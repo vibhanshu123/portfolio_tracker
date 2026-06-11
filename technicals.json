@@ -1,5 +1,5 @@
 {
-  "NSE:NEULANDLAB": {
+  "NSE:NEULANDLAB": { 
     "error": "download failed (rate limited or no data \u2014 try again shortly)"
   },
   "NSE:NH": {
@@ -72,7 +72,80 @@
     "error": "download failed or insufficient history"
   },
   "NSE:JAYNECOIND": {
-    "error": "download failed or insufficient history"
+    "error": "download failed or insufficient history",
+    "error": "insufficient history"
+  },
+  "NSE:NH": {
+    "error": "insufficient history"
+  },
+  "NSE:JMFINANCIL": {
+    "error": "insufficient history"
+  },
+  "NSE:SOLARA": {
+    "error": "insufficient history"
+  },
+  "NSE:WINDLAS": {
+    "error": "insufficient history"
+  },
+  "NSE:TDPOWERSYS": {
+    "error": "insufficient history"
+  },
+  "NSE:LAURUSLABS": {
+    "error": "insufficient history"
+  },
+  "NSE:ENTERO": {
+    "error": "insufficient history"
+  },
+  "NSE:INTERARCH": {
+    "error": "insufficient history"
+  },
+  "NSE:SILVERBEES": {
+    "error": "insufficient history"
+  },
+  "NSE:GOLDIETF": {
+    "error": "insufficient history"
+  },
+  "NSE:CSBBANK": {
+    "error": "insufficient history"
+  },
+  "NSE:MCX": {
+    "error": "insufficient history"
+  },
+  "NSE:ACUTAAS": {
+    "error": "insufficient history"
+  },
+  "NSE:SANSERA": {
+    "error": "insufficient history"
+  },
+  "NSE:SONACOMS": {
+    "error": "insufficient history"
+  },
+  "NSE:J&KBANK": {
+    "error": "insufficient history"
+  },
+  "NSE:SAMHI": {
+    "error": "insufficient history"
+  },
+  "NSE:FDC": {
+    "error": "insufficient history"
+  },
+  "NSE:GOLDBEES": {
+    "error": "insufficient history"
+  },
+  "NSE:SAILIFE": {
+    "error": "insufficient history"
+  },
+  "NSE:QPOWER": {
+    "error": "insufficient history"
+  },
+  "NSE:SHILPAMED": {
+    "error": "insufficient history"
+  },
+  "NSE:DEEDEV": {
+    "error": "insufficient history"
+  },
+  "NSE:JAYNECOIND": {
+    "error": "insufficient history"
   },
   "GEV": {
     "error": "download failed or insufficient history"
@@ -81,6 +154,7 @@
     "error": "download failed or insufficient history"
   },
   "NSE:BHAGYANGR": {
+
     "error": "download failed or insufficient history"
   },
   "BSE:KLBRENG-B": {
@@ -90,6 +164,16 @@
     "error": "download failed or insufficient history"
   },
   "NSE:GOLDIAM": {
-    "error": "download failed or insufficient history"
+    "error": "download failed or insufficient history",
+    "error": "insufficient history"
+  },
+  "BSE:KLBRENG-B": {
+    "error": "insufficient history"
+  },
+  "NSE:AZAD": {
+    "error": "insufficient history"
+  },
+  "NSE:GOLDIAM": {
+    "error": "insufficient history"
   }
 }

@@ -1,0 +1,1810 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SHILPAMED — Investment Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg-body:#F8F9FC; --bg-card:#FFFFFF; --bg-card-border:#E2E8F0;
+  --text-primary:#0F172A; --text-secondary:#475569; --text-muted:#94A3B8;
+  --color-navy:#0F1F3D; --color-orange:#E8701A; --color-green:#16A34A;
+  --color-red:#DC2626; --color-amber:#D97706; --color-blue:#1D4ED8;
+  --nav-bg:#0F1F3D; --nav-text:#FFFFFF;
+  --table-header-bg:#F1F5F9; --table-row-alt:#F8FAFC;
+  --highlight-latest:#FFF7ED;
+}
+[data-theme="dark"] {
+  --bg-body:#0F172A; --bg-card:#1E293B; --bg-card-border:#334155;
+  --text-primary:#F1F5F9; --text-secondary:#94A3B8; --text-muted:#64748B;
+  --color-navy:#1E40AF; --color-orange:#F97316; --color-green:#22C55E;
+  --color-red:#EF4444; --color-amber:#F59E0B; --color-blue:#3B82F6;
+  --nav-bg:#1E293B; --nav-text:#F1F5F9;
+  --table-header-bg:#1E293B; --table-row-alt:#0F172A;
+  --highlight-latest:#431407;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.6;background:var(--bg-body);color:var(--text-primary);transition:background .2s,color .2s}
+a{color:var(--color-orange);text-decoration:none}
+nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);padding:0;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.nav-top{display:flex;align-items:center;justify-content:space-between;padding:10px 18px 0}
+.nav-brand{color:var(--nav-text);font-size:17px;font-weight:700;letter-spacing:.02em}
+.nav-brand span{color:var(--color-orange)}
+.nav-meta{color:#94A3B8;font-size:12px;margin-left:12px}
+.nav-right{display:flex;align-items:center;gap:10px}
+.dark-toggle{background:none;border:1px solid rgba(255,255,255,.2);color:var(--nav-text);padding:4px 12px;border-radius:6px;cursor:pointer;font-size:12px}
+.nav-tabs{display:flex;overflow-x:auto;gap:2px;padding:6px 10px 0;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+.tab-btn{background:none;border:none;color:rgba(255,255,255,.7);padding:7px 13px;cursor:pointer;font-size:12.5px;border-radius:6px 6px 0 0;white-space:nowrap;transition:all .15s}
+.tab-btn:hover{background:rgba(255,255,255,.1);color:#fff}
+.tab-btn.active{background:var(--bg-body);color:var(--text-primary);font-weight:600}
+main{max-width:1320px;margin:0 auto;padding:24px 16px 60px}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+.section-header{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--color-orange);padding:8px 0 6px 12px;border-left:4px solid var(--color-orange);border-bottom:1px solid var(--bg-card-border);margin:28px 0 16px}
+.card{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:12px;padding:20px 22px;margin-bottom:16px}
+.card-title{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);margin-bottom:6px}
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.grid-4{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
+.kpi-card{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:10px;padding:16px 18px}
+.kpi-label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted)}
+.kpi-value{font-family:ui-monospace,monospace;font-size:26px;font-weight:700;color:var(--text-primary);line-height:1.2;margin:4px 0}
+.kpi-sub{font-size:12px;color:var(--text-secondary)}
+.kpi-spark{height:30px;margin-top:6px}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em}
+.badge-buy{background:#DCFCE7;color:#166534}
+.badge-accumulate{background:#FED7AA;color:#9A3412}
+.badge-watch{background:#FEF3C7;color:#92400E}
+.badge-reduce{background:#FCE7F3;color:#9D174D}
+.badge-avoid{background:#E0E7FF;color:#1E40AF}
+.badge-high{background:#FEE2E2;color:#991B1B}
+.badge-medium{background:#FEF3C7;color:#92400E}
+.badge-low{background:#DCFCE7;color:#166534}
+.badge-optionality{background:#DBEAFE;color:#1E40AF}
+.badge-active{background:#FEE2E2;color:#991B1B}
+.badge-monitoring{background:#FEF3C7;color:#92400E}
+.badge-mitigated{background:#DCFCE7;color:#166534}
+.badge-bullish{background:#DCFCE7;color:#166534}
+.badge-neutral{background:#F1F5F9;color:#475569}
+.badge-cautious{background:#FEF3C7;color:#92400E}
+.badge-bearish{background:#FEE2E2;color:#991B1B}
+.badge-order{background:#DBEAFE;color:#1E40AF}
+.badge-results{background:#EDE9FE;color:#5B21B6}
+.badge-filing{background:#F1F5F9;color:#475569}
+.badge-amber{background:#FEF3C7;color:#92400E}
+.verdict-block{display:flex;align-items:center;gap:20px;padding:20px 24px;background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:14px;margin-bottom:20px;flex-wrap:wrap}
+.verdict-badge-large{font-size:22px;padding:8px 24px;border-radius:8px;font-weight:800;letter-spacing:.05em}
+.conviction-bar-wrap{flex:1;min-width:160px}
+.conviction-bar-label{font-size:12px;color:var(--text-muted);margin-bottom:4px}
+.conviction-bar-bg{background:var(--bg-card-border);border-radius:8px;height:10px;overflow:hidden}
+.conviction-bar-fill{height:10px;border-radius:8px;background:linear-gradient(90deg,var(--color-orange),var(--color-amber))}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{background:var(--table-header-bg);font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;padding:10px 14px;text-align:right;color:var(--text-secondary);font-weight:600;white-space:nowrap}
+th:first-child{text-align:left}
+td{padding:10px 14px;border-bottom:1px solid var(--bg-card-border);text-align:right;font-family:ui-monospace,monospace;font-size:14.5px;white-space:nowrap}
+td:first-child{text-align:left;font-family:system-ui,sans-serif;font-weight:500;font-size:14.5px}
+tr:nth-child(even) td{background:var(--table-row-alt)}
+.latest-col{background:var(--highlight-latest) !important;font-weight:700}
+.pos{color:var(--color-green)} .neg{color:var(--color-red)}
+.chart-wrap{position:relative;height:280px;margin:10px 0}
+.chart-wrap-sm{position:relative;height:220px;margin:8px 0}
+.chart-wrap-lg{position:relative;height:340px;margin:10px 0}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:680px){.two-col{grid-template-columns:1fr}}
+.metric-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--bg-card-border)}
+.metric-row:last-child{border-bottom:none}
+.metric-label{font-size:14px;color:var(--text-secondary)}
+.metric-value{font-family:ui-monospace,monospace;font-size:15px;font-weight:600;color:var(--text-primary)}
+.risk-card{padding:14px 16px;border:1px solid var(--bg-card-border);border-radius:10px;margin-bottom:10px;background:var(--bg-card)}
+.risk-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:6px}
+.risk-card-title{font-weight:600;font-size:15px}
+.risk-desc{font-size:13.5px;color:var(--text-secondary);line-height:1.5}
+.trigger-card{padding:14px 16px;border:1px solid var(--bg-card-border);border-radius:10px;margin-bottom:10px;background:var(--bg-card)}
+.trigger-title{font-weight:700;font-size:15px;margin-bottom:4px}
+.trigger-sub{font-size:13px;color:var(--text-secondary)}
+.concall-block{padding:16px 0;border-bottom:1px solid var(--bg-card-border)}
+.concall-block:last-child{border-bottom:none}
+.concall-quarter{font-weight:700;font-size:15px;display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.concall-points li{font-size:14px;color:var(--text-secondary);margin-bottom:4px;padding-left:4px}
+.concall-points{padding-left:18px}
+.timeline{position:relative;padding-left:24px}
+.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:var(--bg-card-border)}
+.tl-item{position:relative;margin-bottom:18px}
+.tl-dot{position:absolute;left:-20px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--color-orange);border:2px solid var(--bg-card)}
+.tl-date{font-size:11px;color:var(--text-muted);font-family:ui-monospace,monospace;margin-bottom:2px}
+.tl-headline{font-size:14px;font-weight:600;margin-bottom:2px}
+.tl-detail{font-size:13px;color:var(--text-secondary)}
+.moat-table td:nth-child(2){text-align:center}
+.score-block{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;font-weight:700;font-size:16px;margin-right:4px}
+.thesis-col{padding:18px;border-radius:10px;border:1px solid var(--bg-card-border)}
+.thesis-bull{border-top:3px solid var(--color-green)}
+.thesis-base{border-top:3px solid var(--color-amber)}
+.thesis-bear{border-top:3px solid var(--color-red)}
+.thesis-label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:10px}
+.thesis-points li{font-size:13.5px;margin-bottom:5px;color:var(--text-secondary)}
+.thesis-points{padding-left:16px}
+.note{font-size:12px;color:var(--text-muted);padding:8px 12px;background:var(--table-row-alt);border-radius:6px;margin-top:8px;font-style:italic}
+.forensic-row{display:grid;grid-template-columns:180px 1fr;gap:8px;padding:10px 0;border-bottom:1px solid var(--bg-card-border);align-items:start}
+.forensic-label{font-size:13px;color:var(--text-muted);font-weight:600}
+.forensic-val{font-size:14px;color:var(--text-primary)}
+.progress-bg{background:var(--bg-card-border);border-radius:8px;height:8px;overflow:hidden;margin-top:4px}
+.progress-fill{height:8px;border-radius:8px}
+.catalyst-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px}
+.catalyst-item{padding:12px 14px;border:1px solid var(--bg-card-border);border-radius:8px;background:var(--bg-card)}
+.catalyst-q{font-size:11px;text-transform:uppercase;color:var(--color-orange);font-weight:700;margin-bottom:4px}
+.catalyst-title{font-size:14px;font-weight:600;margin-bottom:3px}
+.catalyst-sub{font-size:12.5px;color:var(--text-secondary)}
+@media print{nav,.dark-toggle,.tab-btn{display:none!important}.tab-pane{display:block!important}body{background:#fff;color:#000}}
+</style>
+</head>
+<body>
+<nav>
+<div class="nav-top">
+  <div style="display:flex;align-items:baseline;gap:8px">
+    <span class="nav-brand">SHILPA<span>MED</span></span>
+    <span class="nav-meta">Shilpa Medicare Ltd · NSE: SHILPAMED · BSE: 530549 · CMP ₹519 · MCap ₹10,149 Cr</span>
+  </div>
+  <div class="nav-right">
+    <span class="badge badge-accumulate" style="font-size:12px">ACCUMULATE</span>
+    <button class="dark-toggle" onclick="toggleDark()">🌓 Theme</button>
+  </div>
+</div>
+<div class="nav-tabs">
+  <button class="tab-btn active" onclick="showTab(0,this)">Exec Summary</button>
+  <button class="tab-btn" onclick="showTab(1,this)">Overview</button>
+  <button class="tab-btn" onclick="showTab(2,this)">Business</button>
+  <button class="tab-btn" onclick="showTab(3,this)">Industry</button>
+  <button class="tab-btn" onclick="showTab(4,this)">Financials</button>
+  <button class="tab-btn" onclick="showTab(5,this)">Growth</button>
+  <button class="tab-btn" onclick="showTab(6,this)">Forensics</button>
+  <button class="tab-btn" onclick="showTab(7,this)">Valuation</button>
+  <button class="tab-btn" onclick="showTab(8,this)">Thesis</button>
+  <button class="tab-btn" onclick="showTab(9,this)">Risks</button>
+  <button class="tab-btn" onclick="showTab(10,this)">Concall</button>
+  <button class="tab-btn" onclick="showTab(11,this)">Cap. Alloc.</button>
+  <button class="tab-btn" onclick="showTab(12,this)">Ownership</button>
+  <button class="tab-btn" onclick="showTab(13,this)">Events</button>
+</div>
+</nav>
+<main id="dashboard">
+<!-- TAB 0: EXECUTIVE SUMMARY -->
+<div id="tab-0" class="tab-pane active">
+<div class="verdict-block">
+  <div>
+    <div class="card-title">Analyst Verdict</div>
+    <div class="verdict-badge-large badge badge-accumulate">ACCUMULATE</div>
+  </div>
+  <div class="conviction-bar-wrap">
+    <div class="conviction-bar-label">Conviction: <strong>6 / 10</strong></div>
+    <div class="conviction-bar-bg"><div class="conviction-bar-fill" style="width:60%"></div></div>
+  </div>
+  <div>
+    <div class="card-title">Target Price (18-Month)</div>
+    <div style="font-family:ui-monospace,monospace;font-size:26px;font-weight:700">₹670</div>
+    <div style="font-size:13px;color:var(--color-green)">↑ +29% from ₹519 CMP</div>
+  </div>
+  <div>
+    <div class="card-title">Forensic Rating</div>
+    <span class="badge badge-amber" style="font-size:13px">⚠ AMBER FLAGS</span>
+    <div style="font-size:12px;color:var(--text-muted);margin-top:4px">Large RPTs · CWIP ₹884 Cr · Import alert</div>
+  </div>
+  <div>
+    <div class="card-title">Report Date</div>
+    <div style="font-weight:600">May 22, 2026</div>
+    <div style="font-size:12px;color:var(--text-muted)">Q4 FY26 Results</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Investment Thesis</div>
+  <p style="font-size:15.5px;line-height:1.7;color:var(--text-primary)">
+    Shilpa Medicare is a multi-segment pharma company completing a structural transformation: the FY23 trough (11% EBITDA, net loss) is firmly behind, replaced by FY26's highest-ever revenue (₹1,549 Cr, +18%), EBITDA (₹445 Cr, 29% margin), and adj. PAT (₹232 Cr, +135%). 
+    The investment thesis rests on three converging forces — (1) a first-in-class NAFLD product (NorUDCA/Noduca™) ramping in a 188-million-patient Indian market; (2) EMA-approved Rotigotine TDS entering EU in FY27 with US filing already done; and (3) Adalimumab + Aflibercept biosimilars scaling alongside a deep pipeline (Nivolumab, Pembrolizumab, rHA albumin) that the market has not yet priced.
+    At ₹519 CMP, the stock trades at 44x consolidated adj. P/E and 24x EV/EBITDA — elevated but not irrational for an accelerating, high-optionality pharma compounder. 
+    Accumulate on dips with a 18-month target of ₹670 (29% upside), with the real payoff in FY28–FY29 when biosimilars + ADC reach commercial scale.
+  </p>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">5 Reasons to Own</div>
+    <ul style="padding-left:18px">
+      <li style="margin-bottom:8px;font-size:14.5px"><strong>NorUDCA monopoly:</strong> World's first CDSCO-approved NAFLD API + formulation — 188 mn Indian patients, 3 marketing partners, own Noduca™ brand, global filing next</li>
+      <li style="margin-bottom:8px;font-size:14.5px"><strong>Rotigotine EU de-risked:</strong> EMA marketing authorisation already received; EU launch 1HFY27; US NDA filed 4QFY26 — binary risk removed, revenue starts flowing</li>
+      <li style="margin-bottom:8px;font-size:14.5px"><strong>Biologics inflection:</strong> Adalimumab +25% YoY; Aflibercept Phase III completing 1HFY27 (India launch FY27); Nivolumab + Pembrolizumab Phase I FY27 — pipeline worth USD 60+ bn in reference product value</li>
+      <li style="margin-bottom:8px;font-size:14.5px"><strong>Operating leverage on ₹2,477 Cr gross block:</strong> 39% of gross block sits in CWIP (₹884 Cr) — once biologics + peptide facilities ramp, EBITDA margins can reach 33-35%</li>
+      <li style="margin-bottom:8px;font-size:14.5px"><strong>Margin trajectory intact:</strong> EBITDA 11%(FY23) → 29%(FY26) → 33%+(FY28E) as high-margin biosimilar + CDMO revenue dilutes commodity API drag</li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-title">5 Reasons to Pause</div>
+    <ul style="padding-left:18px">
+      <li style="margin-bottom:8px;font-size:14.5px"><strong>Premium valuation leaves no room:</strong> Standalone P/E 88x, EV/EBITDA 53x on screener basis — any guidance miss punished severely</li>
+      <li style="margin-bottom:8px;font-size:14.5px"><strong>USFDA import alert on Jadcherla (ACTIVE):</strong> CAPA submitted; awaiting surprise re-inspection — US formulations revenue (₹80 Cr in FY26) at risk of disruption</li>
+      <li style="margin-bottom:8px;font-size:14.5px"><strong>Promoter dilution:</strong> Promoter holding fell from 50.01% (Jun 2023) to 40.13% (Mar 2026) over 3 years — 3 rounds of dilutive equity raising</li>
+      <li style="margin-bottom:8px;font-size:14.5px"><strong>Persistently negative FCF:</strong> 3-year cumulative FCF = -₹189 Cr (standalone); consolidated capex ₹361 Cr in FY26 vs OCF not disclosed; capital returns remain years away</li>
+      <li style="margin-bottom:8px;font-size:14.5px"><strong>Long-dated biologics optionality:</strong> rHA albumin commercialisation FY29; ADC phase I only in FY27 — investors must fund 3+ years of R&D drag before payoff</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Top 3 Risks to Thesis</div>
+  <div class="grid-3">
+    <div style="padding:12px;border:1px solid var(--bg-card-border);border-radius:8px;border-top:3px solid var(--color-red)">
+      <div style="font-weight:700;margin-bottom:6px">USFDA Re-inspection Failure</div>
+      <div style="font-size:13px;color:var(--text-secondary)">If Jadcherla fails re-inspection, US formulation revenues (₹80 Cr, ~5% of consolidated) suspended — plus reputational overhang on other products</div>
+    </div>
+    <div style="padding:12px;border:1px solid var(--bg-card-border);border-radius:8px;border-top:3px solid var(--color-amber)">
+      <div style="font-weight:700;margin-bottom:6px">Biologics Clinical Setback</div>
+      <div style="font-size:13px;color:var(--text-secondary)">Delay in Aflibercept approval or Albumin Phase III failure would impair ₹884 Cr CWIP valuation and force write-offs; has happened before (FY23 trough)</div>
+    </div>
+    <div style="padding:12px;border:1px solid var(--bg-card-border);border-radius:8px;border-top:3px solid var(--color-amber)">
+      <div style="font-weight:700;margin-bottom:6px">API Price Erosion Accelerates</div>
+      <div style="font-size:13px;color:var(--text-secondary)">Oncology API revenue already -8% in FY25; if non-oncology also erodes, API segment (~49% of revenue) could drag consolidated margins despite FDF/biologics ramp</div>
+    </div>
+  </div>
+</div>
+</div>
+<!-- TAB 1: OVERVIEW -->
+<div id="tab-1" class="tab-pane">
+<div class="section-header">Key Performance Indicators — FY26 (Consolidated)</div>
+<div class="grid-4">
+  <div class="kpi-card">
+    <div class="kpi-label">Revenue (Consol.)</div>
+    <div class="kpi-value">₹1,549<span style="font-size:16px">cr</span></div>
+    <div class="kpi-sub pos">+18% YoY · Highest ever</div>
+    <svg class="kpi-spark" id="spark-rev" viewBox="0 0 80 30" preserveAspectRatio="none"></svg>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">EBITDA Margin</div>
+    <div class="kpi-value">29<span style="font-size:16px">%</span></div>
+    <div class="kpi-sub pos">+300 bps YoY · FY23 was 11%</div>
+    <svg class="kpi-spark" id="spark-ebitda" viewBox="0 0 80 30" preserveAspectRatio="none"></svg>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Adj. PAT (Consol.)</div>
+    <div class="kpi-value">₹232<span style="font-size:16px">cr</span></div>
+    <div class="kpi-sub pos">+135% YoY · 15% margin</div>
+    <svg class="kpi-spark" id="spark-pat" viewBox="0 0 80 30" preserveAspectRatio="none"></svg>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Adj. ROCE (Consol.)</div>
+    <div class="kpi-value">17.4<span style="font-size:16px">%</span></div>
+    <div class="kpi-sub pos">FY24: 9.3% · FY23: 3.4%</div>
+    <svg class="kpi-spark" id="spark-roce" viewBox="0 0 80 30" preserveAspectRatio="none"></svg>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Net Debt/EBITDA</div>
+    <div class="kpi-value">1.4<span style="font-size:16px">x</span></div>
+    <div class="kpi-sub pos">FY24: 5.8x · FY23: 6.7x</div>
+    <svg class="kpi-spark" id="spark-leverage" viewBox="0 0 80 30" preserveAspectRatio="none"></svg>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Market Cap</div>
+    <div class="kpi-value">₹10,149<span style="font-size:16px">cr</span></div>
+    <div class="kpi-sub">CMP ₹519 · 19.6 Cr shares</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">P/E (Consol. Adj.)</div>
+    <div class="kpi-value">44<span style="font-size:16px">x</span></div>
+    <div class="kpi-sub neg">Standalone P/E 88x (holding structure)</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">EV/EBITDA (Consol.)</div>
+    <div class="kpi-value">24<span style="font-size:16px">x</span></div>
+    <div class="kpi-sub neg">Standalone basis: 53x</div>
+  </div>
+</div>
+
+<div class="section-header">Revenue — Consolidated 5-Year Track Record</div>
+<div class="card">
+  <div class="chart-wrap"><canvas id="revenueChart"></canvas></div>
+  <p class="note">Consolidated revenue. FY23 was trough year due to biologics investment drag + API price erosion. FY24 recovery; FY25 re-rating; FY26 inflection.</p>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">Price Performance</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Period</th><th>SHILPAMED</th><th>Nifty 50</th></tr></thead>
+        <tbody>
+          <tr><td>1 Week</td><td>---------</td><td>---------</td></tr>
+          <tr><td>1 Month</td><td>---------</td><td>---------</td></tr>
+          <tr><td>3 Months</td><td>---------</td><td>---------</td></tr>
+          <tr><td>6 Months</td><td>---------</td><td>---------</td></tr>
+          <tr><td>52W High / Low</td><td>₹522 / ₹260</td><td>---------</td></tr>
+          <tr><td>200 DMA</td><td>₹373</td><td>---------</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">CMP ₹519 is 39% above 200 DMA (₹373) — extended; accumulate on dips toward ₹450-460.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Shareholding Pattern — Mar 2026</div>
+    <div class="chart-wrap-sm"><canvas id="donutSharehold"></canvas></div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px">
+      <span style="font-size:12px"><span style="color:#0F1F3D">■</span> Promoters 40.13%</span>
+      <span style="font-size:12px"><span style="color:#E8701A">■</span> FIIs 11.07%</span>
+      <span style="font-size:12px"><span style="color:#16A34A">■</span> DIIs 8.58%</span>
+      <span style="font-size:12px"><span style="color:#94A3B8">■</span> Public 40.21%</span>
+    </div>
+    <p class="note neg">⚠ Promoter holding declined from 50.01% (Jun 2023) to 40.13% (Mar 2026) — 3 dilutive equity events (QIP Apr 2024, QIP Feb 2025, Bonus 1:1 Jun 2025).</p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Company Snapshot</div>
+  <div class="grid-3">
+    <div>
+      <div class="metric-row"><span class="metric-label">Founded</span><span class="metric-value">1987</span></div>
+      <div class="metric-row"><span class="metric-label">Listed</span><span class="metric-value">BSE + NSE</span></div>
+      <div class="metric-row"><span class="metric-label">Headquarters</span><span class="metric-value">Raichur, Karnataka</span></div>
+      <div class="metric-row"><span class="metric-label">New Reg. Office</span><span class="metric-value">Mumbai (FY26 ballot)</span></div>
+      <div class="metric-row"><span class="metric-label">Chairman</span><span class="metric-value">Om Prakash Inani</span></div>
+      <div class="metric-row"><span class="metric-label">Managing Director</span><span class="metric-value">Vishnukant Bhutada</span></div>
+    </div>
+    <div>
+      <div class="metric-row"><span class="metric-label">CFO</span><span class="metric-value">Alpesh Dalal</span></div>
+      <div class="metric-row"><span class="metric-label">Equity Capital (FV Re.1)</span><span class="metric-value">₹20 Cr (19.6 Cr sh.)</span></div>
+      <div class="metric-row"><span class="metric-label">Book Value / Share</span><span class="metric-value">₹139</span></div>
+      <div class="metric-row"><span class="metric-label">Dividend FY26</span><span class="metric-value">₹0.60 / share</span></div>
+      <div class="metric-row"><span class="metric-label">Credit Rating</span><span class="metric-value">IND A+ / Positive</span></div>
+      <div class="metric-row"><span class="metric-label">Rating Agency</span><span class="metric-value">India Ratings (Fitch)</span></div>
+    </div>
+    <div>
+      <div class="metric-row"><span class="metric-label">Manufacturing Sites</span><span class="metric-value">10+ (KA + TG)</span></div>
+      <div class="metric-row"><span class="metric-label">R&D Personnel</span><span class="metric-value">400+</span></div>
+      <div class="metric-row"><span class="metric-label">Global DMF Filings</span><span class="metric-value">283+</span></div>
+      <div class="metric-row"><span class="metric-label">Countries (Sales)</span><span class="metric-value">50+</span></div>
+      <div class="metric-row"><span class="metric-label">Statutory Auditor</span><span class="metric-value">B N P S & Associates LLP</span></div>
+      <div class="metric-row"><span class="metric-label">Website</span><span class="metric-value">vbshilpa.com</span></div>
+    </div>
+  </div>
+</div>
+</div>
+<!-- TAB 2: BUSINESS -->
+<div id="tab-2" class="tab-pane">
+<div class="section-header">Business Overview</div>
+<div class="card">
+  <p style="font-size:15px;line-height:1.7">Shilpa Medicare is a vertically integrated Indian pharmaceutical company with presence across four segments: <strong>API</strong> (oncology + non-oncology + CDMO), <strong>Formulations</strong> (EU complex generics, US 505(b)(2), India), <strong>Biologics</strong> (biosimilars + novel biologics + rHA albumin), and <strong>CDMO</strong> (small molecule + biologics for global pharma). The holding company (SML) primarily manufactures APIs at Raichur; the growth engine runs through wholly-owned subsidiaries — Shilpa Pharma Lifesciences (API), Shilpa Therapeutics (EU FDF), FTF Pharma Inc (US), Shilpa Biologicals (biosimilar R&D), and Shilpa Biocare (commercial biologics).</p>
+</div>
+
+<div class="section-header">Revenue Segment Mix — FY26 Consolidated</div>
+<div class="grid-2">
+  <div class="card">
+    <div class="chart-wrap-sm"><canvas id="segmentPie"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Segment</th><th>FY26 Rev (₹Cr)</th><th>FY25 Rev</th><th>YoY</th><th>% Mix</th></tr></thead>
+        <tbody>
+          <tr><td>API (incl. captive)</td><td>985</td><td>845</td><td class="pos">+16%</td><td>49%</td></tr>
+          <tr><td>Formulations (FDF)</td><td>618</td><td>474</td><td class="pos">+30%</td><td>40%</td></tr>
+          <tr><td>Biologics</td><td>150</td><td>76</td><td class="pos">+98%</td><td>10%</td></tr>
+          <tr><td>Others</td><td>12</td><td>~15</td><td class="neg">-20%</td><td>1%</td></tr>
+          <tr style="font-weight:700"><td>Total</td><td>1,549</td><td>1,310</td><td class="pos">+18%</td><td>100%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Biologics fastest growing: ₹76 Cr (FY25) → ₹150 Cr (FY26) → target ₹250+ Cr (FY27E as Aflibercept commercialises + CDMO NBE programs advance)</p>
+  </div>
+</div>
+
+<div class="section-header">API Segment — Sub-segment Detail</div>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">API Revenue Breakdown (FY25 → FY26, ₹ Cr)</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Sub-Segment</th><th>FY25</th><th>FY26</th><th>YoY</th></tr></thead>
+        <tbody>
+          <tr><td>Oncology APIs</td><td>328</td><td>455</td><td class="pos">+39%</td></tr>
+          <tr><td>Non-Oncology APIs</td><td>318</td><td>390</td><td class="pos">+23%</td></tr>
+          <tr><td>Specialty CDMO + Peptide</td><td>62</td><td>110</td><td class="pos">+77%</td></tr>
+          <tr><td>Others/Polymer</td><td>~34</td><td>30</td><td class="neg">-12%</td></tr>
+          <tr style="font-weight:700"><td>Total API (incl. captive)</td><td>845</td><td>985</td><td class="pos">+16%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Total API includes captive supply to Shilpa's own formulations entities (~₹226 Cr in FY26). External API revenue ~₹759 Cr. 283 total DMF filings globally.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Formulations Revenue by Geography (FY25 → FY26, ₹ Cr)</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Geography</th><th>FY25</th><th>FY26</th><th>YoY</th></tr></thead>
+        <tbody>
+          <tr><td>Europe (Shilpa Therapeutics)</td><td>99</td><td>223</td><td class="pos">+125%</td></tr>
+          <tr><td>USA (FTF Pharma)</td><td>111</td><td>80</td><td class="neg">-28%</td></tr>
+          <tr><td>Rest of World</td><td>190</td><td>123</td><td class="neg">-35%</td></tr>
+          <tr><td>India (NorUDCA ramp)</td><td>26</td><td>72</td><td class="pos">+177%</td></tr>
+          <tr><td>Licensing / Services</td><td>48</td><td>120</td><td class="pos">+150%</td></tr>
+          <tr style="font-weight:700"><td>Total FDF</td><td>474</td><td>618</td><td class="pos">+30%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note neg">⚠ US business declined ₹111 Cr → ₹80 Cr; Jadcherla import alert impact. Europe is the new growth engine: ₹99 Cr → ₹223 Cr (+125%) led by Nilotinib, Axitinib, Rotigotine.</p>
+  </div>
+</div>
+
+<div class="section-header">Competitive Moat Scorecard</div>
+<div class="card">
+  <div class="table-wrap">
+    <table class="moat-table">
+      <thead><tr><th>Moat Factor</th><th style="text-align:center">Rating</th><th>Rationale</th></tr></thead>
+      <tbody>
+        <tr><td>Regulatory barriers (DMFs + approvals)</td><td style="text-align:center"><span class="badge badge-low">STRONG</span></td><td style="font-size:13.5px">283 DMFs globally; US FDA, EU GMP, ANVISA, TGA, PMDA — takes years to replicate</td></tr>
+        <tr><td>First-mover advantage (NorUDCA)</td><td style="text-align:center"><span class="badge badge-low">STRONG</span></td><td style="font-size:13.5px">World's first CDSCO-approved NAFLD API+FDF; 5-7 years of competitive moat before rivals can file</td></tr>
+        <tr><td>IP / Patent estate</td><td style="text-align:center"><span class="badge badge-medium">MODERATE</span></td><td style="font-size:13.5px">70+ patents filed; rHA patented US+EU; TDS delivery IP — but generic pharma patents have limited life</td></tr>
+        <tr><td>Vertical integration</td><td style="text-align:center"><span class="badge badge-low">STRONG</span></td><td style="font-size:13.5px">API→FDF→Biologics; captive API supply protects FDF margins; CDMO capability builds lock-in</td></tr>
+        <tr><td>Scale / Cost advantages</td><td style="text-align:center"><span class="badge badge-medium">MODERATE</span></td><td style="font-size:13.5px">Large API plant (1,160 KL reactor capacity) but faces pricing pressure in oncology APIs from Chinese competition</td></tr>
+        <tr><td>Customer switching costs</td><td style="text-align:center"><span class="badge badge-medium">MODERATE</span></td><td style="font-size:13.5px">CDMO clients are sticky (3-5 year programs); retail pharma less so; biosimilar CDMO creates durable relationships</td></tr>
+        <tr><td>Brand / Distribution</td><td style="text-align:center"><span class="badge badge-watch">WEAK</span></td><td style="font-size:13.5px">Limited domestic brand presence; NorUDCA via marketing partners; mostly B2B — no direct-to-patient brand</td></tr>
+        <tr><td>Network effects</td><td style="text-align:center"><span class="badge badge-watch">NONE</span></td><td style="font-size:13.5px">Not applicable — pharma API/FDF manufacturing is not a network-effects business</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section-header">Novel Product Pipeline</div>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Product</th><th>Category</th><th>Stage</th><th>Market</th><th>Target Launch</th><th>Global Mkt (USD)</th></tr></thead>
+      <tbody>
+        <tr><td>NorUDCA (Noduca™) — NAFLD</td><td>FDF Novel</td><td>Launched India 3QFY26</td><td>India + EU + RoW</td><td class="latest-col">Launched ✓</td><td>~USD 2 Bn (India TAM)</td></tr>
+        <tr><td>Rotigotine TDS Patch</td><td>FDF Complex</td><td>EMA approved ✓; US filed</td><td>EU + USA</td><td class="latest-col">EU: 1HFY27</td><td>~USD 800 Mn</td></tr>
+        <tr><td>OLC (CDMO — Unicycive)</td><td>API+FDF CDMO</td><td>PDUFA June 29, 2026</td><td>USA</td><td class="latest-col">FY27 (exclusive)</td><td>Orphan Drug</td></tr>
+        <tr><td>Aflibercept (biosimilar)</td><td>Biologics</td><td>Phase III completing 1HFY27</td><td>India + RoW</td><td>FY27 India</td><td>~USD 6 Bn</td></tr>
+        <tr><td>Ondansetron ER (OERIS™)</td><td>FDF Novel LA Inj</td><td>Phase III positive; CDSCO filed</td><td>India + EU</td><td>FY27 India</td><td>~USD 375 Mn</td></tr>
+        <tr><td>Abraxane (Nab-Paclitaxel)</td><td>FDF Complex</td><td>Exhibit batches done; BE studies</td><td>EU + RoW</td><td>FY27-28</td><td>~USD 163 Mn (EU)</td></tr>
+        <tr><td>Enzalutamide (Xtandi)</td><td>FDF Complex</td><td>Exhibit batches done; filing prep</td><td>EU + US</td><td>FY28</td><td>~USD 6 Bn</td></tr>
+        <tr><td>Semaglutide (GLP-1)</td><td>API + FDF</td><td>API validated; FDF done</td><td>India + RoW</td><td>FY27-28</td><td>~USD 20 Bn+</td></tr>
+        <tr><td>Recombinant Human Albumin</td><td>Biologics Novel</td><td>CDSCO Phase III approved; EU IMPD</td><td>India + EU</td><td>Early FY29</td><td>~USD 4 Bn global</td></tr>
+        <tr><td>Nivolumab (biosimilar)</td><td>Biologics</td><td>Phase I/III planned FY27</td><td>India + Global</td><td>FY29-30</td><td>~USD 12 Bn</td></tr>
+        <tr><td>Pembrolizumab (biosimilar)</td><td>Biologics</td><td>Phase I/III planned FY27</td><td>India + Global</td><td>FY29-30</td><td>~USD 35 Bn</td></tr>
+        <tr><td>ADC platform (SBPL 1)</td><td>Biologics ADC</td><td>GMP facility commissioning 1QFY27</td><td>Global</td><td>FY28+ (Phase I FY27)</td><td>~USD 3 Bn</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+<!-- TAB 3: INDUSTRY -->
+<div id="tab-3" class="tab-pane">
+<div class="section-header">Addressable Markets — TAM Overview</div>
+<div class="grid-3">
+  <div class="card">
+    <div class="card-title">Indian Pharma Industry</div>
+    <div class="kpi-value" style="font-size:22px">~USD 50 Bn</div>
+    <div style="font-size:13.5px;color:var(--text-secondary);margin-top:6px">Domestic + exports. CAGR ~9-10% through 2030. India = 3rd largest globally by volume, 14th by value. Generic pharma dominance — India supplies ~20% of global generic medicines.</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Global Biosimilars Market</div>
+    <div class="kpi-value" style="font-size:22px">USD 45-50 Bn</div>
+    <div style="font-size:13.5px;color:var(--text-secondary);margin-top:6px">By 2030E. CAGR ~25-30%. Patent cliff: USD 200+ Bn of biologics patents expiring 2024-2030 (Humira, Eylea, Keytruda, Opdivo). India biologics = structural decade-long opportunity.</div>
+  </div>
+  <div class="card">
+    <div class="card-title">NAFLD/NASH Market (NorUDCA TAM)</div>
+    <div class="kpi-value" style="font-size:22px">USD 8-12 Bn</div>
+    <div style="font-size:13.5px;color:var(--text-secondary);margin-top:6px">Global by 2030E. ~188 Mn Indian patients (~25% prevalence); ~1.2 Bn globally. NorUDCA = only approved drug in India for NAFLD. Shilpa has first-mover advantage of ~5-7 years.</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Oncology API Market</div>
+    <div class="kpi-value" style="font-size:22px">USD 10-12 Bn</div>
+    <div style="font-size:13.5px;color:var(--text-secondary);margin-top:6px">India API exports ~USD 3.5 Bn annually; oncology APIs command premium. Major patent expiries 2025-2032 (Palbociclib, Olaparib, Enzalutamide etc.) create new addressable opportunities.</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Transdermal Drug Delivery</div>
+    <div class="kpi-value" style="font-size:22px">USD 5-7 Bn</div>
+    <div style="font-size:13.5px;color:var(--text-secondary);margin-top:6px">Global TDS market CAGR ~6%. Shilpa = only Indian company with EMA-approved TDS product (Rotigotine). Bangalore TDS plant US FDA inspected. ~30 Mn units capacity.</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Global CDMO Market</div>
+    <div class="kpi-value" style="font-size:22px">USD 160+ Bn</div>
+    <div style="font-size:13.5px;color:var(--text-secondary);margin-top:6px">By 2028E. CAGR ~8%. Biologics CDMO fastest-growing segment (~15% CAGR). India CDMO gaining share vs China post-COVID supply-chain diversification. Shilpa well-positioned.</div>
+  </div>
+</div>
+
+<div class="section-header">Competitive Landscape</div>
+<div class="card">
+  <div class="grid-2">
+    <div>
+      <div class="card-title" style="margin-bottom:8px">API — Indian Peers</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Company</th><th>Focus</th><th>Key Differentiator vs Shilpa</th></tr></thead>
+          <tbody>
+            <tr><td>Divi's Labs</td><td>API + CRAMS</td><td>Scale; pure-play API; no biologics; lower valuation risk</td></tr>
+            <tr><td>Aarti Pharmalab</td><td>Oncology API</td><td>Pure onco API; simpler model; smaller pipeline</td></tr>
+            <tr><td>Laurus Labs</td><td>API + FDF + Biotech</td><td>Similar diversification; stronger US FDF presence; CDMO growing</td></tr>
+            <tr><td>Suven Pharma</td><td>CDMO</td><td>Specialty CDMO focus; no biologics; Advent PE backed</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="card-title" style="margin-bottom:8px">Biologics — Indian Peers</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Company</th><th>Stage</th><th>Differentiation</th></tr></thead>
+          <tbody>
+            <tr><td>Dr. Reddy's Labs</td><td>Commercial</td><td>Ahead on biosimilar commercialisation; multiple mAbs launched</td></tr>
+            <tr><td>Biocon Biologics</td><td>Commercial (global)</td><td>Largest Indian biologics player; Viatris partnership</td></tr>
+            <tr><td>Lupin</td><td>Phase III</td><td>Etanercept + Adalimumab in development</td></tr>
+            <tr><td>Shilpa Medicare</td><td>Commercial + R&D</td><td>ADC capability unique; rHA + CDMO NBE — differentiated</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-header">Structural Tailwinds &amp; Headwinds</div>
+<div class="grid-2">
+  <div class="card" style="border-top:3px solid var(--color-green)">
+    <div class="card-title" style="color:var(--color-green)">Structural Tailwinds</div>
+    <ul style="padding-left:16px">
+      <li style="margin-bottom:8px;font-size:14px"><strong>Biologics patent cliff 2024-2030:</strong> ~USD 200 Bn of biologics off-patent; Humira, Eylea, Keytruda all creating biosimilar demand. India biologics at 5-10% global market share by 2028.</li>
+      <li style="margin-bottom:8px;font-size:14px"><strong>China+1 CDMO diversification:</strong> Post-COVID, global pharma companies actively diversifying supply chains away from China. India CDMO market gaining disproportionate share.</li>
+      <li style="margin-bottom:8px;font-size:14px"><strong>NAFLD epidemic:</strong> ~25% global prevalence; NorUDCA is only CDSCO-approved NAFLD drug — structural revenue stream for 10+ years as awareness + diagnosis rates climb.</li>
+      <li style="margin-bottom:8px;font-size:14px"><strong>EU complex generics demand:</strong> EU generics market >USD 80 Bn; complex products (TDS, injectables) command 3-5x price premium vs oral solids. Shilpa's Bangalore TDS plant uniquely positioned.</li>
+      <li style="margin-bottom:8px;font-size:14px"><strong>GLP-1 manufacturing boom:</strong> Semaglutide/Tirzepatide + next-gen GLP-1s creating multi-decade peptide API demand. Shilpa's peptide validation + dedicated capacity creates early positioning.</li>
+    </ul>
+  </div>
+  <div class="card" style="border-top:3px solid var(--color-red)">
+    <div class="card-title" style="color:var(--color-red)">Structural Headwinds</div>
+    <ul style="padding-left:16px">
+      <li style="margin-bottom:8px;font-size:14px"><strong>Oncology API price erosion:</strong> Chinese API manufacturers price Oncology APIs aggressively; Shilpa oncology API revenues declined FY23-FY25 before recovering in FY26. Structural pressure unlikely to abate fully.</li>
+      <li style="margin-bottom:8px;font-size:14px"><strong>US pharma regulatory tightening:</strong> USFDA import alerts are recurring risks for Indian pharma. Jadcherla active alert (2025-26) demonstrates non-zero probability of facility disruption at any time.</li>
+      <li style="margin-bottom:8px;font-size:14px"><strong>Biologics capital intensity:</strong> Building and maintaining biologics manufacturing (EU GMP) requires continuous reinvestment (₹884 Cr CWIP); no guarantee of commercial success; multiple Indian peers competing for same molecules.</li>
+      <li style="margin-bottom:8px;font-size:14px"><strong>Clinical trial execution risk:</strong> Albumin Phase III = 12-15 months + 1-year approval → commercialisation FY29. Multiple competing rHA programs globally; Shilpa could face faster competitor approvals.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section-header">Regulatory Environment</div>
+<div class="card">
+  <div class="grid-3">
+    <div>
+      <div style="font-weight:700;margin-bottom:6px;font-size:14px">India (CDSCO)</div>
+      <div style="font-size:13.5px;color:var(--text-secondary)">NorUDCA approved FY25 — first NCE approval from Shilpa. Aflibercept Phase III; Ondansetron ER filed for approval FY26. CDSCO increasingly aligned with ICH guidelines.</div>
+    </div>
+    <div>
+      <div style="font-weight:700;margin-bottom:6px;font-size:14px">Europe (EMA)</div>
+      <div style="font-size:13.5px;color:var(--text-secondary)">Rotigotine TDS = first EMA marketing authorisation for Shilpa. EU GMP status across multiple facilities. Scientific Advice pathway used for Albumin + biosimilars. EU remains primary revenue growth driver.</div>
+    </div>
+    <div>
+      <div style="font-weight:700;margin-bottom:6px;font-size:14px">USA (USFDA)</div>
+      <div style="font-size:13.5px;color:var(--text-secondary)">17 approved ANDAs; 14 pending. Import alert on Jadcherla (active). Rotigotine US NDA filed 4QFY26. 505(b)(2) pathway used for complex products. Tariff impact minimal (US products via third-party CMOs).</div>
+    </div>
+  </div>
+</div>
+</div>
+<!-- TAB 4: FINANCIALS -->
+<div id="tab-4" class="tab-pane">
+<div class="section-header">Consolidated Quarterly P&amp;L — INR Crores (from Concall Disclosures)</div>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>Q1FY25</th><th>Q2FY25</th><th>Q3FY25</th><th>Q4FY25</th>
+          <th>Q1FY26</th><th>Q2FY26</th><th>Q3FY26</th><th class="latest-col">Q4FY26</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Revenue</td><td>301</td><td>348</td><td>321</td><td>338</td><td>328</td><td>372</td><td>411</td><td class="latest-col pos">439</td></tr>
+        <tr><td>Gross Profit</td><td>207</td><td>240</td><td>218</td><td>234</td><td>249</td><td>268</td><td>280</td><td class="latest-col">297</td></tr>
+        <tr><td>GP Margin %</td><td>69%</td><td>69%</td><td>68%</td><td>69%</td><td>76%</td><td>72%</td><td>68%</td><td class="latest-col">68%</td></tr>
+        <tr><td>EBITDA</td><td>83</td><td>91</td><td>81</td><td>87</td><td>98</td><td>110</td><td>115</td><td class="latest-col pos">121</td></tr>
+        <tr><td>EBITDA Margin %</td><td>27%</td><td>26%</td><td>25%</td><td>26%</td><td>30%</td><td>30%</td><td>28%</td><td class="latest-col">28%</td></tr>
+        <tr><td>Finance Cost</td><td>19</td><td>19</td><td>19</td><td>15</td><td>19</td><td>18</td><td>11</td><td class="latest-col">14</td></tr>
+        <tr><td>Depreciation</td><td>28</td><td>28</td><td>29</td><td>29</td><td>29</td><td>30</td><td>30</td><td class="latest-col">31</td></tr>
+        <tr><td>Adj. PAT</td><td>24</td><td>22</td><td>24</td><td>33</td><td>35</td><td>44</td><td>55</td><td class="latest-col pos">87</td></tr>
+        <tr><td>Adj. PAT Margin %</td><td>8%</td><td>6%</td><td>7%</td><td>10%</td><td>11%</td><td>12%</td><td>13%</td><td class="latest-col">20%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">Consolidated data from management concall disclosures. Q4FY26 adj. PAT margin of 20% is highest ever quarterly, demonstrating strong operating leverage as revenue scaled to ₹439 Cr.</p>
+</div>
+
+<div class="section-header">Quarterly Revenue &amp; EBITDA Chart — Consolidated</div>
+<div class="card">
+  <div class="chart-wrap"><canvas id="quarterlyChart"></canvas></div>
+</div>
+
+<div class="section-header">Annual P&amp;L — Consolidated 5 Years (INR Crores)</div>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Metric</th><th>FY22</th><th>FY23</th><th>FY24</th><th>FY25</th><th class="latest-col">FY26</th></tr></thead>
+      <tbody>
+        <tr><td>Revenue</td><td>1,169</td><td>1,067</td><td>1,159</td><td>1,310</td><td class="latest-col pos">1,549</td></tr>
+        <tr><td>EBITDA</td><td>218</td><td>120</td><td>253</td><td>343</td><td class="latest-col pos">445</td></tr>
+        <tr><td>EBITDA Margin %</td><td>19%</td><td>11%</td><td>22%</td><td>26%</td><td class="latest-col">29%</td></tr>
+        <tr><td>PBT</td><td>102</td><td class="neg">-38</td><td>54</td><td>153</td><td class="latest-col pos">283</td></tr>
+        <tr><td>Adj. PAT</td><td>61</td><td class="neg">-33</td><td>32</td><td>99</td><td class="latest-col pos">232</td></tr>
+        <tr><td>Adj. PAT Margin %</td><td>5%</td><td class="neg">-3%</td><td>3%</td><td>8%</td><td class="latest-col">15%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="chart-wrap"><canvas id="annualPL"></canvas></div>
+</div>
+
+<div class="section-header">Annual P&amp;L — Standalone 10 Years (INR Crores, from Screener)</div>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Metric</th><th>FY17</th><th>FY18</th><th>FY19</th><th>FY20</th><th>FY21</th><th>FY22</th><th>FY23</th><th>FY24</th><th>FY25</th><th class="latest-col">FY26</th></tr></thead>
+      <tbody>
+        <tr><td>Revenue</td><td>734</td><td>741</td><td>664</td><td>806</td><td>257</td><td>357</td><td>248</td><td>310</td><td>476</td><td class="latest-col">597</td></tr>
+        <tr><td>Operating Profit</td><td>183</td><td>179</td><td>177</td><td>245</td><td>34</td><td>22</td><td class="neg">-44</td><td>26</td><td>123</td><td class="latest-col">156</td></tr>
+        <tr><td>OPM %</td><td>25%</td><td>24%</td><td>27%</td><td>30%</td><td>13%</td><td>6%</td><td class="neg">-18%</td><td>8%</td><td>26%</td><td class="latest-col">26%</td></tr>
+        <tr><td>Other Income</td><td>15</td><td>23</td><td>21</td><td>32</td><td>204</td><td>170</td><td>159</td><td>79</td><td>39</td><td class="latest-col">58</td></tr>
+        <tr><td>Net Profit</td><td>127</td><td>133</td><td>124</td><td>194</td><td>184</td><td>141</td><td>57</td><td>27</td><td>70</td><td class="latest-col">133</td></tr>
+        <tr><td>EPS (₹, FV Re.1)</td><td>7.95</td><td>8.17</td><td>7.61</td><td>11.88</td><td>11.31</td><td>8.12</td><td>3.29</td><td>1.55</td><td>3.57</td><td class="latest-col">6.80</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">⚠ STANDALONE data. Standalone revenue is the parent-only API manufacturing entity; consolidated revenue (₹1,549 Cr FY26) is ~2.6x higher. "Other Income" includes inter-company interest receipts from subsidiaries. FY21 PAT spike due to inter-company restatements.</p>
+</div>
+
+<div class="section-header">Balance Sheet Snapshot (Consolidated vs Standalone FY26)</div>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">Consolidated Balance Sheet — FY26 (₹ Crores)</div>
+    <div class="metric-row"><span class="metric-label">Fixed Assets (Net Block)</span><span class="metric-value">1,593</span></div>
+    <div class="metric-row"><span class="metric-label">Capital WIP</span><span class="metric-value neg">884 (39% of gross block)</span></div>
+    <div class="metric-row"><span class="metric-label">Intangible Assets</span><span class="metric-value">242</span></div>
+    <div class="metric-row"><span class="metric-label">Net Working Capital</span><span class="metric-value">736</span></div>
+    <div class="metric-row"><span class="metric-label">Cash &amp; Equivalents</span><span class="metric-value">46</span></div>
+    <div class="metric-row"><span class="metric-label">Total Assets (Net)</span><span class="metric-value">3,332</span></div>
+    <div class="metric-row"><span class="metric-label">Equity</span><span class="metric-value">2,591</span></div>
+    <div class="metric-row"><span class="metric-label">Total Borrowings</span><span class="metric-value">658</span></div>
+    <div class="metric-row"><span class="metric-label">Net Debt</span><span class="metric-value">613</span></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Key Financial Ratios — FY26 vs FY25</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Ratio</th><th>FY24</th><th>FY25</th><th class="latest-col">FY26</th></tr></thead>
+        <tbody>
+          <tr><td>EBITDA Margin (consol.)</td><td>22%</td><td>26%</td><td class="latest-col pos">29%</td></tr>
+          <tr><td>Adj. ROCE (excl. Bio.)</td><td>9.3%</td><td>15.0%</td><td class="latest-col pos">17.4%</td></tr>
+          <tr><td>Net Debt/EBITDA</td><td>5.8x</td><td>1.6x</td><td class="latest-col pos">1.4x</td></tr>
+          <tr><td>D/E (standalone)</td><td>0.06x</td><td>0.04x</td><td class="latest-col">0.05x</td></tr>
+          <tr><td>Current Ratio (standalone)</td><td>2.01x</td><td>2.10x</td><td class="latest-col">---------</td></tr>
+          <tr><td>Debtor Days (standalone)</td><td>170</td><td>146</td><td class="latest-col">136</td></tr>
+          <tr><td>Inventory Days (standalone)</td><td>458</td><td>450</td><td class="latest-col pos">285</td></tr>
+          <tr><td>Cash Conversion Cycle (std.)</td><td>412</td><td>529</td><td class="latest-col pos">282</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note pos">Working capital improving: CCC 529 (FY25) → 282 (FY26) — major improvement driven by inventory normalisation post biologics investment ramp.</p>
+  </div>
+</div>
+
+<div class="section-header">Piotroski F-Score &amp; Altman Z-Score (Standalone Basis)</div>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">Piotroski F-Score — FY26 (Standalone)</div>
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px">
+      <div style="width:64px;height:64px;border-radius:50%;background:var(--color-amber);display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;font-weight:700">5</div>
+      <div><div style="font-weight:700;font-size:16px">5 / 9 — NEUTRAL</div><div style="font-size:13px;color:var(--text-muted)">Moderate quality; improving</div></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Signal</th><th>Check</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td>ROA Positive</td><td>PAT 133 / Assets 3029 = 4.4%</td><td class="pos">✓ 1</td></tr>
+          <tr><td>CFO Positive</td><td>CFO ₹60 Cr</td><td class="pos">✓ 1</td></tr>
+          <tr><td>ROA Improving</td><td>4.4% vs 2.3% (FY25)</td><td class="pos">✓ 1</td></tr>
+          <tr><td>Accruals (CFO &gt; ROA)</td><td>CFO/Assets 2.0% &lt; ROA 4.4%</td><td class="neg">✗ 0</td></tr>
+          <tr><td>Leverage Declining</td><td>D/E 0.05x vs 0.04x (FY25) — slight increase</td><td class="neg">✗ 0</td></tr>
+          <tr><td>Liquidity Improving</td><td>CR ~2.1x stable</td><td class="pos">✓ 1</td></tr>
+          <tr><td>No Equity Dilution</td><td>1:1 Bonus + QIP in FY25/FY26</td><td class="neg">✗ 0</td></tr>
+          <tr><td>Gross Margin Stable</td><td>OPM% 26% (FY26) = 26% (FY25) — flat</td><td class="neg">✗ 0</td></tr>
+          <tr><td>Asset Turnover Improving</td><td>19.7% (FY26) vs 15.8% (FY25)</td><td class="pos">✓ 1</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Altman Z-Score — FY26 (Consolidated)</div>
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px">
+      <div style="width:64px;height:64px;border-radius:50%;background:var(--color-green);display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;font-weight:700">11.4</div>
+      <div><div style="font-weight:700;font-size:16px">11.4 — SAFE ZONE</div><div style="font-size:13px;color:var(--text-muted)">Z &gt; 2.99 = financially healthy</div></div>
+    </div>
+    <div class="metric-row"><span class="metric-label">X1 — WC/Total Assets</span><span class="metric-value">0.22</span></div>
+    <div class="metric-row"><span class="metric-label">X2 — Retained Earnings/TA</span><span class="metric-value">0.77</span></div>
+    <div class="metric-row"><span class="metric-label">X3 — EBIT/Total Assets</span><span class="metric-value">0.10</span></div>
+    <div class="metric-row"><span class="metric-label">X4 — Market Cap/Book Debt</span><span class="metric-value">15.42</span></div>
+    <div class="metric-row"><span class="metric-label">X5 — Sales/Total Assets</span><span class="metric-value">0.47</span></div>
+    <p class="note pos">Z-Score dominated by X4 (market cap >> book debt). Company is financially solvent. Main risk is not insolvency but capex-funded growth without near-term FCF generation.</p>
+  </div>
+</div>
+
+<div class="section-header">Cash Flow Quality (Standalone, INR Crores)</div>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Metric</th><th>FY22</th><th>FY23</th><th>FY24</th><th>FY25</th><th class="latest-col">FY26</th></tr></thead>
+      <tbody>
+        <tr><td>Operating CF (CFO)</td><td>174</td><td>2</td><td>10</td><td class="neg">-19</td><td class="latest-col">60</td></tr>
+        <tr><td>Investing CF (CFI)</td><td>-379</td><td>-95</td><td>155</td><td>-431</td><td class="latest-col">-67</td></tr>
+        <tr><td>Financing CF (CFF)</td><td>97</td><td>88</td><td>-163</td><td>450</td><td class="latest-col">14</td></tr>
+        <tr><td>Free Cash Flow (FCF)</td><td>0</td><td>-56</td><td>-46</td><td>-76</td><td class="latest-col neg">-67</td></tr>
+        <tr><td>CFO/Operating Profit</td><td>954%</td><td>-24%</td><td>64%</td><td>-1%</td><td class="latest-col">52%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note neg">⚠ Standalone FCF negative every year since FY22. FY25 CFI = -₹431 Cr due to large QIP proceeds being deployed into subsidiaries (₹490 Cr QIP deployed). FY26 CFO improves to ₹60 Cr but capex keeps FCF negative. 5Y cumulative FCF ≈ -₹245 Cr. Positive FCF inflection expected only when CWIP starts generating revenue (FY27-FY28).</p>
+</div>
+</div>
+<!-- TAB 5: GROWTH -->
+<div id="tab-5" class="tab-pane">
+<div class="section-header">Revenue &amp; PAT CAGR Cards</div>
+<div class="grid-4">
+  <div class="kpi-card"><div class="kpi-label">Revenue CAGR (FY24-FY26)</div><div class="kpi-value pos">+15.6%</div><div class="kpi-sub">₹1,159 Cr → ₹1,549 Cr (consol.)</div></div>
+  <div class="kpi-card"><div class="kpi-label">Revenue CAGR (FY22-FY26)</div><div class="kpi-value">+7.2%</div><div class="kpi-sub">Depressed by FY23 trough; inflection begun</div></div>
+  <div class="kpi-card"><div class="kpi-label">Adj. PAT CAGR (FY24-FY26)</div><div class="kpi-value pos">+169%</div><div class="kpi-sub">₹32 Cr → ₹232 Cr; 7x in 2 years</div></div>
+  <div class="kpi-card"><div class="kpi-label">EBITDA CAGR (FY24-FY26)</div><div class="kpi-value pos">+33%</div><div class="kpi-sub">₹253 Cr → ₹445 Cr; margin +700 bps</div></div>
+  <div class="kpi-card"><div class="kpi-label">Biologics Revenue Growth</div><div class="kpi-value pos">+98%</div><div class="kpi-sub">₹76 Cr (FY25) → ₹150 Cr (FY26)</div></div>
+  <div class="kpi-card"><div class="kpi-label">EU Formulations Growth</div><div class="kpi-value pos">+125%</div><div class="kpi-sub">₹99 Cr (FY25) → ₹223 Cr (FY26)</div></div>
+  <div class="kpi-card"><div class="kpi-label">India Formulations Growth</div><div class="kpi-value pos">+177%</div><div class="kpi-sub">₹26 Cr (FY25) → ₹72 Cr (FY26); NorUDCA driven</div></div>
+  <div class="kpi-card"><div class="kpi-label">Adj. PAT TTM</div><div class="kpi-value">₹232 Cr</div><div class="kpi-sub">Adj. EPS ₹11.84 (consol. basis)</div></div>
+</div>
+
+<div class="section-header">Growth Trigger Cards</div>
+<div class="trigger-card" style="border-left:4px solid var(--color-green)">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+    <div>
+      <div class="trigger-title">Rotigotine TDS — EU Launch FY27 (De-Risked)</div>
+      <div class="trigger-sub">EMA marketing authorisation received. EU TDS market ~USD 800 Mn. Shilpa = first Indian company with EMA-approved transdermal patch. EU launch planned 1HFY27; US NDA filed 4QFY26 (US approval FY27-28).</div>
+      <div class="trigger-sub" style="margin-top:6px;color:var(--text-secondary)"><strong>Bear pushback:</strong> EU launch pricing and market share ramp may be slower than expected if branded equivalents (Neupro) defend aggressively.</div>
+    </div>
+    <span class="badge badge-high" style="white-space:nowrap">HIGH IMPACT</span>
+  </div>
+</div>
+<div class="trigger-card" style="border-left:4px solid var(--color-green)">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+    <div>
+      <div class="trigger-title">NorUDCA / Noduca™ — NAFLD Ramp (Monopoly Product)</div>
+      <div class="trigger-sub">First-in-class; 188 Mn Indian NAFLD patients. Only company globally with CDSCO approval. Three large marketing partners in India + own Noduca brand. Revenue ramping from ₹72 Cr (FY26) — management targets 10% market penetration in 3-5 years = ₹200+ Cr Indian revenue opportunity.</div>
+      <div class="trigger-sub" style="margin-top:6px;color:var(--text-secondary)"><strong>Bear pushback:</strong> NAFLD is chronic, asymptomatic — patient awareness + diagnosis pipeline takes years. Pricing pressure if MNCs pursue NASH indications with competing drugs.</div>
+    </div>
+    <span class="badge badge-high" style="white-space:nowrap">HIGH IMPACT</span>
+  </div>
+</div>
+<div class="trigger-card" style="border-left:4px solid var(--color-amber)">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+    <div>
+      <div class="trigger-title">Aflibercept Biosimilar — India + RoW Launch FY27</div>
+      <div class="trigger-sub">Reference product Eylea: ~USD 6 Bn global market. Phase III completing 1HFY27. India launch FY27; out-licensed to 2 partners (India + Russia). Limited Indian biosimilar competition expected. MENA discussions active. Revenue contribution FY27E: ₹40-60 Cr (India) ramping through FY28-FY29.</div>
+      <div class="trigger-sub" style="margin-top:6px;color:var(--text-secondary)"><strong>Bear pushback:</strong> EU biosimilar market for Aflibercept already has established players (Amgen's Pavblu, Samsung's Opuviz); EU entry timeline unclear for Shilpa.</div>
+    </div>
+    <span class="badge badge-medium" style="white-space:nowrap">MEDIUM IMPACT</span>
+  </div>
+</div>
+<div class="trigger-card" style="border-left:4px solid var(--color-amber)">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+    <div>
+      <div class="trigger-title">OLC (Oxylanthanum Carbonate) — US Commercial CDMO Revenue FY27</div>
+      <div class="trigger-sub">Unicycive's NDA resubmission accepted; PDUFA date June 29, 2026. If approved, Shilpa = exclusive CDMO partner for API + formulation. Long-term manufacturing + supply agreement. Milestone payments at filing/approval/launch. Orphan Drug Designation ensures pricing power. Revenue contribution from FY27Q1 if approved.</div>
+      <div class="trigger-sub" style="margin-top:6px;color:var(--text-secondary)"><strong>Bear pushback:</strong> FDA has delayed OLC previously; PDUFA dates are not guarantees. Unicycive is a small-cap company — commercial execution risk lies with partner, not Shilpa.</div>
+    </div>
+    <span class="badge badge-medium" style="white-space:nowrap">MEDIUM IMPACT</span>
+  </div>
+</div>
+<div class="trigger-card" style="border-left:4px solid var(--color-blue)">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+    <div>
+      <div class="trigger-title">Recombinant Human Albumin — Long-Duration Optionality</div>
+      <div class="trigger-sub">8 years in development. Phase III starts India + EU 1HFY27 (12-15 months to complete). Orion Corporation exclusive EU partner with milestone payments. rHA production technology patented US + EU. Global albumin market ~USD 4 Bn; animal-free rHA commands premium. India + EU commercialisation early FY29.</div>
+      <div class="trigger-sub" style="margin-top:6px;color:var(--text-secondary)"><strong>Bear pushback:</strong> Clinical trial results not guaranteed. FY29 is 3 years away. Multiple global rHA programs (Albumin Biosciences, Novozymes BioFarma). Long development risk + regulatory pathway uncertainty.</div>
+    </div>
+    <span class="badge badge-optionality" style="white-space:nowrap">OPTIONALITY</span>
+  </div>
+</div>
+<div class="trigger-card" style="border-left:4px solid var(--color-blue)">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+    <div>
+      <div class="trigger-title">ADC + Nivolumab/Pembrolizumab — Decade Optionality</div>
+      <div class="trigger-sub">ADC GMP facility (first in India with end-to-end capability) commissioning 1QFY27. Phase I FY27. Nivolumab (~USD 12 Bn) + Pembrolizumab (~USD 35 Bn) Phase I/III planned FY27 — combined reference product value USD 47 Bn. Revenue impact only in FY29-30+ but potential to be a step-function re-rating event if Phase I succeeds.</div>
+      <div class="trigger-sub" style="margin-top:6px;color:var(--text-secondary)"><strong>Bear pushback:</strong> Indian biosimilar regulation for PD-1 inhibitors is unsettled; Phase I to commercial launch = 5+ years; multiple well-funded global peers (Biocon, Amneal, Samsung). Long-dated and uncertain.</div>
+    </div>
+    <span class="badge badge-optionality" style="white-space:nowrap">OPTIONALITY</span>
+  </div>
+</div>
+
+<div class="section-header">FY27 Catalyst Timeline</div>
+<div class="card">
+  <div class="catalyst-grid">
+    <div class="catalyst-item">
+      <div class="catalyst-q">Q1 FY27 (Apr–Jun 2026)</div>
+      <div class="catalyst-title">OLC PDUFA — June 29</div>
+      <div class="catalyst-sub">US FDA approval decision for Unicycive's hyperphosphatemia drug. Shilpa exclusive CDMO. Commercial supplies begin if approved.</div>
+    </div>
+    <div class="catalyst-item">
+      <div class="catalyst-q">Q1–Q2 FY27</div>
+      <div class="catalyst-title">Rotigotine EU Commercial Launch</div>
+      <div class="catalyst-sub">First revenue from EMA-approved TDS patch. EU supply chain finalised. Profit-share model with European partner.</div>
+    </div>
+    <div class="catalyst-item">
+      <div class="catalyst-q">Q1–Q2 FY27</div>
+      <div class="catalyst-title">ADC GMP Facility Commissioning</div>
+      <div class="catalyst-sub">First ADC biosimilar facility in India. Qualifies Shilpa for ADC CDMO contracts. Phase I ADC program starts FY27.</div>
+    </div>
+    <div class="catalyst-item">
+      <div class="catalyst-q">Q1–Q2 FY27</div>
+      <div class="catalyst-title">Aflibercept Phase III Results</div>
+      <div class="catalyst-sub">Phase III India + RoW completing 1HFY27. India CDSCO filing → launch FY27. SteinCares LatAm agreement activated post-approval.</div>
+    </div>
+    <div class="catalyst-item">
+      <div class="catalyst-q">H1 FY27</div>
+      <div class="catalyst-title">Ondansetron ER India Launch</div>
+      <div class="catalyst-sub">CDSCO approval (OERIS — world's first LA Ondansetron injection). India-first launch; Europe Phase III to follow.</div>
+    </div>
+    <div class="catalyst-item">
+      <div class="catalyst-q">H1 FY27</div>
+      <div class="catalyst-title">rHA Phase III Start (India + EU)</div>
+      <div class="catalyst-sub">Protocol approved CDSCO. IMPD filed to EMA. Orion milestone payment on filing. 12-15 month Phase III duration → FY29 approval.</div>
+    </div>
+  </div>
+</div>
+</div>
+<!-- TAB 6: FORENSICS -->
+<div id="tab-6" class="tab-pane">
+<div class="section-header">Forensic Overview</div>
+<div class="card" style="border-top:3px solid var(--color-amber)">
+  <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+    <span class="badge badge-amber" style="font-size:15px;padding:8px 20px">⚠ AMBER FLAGS</span>
+    <div style="font-size:14.5px;color:var(--text-secondary)">Large inter-company RPTs (parent as holding co.) · CWIP ₹884 Cr (39% of gross block) · Jadcherla USFDA import alert (active) · Promoter dilution 50%→40% · Small auditor for company of this size</div>
+  </div>
+</div>
+
+<div class="section-header">Auditor Profile</div>
+<div class="card">
+  <div class="forensic-row"><div class="forensic-label">Auditor</div><div class="forensic-val">B N P S And Associates LLP (formerly Bohara Bhandari Bung) — Chartered Accountants, Hyderabad</div></div>
+  <div class="forensic-row"><div class="forensic-label">Firm Type</div><div class="forensic-val"><span class="badge badge-medium">MID-TIER / REGIONAL</span> — Not Big 4; not major national mid-tier (BDO, GT, SR Batliboi)</div></div>
+  <div class="forensic-row"><div class="forensic-label">Internal Auditor</div><div class="forensic-val">BDO India LLP (stronger: major global network firm)</div></div>
+  <div class="forensic-row"><div class="forensic-label">IFC Opinion</div><div class="forensic-val">Not found in extract — not captured from auditor's report section</div></div>
+  <div class="forensic-row"><div class="forensic-label">Key Audit Matters</div><div class="forensic-val">Not found in extract — AR auditor section detail not captured. Likely includes: valuation of investments in subsidiaries; impairment of CWIP; revenue recognition for licensing income.</div></div>
+  <div class="forensic-row"><div class="forensic-label">KAM Change YoY</div><div class="forensic-val">Not found in extract</div></div>
+  <div class="forensic-row"><div class="forensic-label">Concern Flag</div><div class="forensic-val"><span class="badge badge-medium">AMBER</span> — Regional auditor for a ₹10,149 Cr market cap company with complex multi-subsidiary structure and biologics CWIP investments. Auditor capacity to fully evaluate biologics/biosimilar-specific risks (cell-line valuation, clinical trial impairment) is a legitimate question.</div></div>
+</div>
+
+<div class="section-header">Related Party Transactions (RPT) Analysis</div>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Counterparty</th><th>Nature</th><th>FY25 (₹ Lakhs)</th><th>% of Rev</th><th>Risk</th></tr></thead>
+      <tbody>
+        <tr><td>Shilpa Pharma Lifesciences (WOS)</td><td>API sales + equity infusion</td><td>~1,27,950 (investment)</td><td>N/A</td><td><span class="badge badge-medium">MEDIUM</span></td></tr>
+        <tr><td>Shilpa Therapeutics (WOS)</td><td>FDF revenue + loans</td><td>Included in consol.</td><td>---</td><td><span class="badge badge-low">LOW</span></td></tr>
+        <tr><td>Shilpa Biologicals (WOS)</td><td>Equity infusion + R&amp;D funding</td><td>~30,000+ (equity)</td><td>N/A</td><td><span class="badge badge-medium">MEDIUM</span></td></tr>
+        <tr><td>Loans to Subsidiaries (net)</td><td>Inter-co. financing</td><td>38,870 (FY25 BS)</td><td>81% SA rev</td><td><span class="badge badge-high">HIGH</span></td></tr>
+        <tr><td>Interest from Subsidiaries</td><td>Income on inter-co. loans</td><td>~8,816 (FY25)</td><td>Included in "Other Income"</td><td><span class="badge badge-low">LOW</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note neg">⚠ KEY OBSERVATION: Standalone "Other Income" (₹8,383 lakhs FY25) is substantially inter-company interest receipts from subsidiary loans. Standalone revenue trajectory is NOT representative of business performance — consolidated is the only meaningful measure. Loans to subsidiaries = 81% of standalone revenue from operations, indicating parent is effectively a holding company + API manufacturing entity.</p>
+</div>
+
+<div class="section-header">CWIP Analysis</div>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Entity</th><th>FY24 CWIP</th><th>FY25 CWIP</th><th>FY26 CWIP</th><th>Primary Use</th></tr></thead>
+      <tbody>
+        <tr><td>Standalone (SML parent)</td><td>₹228 Cr</td><td>₹281 Cr</td><td>₹37 Cr</td><td>Raichur API plant — capitalised in FY26</td></tr>
+        <tr><td>Consolidated (group)</td><td>₹822 Cr</td><td>₹822 Cr</td><td class="neg">₹884 Cr</td><td>Albumin fermentation (Kadechur) + Dharwad biologics + API expansion</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="metric-row"><span class="metric-label">CWIP as % of Consolidated Gross Block</span><span class="metric-value neg">39% (₹884 Cr of ₹2,281 Cr)</span></div>
+  <div class="metric-row"><span class="metric-label">CWIP Trend</span><span class="metric-value neg">Growing — ₹822 Cr (FY24) → ₹822 Cr (FY25) → ₹884 Cr (FY26)</span></div>
+  <div class="metric-row"><span class="metric-label">Expected Capitalisations</span><span class="metric-value">Albumin facility + ADC facility + API expansion (FY27-FY28)</span></div>
+  <div class="metric-row"><span class="metric-label">CWIP Ageing Detail</span><span class="metric-value">Not found in extract</span></div>
+  <div class="metric-row"><span class="metric-label">Impairment Risk</span><span class="metric-value"><span class="badge badge-medium">MEDIUM</span> — if Albumin Phase III fails or biologics strategy pivots</span></div>
+  <p class="note neg">⚠ 39% of gross block in CWIP is elevated. Until biologics + albumin facilities are commissioned and generating revenue, this represents capital allocated to future growth that current shareholders are funding without current earnings. Depreciation will increase materially once capitalised.</p>
+</div>
+
+<div class="section-header">Contingent Liabilities</div>
+<div class="card">
+  <p style="font-size:14px;color:var(--text-secondary);padding:12px">Not found in extract — contingent liabilities detail from the notes to accounts was not captured during AR extraction. Key items typically include: customs/excise disputes, income tax demands, clinical trial-related liabilities, and environmental compliance obligations.</p>
+</div>
+
+<div class="section-header">Accounting Policy Changes &amp; Events</div>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Event</th><th>Year</th><th>Impact</th></tr></thead>
+      <tbody>
+        <tr><td>INM Technologies amalgamated into SML</td><td>FY26</td><td>One-time tax benefit: unabsorbed INM losses reduced SML's taxable income; effective Q1FY26 tax rate = 5.5% vs normal 35-36%. Non-recurring.</td></tr>
+        <tr><td>Sravathi deconsolidated → Associate</td><td>FY26</td><td>31% stake sold; Shilpa retains 34% (associate). ₹37 Cr exceptional gain (profit on stake sale) + ₹18 Cr restatement of remaining investment. Non-cash P&amp;L impact.</td></tr>
+        <tr><td>QIP by Shilpa Pharma Lifesciences (WOS)</td><td>FY25 (Apr 2024)</td><td>₹490 Cr QIP at subsidiary level → reduces SML's ownership in Shilpa Pharma. SML immediately converted inter-co loans to equity to maintain consolidated position. Recorded as investment in SML standalone.</td></tr>
+        <tr><td>QIP by SML (parent)</td><td>FY25 (Feb 2025)</td><td>₹300 Cr raised; used entirely to repay high-cost NCDs. Net Debt/EBITDA: 5.8x (FY24) → 1.6x (FY25). Dilutive but balance-sheet transformative.</td></tr>
+        <tr><td>1:1 Bonus Issue</td><td>FY26 (Jun 2025)</td><td>Shares doubled: 9.78 Cr → 19.6 Cr. EPS halved on face. No economic impact; improves liquidity. FY26 data should be viewed on post-bonus share count.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section-header">Forensic Scorecard Summary</div>
+<div class="grid-3">
+  <div class="card" style="text-align:center">
+    <div class="card-title">Auditor Quality</div>
+    <span class="badge badge-medium" style="font-size:14px;padding:6px 16px">AMBER</span>
+    <div style="font-size:12.5px;color:var(--text-secondary);margin-top:6px">Regional firm; BDO internal auditor helps</div>
+  </div>
+  <div class="card" style="text-align:center">
+    <div class="card-title">RPT Risk</div>
+    <span class="badge badge-high" style="font-size:14px;padding:6px 16px">HIGH</span>
+    <div style="font-size:12.5px;color:var(--text-secondary);margin-top:6px">Holding co structure; all operations in WOS</div>
+  </div>
+  <div class="card" style="text-align:center">
+    <div class="card-title">CWIP Concern</div>
+    <span class="badge badge-high" style="font-size:14px;padding:6px 16px">YES</span>
+    <div style="font-size:12.5px;color:var(--text-secondary);margin-top:6px">₹884 Cr = 39% gross block; growing</div>
+  </div>
+  <div class="card" style="text-align:center">
+    <div class="card-title">Policy Changes</div>
+    <span class="badge badge-medium" style="font-size:14px;padding:6px 16px">MATERIAL</span>
+    <div style="font-size:12.5px;color:var(--text-secondary);margin-top:6px">INM merger tax benefit, Sravathi deconsolidation</div>
+  </div>
+  <div class="card" style="text-align:center">
+    <div class="card-title">Equity Dilution</div>
+    <span class="badge badge-high" style="font-size:14px;padding:6px 16px">HIGH</span>
+    <div style="font-size:12.5px;color:var(--text-secondary);margin-top:6px">3 equity events in 3 years; promoter 50→40%</div>
+  </div>
+  <div class="card" style="text-align:center">
+    <div class="card-title">Regulatory Risk</div>
+    <span class="badge badge-high" style="font-size:14px;padding:6px 16px">ACTIVE</span>
+    <div style="font-size:12.5px;color:var(--text-secondary);margin-top:6px">Jadcherla USFDA import alert (2025-26)</div>
+  </div>
+</div>
+</div>
+<!-- TAB 7: VALUATION -->
+<div id="tab-7" class="tab-pane">
+<div class="section-header">Current Valuation Metrics</div>
+<div class="grid-3">
+  <div class="card">
+    <div class="card-title">P/E Ratio</div>
+    <div class="kpi-value">88x<span style="font-size:14px;color:var(--text-muted)"> standalone</span></div>
+    <div class="kpi-value pos" style="font-size:22px">44x<span style="font-size:14px"> consolidated adj.</span></div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-top:4px">Screener shows 88x (on standalone EPS ₹6.80). True economic P/E = 44x (consol. adj. EPS ₹11.84). Holding company structure creates distortion.</div>
+  </div>
+  <div class="card">
+    <div class="card-title">EV / EBITDA</div>
+    <div class="kpi-value">53x<span style="font-size:14px;color:var(--text-muted)"> standalone</span></div>
+    <div class="kpi-value pos" style="font-size:22px">24x<span style="font-size:14px"> consolidated</span></div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-top:4px">EV = MCap ₹10,149 + Net Debt ₹613 = ₹10,762 Cr. Consol. EBITDA ₹445 Cr → EV/EBITDA 24x. Much more reasonable than the 53x screener figure.</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Other Multiples</div>
+    <div class="metric-row"><span class="metric-label">Price to Book</span><span class="metric-value">3.75x (₹139 BV)</span></div>
+    <div class="metric-row"><span class="metric-label">Market Cap / Sales (consol.)</span><span class="metric-value">6.6x (₹1,549 Cr)</span></div>
+    <div class="metric-row"><span class="metric-label">Adj. ROCE (consol.)</span><span class="metric-value">17.4%</span></div>
+    <div class="metric-row"><span class="metric-label">Dividend Yield</span><span class="metric-value">0.10% (₹0.60/sh.)</span></div>
+    <div class="metric-row"><span class="metric-label">FCF Yield (standalone)</span><span class="metric-value neg">Negative</span></div>
+  </div>
+</div>
+
+<div class="section-header">Peer Valuation Comparison</div>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Company</th><th>MCap (₹Cr)</th><th>P/E</th><th>EV/EBITDA</th>
+          <th>P/B</th><th>ROCE %</th><th>OPM %</th><th>Qtr PAT Gr.%</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Sun Pharma</td><td>4,40,950</td><td>35.3x</td><td>22.0x</td><td>5.3x</td><td class="pos">20.5%</td><td>30.3%</td><td class="pos">+14%</td></tr>
+        <tr><td>Divi's Lab</td><td>1,82,934</td><td>69.7x</td><td>45.5x</td><td>10.9x</td><td class="pos">22.0%</td><td>32.6%</td><td class="pos">+13%</td></tr>
+        <tr><td>Torrent Pharma</td><td>1,58,020</td><td>71.8x</td><td>38.5x</td><td>18.8x</td><td>15.4%</td><td>32.6%</td><td class="neg">-21%</td></tr>
+        <tr><td>Cipla</td><td>1,13,068</td><td>27.7x</td><td>16.6x</td><td>3.3x</td><td>16.6%</td><td>20.9%</td><td class="neg">-55%</td></tr>
+        <tr><td>Dr. Reddy's Labs</td><td>1,09,590</td><td>26.1x</td><td>14.6x</td><td>2.9x</td><td>13.6%</td><td>19.2%</td><td class="neg">-86%</td></tr>
+        <tr><td>Zydus Lifesciences</td><td>1,05,016</td><td>19.4x</td><td>12.9x</td><td>3.9x</td><td class="pos">21.2%</td><td>31.2%</td><td class="pos">+22%</td></tr>
+        <tr><td>Lupin</td><td>1,04,328</td><td>18.1x</td><td>11.4x</td><td>4.7x</td><td class="pos">30.3%</td><td>31.5%</td><td class="pos">+101%</td></tr>
+        <tr style="background:var(--highlight-latest);font-weight:700"><td>SHILPAMED (standalone)</td><td>10,149</td><td class="neg">87.9x</td><td class="neg">53.0x</td><td>3.8x</td><td class="neg">4.9%</td><td>26.1%</td><td class="pos">+22%</td></tr>
+        <tr style="color:var(--text-muted);font-style:italic"><td>SHILPAMED (consol. adj.)</td><td>10,149</td><td>44x</td><td>24x</td><td>3.9x</td><td>17.4%</td><td>29%</td><td>+135%</td></tr>
+        <tr style="color:var(--text-muted)"><td>Sector Median (156 cos.)</td><td>1,634</td><td>31.0x</td><td>17.1x</td><td>3.5x</td><td>15.4%</td><td>16.0%</td><td>+18%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">Consolidated-adjusted multiples (P/E 44x, EV/EBITDA 24x) are more representative. Premium over sector median reflects biologics optionality, first-mover NorUDCA, and accelerating PAT trajectory (+135% FY26). Discount to Divi's P/E (70x) is justified given smaller scale and USFDA execution risk.</p>
+</div>
+
+<div class="section-header">Target Price Derivation</div>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">Method 1: P/E on FY27E Consolidated Adj. EPS</div>
+    <div class="metric-row"><span class="metric-label">FY26 Adj. PAT</span><span class="metric-value">₹232 Cr</span></div>
+    <div class="metric-row"><span class="metric-label">FY27E Growth Assumption</span><span class="metric-value">+25% (catalysts: Rotigotine EU, OLC US, Aflibercept)</span></div>
+    <div class="metric-row"><span class="metric-label">FY27E Adj. PAT</span><span class="metric-value">₹290 Cr</span></div>
+    <div class="metric-row"><span class="metric-label">Shares Outstanding</span><span class="metric-value">19.6 Crore</span></div>
+    <div class="metric-row"><span class="metric-label">FY27E Adj. EPS</span><span class="metric-value">₹14.8</span></div>
+    <div class="metric-row"><span class="metric-label">Target P/E Multiple</span><span class="metric-value">40x</span></div>
+    <div class="metric-row"><span class="metric-label" style="font-weight:700">1-Year Target Price</span><span class="metric-value pos" style="font-weight:700">₹592</span></div>
+    <div class="metric-row"><span class="metric-label">Upside from CMP ₹519</span><span class="metric-value pos">+14%</span></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Method 2: EV/EBITDA (18-Month, FY28E)</div>
+    <div class="metric-row"><span class="metric-label">FY26 Consol. EBITDA</span><span class="metric-value">₹445 Cr</span></div>
+    <div class="metric-row"><span class="metric-label">FY27E EBITDA (+15%)</span><span class="metric-value">₹512 Cr</span></div>
+    <div class="metric-row"><span class="metric-label">FY28E EBITDA (+18%)</span><span class="metric-value">₹604 Cr</span></div>
+    <div class="metric-row"><span class="metric-label">Target EV/EBITDA</span><span class="metric-value">22x (slight de-rate from 24x)</span></div>
+    <div class="metric-row"><span class="metric-label">Target EV (FY28E)</span><span class="metric-value">₹13,288 Cr</span></div>
+    <div class="metric-row"><span class="metric-label">Less: Net Debt (FY28E ~₹550 Cr)</span><span class="metric-value">-₹550 Cr</span></div>
+    <div class="metric-row"><span class="metric-label">Equity Value</span><span class="metric-value">₹12,738 Cr</span></div>
+    <div class="metric-row"><span class="metric-label" style="font-weight:700">18-Month Target Price</span><span class="metric-value pos" style="font-weight:700">₹650</span></div>
+    <div class="metric-row"><span class="metric-label">Upside from CMP ₹519</span><span class="metric-value pos">+25%</span></div>
+  </div>
+</div>
+
+<div class="card" style="border-top:3px solid var(--color-orange)">
+  <div class="card-title">Blended Target Price — ACCUMULATE</div>
+  <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+    <div style="text-align:center">
+      <div style="font-family:ui-monospace,monospace;font-size:36px;font-weight:700;color:var(--color-orange)">₹670</div>
+      <div style="font-size:13px;color:var(--text-muted)">18-Month Blended Target</div>
+    </div>
+    <div style="flex:1;min-width:200px">
+      <div class="metric-row"><span class="metric-label">Upside from CMP ₹519</span><span class="metric-value pos">+29%</span></div>
+      <div class="metric-row"><span class="metric-label">Bull Case (biosimilar breakthrough)</span><span class="metric-value pos">₹900 (+73%)</span></div>
+      <div class="metric-row"><span class="metric-label">Bear Case (import alert escalates)</span><span class="metric-value neg">₹380 (-27%)</span></div>
+      <div class="metric-row"><span class="metric-label">Valuation Verdict</span><span class="metric-value"><span class="badge badge-watch">FAIR — PRICED FOR EXECUTION</span></span></div>
+    </div>
+    <div style="font-size:13.5px;color:var(--text-secondary);flex:2;min-width:200px">
+      At ₹670 target, the stock would trade at ~55x consolidated FY27E adj. P/E and ~26x EV/EBITDA — a premium that is only justified if FY27 catalysts (Rotigotine EU, OLC approval, Aflibercept) land as guided. Accumulate in ₹450-480 zone for better risk-reward; at CMP ₹519, risk-reward is neutral with upside to ₹670 in base case.
+    </div>
+  </div>
+</div>
+
+<div class="section-header">Historical P/E Band (Standalone Basis)</div>
+<div class="card">
+  <div class="chart-wrap"><canvas id="valuationBand"></canvas></div>
+  <p class="note">Standalone P/E shown (industry standard for Screener data). Historical P/E ranges from 10x (FY23 trough — loss year) to 90x+ (FY26 recovery). Current 88x is at historical ceiling — re-rating on consolidated earnings basis would normalise this to 44x.</p>
+</div>
+</div>
+<!-- TAB 8: THESIS -->
+<div id="tab-8" class="tab-pane">
+<div class="section-header">Investment Cases</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px;margin-bottom:20px">
+  <div class="thesis-col thesis-bull">
+    <div class="thesis-label" style="color:var(--color-green)">🟢 Bull Case — ₹900 (73% upside) | Prob: 25%</div>
+    <ul class="thesis-points">
+      <li>Rotigotine EU + US both approved in FY27; peak revenue ₹150 Cr from TDS alone</li>
+      <li>OLC US commercialises June 2026 — milestone income + volume ramp; ₹50-80 Cr exclusive CDMO revenue FY27</li>
+      <li>Aflibercept India launch FY27 with >5% market share; Nivolumab Phase I clean data → re-rating of biologics pipeline</li>
+      <li>NorUDCA gains EU regulatory approval; 10x revenue opportunity vs India alone</li>
+      <li>EBITDA reaches ₹600+ Cr (FY28E); adj. PAT ₹350+ Cr; re-rating to 50x consol. adj. P/E</li>
+    </ul>
+  </div>
+  <div class="thesis-col thesis-base">
+    <div class="thesis-label" style="color:var(--color-amber)">🟡 Base Case — ₹670 (29% upside) | Prob: 50%</div>
+    <ul class="thesis-points">
+      <li>Rotigotine EU launches FY27 with modest initial revenues (₹40-60 Cr); US approval delayed to FY28</li>
+      <li>OLC approved June 2026; revenue contribution ₹30-40 Cr in FY27</li>
+      <li>Aflibercept approved in India — ₹30-50 Cr revenue FY27-FY28</li>
+      <li>NorUDCA domestic ramp to ₹120-150 Cr by FY28 (3-5% market penetration)</li>
+      <li>EBITDA ₹512 Cr (FY27E, +15%); adj. PAT ₹290 Cr (+25%); stock re-rates to 40x consol. adj. P/E</li>
+      <li>USFDA clears Jadcherla on re-inspection — no revenue disruption</li>
+    </ul>
+  </div>
+  <div class="thesis-col thesis-bear">
+    <div class="thesis-label" style="color:var(--color-red)">🔴 Bear Case — ₹380 (-27% downside) | Prob: 25%</div>
+    <ul class="thesis-points">
+      <li>Jadcherla USFDA import alert not cleared in FY27 — US revenues suspended; 1-2 year remediation</li>
+      <li>OLC FDA rejection (complete response letter) — CDMO milestone income delayed; Unicycive stock collapses and partnership weakens</li>
+      <li>Biologics CWIP (₹884 Cr) requires partial impairment if Albumin Phase III design issue</li>
+      <li>API price erosion accelerates in FY27; oncology API revenues decline -15%</li>
+      <li>EBITDA ₹380 Cr (FY27E, -15%); adj. PAT ₹150 Cr; stock de-rates to 30x consol. adj. P/E = ₹230/share → with biotech premium ≈ ₹380</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section-header">Conviction Score &amp; Probability-Weighted Target</div>
+<div class="card">
+  <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+    <div>
+      <div class="kpi-label">Conviction Score</div>
+      <div class="kpi-value">6 / 10</div>
+      <div style="display:flex;gap:4px;margin-top:6px">
+        <div style="width:18px;height:18px;border-radius:4px;background:var(--color-orange)"></div>
+        <div style="width:18px;height:18px;border-radius:4px;background:var(--color-orange)"></div>
+        <div style="width:18px;height:18px;border-radius:4px;background:var(--color-orange)"></div>
+        <div style="width:18px;height:18px;border-radius:4px;background:var(--color-orange)"></div>
+        <div style="width:18px;height:18px;border-radius:4px;background:var(--color-orange)"></div>
+        <div style="width:18px;height:18px;border-radius:4px;background:var(--color-orange)"></div>
+        <div style="width:18px;height:18px;border-radius:4px;background:var(--bg-card-border)"></div>
+        <div style="width:18px;height:18px;border-radius:4px;background:var(--bg-card-border)"></div>
+        <div style="width:18px;height:18px;border-radius:4px;background:var(--bg-card-border)"></div>
+        <div style="width:18px;height:18px;border-radius:4px;background:var(--bg-card-border)"></div>
+      </div>
+    </div>
+    <div style="flex:1;min-width:200px">
+      <div class="metric-row"><span class="metric-label">Bull Case (25%) × ₹900</span><span class="metric-value pos">+₹225 contribution</span></div>
+      <div class="metric-row"><span class="metric-label">Base Case (50%) × ₹670</span><span class="metric-value">+₹335 contribution</span></div>
+      <div class="metric-row"><span class="metric-label">Bear Case (25%) × ₹380</span><span class="metric-value neg">+₹95 contribution</span></div>
+      <div class="metric-row" style="border-top:2px solid var(--color-orange)"><span class="metric-label" style="font-weight:700">Probability-Weighted Target</span><span class="metric-value pos" style="font-weight:700">₹655</span></div>
+    </div>
+  </div>
+  <div class="chart-wrap-sm"><canvas id="bullBearChart"></canvas></div>
+</div>
+
+<div class="section-header">Key Monitorables</div>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Metric to Watch</th><th>Current</th><th>Bull Threshold</th><th>Bear Threshold</th><th>When to Check</th></tr></thead>
+      <tbody>
+        <tr><td>Rotigotine EU Revenue</td><td>₹0 (not yet launched)</td><td class="pos">&gt;₹40 Cr in H1FY27</td><td class="neg">Not launched by Q2FY27</td><td>Q1+Q2 FY27 concall</td></tr>
+        <tr><td>OLC US Approval</td><td>PDUFA June 29, 2026</td><td class="pos">FDA approval June 2026</td><td class="neg">CRL received</td><td>June 29, 2026</td></tr>
+        <tr><td>NorUDCA India Revenue</td><td>₹72 Cr (FY26)</td><td class="pos">&gt;₹120 Cr FY27</td><td class="neg">&lt;₹80 Cr FY27</td><td>Quarterly concall</td></tr>
+        <tr><td>Jadcherla Import Alert</td><td>ACTIVE — awaiting re-insp.</td><td class="pos">Cleared without WL</td><td class="neg">Warning Letter issued</td><td>USFDA inspection notice</td></tr>
+        <tr><td>Consol. EBITDA Margin</td><td>29% (FY26)</td><td class="pos">&gt;31% in FY27</td><td class="neg">&lt;26% sustained</td><td>Quarterly concall</td></tr>
+        <tr><td>Biologics Revenue</td><td>₹150 Cr (FY26)</td><td class="pos">&gt;₹250 Cr FY27E</td><td class="neg">&lt;₹170 Cr FY27</td><td>Quarterly segment disclosure</td></tr>
+        <tr><td>Net Debt/EBITDA</td><td>1.4x (FY26)</td><td class="pos">&lt;1.0x FY27</td><td class="neg">&gt;2.0x (capex surge)</td><td>Annual results</td></tr>
+        <tr><td>Promoter Holding</td><td>40.13% (Mar 2026)</td><td class="pos">Stable or increasing</td><td class="neg">Below 35%</td><td>Quarterly shareholding</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+<!-- TAB 9: RISKS -->
+<div id="tab-9" class="tab-pane">
+<div class="section-header">Risk Register</div>
+<div class="risk-card">
+  <div class="risk-card-header">
+    <div class="risk-card-title">1. USFDA Import Alert — Jadcherla Formulation Plant</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="badge badge-high">HIGH</span><span class="badge badge-active">ACTIVE</span></div>
+  </div>
+  <div class="risk-desc">CAPA submitted by Shilpa; awaiting surprise re-inspection (USFDA's post-import-alert model). US formulations revenue = ₹80 Cr (FY26, -28% YoY already impacted). If Warning Letter issued: complete suspension of US facility; ~₹80-100 Cr revenue at risk + reputational overhang on all USFDA-regulated products. Timeline to resolution: 12-24 months from CAPA acceptance to re-inspection. <strong>Mitigant:</strong> US products via third-party CMOs (505(b)(2) products unaffected per management). Direct impact limited but sentiment impact severe.</div>
+</div>
+<div class="risk-card">
+  <div class="risk-card-header">
+    <div class="risk-card-title">2. Biologics CWIP Impairment Risk (₹884 Cr)</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="badge badge-high">HIGH</span><span class="badge badge-monitoring">MONITORING</span></div>
+  </div>
+  <div class="risk-desc">39% of consolidated gross block (₹884 Cr) is CWIP — primarily Albumin fermentation (Kadechur), Dharwad biologics expansion, peptide capacity. If Albumin Phase III fails clinical endpoint, entire fermentation CWIP (~₹300-400 Cr estimated) may require impairment. Similar risk if biosimilar pipeline faces unexpected regulatory rejection. FY23 trough was partly caused by similar over-investment in biologics. <strong>Mitigant:</strong> CWIP diversified across multiple programs; Albumin has Orion partnership de-risking commercial side; ADC + peptide have independent demand.</div>
+</div>
+<div class="risk-card">
+  <div class="risk-card-header">
+    <div class="risk-card-title">3. Promoter Dilution — Structural Overhang</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="badge badge-medium">MEDIUM</span><span class="badge badge-monitoring">MONITORING</span></div>
+  </div>
+  <div class="risk-desc">Promoter holding declined from 50.01% (Jun 2023) to 40.13% (Mar 2026) through 3 equity events. If biologics + albumin capex requires another round of equity, further dilution is likely. Low promoter conviction on retaining control raises governance questions. At 40.13%, any activist pressure or hostile approach becomes feasible threshold. <strong>Mitigant:</strong> Balance sheet healthier now (D/E 0.05x standalone, Net D/EBITDA 1.4x consolidated); near-term equity raise unlikely. Promoters remain single largest block at 40%.</div>
+</div>
+<div class="risk-card">
+  <div class="risk-card-header">
+    <div class="risk-card-title">4. Oncology API Price Erosion &amp; China Competition</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="badge badge-medium">MEDIUM</span><span class="badge badge-active">ACTIVE</span></div>
+  </div>
+  <div class="risk-desc">API segment = 49% of consolidated revenue. Oncology API revenues declined FY23-FY25 before recovering in FY26 (new onco products + captive demand increase). Chinese API manufacturers continue aggressive pricing, especially in non-patented oncology APIs. If onco API prices erode -10% annually, API segment revenue declines ₹45-50 Cr/year, offsetting formulations/biologics growth. <strong>Mitigant:</strong> Shifting mix toward high-value non-infringing APIs (Nilotinib, Palbociclib etc.) + CDMO model (25+ programs) reduces price-taking exposure.</div>
+</div>
+<div class="risk-card">
+  <div class="risk-card-header">
+    <div class="risk-card-title">5. OLC FDA Decision Risk (PDUFA June 29, 2026)</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="badge badge-medium">MEDIUM</span><span class="badge badge-monitoring">MONITORING</span></div>
+  </div>
+  <div class="risk-desc">Unicycive's OLC has been through prior FDA review cycles. Current NDA resubmission accepted; PDUFA June 29, 2026. If FDA issues another Complete Response Letter (CRL), Shilpa loses the FY27 CDMO milestone + commercial revenue. Unicycive is small-cap (~USD 100 Mn) — any adverse FDA action would hammer their stock and potentially compromise the long-term supply agreement. <strong>Mitigant:</strong> Shilpa's CDMO role is manufacturing-only; commercial risk sits with Unicycive. Shilpa has already received development milestone payments. Diversified CDMO portfolio (25+ programs) reduces single-program dependency.</div>
+</div>
+<div class="risk-card">
+  <div class="risk-card-header">
+    <div class="risk-card-title">6. INR/EUR FX Risk</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="badge badge-low">LOW</span><span class="badge badge-monitoring">MONITORING</span></div>
+  </div>
+  <div class="risk-desc">EU revenues = ₹223 Cr (FY26), ~14% of consolidated revenue and the fastest growing geography. Company has EUR-denominated loans (mentioned in Q1FY26 concall: EUR loan swap M-to-M impact ₹6.5 Cr in Q1FY26). Natural hedge partially offset but not complete. INR appreciation vs EUR would reduce reported revenues and margins. <strong>Mitigant:</strong> India + RoW revenues provide partial INR-denominated buffer. INR/EUR historically volatile in ±10% annual range; modest impact on earnings at current revenue scale.</div>
+</div>
+<div class="risk-card">
+  <div class="risk-card-header">
+    <div class="risk-card-title">7. Biosimilar Competition for Adalimumab (India)</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="badge badge-low">LOW</span><span class="badge badge-monitoring">MONITORING</span></div>
+  </div>
+  <div class="risk-desc">Adalimumab is Shilpa's commercial biosimilar in India — growing 25% YoY in FY26. However, multiple Indian companies (Biocon, Lupin, Cadila) have or are filing Adalimumab biosimilars in India. Price competition will intensify as more approvals arrive. Peak India Adalimumab revenue may be achieved by FY27-FY28 before erosion begins. <strong>Mitigant:</strong> Shilpa is already commercial with established market share; switching costs in biologics are higher than small molecule generics; filing in 20+ RoW markets diversifies revenue base.</div>
+</div>
+</div>
+<!-- TAB 10: CONCALL -->
+<div id="tab-10" class="tab-pane">
+<div class="section-header">Guidance Tracker</div>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Quarter Given</th><th>Guidance / Commitment</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Q2 FY26 (Nov 2025)</td><td>Rotigotine EMA approval expected Q4 FY26</td><td><span class="badge badge-low">HIT ✓</span></td></tr>
+        <tr><td>Q2 FY26</td><td>NorUDCA launched India Q3 FY26</td><td><span class="badge badge-low">HIT ✓</span></td></tr>
+        <tr><td>Q1 FY26 (Aug 2025)</td><td>Highest ever Q1 EBITDA (₹98 Cr)</td><td><span class="badge badge-low">HIT ✓</span></td></tr>
+        <tr><td>Q3 FY26 (Feb 2026)</td><td>ADC GMP facility commissioning Q4 FY26</td><td><span class="badge badge-medium">DEFERRED to Q1FY27</span></td></tr>
+        <tr><td>Q4 FY25 (May 2025)</td><td>Finance cost declining YoY in FY26</td><td><span class="badge badge-low">HIT ✓</span> (₹76Cr→₹59Cr, -22%)</td></tr>
+        <tr><td>Q1 FY26</td><td>US Rotigotine NDA filing Q3 FY26</td><td><span class="badge badge-medium">SLIGHT DELAY — done Q4 FY26</span></td></tr>
+        <tr><td>Q4 FY26 (May 2026)</td><td>"On track for a stronger FY27"</td><td><span class="badge badge-watch">FORWARD GUIDE — Monitor</span></td></tr>
+        <tr><td>Q4 FY26</td><td>Aflibercept Phase III completing 1HFY27; India launch FY27</td><td><span class="badge badge-watch">PENDING</span></td></tr>
+        <tr><td>Q4 FY26</td><td>ADC GMP facility commissioning 1Q FY27</td><td><span class="badge badge-watch">PENDING</span></td></tr>
+        <tr><td>Q4 FY26</td><td>rHA Phase III start India + EU 1HFY27</td><td><span class="badge badge-watch">PENDING</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note pos">Management credibility: High on operational milestones; slight delay on ADC commissioning (Q4 FY26 → Q1 FY27); US Rotigotine filing 1Q late. Core financial deliverables (EBITDA, PAT, revenue) consistently beating expectations.</p>
+</div>
+
+<div class="section-header">Q4 FY26 Concall — May 22, 2026</div>
+<div class="card">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+    <span class="badge badge-bullish">BULLISH</span>
+    <span style="font-size:13px;color:var(--text-muted)">Keshav Bhutada (CEO, Shilpa Pharma) · Alpesh Dalal (CFO) · Monish Shah (IR)</span>
+  </div>
+  <div class="concall-block">
+    <div class="concall-quarter">Financial Highlights (Q4 FY26)</div>
+    <ul class="concall-points">
+      <li>Revenue ₹439 Cr (+30% YoY) — highest ever quarterly. EBITDA ₹121 Cr (28% margin, +40% YoY) — highest ever quarterly</li>
+      <li>Adj. PAT ₹87 Cr (+147% YoY); adj. PAT margin 20% — first time crossing 20% quarterly margin</li>
+      <li>Finance cost ₹14 Cr (-6% YoY) — continuing NCD repayment benefit</li>
+      <li>Exceptional Q4: Sravathi stake sale profit ~₹37 Cr + Sartorius provision ~₹6 Cr = net ₹25 Cr gain; also ₹18 Cr investment restatement</li>
+    </ul>
+  </div>
+  <div class="concall-block">
+    <div class="concall-quarter">API Business Updates</div>
+    <ul class="concall-points">
+      <li>NCE Program 1 (bladder cancer, FDA Breakthrough): approved; commercial supplies starting Q4 FY26 — big pharma partner</li>
+      <li>Semaglutide validation completed Q4 FY26; DMF to be readied by 1HFY27</li>
+      <li>UDCA CEP approved; commercial supplies &gt;10 MT/month run-rate</li>
+      <li>New onco block expansion by end FY27; 15+ new oncology APIs in development grid</li>
+      <li>Tranexamic Acid: additional 100 MT capacity being built; full utilisation at existing capacity</li>
+    </ul>
+  </div>
+  <div class="concall-block">
+    <div class="concall-quarter">Formulations Business Updates</div>
+    <ul class="concall-points">
+      <li>NorUDCA (Noduca): launched India 3QFY26; exceeding expectations; order book firm for FY27; 3 marketing partners + own label</li>
+      <li>EU crossed ₹200 Cr milestone (+60% YoY in Q4); Nilotinib + Axitinib key; Rotigotine EMA approved</li>
+      <li>Rotigotine TDS: EMA final approval received; EU launch planned 1HFY27; US NDA filed Q4 FY26</li>
+      <li>OERIS Ondansetron ER: positive Phase III; CDSCO filing done; India launch FY27</li>
+      <li>Abraxane + Enzalutamide exhibit batches completed Q4 FY26; EU filings 1HFY27</li>
+      <li>Jadcherla: CAPA submitted to USFDA; remediation complete from Shilpa side; awaiting re-inspection</li>
+    </ul>
+  </div>
+  <div class="concall-block">
+    <div class="concall-quarter">Biologics &amp; Pipeline</div>
+    <ul class="concall-points">
+      <li>Adalimumab: ~25% India growth; 20 RoW filings; EMA Scientific Advice targeted 1QFY27; SteinCares LatAm deal</li>
+      <li>Aflibercept: Phase III completing 1HFY27; India launch FY27; licensed India + Russia; MENA discussions</li>
+      <li>ADC GMP facility: commissioning 1QFY27; Test License received; first ADC biosimilar Phase I FY27</li>
+      <li>Albumin: CDSCO Phase III approved; India + EU Phase III start 1HFY27; Orion EU partnership with milestone payments</li>
+      <li>"We are co-developing 2 NBEs and 1 NCE with global partners, establishing Shilpa as a preferred CDMO for novel product development"</li>
+      <li>"On track for a stronger FY27" — MD Vishnukant Bhutada</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section-header">Q3 FY26 Concall — February 6, 2026</div>
+<div class="card">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+    <span class="badge badge-bullish">BULLISH</span>
+  </div>
+  <ul class="concall-points">
+    <li>Revenue ₹411 Cr (+28% YoY); EBITDA ₹115 Cr (28% margin, +41% YoY); adj. PAT ₹55 Cr</li>
+    <li>NorUDCA launched Q3 FY26 — "exceeded management expectations"; strong order book; 3 partners + Noduca brand</li>
+    <li>EU formulations ₹73 Cr Q3 (+100% YoY); Nilotinib = key driver; profit-share model included</li>
+    <li>OLC PDUFA date June 29, 2026; dedicated OLC block commissioned; Shilpa as exclusive CDMO</li>
+    <li>Albumin: CDSCO India Phase III approved; IMPD to EU targeted Q4 FY26 — "heavy lifting on investment largely complete; focus now on execution and scaling"</li>
+    <li>Licensing income: ~₹150 Cr annual run rate (steady base); moving toward commercial supply agreements</li>
+    <li>Net debt ₹625 Cr (Dec 31, 2025); finance cost declining; Sravathi 31% stake sale completed</li>
+  </ul>
+</div>
+
+<div class="section-header">Q2 FY26 Concall — November 17, 2025</div>
+<div class="card">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+    <span class="badge badge-bullish">BULLISH</span>
+  </div>
+  <ul class="concall-points">
+    <li>Revenue ₹372 Cr (+7% YoY) — highest ever quarterly at time. EBITDA ₹110 Cr (30% margin) — "first time crossing ₹100 Cr landmark"</li>
+    <li>H1FY26 PAT ₹91 Cr surpassed full-year FY25 PAT ₹78 Cr in just 6 months</li>
+    <li>Adj. ROCE ~17% (H1FY26) vs 4% in FY23 — transformation visible in returns</li>
+    <li>Tariff impact: all US 505(b)(2) products via USFDA-approved 3rd-party CMOs — no tariff impact</li>
+    <li>API NCE1 (bladder cancer, big pharma, FDA Breakthrough): partner received approval; commercial supplies start Q4 FY26</li>
+    <li>Nilotinib: 2 new filings US + EU; market share growing; EU launch is profit-share model</li>
+    <li>"We recorded highest ever quarterly EBITDA at INR 110 crores. We have crossed ₹100 crores landmark for the first time in our history." — Alpesh Dalal (CFO)</li>
+  </ul>
+</div>
+
+<div class="section-header">Q4 FY25 Concall — May 26, 2025</div>
+<div class="card">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+    <span class="badge badge-bullish">BULLISH</span>
+  </div>
+  <ul class="concall-points">
+    <li>FY25 revenue ₹1,310 Cr (+13%); EBITDA ₹340 Cr (26%); adj. PAT ₹97 Cr (&gt;2.5x YoY)</li>
+    <li>Net Debt ₹558 Cr (Mar 25) vs ₹905 Cr (Mar 24) — ₹347 Cr reduction in 1 year</li>
+    <li>Net Debt/EBITDA 1.6x vs 5.8x FY24 — transformational balance sheet improvement post QIP</li>
+    <li>QIP Feb 2025: ₹300 Cr raised by SML; used to fully repay high-cost NCDs</li>
+    <li>Q4FY25 biologics ₹10 Cr; small but inflecting — Adalimumab commercial scale-up beginning</li>
+    <li>Jadcherla US: 3 NDA products (Pemetrexed, Bortezomib, oral liquid) all commercially launched; revenues ramping</li>
+    <li>Import alert issued subsequently — creating near-term disruption in those revenues</li>
+  </ul>
+</div>
+</div>
+<!-- TAB 11: CAPITAL ALLOCATION -->
+<div id="tab-11" class="tab-pane">
+<div class="section-header">Capital Allocation Verdict</div>
+<div class="card" style="border-top:3px solid var(--color-amber)">
+  <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+    <span class="badge badge-watch" style="font-size:15px;padding:8px 20px">MIXED</span>
+    <div style="font-size:14.5px;color:var(--text-secondary)">Long-duration capex in biologics is strategically correct but execution discipline has been uneven (CWIP 39% of gross block). QIPs were necessary and well-timed. Balance sheet now healthy. FCF generation expected FY27-FY28 as CWIP capitalises and revenue scales.</div>
+  </div>
+</div>
+
+<div class="section-header">Capex vs Operating Cash Flow (Standalone, INR Crores)</div>
+<div class="card">
+  <div class="chart-wrap"><canvas id="cashFlowChart"></canvas></div>
+  <p class="note neg">Standalone capex has exceeded CFO in every year since FY19. FY25 CFI = -₹431 Cr largely due to equity infusion into subsidiaries (QIP proceeds). Consolidated capex FY25 = ₹216 Cr, FY26 = ₹361 Cr — both substantially above standalone. FCF positive inflection requires biologics revenues to scale.</p>
+</div>
+
+<div class="section-header">Debt Trajectory (Consolidated, INR Crores)</div>
+<div class="card">
+  <div class="chart-wrap-sm"><canvas id="debtChart"></canvas></div>
+  <div class="grid-2" style="margin-top:12px">
+    <div>
+      <div class="metric-row"><span class="metric-label">Borrowings FY22</span><span class="metric-value neg">₹195 Cr</span></div>
+      <div class="metric-row"><span class="metric-label">Borrowings FY23</span><span class="metric-value neg">₹290 Cr</span></div>
+      <div class="metric-row"><span class="metric-label">Borrowings FY24</span><span class="metric-value neg">₹144 Cr (consol. ₹1,050+ Cr)</span></div>
+      <div class="metric-row"><span class="metric-label">Borrowings FY25</span><span class="metric-value">₹108 Cr (SA); ₹586 Cr (consol.)</span></div>
+      <div class="metric-row"><span class="metric-label">Borrowings FY26</span><span class="metric-value">₹132 Cr (SA); ₹658 Cr (consol.)</span></div>
+    </div>
+    <div>
+      <div class="metric-row"><span class="metric-label">Net Debt FY26 (consol.)</span><span class="metric-value">₹613 Cr</span></div>
+      <div class="metric-row"><span class="metric-label">Net Debt/EBITDA FY26</span><span class="metric-value pos">1.4x</span></div>
+      <div class="metric-row"><span class="metric-label">Net Debt/EBITDA FY24</span><span class="metric-value neg">5.8x</span></div>
+      <div class="metric-row"><span class="metric-label">Finance Cost FY26</span><span class="metric-value pos">₹59 Cr (-22% YoY)</span></div>
+      <div class="metric-row"><span class="metric-label">Interest Coverage</span><span class="metric-value pos">7.5x (EBITDA/Finance Cost)</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="section-header">ROCE Trend (Consolidated Adj., Excl. Biologics/NBE)</div>
+<div class="card">
+  <div class="chart-wrap-sm"><canvas id="roceChart"></canvas></div>
+  <p class="note pos">Adj. ROCE improving sharply: 3.4% (FY23) → 9.3% (FY24) → 15.0% (FY25) → 17.4% (FY26). Biologics/NBE investments excluded as they are pre-commercial. Once biologics start contributing, adjusted ROCE calculation will change. Target 20%+ ROCE (excl. pre-commercial investments) by FY28E as core business scales.</p>
+</div>
+
+<div class="section-header">Dividend History</div>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Year</th><th>Dividend per Share (₹)</th><th>Payout Ratio</th><th>Div. Yield (Approx.)</th></tr></thead>
+      <tbody>
+        <tr><td>FY22</td><td>₹0.35 (pre-bonus adj. ₹0.70)</td><td>7%</td><td>~0.2%</td></tr>
+        <tr><td>FY23</td><td>Nil</td><td>0%</td><td>Nil</td></tr>
+        <tr><td>FY24</td><td>Nil</td><td>0%</td><td>Nil</td></tr>
+        <tr><td>FY25</td><td>₹0.40/share (post-bonus adj. ₹0.20)</td><td>14%</td><td>~0.1%</td></tr>
+        <tr class="latest-col"><td>FY26</td><td>₹0.60/share</td><td>~5%</td><td>0.10%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">Dividend yield negligible at 0.10%. Company is in investment/growth mode; capital is being deployed into biologics + CDMO capacity. Dividend policy consistent with pharma peers in high-growth phase. Investors in SHILPAMED are buying growth, not income.</p>
+</div>
+
+<div class="section-header">Key Equity Events (Capital Raising History)</div>
+<div class="card">
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-date">April 2024</div><div class="tl-headline">QIP by Shilpa Pharma Lifesciences (API subsidiary) — ₹490 Cr</div><div class="tl-detail">SML's ownership in Shilpa Pharma Lifesciences diluted; SML immediately converted inter-co loans to equity to maintain consolidation. Funded API plant expansion + biologics capex.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-date">February 2025</div><div class="tl-headline">QIP by SML (parent) — ₹300 Cr</div><div class="tl-detail">Proceeds used entirely to repay high-cost NCDs. Net Debt/EBITDA fell from 5.8x (FY24) to 1.6x (FY25). Transformational balance sheet event. ~1.10 Cr new shares issued.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-date">June 2025</div><div class="tl-headline">1:1 Bonus Issue — Shares Doubled</div><div class="tl-detail">Board approved; shares: 9.78 Cr → 19.6 Cr. No economic impact. Improves market liquidity. EPS halved on face; P/E calculation must account for post-bonus share count.</div></div>
+  </div>
+</div>
+</div>
+<!-- TAB 12: OWNERSHIP -->
+<div id="tab-12" class="tab-pane">
+<div class="section-header">Shareholding Pattern — Quarterly Trend</div>
+<div class="card">
+  <div class="chart-wrap-lg"><canvas id="shareholdingTrend"></canvas></div>
+</div>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">FII Holding Trend</div>
+    <div class="chart-wrap-sm"><canvas id="fiiDiiChart"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Shareholding Table — Latest 8 Quarters</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Quarter</th><th>Promoters</th><th>FIIs</th><th>DIIs</th><th>Public</th></tr></thead>
+        <tbody>
+          <tr><td>Mar 2024</td><td>50.01%</td><td>5.63%</td><td>1.65%</td><td>42.71%</td></tr>
+          <tr><td>Jun 2024</td><td>44.39%</td><td>9.08%</td><td>7.61%</td><td>38.91%</td></tr>
+          <tr><td>Sep 2024</td><td>44.33%</td><td>9.59%</td><td>8.18%</td><td>37.90%</td></tr>
+          <tr><td>Dec 2024</td><td>44.23%</td><td>9.90%</td><td>8.27%</td><td>37.59%</td></tr>
+          <tr><td>Mar 2025</td><td>44.23%</td><td>10.97%</td><td>7.55%</td><td>37.25%</td></tr>
+          <tr><td>Jun 2025</td><td>44.23%</td><td>11.19%</td><td>7.46%</td><td>37.10%</td></tr>
+          <tr><td>Sep 2025</td><td>44.23%</td><td>10.92%</td><td>7.67%</td><td>37.18%</td></tr>
+          <tr><td>Dec 2025</td><td>40.13%</td><td>10.97%</td><td>8.34%</td><td>40.56%</td></tr>
+          <tr class="latest-col"><td>Mar 2026</td><td>40.13%</td><td>11.07%</td><td>8.58%</td><td>40.21%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="section-header">Ownership Quality Analysis</div>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">Promoter Holding Analysis</div>
+    <div class="metric-row"><span class="metric-label">Jun 2023 (pre-events)</span><span class="metric-value">50.01%</span></div>
+    <div class="metric-row"><span class="metric-label">After Shilpa Pharma QIP (Jun 2024)</span><span class="metric-value neg">44.39% (↓5.62%)</span></div>
+    <div class="metric-row"><span class="metric-label">Mar 2026 (post all events)</span><span class="metric-value neg">40.13% (↓4.26% more)</span></div>
+    <div class="metric-row"><span class="metric-label">3-Year Total Decline</span><span class="metric-value neg">-9.88 percentage points</span></div>
+    <div class="metric-row"><span class="metric-label">Promoter Pledge</span><span class="metric-value">Not found in data</span></div>
+    <div class="metric-row"><span class="metric-label">Risk of further dilution</span><span class="metric-value"><span class="badge badge-medium">MEDIUM</span> (biologics capex needs)</span></div>
+    <p class="note neg">Promoter holding below 50% opens doors to potential unsolicited acquisitions at ₹10,149 Cr market cap. Currently manageable but monitoring required.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Institutional Interest Dynamics</div>
+    <div class="metric-row"><span class="metric-label">FII Mar 2024</span><span class="metric-value">5.63%</span></div>
+    <div class="metric-row"><span class="metric-label">FII Mar 2026</span><span class="metric-value pos">11.07% (+5.44%)</span></div>
+    <div class="metric-row"><span class="metric-label">FII Trend</span><span class="metric-value pos">Increasing — positive signal</span></div>
+    <div class="metric-row"><span class="metric-label">DII Mar 2024</span><span class="metric-value">1.65%</span></div>
+    <div class="metric-row"><span class="metric-label">DII Mar 2026</span><span class="metric-value pos">8.58% (+6.93%)</span></div>
+    <div class="metric-row"><span class="metric-label">DII Trend</span><span class="metric-value pos">Strong entry — major DII buy</span></div>
+    <div class="metric-row"><span class="metric-label">No. of Shareholders</span><span class="metric-value">53,410 (Mar 2026)</span></div>
+    <p class="note pos">Both FII and DII ownership nearly doubled since FY24 — institutional confidence in the turnaround. This provides price support on dips; institutions are building long-term positions.</p>
+  </div>
+</div>
+
+<div class="section-header">Ownership Verdict</div>
+<div class="card">
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+    <span class="badge badge-medium" style="font-size:14px;padding:6px 16px">MIXED — WATCHLIST</span>
+    <div style="font-size:14px;color:var(--text-secondary)">
+      FII/DII accumulation is bullish institutional conviction. But promoter dilution from 50% to 40% in 3 years is a structural concern. At current holding (40.13%), promoters are at the threshold where control becomes contestable. Monitoring promoter pledge status and any further equity issuances is critical. The positive news: no further dilution announced and balance sheet no longer requires emergency capital.
+    </div>
+  </div>
+</div>
+</div>
+<!-- TAB 13: EVENTS -->
+<div id="tab-13" class="tab-pane">
+<div class="section-header">Corporate Events Timeline — May 2026 Season</div>
+<div class="card">
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-dot"></div>
+      <div class="tl-date">May 22, 2026</div>
+      <div class="tl-headline"><span class="badge badge-results">RESULTS</span> Q4 &amp; FY26 Audited Results Approved by Board</div>
+      <div class="tl-detail">Consol. FY26: Revenue ₹1,549 Cr (+18%), EBITDA ₹445 Cr (29%), Adj. PAT ₹232 Cr (+135%). Standalone FY26: Revenue ₹597 Cr, PAT ₹133 Cr. Dividend ₹0.60/share recommended.</div>
+    </div>
+    <div class="tl-item"><div class="tl-dot"></div>
+      <div class="tl-date">May 22, 2026</div>
+      <div class="tl-headline"><span class="badge badge-results">EARNINGS CALL</span> Q4 FY26 Investor Conference Call (4 PM IST)</div>
+      <div class="tl-detail">Audio recording filed to exchanges. Key highlights: Rotigotine EMA approval, ADC commissioning 1QFY27, Sravathi exceptional gain, "on track for a stronger FY27" guidance.</div>
+    </div>
+    <div class="tl-item"><div class="tl-dot"></div>
+      <div class="tl-date">May 22, 2026</div>
+      <div class="tl-headline"><span class="badge badge-filing">CORPORATE ACTION</span> Postal Ballot Notice — Registered Office Shift KA → MH</div>
+      <div class="tl-detail">Shifting from Raichur, Karnataka to Trade Star Building, Andheri (E), Mumbai 400059. Rationale: access to financial institutions, institutional investors, global pharma clients. E-voting: May 24 – June 22, 2026. Results by June 24, 2026.</div>
+    </div>
+    <div class="tl-item"><div class="tl-dot"></div>
+      <div class="tl-date">May 22–23, 2026</div>
+      <div class="tl-headline"><span class="badge badge-filing">FILING</span> FY26 Investor Presentation (38 Slides) Filed to BSE + NSE</div>
+      <div class="tl-detail">Comprehensive FY26 segmental breakdown, 5-year track record, pipeline status table, balance sheet. Published on vbshilpa.com/investor-presentation.php</div>
+    </div>
+    <div class="tl-item"><div class="tl-dot"></div>
+      <div class="tl-date">May 23, 2026</div>
+      <div class="tl-headline"><span class="badge badge-filing">NEWSPAPER</span> Audited Results Published (Business Line + Suddi Moola)</div>
+      <div class="tl-detail">SEBI LODR Regulation 47 compliance. Both English (national) and Kannada (regional) publications. Key standalone and consolidated financial highlights.</div>
+    </div>
+    <div class="tl-item"><div class="tl-dot"></div>
+      <div class="tl-date">June 22, 2026 (Upcoming)</div>
+      <div class="tl-headline"><span class="badge badge-watch">PENDING</span> E-Voting Closes — Registered Office Shift Resolution</div>
+      <div class="tl-detail">Shareholders voting on special resolution to shift RO from Raichur (KA) to Mumbai (MH). Results announcement on or before June 24, 2026. Scrutinizer: Santosh Kumar Gunemoni (VCAN &amp; Associates).</div>
+    </div>
+    <div class="tl-item"><div class="tl-dot"></div>
+      <div class="tl-date">June 29, 2026 (Upcoming)</div>
+      <div class="tl-headline"><span class="badge badge-order">KEY CATALYST</span> OLC (Unicycive) PDUFA Date — US FDA Decision</div>
+      <div class="tl-detail">Oxylanthanum Carbonate NDA resubmission accepted. PDUFA date June 29, 2026. If approved: Shilpa exclusive CDMO; commercial supplies begin; milestone income received. Watch for FDA decision.</div>
+    </div>
+  </div>
+</div>
+
+<div class="section-header">Historical Key Events (FY25 &amp; FY26 Highlights)</div>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Date</th><th>Event</th><th>Impact</th></tr></thead>
+      <tbody>
+        <tr><td>1QFY27 expected</td><td>Rotigotine TDS EU commercial launch</td><td class="pos">New revenue stream; EMA-approved; first Indian TDS in EU</td></tr>
+        <tr><td>FY26 Q4</td><td>Sravathi stake sale (31%) — exceptional gain ₹37 Cr</td><td>One-time; Sravathi now associate</td></tr>
+        <tr><td>FY26 Q4</td><td>Rotigotine US NDA filed to USFDA</td><td class="pos">Derisks US approval timeline; FY27-28 US launch potential</td></tr>
+        <tr><td>FY26 Q4</td><td>Abraxane + Xtandi exhibit batches completed</td><td class="pos">EU filings 1HFY27; new complex generics pipeline advancing</td></tr>
+        <tr><td>FY26 Q3</td><td>NorUDCA (Noduca™) India Launch</td><td class="pos">First-in-class NAFLD; exceeding expectations; 3 partners</td></tr>
+        <tr><td>FY26 Q2</td><td>USFDA issues import alert on Jadcherla</td><td class="neg">US formulations disrupted; CAPA submitted; awaiting re-inspection</td></tr>
+        <tr><td>FY26 Q1</td><td>1:1 Bonus Issue announced (June 2025)</td><td>Liquidity improvement; shares doubled</td></tr>
+        <tr><td>FY26 Q1</td><td>Orion Corporation Partnership (rHA)</td><td class="pos">Exclusive EU commercialisation; milestone payments at each development stage</td></tr>
+        <tr><td>FY25 (Feb 2025)</td><td>QIP by SML — ₹300 Cr</td><td class="pos">NCDs fully repaid; Net D/EBITDA: 5.8x→1.6x; transformational</td></tr>
+        <tr><td>FY25 (Apr 2024)</td><td>QIP by Shilpa Pharma Lifesciences — ₹490 Cr</td><td class="pos">API expansion + biologics capex funded; promoter dilution from 50%→44%</td></tr>
+        <tr><td>FY25</td><td>NorUDCA CDSCO Approval — NAFLD indication</td><td class="pos">World first; first NCE approval for Shilpa from CDSCO</td></tr>
+        <tr><td>FY25</td><td>SteinCares Licensing Agreement — Biosimilars LatAm</td><td class="pos">Access to 30+ LatAm countries for biosimilar portfolio</td></tr>
+        <tr><td>FY23</td><td>Celltrion INC settlement (~₹29 Cr expense)</td><td class="neg">One-time exceptional charge; legal settlement resolved</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+</main>
+<script>
+Chart.defaults.font.size = 13;
+
+function textColor() {
+  return document.documentElement.getAttribute('data-theme') === 'dark' ? '#F1F5F9' : '#0F172A';
+}
+function gridColor() {
+  return document.documentElement.getAttribute('data-theme') === 'dark' ? '#334155' : '#E2E8F0';
+}
+
+function showTab(n, btn) {
+  document.querySelectorAll('.tab-pane').forEach(function(p) { p.style.display = 'none'; p.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  var pane = document.getElementById('tab-' + n);
+  if (pane) { pane.style.display = 'block'; pane.classList.add('active'); }
+  if (btn) btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleDark() {
+  var d = document.documentElement;
+  d.setAttribute('data-theme', d.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  rebuildCharts();
+}
+
+// Sparkline SVG helper
+function buildSparkline(svgId, data, color) {
+  var svg = document.getElementById(svgId);
+  if (!svg) return;
+  var validData = data.filter(function(v) { return typeof v === 'number' && !isNaN(v); });
+  if (validData.length < 2) return;
+  var min = Math.min.apply(null, validData);
+  var max = Math.max.apply(null, validData);
+  var range = max - min || 1;
+  var w = 80; var h = 30; var pad = 3;
+  var pts = validData.map(function(v, i) {
+    var x = pad + (i / (validData.length - 1)) * (w - 2 * pad);
+    var y = h - pad - ((v - min) / range) * (h - 2 * pad);
+    return x.toFixed(1) + ',' + y.toFixed(1);
+  });
+  svg.innerHTML = '<polyline points="' + pts.join(' ') + '" fill="none" stroke="' + color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+}
+
+var charts = {};
+
+function buildCharts() {
+  var tc = textColor(); var gc = gridColor();
+
+  // Revenue sparkline (consolidated 5Y)
+  buildSparkline('spark-rev', [1169, 1067, 1159, 1310, 1549], '#16A34A');
+  // EBITDA% sparkline
+  buildSparkline('spark-ebitda', [19, 11, 22, 26, 29], '#16A34A');
+  // Adj PAT sparkline (use absolute values for sparkline)
+  buildSparkline('spark-pat', [61, 33, 32, 99, 232], '#16A34A');
+  // ROCE sparkline
+  buildSparkline('spark-roce', [3.4, 9.3, 15.0, 17.4, 17.4], '#16A34A');
+  // Leverage sparkline (inverted — lower is better; show Net D/EBITDA)
+  buildSparkline('spark-leverage', [6.7, 5.8, 1.6, 1.4, 1.4], '#DC2626');
+
+  // CONSOLIDATED 5Y REVENUE + EBITDA BAR CHART
+  var ctxRev = document.getElementById('revenueChart');
+  if (ctxRev) {
+    if (charts['revenueChart']) charts['revenueChart'].destroy();
+    charts['revenueChart'] = new Chart(ctxRev, {
+      type: 'bar',
+      data: {
+        labels: ['FY22','FY23','FY24','FY25','FY26'],
+        datasets: [
+          { label: 'Revenue (₹Cr)', data: [1169, 1067, 1159, 1310, 1549], backgroundColor: ['#CBD5E1','#CBD5E1','#CBD5E1','#94A3B8','#0F1F3D'], borderRadius: 4, yAxisID: 'y' },
+          { label: 'EBITDA (₹Cr)', data: [218, 120, 253, 343, 445], backgroundColor: '#E8701A', borderRadius: 4, yAxisID: 'y' },
+          { label: 'EBITDA Margin %', data: [19, 11, 22, 26, 29], type: 'line', borderColor: '#16A34A', backgroundColor: 'transparent', pointBackgroundColor: '#16A34A', yAxisID: 'y1', tension: 0.3 }
+        ]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: tc, font: { size: 13 } } }, tooltip: { titleColor: tc, bodyColor: tc } }, scales: { y: { grid: { color: gc }, ticks: { color: tc }, title: { display: true, text: '₹ Crores', color: tc } }, y1: { position: 'right', grid: { display: false }, ticks: { color: tc, callback: function(v) { return v + '%'; } }, title: { display: true, text: 'EBITDA %', color: tc }, min: 0, max: 40 }, x: { grid: { color: gc }, ticks: { color: tc } } } }
+    });
+  }
+
+  // DONUT SHAREHOLDING
+  var ctxDs = document.getElementById('donutSharehold');
+  if (ctxDs) {
+    if (charts['donutSharehold']) charts['donutSharehold'].destroy();
+    charts['donutSharehold'] = new Chart(ctxDs, {
+      type: 'doughnut',
+      data: { labels: ['Promoters 40.1%','FIIs 11.1%','DIIs 8.6%','Public 40.2%'], datasets: [{ data: [40.13, 11.07, 8.58, 40.21], backgroundColor: ['#0F1F3D','#E8701A','#16A34A','#94A3B8'], borderWidth: 2, borderColor: document.documentElement.getAttribute('data-theme') === 'dark' ? '#1E293B' : '#FFFFFF' }] },
+      options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { display: false }, tooltip: { titleColor: tc, bodyColor: tc } } }
+    });
+  }
+
+  // SEGMENT PIE
+  var ctxSeg = document.getElementById('segmentPie');
+  if (ctxSeg) {
+    if (charts['segmentPie']) charts['segmentPie'].destroy();
+    charts['segmentPie'] = new Chart(ctxSeg, {
+      type: 'doughnut',
+      data: { labels: ['API 49%','Formulations 40%','Biologics 10%','Others 1%'], datasets: [{ data: [49, 40, 10, 1], backgroundColor: ['#0F1F3D','#E8701A','#16A34A','#94A3B8'], borderWidth: 2, borderColor: document.documentElement.getAttribute('data-theme') === 'dark' ? '#1E293B' : '#FFFFFF' }] },
+      options: { responsive: true, maintainAspectRatio: false, cutout: '60%', plugins: { legend: { position: 'bottom', labels: { color: tc, font: { size: 12 }, padding: 8 } }, tooltip: { titleColor: tc, bodyColor: tc } } }
+    });
+  }
+
+  // QUARTERLY CONSOLIDATED CHART
+  var ctxQ = document.getElementById('quarterlyChart');
+  if (ctxQ) {
+    if (charts['quarterlyChart']) charts['quarterlyChart'].destroy();
+    charts['quarterlyChart'] = new Chart(ctxQ, {
+      type: 'bar',
+      data: {
+        labels: ['Q1FY25','Q2FY25','Q3FY25','Q4FY25','Q1FY26','Q2FY26','Q3FY26','Q4FY26'],
+        datasets: [
+          { label: 'Revenue (₹Cr)', data: [301, 348, 321, 338, 328, 372, 411, 439], backgroundColor: '#0F1F3D', borderRadius: 4, yAxisID: 'y' },
+          { label: 'EBITDA (₹Cr)', data: [83, 91, 81, 87, 98, 110, 115, 121], backgroundColor: '#E8701A', borderRadius: 4, yAxisID: 'y' },
+          { label: 'EBITDA Margin %', data: [27, 26, 25, 26, 30, 30, 28, 28], type: 'line', borderColor: '#16A34A', backgroundColor: 'transparent', pointBackgroundColor: '#16A34A', yAxisID: 'y1', tension: 0.3 }
+        ]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: tc, font: { size: 13 } } }, tooltip: { titleColor: tc, bodyColor: tc } }, scales: { y: { grid: { color: gc }, ticks: { color: tc }, title: { display: true, text: '₹ Crores', color: tc } }, y1: { position: 'right', grid: { display: false }, ticks: { color: tc, callback: function(v) { return v + '%'; } }, min: 0, max: 45, title: { display: true, text: 'EBITDA %', color: tc } }, x: { grid: { color: gc }, ticks: { color: tc } } } }
+    });
+  }
+
+  // ANNUAL P&L CONSOLIDATED
+  var ctxAP = document.getElementById('annualPL');
+  if (ctxAP) {
+    if (charts['annualPL']) charts['annualPL'].destroy();
+    charts['annualPL'] = new Chart(ctxAP, {
+      type: 'bar',
+      data: {
+        labels: ['FY22','FY23','FY24','FY25','FY26'],
+        datasets: [
+          { label: 'Revenue (₹Cr)', data: [1169, 1067, 1159, 1310, 1549], backgroundColor: '#0F1F3D', borderRadius: 4 },
+          { label: 'EBITDA (₹Cr)', data: [218, 120, 253, 343, 445], backgroundColor: '#E8701A', borderRadius: 4 },
+          { label: 'Adj. PAT (₹Cr)', data: [61, 33, 32, 99, 232], backgroundColor: '#16A34A', borderRadius: 4 }
+        ]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: tc, font: { size: 13 } } }, tooltip: { titleColor: tc, bodyColor: tc } }, scales: { y: { grid: { color: gc }, ticks: { color: tc } }, x: { grid: { color: gc }, ticks: { color: tc } } } }
+    });
+  }
+
+  // BULL/BEAR CHART
+  var ctxBB = document.getElementById('bullBearChart');
+  if (ctxBB) {
+    if (charts['bullBearChart']) charts['bullBearChart'].destroy();
+    charts['bullBearChart'] = new Chart(ctxBB, {
+      type: 'bar',
+      data: {
+        labels: ['Bear Case\n₹380', 'Base Case\n₹670', 'Bull Case\n₹900'],
+        datasets: [{ label: 'Probability (%)', data: [25, 50, 25], backgroundColor: ['#DC2626','#D97706','#16A34A'], borderRadius: 4 }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false }, tooltip: { titleColor: tc, bodyColor: tc, callbacks: { label: function(ctx) { return ctx.raw + '% probability'; } } } }, scales: { x: { grid: { color: gc }, ticks: { color: tc, callback: function(v) { return v + '%'; } }, max: 60 }, y: { grid: { color: gc }, ticks: { color: tc } } } }
+    });
+  }
+
+  // VALUATION BAND (Standalone P/E × EPS = approx price)
+  var ctxVB = document.getElementById('valuationBand');
+  if (ctxVB) {
+    if (charts['valuationBand']) charts['valuationBand'].destroy();
+    charts['valuationBand'] = new Chart(ctxVB, {
+      type: 'line',
+      data: {
+        labels: ['FY15','FY16','FY17','FY18','FY19','FY20','FY21','FY22','FY23','FY24','FY25','FY26'],
+        datasets: [
+          { label: 'EPS (₹)', data: [5.45, 7.32, 7.95, 8.17, 7.61, 11.88, 11.31, 8.12, 3.29, 1.55, 3.57, 6.80], borderColor: '#0F1F3D', backgroundColor: 'transparent', pointRadius: 3, tension: 0.3 },
+          { label: 'EBITDA Margin %', data: [24, 24, 25, 24, 27, 30, 13, 6, 18, 8, 26, 26], borderColor: '#E8701A', backgroundColor: 'transparent', pointRadius: 3, tension: 0.3 }
+        ]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: tc, font: { size: 13 } } }, tooltip: { titleColor: tc, bodyColor: tc } }, scales: { y: { grid: { color: gc }, ticks: { color: tc } }, x: { grid: { color: gc }, ticks: { color: tc } } } }
+    });
+  }
+
+  // CAPEX vs OCF (Standalone)
+  var ctxCF = document.getElementById('cashFlowChart');
+  if (ctxCF) {
+    if (charts['cashFlowChart']) charts['cashFlowChart'].destroy();
+    charts['cashFlowChart'] = new Chart(ctxCF, {
+      type: 'bar',
+      data: {
+        labels: ['FY20','FY21','FY22','FY23','FY24','FY25','FY26'],
+        datasets: [
+          { label: 'CFO (₹Cr)', data: [130, 70, 174, 2, 10, -19, 60], backgroundColor: '#16A34A', borderRadius: 4 },
+          { label: 'Capex (₹Cr)', data: [-334, -266, -174, -58, -56, -57, -127], backgroundColor: '#DC2626', borderRadius: 4 },
+          { label: 'FCF (₹Cr)', data: [-204, -196, 0, -56, -46, -76, -67], type: 'line', borderColor: '#D97706', backgroundColor: 'transparent', pointBackgroundColor: '#D97706', tension: 0.3 }
+        ]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: tc, font: { size: 13 } } }, tooltip: { titleColor: tc, bodyColor: tc } }, scales: { y: { grid: { color: gc }, ticks: { color: tc } }, x: { grid: { color: gc }, ticks: { color: tc } } } }
+    });
+  }
+
+  // DEBT CHART (Consolidated borrowings, approximated)
+  var ctxDbt = document.getElementById('debtChart');
+  if (ctxDbt) {
+    if (charts['debtChart']) charts['debtChart'].destroy();
+    charts['debtChart'] = new Chart(ctxDbt, {
+      type: 'line',
+      data: {
+        labels: ['FY22','FY23','FY24','FY25','FY26'],
+        datasets: [
+          { label: 'Consol. Borrowings (₹Cr)', data: [900, 1050, 1050, 586, 658], borderColor: '#DC2626', backgroundColor: 'rgba(220,38,38,0.08)', fill: true, tension: 0.3, pointRadius: 4 },
+          { label: 'Net Debt/EBITDA (×)', data: [3.0, 6.7, 5.8, 1.6, 1.4], borderColor: '#E8701A', backgroundColor: 'transparent', yAxisID: 'y1', tension: 0.3, pointRadius: 4 }
+        ]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: tc, font: { size: 13 } } }, tooltip: { titleColor: tc, bodyColor: tc } }, scales: { y: { grid: { color: gc }, ticks: { color: tc }, title: { display: true, text: '₹ Crores', color: tc } }, y1: { position: 'right', grid: { display: false }, ticks: { color: tc, callback: function(v) { return v + 'x'; } }, title: { display: true, text: 'Net D/EBITDA', color: tc } }, x: { grid: { color: gc }, ticks: { color: tc } } } }
+    });
+  }
+
+  // ROCE CHART
+  var ctxRC = document.getElementById('roceChart');
+  if (ctxRC) {
+    if (charts['roceChart']) charts['roceChart'].destroy();
+    charts['roceChart'] = new Chart(ctxRC, {
+      type: 'line',
+      data: {
+        labels: ['FY22','FY23','FY24','FY25','FY26'],
+        datasets: [{ label: 'Adj. ROCE % (excl. Biologics/NBE)', data: [2, 3.4, 9.3, 15.0, 17.4], borderColor: '#16A34A', backgroundColor: 'rgba(22,163,74,0.1)', fill: true, tension: 0.3, pointRadius: 5, pointBackgroundColor: '#16A34A' }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: tc, font: { size: 13 } } }, tooltip: { titleColor: tc, bodyColor: tc } }, scales: { y: { grid: { color: gc }, ticks: { color: tc, callback: function(v) { return v + '%'; } }, min: 0, max: 25 }, x: { grid: { color: gc }, ticks: { color: tc } } } }
+    });
+  }
+
+  // SHAREHOLDING STACKED BAR
+  var ctxSH = document.getElementById('shareholdingTrend');
+  if (ctxSH) {
+    if (charts['shareholdingTrend']) charts['shareholdingTrend'].destroy();
+    charts['shareholdingTrend'] = new Chart(ctxSH, {
+      type: 'bar',
+      data: {
+        labels: ['Jun23','Sep23','Dec23','Mar24','Jun24','Sep24','Dec24','Mar25','Jun25','Sep25','Dec25','Mar26'],
+        datasets: [
+          { label: 'Promoters', data: [50.01, 50.01, 50.01, 50.01, 44.39, 44.33, 44.23, 44.23, 44.23, 44.23, 40.13, 40.13], backgroundColor: '#0F1F3D', stack: 's' },
+          { label: 'FIIs', data: [10.26, 8.60, 8.52, 5.63, 9.08, 9.59, 9.90, 10.97, 11.19, 10.92, 10.97, 11.07], backgroundColor: '#E8701A', stack: 's' },
+          { label: 'DIIs', data: [0.37, 0.41, 0.06, 1.65, 7.61, 8.18, 8.27, 7.55, 7.46, 7.67, 8.34, 8.58], backgroundColor: '#16A34A', stack: 's' },
+          { label: 'Public', data: [39.36, 40.98, 41.41, 42.71, 38.91, 37.90, 37.59, 37.25, 37.10, 37.18, 40.56, 40.21], backgroundColor: '#94A3B8', stack: 's' }
+        ]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: tc, font: { size: 13 } } }, tooltip: { titleColor: tc, bodyColor: tc } }, scales: { y: { stacked: true, grid: { color: gc }, ticks: { color: tc, callback: function(v) { return v + '%'; } }, max: 100 }, x: { stacked: true, grid: { color: gc }, ticks: { color: tc } } } }
+    });
+  }
+
+  // FII/DII TREND LINE
+  var ctxFII = document.getElementById('fiiDiiChart');
+  if (ctxFII) {
+    if (charts['fiiDiiChart']) charts['fiiDiiChart'].destroy();
+    charts['fiiDiiChart'] = new Chart(ctxFII, {
+      type: 'line',
+      data: {
+        labels: ['Jun23','Sep23','Dec23','Mar24','Jun24','Sep24','Dec24','Mar25','Jun25','Sep25','Dec25','Mar26'],
+        datasets: [
+          { label: 'FII %', data: [10.26, 8.60, 8.52, 5.63, 9.08, 9.59, 9.90, 10.97, 11.19, 10.92, 10.97, 11.07], borderColor: '#E8701A', backgroundColor: 'transparent', tension: 0.3, pointRadius: 3 },
+          { label: 'DII %', data: [0.37, 0.41, 0.06, 1.65, 7.61, 8.18, 8.27, 7.55, 7.46, 7.67, 8.34, 8.58], borderColor: '#16A34A', backgroundColor: 'transparent', tension: 0.3, pointRadius: 3 }
+        ]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: tc, font: { size: 13 } } }, tooltip: { titleColor: tc, bodyColor: tc } }, scales: { y: { grid: { color: gc }, ticks: { color: tc, callback: function(v) { return v + '%'; } } }, x: { grid: { color: gc }, ticks: { color: tc } } } }
+    });
+  }
+}
+
+function rebuildCharts() {
+  Chart.defaults.color = textColor();
+  Object.keys(charts).forEach(function(k) { try { charts[k].destroy(); } catch(e) {} });
+  charts = {};
+  buildCharts();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  buildCharts();
+  // Init: show tab 0
+  var pane = document.getElementById('tab-0');
+  if (pane) { pane.style.display = 'block'; pane.classList.add('active'); }
+});
+</script>
+</body>
+</html>

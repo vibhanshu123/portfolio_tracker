@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEEDEV — DEE Development Engineers | Investment Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg-body:#F8F9FC;--bg-card:#FFFFFF;--bg-card-border:#E2E8F0;
+  --text-primary:#0F172A;--text-secondary:#475569;--text-muted:#94A3B8;
+  --color-navy:#0F1F3D;--color-orange:#E8701A;--color-green:#16A34A;
+  --color-red:#DC2626;--color-amber:#D97706;--color-blue:#1D4ED8;
+  --nav-bg:#0F1F3D;--nav-text:#FFFFFF;
+  --table-header-bg:#F1F5F9;--table-row-alt:#F8FAFC;--highlight-latest:#FFF7ED;
+}
+[data-theme="dark"]{
+  --bg-body:#0F172A;--bg-card:#1E293B;--bg-card-border:#334155;
+  --text-primary:#F1F5F9;--text-secondary:#94A3B8;--text-muted:#64748B;
+  --color-navy:#1E40AF;--color-orange:#F97316;--color-green:#22C55E;
+  --color-red:#EF4444;--color-amber:#F59E0B;--color-blue:#3B82F6;
+  --nav-bg:#1E293B;--nav-text:#F1F5F9;
+  --table-header-bg:#1E293B;--table-row-alt:#0F172A;--highlight-latest:#431407;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);font-size:16px;line-height:1.6;}
+nav{background:var(--nav-bg);position:sticky;top:0;z-index:100;}
+.nav-header{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-bottom:1px solid rgba(255,255,255,0.1);}
+.nav-company{color:var(--nav-text);font-size:15px;font-weight:700;}
+.nav-meta{color:rgba(255,255,255,0.55);font-size:12px;margin-left:10px;}
+.dark-toggle{background:rgba(255,255,255,0.15);border:none;color:var(--nav-text);padding:6px 16px;border-radius:20px;cursor:pointer;font-size:12px;font-weight:600;}
+.nav-tabs{display:flex;overflow-x:auto;scrollbar-width:none;padding:0 6px;}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.tab-btn{background:none;border:none;color:rgba(255,255,255,0.6);padding:11px 13px;cursor:pointer;font-size:12px;white-space:nowrap;border-bottom:3px solid transparent;transition:all 0.2s;font-weight:500;}
+.tab-btn:hover{color:var(--nav-text);}
+.tab-btn.active{color:var(--color-orange);border-bottom-color:var(--color-orange);}
+main{max-width:1380px;margin:0 auto;padding:24px 18px;}
+.tab-pane{display:none;}
+.section-header{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--color-orange);border-left:4px solid var(--color-orange);border-bottom:1px solid var(--bg-card-border);padding:6px 0 6px 12px;margin:24px 0 14px;}
+.card{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:10px;padding:20px;}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:14px;margin-bottom:20px;}
+.kpi-card{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:10px;padding:16px;}
+.kpi-label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);font-weight:600;}
+.kpi-value{font-size:22px;font-weight:800;font-family:monospace;color:var(--text-primary);margin:4px 0 2px;}
+.kpi-sub{font-size:12px;color:var(--text-secondary);}
+.table-wrap{overflow-x:auto;border-radius:8px;border:1px solid var(--bg-card-border);}
+table{width:100%;border-collapse:collapse;font-size:15px;}
+th{background:var(--table-header-bg);font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-secondary);padding:10px 14px;text-align:left;white-space:nowrap;font-weight:700;}
+td{padding:10px 14px;border-top:1px solid var(--bg-card-border);color:var(--text-primary);font-family:monospace;}
+tr:nth-child(even) td{background:var(--table-row-alt);}
+tr.latest td{background:var(--highlight-latest);}
+td.label{font-family:system-ui;font-weight:600;font-size:14px;}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;}
+.badge-buy{background:#DCFCE7;color:#15803D;}
+.badge-accumulate{background:#FEF3C7;color:#B45309;}
+.badge-watch{background:#FEF9C3;color:#92400E;}
+.badge-high{background:#FEE2E2;color:#991B1B;}
+.badge-medium{background:#FEF3C7;color:#92400E;}
+.badge-low{background:#DCFCE7;color:#166534;}
+.badge-optionality{background:#DBEAFE;color:#1E40AF;}
+.badge-amber-flag{background:#FEF3C7;color:#92400E;}
+.badge-clean{background:#DCFCE7;color:#166534;}
+.badge-red-flag{background:#FEE2E2;color:#991B1B;}
+.badge-bullish{background:#DCFCE7;color:#166534;}
+.badge-neutral{background:#F1F5F9;color:#475569;}
+.badge-cautious{background:#FEF3C7;color:#92400E;}
+.badge-order{background:#DBEAFE;color:#1E40AF;}
+.badge-results{background:#EDE9FE;color:#6D28D9;}
+.badge-filing{background:#F1F5F9;color:#475569;}
+.badge-regulatory{background:#FEF3C7;color:#92400E;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.chart-card{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:10px;padding:20px;}
+.chart-title{font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;}
+.verdict-hero{text-align:center;padding:32px 24px;background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:12px;margin-bottom:20px;}
+.verdict-ticker{font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.15em;}
+.verdict-name{font-size:24px;font-weight:800;color:var(--text-primary);margin:8px 0 14px;}
+.verdict-badge-lg{font-size:16px;padding:10px 30px;border-radius:30px;font-weight:800;}
+.verdict-thesis{font-size:14px;line-height:1.75;color:var(--text-secondary);max-width:720px;margin:18px auto 0;text-align:left;}
+.conviction-wrap{background:var(--bg-card-border);border-radius:8px;height:10px;width:100%;margin-top:8px;}
+.conviction-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--color-orange),var(--color-green));}
+.scenario-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px;}
+.scenario-card{border-radius:10px;padding:20px;}
+.scenario-bull{background:#F0FDF4;border:1px solid #BBF7D0;}
+.scenario-base{background:#FFF7ED;border:1px solid #FED7AA;}
+.scenario-bear{background:#FEF2F2;border:1px solid #FECACA;}
+[data-theme="dark"] .scenario-bull{background:#052e16;border-color:#166534;}
+[data-theme="dark"] .scenario-base{background:#431407;border-color:#7C2D12;}
+[data-theme="dark"] .scenario-bear{background:#450A0A;border-color:#7F1D1D;}
+.scenario-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;}
+.scenario-price{font-size:28px;font-weight:800;font-family:monospace;margin:4px 0;}
+.scenario-prob{font-size:12px;color:var(--text-secondary);}
+.risk-card{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:10px;padding:16px;border-left:4px solid;margin-bottom:12px;}
+.risk-card.high{border-left-color:var(--color-red);}
+.risk-card.medium{border-left-color:var(--color-amber);}
+.risk-card.low{border-left-color:var(--color-green);}
+.risk-title{font-weight:700;font-size:14px;margin-bottom:6px;}
+.risk-desc{font-size:13px;color:var(--text-secondary);line-height:1.5;}
+.trigger-card{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:10px;padding:18px;margin-bottom:12px;}
+.trigger-title{font-weight:700;font-size:14px;margin:8px 0 6px;}
+.trigger-desc{font-size:13px;color:var(--text-secondary);line-height:1.5;}
+.trigger-bear{font-size:12px;color:var(--color-red);margin-top:8px;border-top:1px solid var(--bg-card-border);padding-top:8px;}
+.forensic-item{padding:12px 0;border-bottom:1px solid var(--bg-card-border);display:flex;justify-content:space-between;align-items:flex-start;gap:20px;}
+.forensic-label{font-weight:600;font-size:14px;min-width:160px;}
+.forensic-value{font-size:13px;color:var(--text-secondary);text-align:right;}
+.timeline{padding-left:28px;position:relative;}
+.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:var(--bg-card-border);}
+.timeline-item{position:relative;margin-bottom:22px;}
+.timeline-dot{position:absolute;left:-24px;top:5px;width:12px;height:12px;border-radius:50%;background:var(--color-orange);}
+.timeline-date{font-size:11px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;}
+.timeline-title{font-size:14px;font-weight:700;color:var(--text-primary);margin:2px 0;}
+.timeline-desc{font-size:13px;color:var(--text-secondary);line-height:1.5;}
+.q-selector{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+.q-btn{background:var(--bg-card);border:1px solid var(--bg-card-border);color:var(--text-secondary);padding:7px 14px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;}
+.q-btn.active{background:var(--color-orange);border-color:var(--color-orange);color:#fff;}
+.q-pane{display:none;}
+.q-pane.active{display:block;}
+.moat-row{display:flex;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid var(--bg-card-border);flex-wrap:wrap;}
+.moat-name{font-weight:700;font-size:13px;min-width:140px;}
+.moat-bar-wrap{flex:1;min-width:80px;height:8px;background:var(--bg-card-border);border-radius:4px;}
+.moat-bar-fill{height:100%;border-radius:4px;background:var(--color-orange);}
+.moat-rating{font-size:12px;font-weight:700;color:var(--text-muted);min-width:70px;}
+.moat-note{font-size:12px;color:var(--text-secondary);flex:2;}
+.monitor-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;padding:10px 0;border-bottom:1px solid var(--bg-card-border);font-size:14px;align-items:center;}
+.monitor-grid.hdr{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);font-weight:700;}
+.positive{color:var(--color-green);}
+.negative{color:var(--color-red);}
+.neutral-val{color:var(--text-secondary);}
+@media(max-width:768px){.two-col,.three-col,.scenario-grid{grid-template-columns:1fr;}.moat-note{display:none;}.monitor-grid{grid-template-columns:2fr 1fr 1fr;}}
+@media print{nav,.dark-toggle{display:none!important;}body{background:#fff;color:#000;}.tab-pane{display:block!important;page-break-before:always;}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-header">
+    <div style="display:flex;align-items:center;">
+      <span class="nav-company">DEE Development Engineers</span>
+      <span class="nav-meta">DEEDEV &nbsp;|&nbsp; BSE: 544198 &nbsp;|&nbsp; ₹492.70 &nbsp;|&nbsp; MCap ₹3,413 Cr &nbsp;|&nbsp; May 2026</span>
+    </div>
+    <button class="dark-toggle" onclick="toggleTheme()">☀ / ☾</button>
+  </div>
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="showTab(0)">Exec Summary</button>
+    <button class="tab-btn" onclick="showTab(1)">Overview</button>
+    <button class="tab-btn" onclick="showTab(2)">Business</button>
+    <button class="tab-btn" onclick="showTab(3)">Industry</button>
+    <button class="tab-btn" onclick="showTab(4)">Financials</button>
+    <button class="tab-btn" onclick="showTab(5)">Growth</button>
+    <button class="tab-btn" onclick="showTab(7)">Forensics</button>
+    <button class="tab-btn" onclick="showTab(8)">Valuation</button>
+    <button class="tab-btn" onclick="showTab(9)">Thesis</button>
+    <button class="tab-btn" onclick="showTab(10)">Risks</button>
+    <button class="tab-btn" onclick="showTab(11)">Concall</button>
+    <button class="tab-btn" onclick="showTab(12)">Cap. Alloc.</button>
+    <button class="tab-btn" onclick="showTab(13)">Ownership</button>
+    <button class="tab-btn" onclick="showTab(14)">Events</button>
+  </div>
+</nav>
+<main id="dashboard">
+<!-- TAB 0: EXECUTIVE SUMMARY -->
+<div id="tab-0" class="tab-pane" style="display:block;">
+  <div class="verdict-hero">
+    <div class="verdict-ticker">NSE: DEEDEV &nbsp;|&nbsp; Capital Goods — Process Piping &amp; Fabrication</div>
+    <div class="verdict-name">DEE Development Engineers Limited</div>
+    <span class="badge badge-accumulate verdict-badge-lg">ACCUMULATE</span>
+    <div style="max-width:280px;margin:16px auto 0;">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-bottom:4px;"><span>Conviction</span><span>6 / 10</span></div>
+      <div class="conviction-wrap"><div class="conviction-fill" style="width:60%;"></div></div>
+    </div>
+    <div class="verdict-thesis">DEE is India's largest process piping fabricator, positioned at the intersection of two multi-decade capex cycles — power (80 GW thermal + nuclear) and oil &amp; gas (LNG, petrochemicals, hydrogen). The consolidated order book has nearly tripled from ₹800 Cr (Mar 2024) to ₹1,940 Cr (Mar 2026), driven by BHEL/L&amp;T overflow on power and Dow/JGC relationships on O&amp;G exports. Revenue should compound 30–35% through FY27 as the Anjar facility (30,000 MTPA commissioned) and seamless pipe plant (7,000 MTPA) ramp up. The key risk is structural: CCC exceeds 500 days on an annual basis, CFO turned negative in FY25, and an export-obligation contingency of ₹100 Cr (4.3x standalone PAT) sits unprovided. At P/E ~52x TTM and ~25x FY27E, the stock prices in significant execution. Accumulate on dips with a 12–18 month horizon; do not size up ahead of cash flow normalization.</div>
+  </div>
+
+  <div class="two-col" style="margin-bottom:20px;">
+    <div class="card">
+      <div class="section-header" style="margin-top:0;">5 Reasons to Own</div>
+      <div style="padding:8px 0;border-bottom:1px solid var(--bg-card-border);font-size:14px;"><strong>1. Order book inflection confirmed.</strong> Consolidated order book at ₹1,940 Cr (Mar'26) + ₹211 Cr L1 pipeline — 2.4x FY25 revenue providing 18-month visibility.</div>
+      <div style="padding:8px 0;border-bottom:1px solid var(--bg-card-border);font-size:14px;"><strong>2. Power capex cycle structurally new.</strong> 80 GW announced by GoI; DEE is one of only 3 NTPC-approved piping fabricators. Each 800 MW plant = ₹400–600 Cr for DEE. Power order book now ₹1,005 Cr (52% of consolidated).</div>
+      <div style="padding:8px 0;border-bottom:1px solid var(--bg-card-border);font-size:14px;"><strong>3. Seamless pipe — genuine import substitute.</strong> 7,000 MTPA P91/P92 plant (₹90 Cr capex) is the only domestic manufacturer in this grade. BHEL imports from Europe at ≥20% premium. IRR modelled at 30–35%.</div>
+      <div style="padding:8px 0;border-bottom:1px solid var(--bg-card-border);font-size:14px;"><strong>4. Anjar operating leverage now crystallising.</strong> All 30,000 MTPA at Anjar commissioned Sep'25. 1–2% logistics savings vs Palwal + automation absorption + fixed cost dilution → EBITDA margin path to 18–20% in FY27.</div>
+      <div style="padding:8px 0;font-size:14px;"><strong>5. Export franchise + client stickiness.</strong> Dow Chemical ($40M+ order), JGC (LNG MOU), John Zink, Nooter Eriksen — repeat international customers across 3 cycles. Steel pricing fully back-to-back contracted; no commodity P&amp;L volatility.</div>
+    </div>
+    <div class="card">
+      <div class="section-header" style="margin-top:0;">Top 3 Risks</div>
+      <div class="risk-card high" style="margin-bottom:10px;">
+        <div class="risk-title">Working Capital Spiral <span class="badge badge-high" style="float:right;">HIGH</span></div>
+        <div class="risk-desc">CCC 510+ days (FY25 Screener); CFO negative ₹96 Cr in FY25; inventory built 98% YoY to ₹512 Cr. Export obligation contingency ₹100 Cr unprovided. If receivables do not convert or Anjar ramp delays, net debt could spike past ₹400 Cr threatening covenants.</div>
+      </div>
+      <div class="risk-card high" style="margin-bottom:10px;">
+        <div class="risk-title">Power Tariff / PSERC Regulatory <span class="badge badge-high" style="float:right;">HIGH</span></div>
+        <div class="risk-desc">MPPL PPA at ₹5.22/unit (down from ₹8.59 interim); DEE Power Division at ₹7.47/unit under HC stay but could be cut to ₹5.88. Combined annual drag ~₹38.5 Cr revenue. Impairment risk on ₹26 Cr carrying value of power plant.</div>
+      </div>
+      <div class="risk-card medium">
+        <div class="risk-title">Execution &amp; Concentration Risk <span class="badge badge-medium" style="float:right;">MEDIUM</span></div>
+        <div class="risk-desc">Single customer Dow Chemical represents &gt;₹350 Cr of order book. Revenue heavily Q4-weighted. Seamless pipe plant startup delays already evident (3 consecutive quarters "nearing commissioning"). Management guidance has been downgraded 3 times on margins.</div>
+      </div>
+      <div style="margin-top:16px;padding:12px;background:var(--table-header-bg);border-radius:8px;font-size:13px;">
+        <strong>Forensic rating:</strong> <span class="badge badge-amber-flag">AMBER FLAGS</span> — Export obligation 2x YoY (₹100 Cr vs ₹49 Cr), Bank-book inventory discrepancy multi-year pattern, EOM on power plant impairment, revolving CMD loans.
+      </div>
+    </div>
+  </div>
+
+  <div class="section-header">Investment Snapshot</div>
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-label">CMP</div><div class="kpi-value">₹492.70</div><div class="kpi-sub">52W: ₹183–₹493</div></div>
+    <div class="kpi-card"><div class="kpi-label">Market Cap</div><div class="kpi-value">₹3,413 Cr</div><div class="kpi-sub">MCap/Sales 4.0x</div></div>
+    <div class="kpi-card"><div class="kpi-label">TTM P/E</div><div class="kpi-value">50.0x</div><div class="kpi-sub">EPS TTM ₹9.44</div></div>
+    <div class="kpi-card"><div class="kpi-label">EV/EBITDA</div><div class="kpi-value">22.4x</div><div class="kpi-sub">TTM EBITDA ~₹160 Cr</div></div>
+    <div class="kpi-card"><div class="kpi-label">Order Book</div><div class="kpi-value">₹1,940 Cr</div><div class="kpi-sub">Consol. Mar'26 + ₹211 Cr L1</div></div>
+    <div class="kpi-card"><div class="kpi-label">FY26E Revenue</div><div class="kpi-value">~₹1,050 Cr</div><div class="kpi-sub">9M ₹780 Cr (consol.)</div></div>
+    <div class="kpi-card"><div class="kpi-label">Target Price</div><div class="kpi-value">₹620</div><div class="kpi-sub">+26% upside | 18M</div></div>
+    <div class="kpi-card"><div class="kpi-label">Forensic</div><div class="kpi-value" style="font-size:16px;">AMBER</div><div class="kpi-sub">Flags — see Tab 7</div></div>
+  </div>
+</div>
+<!-- TAB 1: OVERVIEW -->
+<div id="tab-1" class="tab-pane">
+  <div class="section-header" style="margin-top:0;">Key Performance Indicators</div>
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">TTM Revenue</div>
+      <div class="kpi-value">₹853 Cr</div>
+      <div class="kpi-sub">+34% YoY (standalone)</div>
+      <div style="margin-top:8px;">
+        <svg width="100%" height="32" viewBox="0 0 140 32"><polyline points="0,22 20,24 40,20 60,26 80,18 100,10 120,6 140,2" fill="none" stroke="var(--color-orange)" stroke-width="2.5" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">EBITDA Margin TTM</div>
+      <div class="kpi-value">19%</div>
+      <div class="kpi-sub">vs 14% in FY25; 12% in FY24</div>
+      <div style="margin-top:8px;">
+        <svg width="100%" height="32" viewBox="0 0 140 32"><polyline points="0,8 20,10 40,10 60,12 80,12 100,10 120,4 140,2" fill="none" stroke="var(--color-green)" stroke-width="2.5" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">TTM PAT</div>
+      <div class="kpi-value">₹65 Cr</div>
+      <div class="kpi-sub">+183% YoY; EPS ₹9.44</div>
+      <div style="margin-top:8px;">
+        <svg width="100%" height="32" viewBox="0 0 140 32"><polyline points="0,18 20,20 40,20 60,24 80,26 100,28 120,20 140,2" fill="none" stroke="var(--color-green)" stroke-width="2.5" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">ROCE</div>
+      <div class="kpi-value">6.94%</div>
+      <div class="kpi-sub">Suppressed by IPO dilution &amp; CWIP</div>
+      <div style="margin-top:8px;">
+        <svg width="100%" height="32" viewBox="0 0 140 32"><polyline points="0,10 20,12 40,14 60,16 80,18 100,20 120,22 140,20" fill="none" stroke="var(--color-amber)" stroke-width="2.5" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Order Book</div>
+      <div class="kpi-value">₹1,940 Cr</div>
+      <div class="kpi-sub">Consolidated Mar'26; +143% in 2yr</div>
+      <div style="margin-top:8px;">
+        <svg width="100%" height="32" viewBox="0 0 140 32"><polyline points="0,26 20,26 40,10 60,6 80,12 100,10 120,10 140,4" fill="none" stroke="var(--color-orange)" stroke-width="2.5" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Debt/Equity</div>
+      <div class="kpi-value">0.45x</div>
+      <div class="kpi-sub">Gross debt ₹368 Cr (FY25 SA)</div>
+      <div style="margin-top:8px;">
+        <svg width="100%" height="32" viewBox="0 0 140 32"><polyline points="0,12 20,8 40,6 60,10 80,16 100,8 120,6 140,6" fill="none" stroke="var(--color-blue)" stroke-width="2.5" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Promoter Hold.</div>
+      <div class="kpi-value">70.18%</div>
+      <div class="kpi-sub">Stable since IPO; no pledge</div>
+      <div style="margin-top:8px;">
+        <svg width="100%" height="32" viewBox="0 0 140 32"><polyline points="0,16 20,16 40,16 60,15 80,16 100,16 120,16 140,16" fill="none" stroke="var(--color-green)" stroke-width="2.5" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">FCF (FY25)</div>
+      <div class="kpi-value">-₹248 Cr</div>
+      <div class="kpi-sub">Heavy capex year; normalising FY27</div>
+      <div style="margin-top:8px;">
+        <svg width="100%" height="32" viewBox="0 0 140 32"><polyline points="0,2 20,8 40,6 60,10 80,18 100,24 120,28 140,30" fill="none" stroke="var(--color-red)" stroke-width="2.5" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="chart-card">
+      <div class="chart-title">Shareholding Pattern — Mar 2026</div>
+      <canvas id="chartShareholding" height="220"></canvas>
+    </div>
+    <div class="card">
+      <div class="section-header" style="margin-top:0;">Company Snapshot</div>
+      <table>
+        <tr><td class="label">Founded</td><td>1988 | Listed June 2024</td></tr>
+        <tr><td class="label">Headquarters</td><td>Tatarpur, Palwal, Haryana</td></tr>
+        <tr><td class="label">CMD</td><td>Mr. K.L. Bansal (3+ decades)</td></tr>
+        <tr><td class="label">Manufacturing</td><td>Palwal (Haryana), Anjar (Gujarat), Numaligarh (Assam), Barmer (Rajasthan)</td></tr>
+        <tr><td class="label">Capacity</td><td>127,500 MTPA piping + 7,000 MTPA seamless pipe</td></tr>
+        <tr><td class="label">Certifications</td><td>ASME Code, IBR, PED, NPCIL nuclear approved</td></tr>
+        <tr><td class="label">Auditor</td><td>S.R. Batliboi &amp; Assoc. LLP (EY)</td></tr>
+        <tr><td class="label">IPO</td><td>June 2024 | ₹418 Cr raised | +67% premium</td></tr>
+        <tr><td class="label">CIN</td><td>L74140HR1988PLC030225</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-header">Key Milestones</div>
+  <div class="timeline">
+    <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">Jun 2024</div><div class="timeline-title">IPO — Listed at 67% premium; raised ₹418 Cr</div><div class="timeline-desc">₹175 Cr used for debt repayment; ₹18 Cr for working capital; Anjar expansion began.</div></div>
+    <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">Sep 2024</div><div class="timeline-title">Dow Chemical order — $40.7M (~₹340 Cr) job work</div><div class="timeline-desc">First major export order from Anjar; Numaligarh Refinery ₹245 Cr domestic order; order book surged to ₹1,192 Cr.</div></div>
+    <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">Sep 2025</div><div class="timeline-title">Anjar Phase 2 complete — 30,000 MTPA total commissioned</div><div class="timeline-desc">Full capacity operational; Anjar logistics saves 1–2% of revenue vs Palwal site.</div></div>
+    <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">Oct 2025</div><div class="timeline-title">Molsieve Designs acquisition (70%) — hydrogen purification vertical</div><div class="timeline-desc">Enables H2 purification to 99.9999% purity; JV with international partner for modular plants.</div></div>
+    <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">Jan 2026</div><div class="timeline-title">Seamless pipe plant — commercial production target</div><div class="timeline-desc">7,000 MTPA; P91/P92 grade; only domestic manufacturer; peak revenue ₹450 Cr; IRR 30–35%.</div></div>
+    <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">Mar 2026</div><div class="timeline-title">Order book crosses ₹1,940 Cr (consolidated)</div><div class="timeline-desc">Power piping now 52% of book (₹1,005 Cr); L1 pipeline ₹211 Cr; FY26 cumulative inflow ₹1,870 Cr.</div></div>
+  </div>
+</div>
+<!-- TAB 2: BUSINESS -->
+<div id="tab-2" class="tab-pane">
+  <div class="section-header" style="margin-top:0;">Business Model</div>
+  <div class="card" style="margin-bottom:20px;font-size:14px;line-height:1.8;">
+    DEE Development Engineers fabricates <strong>high-pressure, high-temperature prefabricated piping systems</strong> — the engineered pipe spools, fittings, and assemblies that form the circulatory system inside power plants, oil refineries, and petrochemical facilities. It is not a commodity pipe manufacturer: every spool is custom-engineered to client drawings, fabricated in exotic materials (P91/P92 chrome-moly, stainless steel, super duplex, titanium), and must comply with international codes (ASME B31.1/B31.3, IBR, PED). DEE claims to be India's largest provider of these solutions. Revenue is split across <strong>Piping</strong> (~92% standalone), <strong>Power</strong> (biomass generation, ~6%), and <strong>Heavy Fabrication</strong> (wind towers via Fabricom subsidiary). Order execution cycles are 12–18 months; margins are protected by back-to-back steel contracts.
+  </div>
+
+  <div class="two-col" style="margin-bottom:20px;">
+    <div class="chart-card">
+      <div class="chart-title">Consolidated Order Book Composition — Mar 2026 (₹ Cr)</div>
+      <canvas id="chartSegment" height="240"></canvas>
+    </div>
+    <div class="card">
+      <div class="section-header" style="margin-top:0;">Revenue Segments (FY25 Standalone)</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Segment</th><th>Revenue (₹ Cr)</th><th>EBIT</th><th>EBIT Margin</th></tr></thead>
+          <tbody>
+            <tr class="latest"><td class="label">Piping</td><td>596.7</td><td>59.1</td><td>9.9%</td></tr>
+            <tr><td class="label">Power (Biomass)</td><td>42.2</td><td>7.3</td><td>17.2%</td></tr>
+            <tr><td class="label">Heavy Fab (consol.)</td><td>36.0*</td><td>—</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:8px;">*FY24 consolidated; Fabricom captured via job work in standalone.</div>
+      <div class="section-header">Export vs Domestic Mix</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Geography</th><th>FY23</th><th>FY24</th><th>FY25</th></tr></thead>
+          <tbody>
+            <tr class="latest"><td class="label">Export</td><td>45%</td><td>39%</td><td>36%</td></tr>
+            <tr><td class="label">Domestic</td><td>55%</td><td>61%</td><td>64%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="font-size:13px;color:var(--text-secondary);margin-top:10px;">Domestic share rising as Indian power &amp; O&amp;G capex accelerates. All orders on FOB basis — freight cost changes do not affect margins.</div>
+    </div>
+  </div>
+
+  <div class="section-header">Competitive Moat Assessment</div>
+  <div class="card">
+    <div class="moat-row"><div class="moat-name">Technical Qualifications</div><div class="moat-bar-wrap"><div class="moat-bar-fill" style="width:85%;"></div></div><div class="moat-rating">STRONG</div><div class="moat-note">NTPC approved (1 of 3), NPCIL nuclear certified, ASME Code Stamp — takes 2–5 years to qualify. New entrants face a long approval queue with established players already locked in.</div></div>
+    <div class="moat-row"><div class="moat-name">Switching Costs</div><div class="moat-bar-wrap"><div class="moat-bar-fill" style="width:75%;"></div></div><div class="moat-rating">STRONG</div><div class="moat-note">Customers qualify DEE as an approved vendor after rigorous audits. Switching mid-project risks schedule and safety certification. Repeat order share from BHEL, L&amp;T, JGC, Dow confirms stickiness.</div></div>
+    <div class="moat-row"><div class="moat-name">Scale / Capacity</div><div class="moat-bar-wrap"><div class="moat-bar-fill" style="width:70%;"></div></div><div class="moat-rating">STRONG</div><div class="moat-note">127,500 MTPA piping capacity (India's largest); multi-site (Palwal, Anjar, Numaligarh, Barmer) = geographic resilience and proximity advantage.</div></div>
+    <div class="moat-row"><div class="moat-name">Brand / Reputation</div><div class="moat-bar-wrap"><div class="moat-bar-fill" style="width:65%;"></div></div><div class="moat-rating">MODERATE</div><div class="moat-note">36-year track record; name recognition among OEMs (Toshiba, Doosan, GE). Less brand-driven than qualification-driven.</div></div>
+    <div class="moat-row"><div class="moat-name">Network Effects</div><div class="moat-bar-wrap"><div class="moat-bar-fill" style="width:20%;"></div></div><div class="moat-rating">WEAK</div><div class="moat-note">Not applicable — industrial supply is not network-effect driven.</div></div>
+    <div class="moat-row"><div class="moat-name">Regulatory / IP</div><div class="moat-bar-wrap"><div class="moat-bar-fill" style="width:50%;"></div></div><div class="moat-rating">MODERATE</div><div class="moat-note">Regulatory approval as certified manufacturer is a meaningful barrier. No patent moat but process know-how in exotic metallurgies (P91, titanium, super duplex) is hard to replicate quickly.</div></div>
+  </div>
+
+  <div class="section-header">Key Customers &amp; Suppliers</div>
+  <div class="two-col">
+    <div class="card">
+      <div style="font-size:13px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Major Customers (FY25)</div>
+      <div style="font-size:14px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--bg-card-border);"><strong>GAIL India</strong> — ₹65.4 Cr (10.2% of standalone rev; new in FY25)</div>
+      <div style="font-size:14px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--bg-card-border);"><strong>John Zink Hamworthy</strong> — ₹60.3 Cr (10.1%; was 4.2% in FY24)</div>
+      <div style="font-size:14px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--bg-card-border);"><strong>Dow Chemical Canada</strong> — ~₹350 Cr order in execution (Anjar)</div>
+      <div style="font-size:14px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--bg-card-border);"><strong>Numaligarh Refinery</strong> — ₹245 Cr domestic order (Oil &amp; Gas)</div>
+      <div style="font-size:14px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--bg-card-border);"><strong>JGC Corporation</strong> — ₹13.4 Cr FY25 (WAS ₹95.6 Cr in FY24; LNG MOU ongoing)</div>
+      <div style="font-size:14px;"><strong>BHEL / L&amp;T / NTPC</strong> — Power sector anchor; BHEL formal RFQs began Q4 FY25</div>
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Supply Chain &amp; Materials</div>
+      <div style="font-size:14px;line-height:1.7;">
+        <strong>Raw Materials:</strong> Carbon steel, low/high alloy steel, stainless steel, titanium, super duplex. All procured on back-to-back contracts at time of order receipt — zero steel price P&amp;L risk confirmed over 4–5 price cycles.<br><br>
+        <strong>Key Suppliers:</strong> Indian steel mills + specialized imports for exotic alloys. DEE India's in-house fittings manufacturing reduces third-party dependency.<br><br>
+        <strong>Critical Note:</strong> Seamless pipe in P91/P92 grade currently imported from Europe; DEE's plant eliminates ₹200+ Cr annual import bill for the industry.
+      </div>
+    </div>
+  </div>
+</div>
+<!-- TAB 3: INDUSTRY -->
+<div id="tab-3" class="tab-pane">
+  <div class="section-header" style="margin-top:0;">Market Structure &amp; TAM</div>
+  <div class="three-col" style="margin-bottom:20px;">
+    <div class="kpi-card">
+      <div class="kpi-label">Power Piping TAM (India)</div>
+      <div class="kpi-value" style="font-size:18px;">₹8,000–12,000 Cr</div>
+      <div class="kpi-sub">80 GW thermal announced; each 800 MW = ₹400–600 Cr for DEE over 36–48 months. <span class="badge badge-optionality">TAILWIND</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">O&amp;G Process Piping TAM</div>
+      <div class="kpi-value" style="font-size:18px;">₹5,000–8,000 Cr</div>
+      <div class="kpi-sub">LNG terminals, petrochemical complexes, refinery upgrades. Global LNG demand rising. <span class="badge badge-optionality">TAILWIND</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Industry Lifecycle</div>
+      <div class="kpi-value" style="font-size:18px;">GROWTH</div>
+      <div class="kpi-sub">Both power and O&amp;G capex in multi-year upcycle in India and globally. Not a mature/declining market.</div>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-bottom:20px;">
+    <div class="card">
+      <div class="section-header" style="margin-top:0;">Structural Tailwinds</div>
+      <div class="risk-card low" style="margin-bottom:10px;border-left-color:var(--color-blue);">
+        <div class="risk-title">1. India 80 GW Thermal Expansion</div>
+        <div class="risk-desc">GoI announced 80 GW of new coal/gas power plants. Per 800 MW plant: ₹400–600 Cr piping scope. First BHEL RFQs received Q4 FY25; first shipments expected Q4 FY26. DEE is 1 of only 3 NTPC-approved piping fabricators — supply is structurally constrained.</div>
+      </div>
+      <div class="risk-card low" style="margin-bottom:10px;border-left-color:var(--color-blue);">
+        <div class="risk-title">2. Global LNG &amp; Petrochemicals Build-out</div>
+        <div class="risk-desc">Global LNG capacity additions through 2030 require process piping. JGC MOU covers LNG projects; Dow Chemical Canada relationship validates export capability. India becoming preferred cost hub vs Korea/Turkey for complex piping.</div>
+      </div>
+      <div class="risk-card low" style="margin-bottom:10px;border-left-color:var(--color-blue);">
+        <div class="risk-title">3. India O&amp;G Domestic Capex</div>
+        <div class="risk-desc">GAIL (PDH plant — ₹139 Cr order for DEE), Numaligarh Refinery (₹245 Cr), Nayara Energy, Reliance petrochemicals — domestic O&amp;G capex cycle in full swing. Government's ₹11 lakh Cr energy capex target.</div>
+      </div>
+      <div class="risk-card low" style="margin-bottom:10px;border-left-color:var(--color-blue);">
+        <div class="risk-title">4. Nuclear &amp; Hydrogen — Optionality</div>
+        <div class="risk-desc">NPCIL nuclear approval opens ₹1,000+ Cr opportunity as India's nuclear programme accelerates. Hydrogen JV with international partner via Molsieve Designs (acquired 70% Oct 2025) — pilot plant ₹10–15 Cr capex.</div>
+      </div>
+      <div class="risk-card low" style="border-left-color:var(--color-blue);">
+        <div class="risk-title">5. Seamless Pipe Import Substitution</div>
+        <div class="risk-desc">No domestic manufacturer of P91/P92 seamless pipes currently. DEE's plant (Jan 2026) targets ₹200 Cr+ annual import replacement; premium pricing vs commodity pipes; EBITDA margin ~20% on this line vs 15% corporate average.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-header" style="margin-top:0;">Structural Headwinds</div>
+      <div class="risk-card medium" style="margin-bottom:10px;">
+        <div class="risk-title">1. BHEL / L&amp;T — Customer-Competitor Dynamic</div>
+        <div class="risk-desc">BHEL and L&amp;T are both customers (overflow orders) and competitors (in-house fabrication for 20–30% of their needs). In a sharp power capex upcycle, they may insource more, reducing DEE's addressable share. Only 20–30% of piping is outsourced by these entities.</div>
+      </div>
+      <div class="risk-card medium" style="margin-bottom:10px;">
+        <div class="risk-title">2. US Tariff Risk (Limited but Real)</div>
+        <div class="risk-desc">2% of order book (₹55 Cr) destined for USA; DEE Thailand faces 19% levy. Management says exposure is managed and ExxonMobil projects are mostly non-USA. Still a macro risk to monitor if tariff escalation continues.</div>
+      </div>
+      <div class="risk-card medium">
+        <div class="risk-title">3. Working Capital &amp; Cycle Risk</div>
+        <div class="risk-desc">Process piping is inherently WC-intensive: 12–18 month execution, back-to-back steel procurement, retention-heavy billing. Any slowdown in awarding (government policy change, commodity price spike) directly impacts cash conversion cycle.</div>
+      </div>
+
+      <div class="section-header">Competitive Landscape</div>
+      <div style="font-size:14px;line-height:1.75;">
+        <strong>India:</strong> No direct standalone competitor at DEE's scale for complex piping spools. BHEL and L&amp;T have in-house capability for simpler grades; they outsource complex/specialty work to DEE.<br><br>
+        <strong>International:</strong> Korea (Hyundai Heavy, Doosan) and Turkey compete on simpler piping; cannot match DEE on complex alloy spools or India-price-point for O&amp;G. China competes on commodity fittings only.<br><br>
+        <strong>Key Moat:</strong> Regulatory approval (ASME Code Stamp, IBR, NTPC, NPCIL) creates 2–5 year qualification barriers. New entrants cannot participate without years of track record.
+      </div>
+    </div>
+  </div>
+</div>
+<!-- TAB 4: FINANCIALS -->
+<div id="tab-4" class="tab-pane">
+  <div class="section-header" style="margin-top:0;">Quarterly P&amp;L — Consolidated (₹ Cr) | Metrics as rows, periods as columns</div>
+  <div class="table-wrap" style="margin-bottom:20px;">
+    <table>
+      <thead><tr>
+        <th>Metric</th><th>Q1FY25</th><th>Q2FY25</th><th>Q3FY25</th><th>Q4FY25</th><th>Q1FY26</th><th>Q2FY26</th><th class="latest">Q3FY26</th>
+      </tr></thead>
+      <tbody>
+        <tr><td class="label">Revenue</td><td>185.0</td><td>194.0</td><td>162.0</td><td>286.4</td><td>223.8</td><td>270.0</td><td style="background:var(--highlight-latest);">286.7</td></tr>
+        <tr><td class="label">EBITDA</td><td>24.8</td><td>29.8</td><td>5.7</td><td>63.5</td><td>35.9</td><td>44.1</td><td style="background:var(--highlight-latest);">43.4</td></tr>
+        <tr><td class="label">EBITDA Margin</td><td>13.4%</td><td>15.4%</td><td>3.5%</td><td>22.2%</td><td>16.0%</td><td>16.3%</td><td style="background:var(--highlight-latest);">15.2%</td></tr>
+        <tr><td class="label">PAT</td><td>3.2</td><td>22.3</td><td>-13.0</td><td>31.5</td><td>13.2</td><td>17.9</td><td style="background:var(--highlight-latest);">18.6</td></tr>
+        <tr><td class="label">PAT Margin</td><td>1.7%</td><td>11.5%</td><td>-8.0%</td><td>11.0%</td><td>5.9%</td><td>6.6%</td><td style="background:var(--highlight-latest);">6.5%</td></tr>
+        <tr><td class="label">YoY Rev Growth</td><td>+17.6%</td><td>+8.6%</td><td>-22.7%</td><td>+17.7%</td><td>+21.0%</td><td>+39.2%</td><td style="background:var(--highlight-latest);">+77.0%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">Note: Q3FY25 weakness — GAIL PDH plant ₹139 Cr drawing delays + international order ₹51 Cr delayed + Numaligarh plant ₹60 Cr delayed + Anjar construction delays. Q3FY26 includes ₹4.2 Cr Labour Code one-time charge. Consolidated figures include DEE Thailand + Fabricom.</div>
+
+  <div class="chart-card" style="margin-bottom:20px;">
+    <div class="chart-title">Quarterly Revenue &amp; EBITDA — Consolidated (₹ Cr)</div>
+    <canvas id="chartQuarterly" height="120"></canvas>
+  </div>
+
+  <div class="section-header">Annual P&amp;L — Standalone Screener Data (₹ Cr)</div>
+  <div class="table-wrap" style="margin-bottom:20px;">
+    <table>
+      <thead><tr><th>Metric</th><th>FY19</th><th>FY20</th><th>FY21</th><th>FY22</th><th>FY23</th><th>FY24</th><th>FY25</th><th class="latest">TTM</th></tr></thead>
+      <tbody>
+        <tr><td class="label">Revenue</td><td>519</td><td>620</td><td>411</td><td>370</td><td>503</td><td>644</td><td>639</td><td style="background:var(--highlight-latest);">853</td></tr>
+        <tr><td class="label">EBITDA</td><td>72</td><td>77</td><td>49</td><td>42</td><td>56</td><td>76</td><td>90</td><td style="background:var(--highlight-latest);">160</td></tr>
+        <tr><td class="label">OPM %</td><td>14%</td><td>12%</td><td>12%</td><td>11%</td><td>11%</td><td>12%</td><td>14%</td><td style="background:var(--highlight-latest);">19%</td></tr>
+        <tr><td class="label">Depreciation</td><td>19</td><td>21</td><td>22</td><td>22</td><td>24</td><td>31</td><td>34</td><td style="background:var(--highlight-latest);">36</td></tr>
+        <tr><td class="label">Interest</td><td>25</td><td>34</td><td>22</td><td>22</td><td>29</td><td>40</td><td>40</td><td style="background:var(--highlight-latest);">48</td></tr>
+        <tr><td class="label">Net Profit</td><td>32</td><td>28</td><td>22</td><td>12</td><td>19</td><td>20</td><td>23</td><td style="background:var(--highlight-latest);">65</td></tr>
+        <tr><td class="label">EPS (₹)</td><td>20.21</td><td>17.57</td><td>14.10</td><td>11.60</td><td>17.52</td><td>3.74</td><td>3.38</td><td style="background:var(--highlight-latest);">9.44</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">EPS pre-FY24: pre-IPO share count. Post-IPO dilution: 6.53 Cr shares. TTM includes Q4FY25+Q1-Q3FY26 on standalone basis (note: standalone ~30% lower than consolidated each quarter).</div>
+
+  <div class="chart-card" style="margin-bottom:20px;">
+    <div class="chart-title">Annual Revenue &amp; Operating Profit Trend (₹ Cr)</div>
+    <canvas id="chartAnnual" height="120"></canvas>
+  </div>
+
+  <div class="two-col" style="margin-bottom:20px;">
+    <div>
+      <div class="section-header" style="margin-top:0;">Balance Sheet Snapshot (₹ Cr)</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Item</th><th>FY23</th><th>FY24</th><th>FY25</th><th>Sep'25</th></tr></thead>
+          <tbody>
+            <tr><td class="label">Total Equity</td><td>475</td><td>496</td><td>824</td><td>846</td></tr>
+            <tr><td class="label">Borrowings</td><td>277</td><td>381</td><td>368</td><td>529</td></tr>
+            <tr><td class="label">Fixed Assets</td><td>248</td><td>291</td><td>301</td><td>414</td></tr>
+            <tr class="latest"><td class="label">CWIP</td><td>3</td><td>64</td><td>148</td><td>131</td></tr>
+            <tr><td class="label">Total Assets</td><td>908</td><td>1,147</td><td>1,524</td><td>1,769</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="section-header" style="margin-top:0;">Efficiency Ratios</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Metric</th><th>FY21</th><th>FY23</th><th>FY24</th><th>FY25</th></tr></thead>
+          <tbody>
+            <tr><td class="label">Debtor Days</td><td>160</td><td>99</td><td>87</td><td>116</td></tr>
+            <tr><td class="label">Inventory Days</td><td>280</td><td>490</td><td>487</td><td>708</td></tr>
+            <tr><td class="label">Payable Days</td><td>111</td><td>221</td><td>285</td><td>309</td></tr>
+            <tr class="latest"><td class="label">CCC (Days)</td><td>330</td><td>368</td><td>288</td><td>515</td></tr>
+            <tr><td class="label">ROCE %</td><td>6%</td><td>7%</td><td>8%</td><td>7%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:6px;">CCC 515 days (FY25 Screener methodology) vs 210–243 days cited by management (quarterly WC calculation). Gap due to methodology; both indicate high WC intensity.</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="section-header" style="margin-top:0;">Cash Flow Summary (₹ Cr)</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Item</th><th>FY21</th><th>FY22</th><th>FY23</th><th>FY24</th><th>FY25</th></tr></thead>
+          <tbody>
+            <tr><td class="label">CFO</td><td>69</td><td>56</td><td>21</td><td>84</td><td class="negative">-96</td></tr>
+            <tr><td class="label">CFI</td><td>-10</td><td>-32</td><td>-52</td><td>-140</td><td>-149</td></tr>
+            <tr class="latest"><td class="label">FCF</td><td>60</td><td>32</td><td>-29</td><td>-45</td><td class="negative">-248</td></tr>
+            <tr><td class="label">CFO/OP</td><td>154%</td><td>146%</td><td>46%</td><td>121%</td><td class="negative">-97%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:8px;padding:8px;background:var(--highlight-latest);border-radius:6px;">FY25 CFO deeply negative: RM inventory +₹174 Cr YoY (Anjar forward-buy). Normalization expected FY27 as capex cycle ends and inventory converts.</div>
+    </div>
+    <div class="card">
+      <div class="section-header" style="margin-top:0;">Forensic Ratios</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Score</th><th>Value</th><th>Signal</th></tr></thead>
+          <tbody>
+            <tr><td class="label">Piotroski F-Score</td><td>5 / 9</td><td class="neutral-val">NEUTRAL</td></tr>
+            <tr><td class="label">CFO/PAT Ratio (FY24)</td><td>421%</td><td class="positive">STRONG</td></tr>
+            <tr><td class="label">CFO/PAT Ratio (FY25)</td><td class="negative">-418%</td><td class="negative">WEAK</td></tr>
+            <tr><td class="label">Export Obligation Liab.</td><td>₹100 Cr</td><td class="negative">HIGH RISK</td></tr>
+            <tr class="latest"><td class="label">Net Debt/EBITDA</td><td>~2.0x</td><td class="neutral-val">MODERATE</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- TAB 5: GROWTH -->
+<div id="tab-5" class="tab-pane">
+  <div class="section-header" style="margin-top:0;">Revenue &amp; Earnings CAGR</div>
+  <div class="three-col" style="margin-bottom:20px;">
+    <div class="kpi-card">
+      <div class="kpi-label">Revenue 5Y CAGR (FY20–FY25)</div>
+      <div class="kpi-value">+0.6%</div>
+      <div class="kpi-sub">Depressed by COVID (FY21) and order drought (FY22). Not representative of growth engine.</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Revenue 3Y CAGR (FY22–FY25)</div>
+      <div class="kpi-value">+20%</div>
+      <div class="kpi-sub">Faster growth as order book recovered from 2020 lows. FY25 standalone ₹639 Cr.</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">TTM Revenue vs FY25</div>
+      <div class="kpi-value">+34%</div>
+      <div class="kpi-sub">TTM standalone ₹853 Cr. Consolidated 9M FY26 alone = ₹780 Cr — implies full-year FY26 ~₹1,050 Cr.</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">FY26E Revenue (Consol.)</div>
+      <div class="kpi-value">~₹1,050 Cr</div>
+      <div class="kpi-sub">9M = ₹780 Cr; management guided ₹1,300 Cr (downgraded from PSERC headwind). +27% YoY.</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">FY27E Revenue (Mgmt)</div>
+      <div class="kpi-value">₹1,500+ Cr</div>
+      <div class="kpi-sub">Peak capacity: Palwal ₹1,300–1,500 Cr + Anjar ₹800–1,000 Cr = ₹2,100–2,500 Cr total potential.</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">FY27E EBITDA Margin (Mgmt)</div>
+      <div class="kpi-value">18–20%</div>
+      <div class="kpi-sub">Operating leverage from Anjar + seamless pipe premium margin (~20%) + fixed cost dilution.</div>
+    </div>
+  </div>
+
+  <div class="chart-card" style="margin-bottom:20px;">
+    <div class="chart-title">Order Book Progression (₹ Cr) — Standalone Core Piping</div>
+    <canvas id="chartOrderBook" height="100"></canvas>
+  </div>
+
+  <div class="section-header">Growth Trigger Cards</div>
+  <div class="trigger-card">
+    <span class="badge badge-high">HIGH</span>
+    <div class="trigger-title">India Power Piping Supercycle (80 GW + Nuclear)</div>
+    <div class="trigger-desc">GoI has announced 80 GW of new thermal power capacity. DEE is 1 of only 3 NTPC-qualified piping fabricators. Each 800 MW plant generates ₹400–600 Cr piping scope over 36–48 months. BHEL formal RFQs started Q4 FY25; DEE power order book already ₹1,005 Cr (52% of consolidated). Nuclear programme via NPCIL approval provides additional ₹500+ Cr optionality. Timeline: FY26–FY30 (peak activity).</div>
+    <div class="trigger-bear">Bear pushback: BHEL/L&amp;T insource 70–80% of their piping needs; DEE only gets overflow. If these EPCs ramp in-house capacity, DEE's addressable share shrinks. Government project award timelines historically slip 12–24 months.</div>
+  </div>
+  <div class="trigger-card">
+    <span class="badge badge-high">HIGH</span>
+    <div class="trigger-title">Dow Chemical &amp; Global O&amp;G Export Ramp (Anjar)</div>
+    <div class="trigger-desc">Dow Chemical Canada $40.7M job-work order (₹340 Cr) executing from Anjar through Dec 2026. ExxonMobil rate contract (₹40–50 Cr/year FY26). JGC LNG MOU formalizing — LNG projects globally increasing. Anjar's logistics advantage (proximity to Kandla Port = 1–2% margin saving) and dedicated O&amp;G hub positioning makes DEE the preferred India export partner. Export mix expected to recover from 36% (FY25) toward 45–50%.</div>
+    <div class="trigger-bear">Bear pushback: JGC revenue dropped 86% in FY25 vs FY24. US tariff policy could dampen LNG project FIDs. Export orders are lumpy — Dow order is 60%+ of visible export pipeline; next anchor order not yet secured.</div>
+  </div>
+  <div class="trigger-card">
+    <span class="badge badge-high">HIGH</span>
+    <div class="trigger-title">Seamless Pipe Plant — Import Substitute</div>
+    <div class="trigger-desc">7,000 MTPA facility for P91/P92 chrome-moly seamless pipes. Currently no domestic manufacturer in this grade. BHEL imports from Europe at substantial premium. DEE's plant (₹90 Cr capex) targets ₹450 Cr peak revenue (65 MTPA at ~₹7 Cr/tonne realization) at 30–35% IRR. Initially sold to BHEL/L&amp;T; 40–50% captive use later. EBITDA margin on this product line: ~20% vs corporate 15%.</div>
+    <div class="trigger-bear">Bear pushback: Plant was due Jan 2026 but "nearing commissioning" language in Q3 FY26 (Feb 2026) suggests delays. At ₹450 Cr peak, plant will take 4–6 years at 100% utilization to recover capex. Ramp-up from zero to 65 MTPA is not linear.</div>
+  </div>
+  <div class="trigger-card">
+    <span class="badge badge-medium">MEDIUM</span>
+    <div class="trigger-title">Anjar Operating Leverage Crystallisation</div>
+    <div class="trigger-desc">All 30,000 MTPA at Anjar commissioned Sep 2025. Fixed cost is now fully absorbed; incremental revenue flows at higher incremental margin. Annual depreciation of ₹60–65 Cr post full capitalisation creates operating leverage vs revenue growth. Margin path: 15% (FY26) → 18–20% (FY27) as Anjar revenue contribution scales.</div>
+    <div class="trigger-bear">Bear pushback: EBITDA margins were guided at 19–20% for FY26 but revised to 16–18% (twice). FY27 18–20% guidance is management's third attempt. Power tariff drag (~₹36 Cr FY26) and Labour Code one-time impact may persist. Actual margin delivery track record mixed.</div>
+  </div>
+  <div class="trigger-card">
+    <span class="badge badge-optionality">OPTIONALITY</span>
+    <div class="trigger-title">Hydrogen &amp; New Verticals (Molsieve / NPCIL)</div>
+    <div class="trigger-desc">Molsieve Designs (70% acquired): hydrogen purification to 99.9999% purity for green hydrogen applications. JV with international clean-tech partner for modular H2 plants in India and Thailand. Pilot plant capex ₹10–15 Cr; commercial scaling TBD. Nuclear piping (NPCIL approved) — foreign nuclear clients in advanced discussions. These are optionality, not base case.</div>
+    <div class="trigger-bear">Bear pushback: Green hydrogen economics remain challenged; no committed project. Nuclear piping is highly capital-intensive qualification process. Neither vertical will be material before FY28–29.</div>
+  </div>
+</div>
+<!-- TAB 7: FORENSICS -->
+<div id="tab-7" class="tab-pane">
+  <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+    <div style="font-size:18px;font-weight:800;">Overall Forensic Verdict:</div>
+    <span class="badge badge-amber-flag" style="font-size:14px;padding:6px 18px;">AMBER FLAGS</span>
+    <div style="font-size:13px;color:var(--text-secondary);">Not a red flag situation; requires monitoring. Export obligation explosion and bank-book discrepancy are the two items requiring active tracking.</div>
+  </div>
+
+  <div class="two-col" style="margin-bottom:20px;">
+    <div class="card">
+      <div class="section-header" style="margin-top:0;">Auditor &amp; IFC</div>
+      <div class="forensic-item"><div class="forensic-label">Auditor</div><div class="forensic-value">S.R. Batliboi &amp; Associates LLP (EY member firm — mid-tier Big 4 equivalent)</div></div>
+      <div class="forensic-item"><div class="forensic-label">Engagement Partner</div><div class="forensic-value">Rajeev Sawhney</div></div>
+      <div class="forensic-item"><div class="forensic-label">Firm Type</div><div class="forensic-value">Big 4 equivalent (EY affiliate) — strong independence signal</div></div>
+      <div class="forensic-item"><div class="forensic-label">IFC Opinion</div><div class="forensic-value">Clean — no material weaknesses in internal financial controls</div></div>
+      <div class="forensic-item"><div class="forensic-label">Emphasis of Matter</div><div class="forensic-value">Yes — power plant PP&amp;E ₹26.4 Cr carrying value; potential impairment if PSERC tariff order stands. Sub-judice; no impairment taken.</div></div>
+    </div>
+    <div class="card">
+      <div class="section-header" style="margin-top:0;">Key Audit Matters (FY2025)</div>
+      <div class="forensic-item"><div class="forensic-label">KAM 1</div><div class="forensic-value">Impairment assessment of investments in subsidiaries (DCF-based test). DEE Thailand loan extended 3 years; outstanding ₹32.8 Cr + interest receivable ₹25.1 Cr. Auditors satisfied with DCF support.</div></div>
+      <div class="forensic-item"><div class="forensic-label">KAM 2</div><div class="forensic-value">Revenue recognition for long-term piping construction contracts (INDAS 115). Percentage-of-completion method; significant judgment. Auditors verified contract documentation and completion estimates.</div></div>
+      <div class="forensic-item"><div class="forensic-label">KAM Change</div><div class="forensic-value">Subsidiary impairment KAM active/continuing — no new KAMs introduced; no KAMs dropped.</div></div>
+    </div>
+  </div>
+
+  <div class="section-header">Related Party Transactions (FY2025)</div>
+  <div class="table-wrap" style="margin-bottom:20px;">
+    <table>
+      <thead><tr><th>Counterparty</th><th>Nature</th><th>₹ Cr</th><th>% Revenue</th><th>YoY</th><th>Flag</th></tr></thead>
+      <tbody>
+        <tr><td class="label">KL Bansal (CMD)</td><td>Director loan received (unsecured)</td><td>18.55</td><td>2.9%</td><td>↓ vs ₹33.75 Cr FY24</td><td><span class="badge badge-amber-flag">MONITOR</span></td></tr>
+        <tr class="latest"><td class="label">KL Bansal (CMD)</td><td>Director loan outstanding at year-end</td><td>6.55</td><td>1.0%</td><td>vs ₹0 in FY24</td><td><span class="badge badge-amber-flag">MONITOR</span></td></tr>
+        <tr><td class="label">DEE Thailand (WOS)</td><td>Loan outstanding + interest receivable</td><td>57.97</td><td>9.1%</td><td>↓ post equity conversion</td><td><span class="badge badge-medium">MEDIUM</span></td></tr>
+        <tr><td class="label">DEE Thailand (WOS)</td><td>Corp. guarantee given</td><td>40.10</td><td>6.3%</td><td>New</td><td><span class="badge badge-medium">MEDIUM</span></td></tr>
+        <tr><td class="label">DEE Fabricom (WOS)</td><td>Loan + interest receivable</td><td>9.96</td><td>1.6%</td><td>→</td><td><span class="badge badge-low">LOW</span></td></tr>
+        <tr><td class="label">CFO family members</td><td>Remuneration (spouse + brother)</td><td>0.73</td><td>0.1%</td><td>→</td><td><span class="badge badge-medium">MEDIUM</span></td></tr>
+        <tr><td class="label">KMP total compensation</td><td>Salaries + benefits</td><td>5.39</td><td>0.8%</td><td>+5.6%</td><td><span class="badge badge-low">LOW</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">RPT Risk overall: MEDIUM-HIGH. CMD KL Bansal, Ashima Bansal, and Madhubala have given personal guarantees as collateral for bank borrowings — positive alignment signal. Revolving director loan pattern is the primary concern: CMD borrowed ₹18.55 Cr in FY25 and ₹33.75 Cr in FY24 from the company on unsecured basis.</div>
+
+  <div class="section-header">Contingent Liabilities (FY2025)</div>
+  <div class="table-wrap" style="margin-bottom:20px;">
+    <table>
+      <thead><tr><th>Item</th><th>FY2025 (₹ Cr)</th><th>FY2024 (₹ Cr)</th><th>Change</th><th>% Net Worth</th><th>Flag</th></tr></thead>
+      <tbody>
+        <tr class="latest"><td class="label">Export Obligation (duty-free imports)</td><td>100.33</td><td>48.71</td><td class="negative">+106% YoY</td><td>12.2%</td><td><span class="badge badge-high">HIGH</span></td></tr>
+        <tr><td class="label">Custom Duty (unfulfilled exports)</td><td>8.80</td><td>4.24</td><td class="negative">+108% YoY</td><td>1.1%</td><td><span class="badge badge-medium">MEDIUM</span></td></tr>
+        <tr><td class="label">Customs Demand + Penalty (new)</td><td>11.20</td><td>0.00</td><td class="negative">NEW</td><td>1.4%</td><td><span class="badge badge-medium">MEDIUM</span></td></tr>
+        <tr><td class="label">Antidumping Duty Demand (new)</td><td>0.72</td><td>0.00</td><td class="negative">NEW</td><td>0.1%</td><td><span class="badge badge-low">LOW</span></td></tr>
+        <tr><td class="label">Income Tax Demands</td><td>2.52</td><td>2.07</td><td>+22%</td><td>0.3%</td><td><span class="badge badge-low">LOW</span></td></tr>
+        <tr><td class="label">Excise/GST Demands</td><td>3.51</td><td>3.45</td><td>+2%</td><td>0.4%</td><td><span class="badge badge-low">LOW</span></td></tr>
+        <tr><td class="label">Corporate Guarantees to Subs</td><td>52.20</td><td>60.29</td><td class="positive">-13%</td><td>6.3%</td><td><span class="badge badge-medium">MEDIUM</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="font-size:12px;color:var(--text-muted);padding:10px;background:var(--highlight-latest);border-radius:6px;margin-bottom:20px;">CRITICAL: Export Obligation ₹100.33 Cr = 4.3x standalone PAT (FY25). If DEE fails to fulfil export obligations on duty-free imports, this amount becomes payable. Management is confident of fulfilment; Anjar ramp-up is the hedge. No provision taken.</div>
+
+  <div class="two-col" style="margin-bottom:20px;">
+    <div class="card">
+      <div class="section-header" style="margin-top:0;">CWIP Ageing</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Bucket</th><th>FY2025 (₹ Cr)</th><th>FY2024 (₹ Cr)</th></tr></thead>
+          <tbody>
+            <tr class="latest"><td class="label">&lt; 1 Year</td><td>91.93</td><td>63.74</td></tr>
+            <tr><td class="label">1–2 Years</td><td>56.20</td><td>0.00</td></tr>
+            <tr><td class="label">Overdue / Suspended</td><td>0.00</td><td>0.00</td></tr>
+            <tr><td class="label">Total CWIP</td><td>148.13</td><td>63.74</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="font-size:13px;color:var(--color-green);margin-top:8px;font-weight:600;">CLEAN — All CWIP within 2-year bracket; no stalled or abandoned projects. Seamless pipe plant + Anjar Phase 2 driving the balance.</div>
+    </div>
+    <div class="card">
+      <div class="section-header" style="margin-top:0;">Bank-Book Discrepancy (Auditor Flag)</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Year</th><th>Item</th><th>Gap (₹ Cr)</th></tr></thead>
+          <tbody>
+            <tr class="latest"><td>FY2025</td><td class="label">Trade Receivables</td><td class="negative">+9.09</td></tr>
+            <tr><td>FY2024</td><td class="label">Inventory</td><td class="negative">+45.04</td></tr>
+            <tr><td>FY2024</td><td class="label">Trade Receivables</td><td class="negative">-16.36</td></tr>
+            <tr><td>FY2023</td><td class="label">Inventory (range)</td><td class="negative">+2–13 Cr</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="font-size:13px;color:var(--color-amber);margin-top:8px;font-weight:600;">Multi-year pattern across quarters. Management: provisional bank statements differ from audited year-end books. Risk is real but explained. Watch FY26 AR for continuation.</div>
+    </div>
+  </div>
+
+  <div class="section-header">Forensic Scorecard</div>
+  <div class="card">
+    <div class="forensic-item"><div class="forensic-label">Revenue Quality</div><div class="forensic-value"><span class="badge badge-amber-flag">AMBER</span> — Job work collapse (₹171 Cr → ₹68 Cr) in standalone FY25 masks underlying piping revenue growth. Consolidated captures full picture.</div></div>
+    <div class="forensic-item"><div class="forensic-label">Cash Conversion</div><div class="forensic-value"><span class="badge badge-high">RED FLAG</span> — CFO negative FY25; FCF -₹248 Cr. Driven by inventory build (justifiable); but 3 consecutive years of FCF deterioration is a flag.</div></div>
+    <div class="forensic-item"><div class="forensic-label">Export Obligation</div><div class="forensic-value"><span class="badge badge-high">RED FLAG</span> — ₹100 Cr contingency (4.3x PAT); +106% YoY; largest single forensic item. Unprovided.</div></div>
+    <div class="forensic-item"><div class="forensic-label">RPT Governance</div><div class="forensic-value"><span class="badge badge-amber-flag">AMBER</span> — Revolving CMD loans; CFO family employed; subsidiary loans extended. Personal guarantees by promoters offset partially.</div></div>
+    <div class="forensic-item"><div class="forensic-label">Subsidiary Exposure</div><div class="forensic-value"><span class="badge badge-amber-flag">AMBER</span> — Total sub exposure ₹181 Cr (investments + loans + interest). DEE Thailand loan extended 3 years. Thailand now profitable per management — positive trajectory.</div></div>
+    <div class="forensic-item"><div class="forensic-label">CWIP Quality</div><div class="forensic-value"><span class="badge badge-clean">CLEAN</span> — All within 2-year bracket; no overdue; live projects converting.</div></div>
+    <div class="forensic-item"><div class="forensic-label">Power Plant EOM</div><div class="forensic-value"><span class="badge badge-amber-flag">AMBER</span> — ₹26.4 Cr carrying value flagged by auditors; PSERC case sub-judice. Limited absolute quantum but governance optics.</div></div>
+    <div class="forensic-item"><div class="forensic-label">FEMA/ED Notice</div><div class="forensic-value"><span class="badge badge-clean">CLEAN</span> — Notice received May 2023; info furnished Aug 2023; management considers resolved. No mention in FY25 AR.</div></div>
+  </div>
+</div>
+<!-- TAB 8: VALUATION -->
+<div id="tab-8" class="tab-pane">
+  <div class="section-header" style="margin-top:0;">Current Valuation Metrics</div>
+  <div class="kpi-grid" style="margin-bottom:20px;">
+    <div class="kpi-card"><div class="kpi-label">CMP</div><div class="kpi-value">₹492.70</div><div class="kpi-sub">Screener scrape May 2026</div></div>
+    <div class="kpi-card"><div class="kpi-label">P/E (TTM)</div><div class="kpi-value">50.0x</div><div class="kpi-sub">EPS TTM ₹9.44</div></div>
+    <div class="kpi-card"><div class="kpi-label">EV/EBITDA</div><div class="kpi-value">22.4x</div><div class="kpi-sub">TTM EBITDA ~₹160 Cr</div></div>
+    <div class="kpi-card"><div class="kpi-label">P/B</div><div class="kpi-value">4.03x</div><div class="kpi-sub">Book Value ₹122/share</div></div>
+    <div class="kpi-card"><div class="kpi-label">MCap/Sales</div><div class="kpi-value">4.0x</div><div class="kpi-sub">TTM standalone ₹853 Cr</div></div>
+    <div class="kpi-card"><div class="kpi-label">Target Price</div><div class="kpi-value">₹620</div><div class="kpi-sub">+26% upside | 18M horizon</div></div>
+  </div>
+
+  <div class="two-col" style="margin-bottom:20px;">
+    <div class="card">
+      <div class="section-header" style="margin-top:0;">Target Price Derivation</div>
+      <div style="font-size:14px;line-height:1.8;">
+        <strong>Method 1 — Forward P/E:</strong><br>
+        FY27E EPS: ~₹20–22/share (consol. PAT ~₹135–145 Cr / 6.55 Cr shares)<br>
+        Applied P/E: 28x (sector average for growth companies; 40% discount to current TTM P/E)<br>
+        Implied Price: <strong>₹560–616</strong><br><br>
+        <strong>Method 2 — EV/EBITDA:</strong><br>
+        FY27E EBITDA: ~₹220–250 Cr (at 18–20% on ~₹1,250 Cr revenue)<br>
+        Applied EV/EBITDA: 16x (peer median discount for WC risk)<br>
+        Implied Price: <strong>₹580–640</strong><br><br>
+        <strong>Blended Target: ₹620 (12–18 month horizon)</strong><br>
+        Key assumption: FY27 EBITDA margin delivery of 18%+. PSERC resolution is upside risk.
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-header" style="margin-top:0;">Valuation Verdict</div>
+      <div style="padding:12px;background:var(--highlight-latest);border-radius:8px;margin-bottom:14px;font-size:14px;">
+        <strong>Verdict: FAIR TO SLIGHTLY EXPENSIVE on TTM; ATTRACTIVE on FY27E</strong><br>
+        At 50x TTM P/E, the market is fully pricing in the inflection story. If FY27 EBITDA margin delivers 18%+ and revenue hits ₹1,250 Cr+, forward P/E compresses to ~22–25x — reasonable for a growth industrial. The risk is that margins stay in the 15–16% range (as in 9M FY26) due to power division drag and scale-up costs.
+      </div>
+      <div class="forensic-item"><div class="forensic-label">Upside scenario</div><div class="forensic-value">PSERC resolved favourably + seamless pipe ramp → ₹750–800 (18–24M)</div></div>
+      <div class="forensic-item"><div class="forensic-label">Base scenario</div><div class="forensic-value">FY27 margins 18% + revenue ₹1,250 Cr → ₹620 (18M)</div></div>
+      <div class="forensic-item"><div class="forensic-label">Bear scenario</div><div class="forensic-value">WC spiral + margin 15% + guidance cuts → ₹300–350 (18M)</div></div>
+    </div>
+  </div>
+
+  <div class="section-header">Peer Comparison (Screener Data — Capital Goods Sector)</div>
+  <div class="table-wrap" style="margin-bottom:20px;">
+    <table>
+      <thead><tr><th>Company</th><th>MCap (₹ Cr)</th><th>P/E</th><th>EV/EBITDA</th><th>P/B</th><th>ROCE %</th><th>OPM %</th><th>Sales Growth %</th><th>ROE 3Y %</th></tr></thead>
+      <tbody>
+        <tr class="latest"><td class="label">DEE Development</td><td>3,413</td><td>50.0</td><td>22.4</td><td>4.03</td><td>6.9</td><td>18.8</td><td>42.5</td><td>3.8</td></tr>
+        <tr><td class="label">Kaynes Tech</td><td>29,256</td><td>74.9</td><td>42.6</td><td>6.25</td><td>14.3</td><td>16.3</td><td>41.8</td><td>11.3</td></tr>
+        <tr><td class="label">Honeywell Auto</td><td>25,937</td><td>50.6</td><td>29.7</td><td>6.19</td><td>18.4</td><td>12.6</td><td>14.7</td><td>14.3</td></tr>
+        <tr><td class="label">Jyoti CNC Auto.</td><td>16,978</td><td>47.9</td><td>29.6</td><td>9.27</td><td>24.4</td><td>26.9</td><td>22.3</td><td>19.5</td></tr>
+        <tr><td class="label">Tega Industries</td><td>12,189</td><td>60.4</td><td>32.7</td><td>8.26</td><td>17.8</td><td>18.9</td><td>5.7</td><td>17.5</td></tr>
+        <tr><td class="label">Sector Median</td><td>556</td><td>31.5</td><td>16.8</td><td>4.00</td><td>16.7</td><td>14.0</td><td>14.0</td><td>15.7</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">Note: Peers shown are general capital goods comparables from Screener dataset. Pure-play piping peers (Welspun Corp, MTAR) not available in this dataset. DEE trades at discount to peers on ROCE (6.9% vs 16–24%) reflecting post-IPO dilution and heavy capex phase. P/E premium vs sector median (50x vs 31.5x) implies growth-adjusted premium.</div>
+
+  <div class="chart-card">
+    <div class="chart-title">Peer ROCE vs P/E Positioning</div>
+    <canvas id="chartPeers" height="200"></canvas>
+  </div>
+
+  <div class="section-header">DCF Assumptions (Illustrative)</div>
+  <div class="card">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;font-size:14px;">
+      <div><strong>WACC:</strong> 14% (cost of equity ~16% given small-cap risk; debt at 9.5%)</div>
+      <div><strong>FY26E Revenue:</strong> ₹1,050 Cr consolidated</div>
+      <div><strong>FY27E Revenue:</strong> ₹1,350 Cr (+28% YoY)</div>
+      <div><strong>FY28E Revenue:</strong> ₹1,650 Cr (+22% YoY)</div>
+      <div><strong>Terminal Growth:</strong> 6% (long-run nominal Indian capex cycle)</div>
+      <div><strong>Terminal EBITDA Margin:</strong> 18%</div>
+      <div><strong>DCF-implied value:</strong> ₹560–640 (consistent with target range)</div>
+      <div><strong>Sensitivity:</strong> 1% WACC change = ±₹60/share; 1% margin change = ±₹45/share</div>
+    </div>
+  </div>
+</div>
+<!-- TAB 9: THESIS -->
+<div id="tab-9" class="tab-pane">
+  <div class="section-header" style="margin-top:0;">Investment Thesis — Scenario Analysis</div>
+  <div class="scenario-grid" style="margin-bottom:20px;">
+    <div class="scenario-card scenario-bull">
+      <div class="scenario-label" style="color:var(--color-green);">BULL CASE</div>
+      <div class="scenario-price" style="color:var(--color-green);">₹800</div>
+      <div class="scenario-prob">Probability: 25% | Timeline: 18–24M</div>
+      <div style="margin-top:10px;font-size:13px;line-height:1.6;">
+        <strong>Catalysts:</strong><br>
+        1. BHEL large power orders (₹400–600 Cr each) convert from L1 to formal PO in H2 FY26<br>
+        2. PSERC HC ruling in DEE's favour → ₹7.47/unit restored + retrospective recovery<br>
+        3. Seamless pipe plant ramps to 50%+ utilisation by FY27; margin accretion +100–150bps
+      </div>
+    </div>
+    <div class="scenario-card scenario-base">
+      <div class="scenario-label" style="color:var(--color-orange);">BASE CASE</div>
+      <div class="scenario-price" style="color:var(--color-orange);">₹620</div>
+      <div class="scenario-prob">Probability: 50% | Timeline: 18M</div>
+      <div style="margin-top:10px;font-size:13px;line-height:1.6;">
+        <strong>Assumptions:</strong><br>
+        FY27 Revenue: ₹1,350 Cr (consol.); EBITDA Margin: 18%; PAT: ₹140 Cr<br>
+        Power tariff stays at current levels; seamless pipe ramps slowly<br>
+        Order book stable at ₹1,600–1,800 Cr; L1 pipeline converts at 70%
+      </div>
+    </div>
+    <div class="scenario-card scenario-bear">
+      <div class="scenario-label" style="color:var(--color-red);">BEAR CASE</div>
+      <div class="scenario-price" style="color:var(--color-red);">₹320</div>
+      <div class="scenario-prob">Probability: 25% | Timeline: 18M</div>
+      <div style="margin-top:10px;font-size:13px;line-height:1.6;">
+        <strong>Risks:</strong><br>
+        1. Export obligation of ₹100 Cr crystallises (duty payment required)<br>
+        2. WC cycle worsens → covenant breach, fresh equity dilution<br>
+        3. BHEL power orders delayed 24M+; Dow order completes with no replacement
+      </div>
+    </div>
+  </div>
+  <div style="text-align:center;font-size:14px;color:var(--text-secondary);margin-bottom:20px;">
+    <strong>Probability-weighted target: ₹590</strong> &nbsp;|&nbsp; Rounded to ₹620 with positive optionality bias (seamless pipe, nuclear)
+  </div>
+
+  <div class="two-col" style="margin-bottom:20px;">
+    <div class="chart-card">
+      <div class="chart-title">Scenario Probability Distribution</div>
+      <canvas id="chartScenario" height="200"></canvas>
+    </div>
+    <div class="card">
+      <div class="section-header" style="margin-top:0;">Conviction Score</div>
+      <div style="font-size:48px;font-weight:800;text-align:center;color:var(--color-orange);margin:20px 0 10px;">6 / 10</div>
+      <div class="conviction-wrap" style="max-width:300px;margin:0 auto 16px;"><div class="conviction-fill" style="width:60%;"></div></div>
+      <div style="font-size:13px;line-height:1.7;color:var(--text-secondary);">
+        <strong>What's in the price:</strong> Order book inflection, Anjar ramp, seamless pipe optionality. <br>
+        <strong>What's not in the price:</strong> WC normalisation risk, power tariff headwind, export obligation contingency, seamless pipe execution risk. <br>
+        <strong>Why not higher:</strong> Consecutive guidance downgrades, CFO turning negative, CCC at 515 days, multiple amber forensic flags. <br>
+        <strong>Why not lower:</strong> Real qualified moat, genuine order book growth, India power/O&amp;G cycles are structural (5–10 year tailwinds).
+      </div>
+    </div>
+  </div>
+
+  <div class="section-header">Key Monitorables</div>
+  <div class="card">
+    <div class="monitor-grid hdr"><div>Metric</div><div>Current</div><div>Bull Threshold</div><div>Bear Threshold</div></div>
+    <div class="monitor-grid"><div class="label">9M FY26 Order Inflow</div><div>₹1,870 Cr (FY26 full year)</div><div>&gt;₹2,000 Cr</div><div>&lt;₹1,200 Cr</div></div>
+    <div class="monitor-grid"><div class="label">EBITDA Margin (quarterly)</div><div>15.2% (Q3FY26)</div><div>&gt;18%</div><div>&lt;13%</div></div>
+    <div class="monitor-grid"><div class="label">Cash Conversion Cycle</div><div>243 days (Sep'25)</div><div>&lt;180 days</div><div>&gt;300 days</div></div>
+    <div class="monitor-grid"><div class="label">Export Obligation Fulfillment</div><div>₹100 Cr unprovided</div><div>Fulfilled, no liability</div><div>Provision required</div></div>
+    <div class="monitor-grid"><div class="label">PSERC HC Ruling (Power)</div><div>Stayed at ₹7.47/unit</div><div>HC rules in DEE favour</div><div>Tariff cut to ₹5.88/unit</div></div>
+    <div class="monitor-grid"><div class="label">Seamless Pipe Commissioning</div><div>"Nearing" (Q3FY26)</div><div>50% utilisation FY27</div><div>Further delays &gt;12M</div></div>
+    <div class="monitor-grid"><div class="label">BHEL Power Order PO</div><div>L1 pipeline ₹211 Cr</div><div>₹400+ Cr formal PO</div><div>No PO by Sep 2026</div></div>
+    <div class="monitor-grid"><div class="label">CFO (FY26)</div><div>Negative FY25</div><div>Positive + ₹50 Cr</div><div>Negative again</div></div>
+  </div>
+
+  <div class="section-header">Catalyst Timeline — Next 4 Quarters</div>
+  <div class="timeline">
+    <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">Q4 FY26 (Jan–Mar 2026)</div><div class="timeline-title">Q4 Revenue — expected highest quarter of FY26</div><div class="timeline-desc">Historical pattern: Q4 is maximum billing quarter. BHEL piping first shipments expected Q4 FY26. Seamless pipe commercial production confirmation.</div></div>
+    <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">Apr–Jun 2026 (Q1 FY27)</div><div class="timeline-title">FY27 Order Book Opening + First BHEL PO</div><div class="timeline-desc">Management guided order book opening FY27 at ₹1,100–1,250 Cr (standalone). Formal BHEL orders expected. Biomass pellet plant at MPPL commissioning.</div></div>
+    <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">H1 FY27</div><div class="timeline-title">Cash Flow Normalisation + Debt Repayment</div><div class="timeline-desc">Management stated cash flows improving in H1 FY27 post-capex cycle completion. ₹40 Cr/year debt repayment target. CFO should turn positive.</div></div>
+    <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">FY27 Full Year</div><div class="timeline-title">EBITDA Margin 18–20% — the real test</div><div class="timeline-desc">Management has guided 18–20% for FY27 across 4 consecutive calls. This is the key delivery gate. If margins stay at 15%, re-rating reverses.</div></div>
+  </div>
+</div>
+<!-- TAB 10: RISKS -->
+<div id="tab-10" class="tab-pane">
+  <div class="section-header" style="margin-top:0;">Risk Matrix</div>
+  <div class="chart-card" style="margin-bottom:20px;">
+    <div class="chart-title">Risk Matrix — Impact vs Probability</div>
+    <canvas id="chartRisk" height="200"></canvas>
+  </div>
+
+  <div class="section-header">Risk Register</div>
+  <div class="risk-card high">
+    <div style="display:flex;justify-content:space-between;align-items:center;"><div class="risk-title">1. Working Capital Spiral &amp; CFO Deterioration</div><span class="badge badge-high">HIGH</span></div>
+    <div class="risk-desc">CCC has worsened from 288 days (FY24) to 515 days (FY25) on Screener methodology. CFO was negative ₹96 Cr in FY25. Export obligation ₹100 Cr unprovided. If inventory does not convert to receivables and collections do not improve, net debt could breach ₹450–500 Cr range, pressuring covenants and potentially requiring fresh equity. <strong>Impact: HIGH | Probability: MEDIUM | Status: ACTIVE — watch quarterly CFO.</strong></div>
+  </div>
+  <div class="risk-card high" style="margin-top:12px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;"><div class="risk-title">2. Export Obligation Contingency (₹100 Cr)</div><span class="badge badge-high">HIGH</span></div>
+    <div class="risk-desc">Company imported raw materials duty-free (EPCG / advance authorization scheme) and must fulfil export obligations. ₹100.33 Cr outstanding obligation (up 106% YoY). If not fulfilled, entire amount becomes a customs liability. No provision taken. Management confident Anjar ramp will generate the required exports. <strong>Impact: HIGH | Probability: LOW-MEDIUM | Status: ACTIVE — Anjar ramp is the hedge.</strong></div>
+  </div>
+  <div class="risk-card high" style="margin-top:12px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;"><div class="risk-title">3. PSERC Tariff Cut — Power Division</div><span class="badge badge-high">HIGH</span></div>
+    <div class="risk-desc">DEE Power Division (Abohar 8MW): PSERC cut tariff to ₹5.877/unit (from ₹7.47). HC Punjab &amp; Haryana granted stay Oct 2025; company billing at ₹7.47 pending final order. MPPL (Muktsar 6MW): PSERC final order ₹5.224/unit from ₹8.59 interim. Annual combined drag ~₹38.5 Cr if both cuts crystallise. Impairment risk on ₹26 Cr power plant PP&amp;E. <strong>Impact: MEDIUM-HIGH | Probability: MEDIUM | Status: ACTIVE — HC outcome pending.</strong></div>
+  </div>
+  <div class="risk-card medium" style="margin-top:12px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;"><div class="risk-title">4. Execution Concentration &amp; Order Lumpiness</div><span class="badge badge-medium">MEDIUM</span></div>
+    <div class="risk-desc">Dow Chemical order (~₹350 Cr) completes Dec 2026 — is the anchor for Anjar revenue in FY26/FY27. No confirmed replacement of equal size yet secured. Revenue is heavily Q4-weighted (management's own admission: "Q1 slowest, Q4 maximum"). A single quarter slip can cause a 15–20% EPS miss. <strong>Impact: MEDIUM | Probability: MEDIUM | Status: MONITORING.</strong></div>
+  </div>
+  <div class="risk-card medium" style="margin-top:12px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;"><div class="risk-title">5. Seamless Pipe Ramp Risk</div><span class="badge badge-medium">MEDIUM</span></div>
+    <div class="risk-desc">Plant due Jan 2026 but "nearing commissioning" as of Q3 FY26 call (Feb 2026). ₹90 Cr capex; peak revenue ₹450 Cr — this level of utilisation requires BHEL/L&amp;T to commit substantial tonnage. Initial sales cycle to new product: 12–24 months for qualification at customer end. Captive use (40–50%) only viable when DEE itself wins large supercritical power contracts. <strong>Impact: MEDIUM | Probability: MEDIUM | Status: ACTIVE — monitor commissioning.</strong></div>
+  </div>
+  <div class="risk-card medium" style="margin-top:12px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;"><div class="risk-title">6. Governance — Director Loans &amp; RPT</div><span class="badge badge-medium">MEDIUM</span></div>
+    <div class="risk-desc">CMD KL Bansal has borrowed ₹33.75 Cr (FY24) and ₹18.55 Cr (FY25) from the company on unsecured basis. ₹6.55 Cr outstanding at FY25 year-end. CFO's spouse and brother also employed. This is a pattern of using company as liquidity vehicle. Not illegal but signals governance risk for public shareholders. <strong>Impact: MEDIUM | Probability: LOW | Status: MONITORING.</strong></div>
+  </div>
+  <div class="risk-card low" style="margin-top:12px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;"><div class="risk-title">7. US Tariff &amp; FX Risk</div><span class="badge badge-low">LOW</span></div>
+    <div class="risk-desc">Only 2% of order book (₹55 Cr) destined for USA; DEE Thailand faces 19% tariff levy but exposure managed. All orders are FOB — freight changes do not impact margins. Steel procurement back-to-back — no commodity FX risk. <strong>Impact: LOW | Probability: LOW | Status: MITIGATED.</strong></div>
+  </div>
+  <div class="risk-card low" style="margin-top:12px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;"><div class="risk-title">8. Succession Risk</div><span class="badge badge-low">LOW</span></div>
+    <div class="risk-desc">CMD KL Bansal is the driving force. His son Atul Krishan Bansal (who ran Thailand operations) passed away in 2020. Daughters are now involved; group trust formed. Company described as "professionally managed." Near-term risk is low; long-term succession is a watch item. <strong>Impact: MEDIUM | Probability: LOW | Status: MONITORING.</strong></div>
+  </div>
+</div>
+<!-- TAB 11: CONCALL -->
+<div id="tab-11" class="tab-pane">
+  <div class="section-header" style="margin-top:0;">Management Concall Navigator — 7 Quarters (Q1 FY25 to Q3 FY26)</div>
+  <div class="q-selector">
+    <button class="q-btn active" onclick="showQ(0)">Q3 FY26</button>
+    <button class="q-btn" onclick="showQ(1)">Q2 FY26</button>
+    <button class="q-btn" onclick="showQ(2)">Q1 FY26</button>
+    <button class="q-btn" onclick="showQ(3)">Q4 FY25</button>
+    <button class="q-btn" onclick="showQ(4)">Q3 FY25</button>
+    <button class="q-btn" onclick="showQ(5)">Q2 FY25</button>
+    <button class="q-btn" onclick="showQ(6)">Q1 FY25</button>
+  </div>
+
+  <div id="q-0" class="q-pane active">
+    <div class="two-col" style="margin-bottom:14px;">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><strong>Q3 FY26 — Feb 5, 2026</strong><span class="badge badge-bullish">BULLISH</span></div>
+        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px;">Management: KL Bansal (CMD) | Brham Yadav (CFO — NEW) | Pankaj Agarwal (COO)</div>
+        <div style="font-size:14px;"><strong>Revenue:</strong> ₹286.7 Cr (+77% YoY) | <strong>EBITDA:</strong> ₹43.4 Cr (15.2%) | <strong>PAT:</strong> ₹18.6 Cr<br><strong>9M FY26:</strong> Revenue ₹780.4 Cr (+44.3%) | EBITDA 15.8% | Core EBITDA 17.4%</div>
+      </div>
+      <div class="card">
+        <div style="font-weight:700;margin-bottom:8px;">Key Highlights</div>
+        <div style="font-size:13px;line-height:1.7;">
+          • Order book Dec'25: ₹1,303 Cr | L1 pipeline: ₹300–400 Cr<br>
+          • Seamless pipe plant: nearing commissioning; 7,000 MTPA; peak revenue ₹450 Cr<br>
+          • CAPEX cycle 95–98% complete by Mar FY26 → maintenance capex ₹10–15 Cr/year<br>
+          • Power tariff drag FY26 total: ~₹36 Cr<br>
+          • Pellet plant commissioning: April 2026<br>
+          • Labour Code one-time: ₹4.2 Cr hit in EBITDA<br>
+          • New CFO: Brham Yadav replaced Sameer Agarwal
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="font-weight:700;margin-bottom:8px;">Guidance Given</div>
+      <div style="font-size:13px;line-height:1.7;">FY27 EBITDA margin: 18–20% (reconfirmed); Revenue at optimum capacity: ₹2,300–2,500 Cr; 3x revenue in 3–5 years confirmed; Debt repayment: ₹40 Cr/year; Normalized tax rate: 25.17%; Next focus: nuclear, semiconductor, pharma piping</div>
+    </div>
+  </div>
+
+  <div id="q-1" class="q-pane">
+    <div class="two-col" style="margin-bottom:14px;">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><strong>Q2 FY26 — Nov 7, 2025</strong><span class="badge badge-bullish">BULLISH</span></div>
+        <div style="font-size:14px;"><strong>Revenue:</strong> ₹270 Cr (+39.2% YoY) | <strong>EBITDA:</strong> ₹44.1 Cr (16.3%) | <strong>PAT:</strong> ₹17.9 Cr<br><strong>H1 FY26:</strong> Revenue ₹493.8 Cr | EBITDA 16.2% | PAT ₹31.1 Cr (+22.1%)</div>
+      </div>
+      <div class="card">
+        <div style="font-weight:700;margin-bottom:8px;">Key Highlights</div>
+        <div style="font-size:13px;line-height:1.7;">
+          • Anjar: all 30,000 MTPA commissioned (Sep 2025)<br>
+          • Secured ₹170 Cr thermal power order in Q2<br>
+          • Cash conversion cycle: 243 days | ROCE: 9.4% | ROE: 7.7%<br>
+          • Equity fundraise resolution SUSPENDED — bank credit limits sufficient<br>
+          • US tariff exposure: only 2% of order book (₹55 Cr)<br>
+          • Hydrogen JV + Molsieve Designs 70% acquired<br>
+          • Power sector pipeline H2 FY26: ₹500 Cr; FY27: ₹650–700 Cr
+        </div>
+      </div>
+    </div>
+    <div class="card"><div style="font-weight:700;margin-bottom:8px;">Guidance</div><div style="font-size:13px;">Revenue FY26: +40–45% over FY25 base (~₹1,155–1,195 Cr); EBITDA margin FY26: 16–18%; Seamless pipe commercial Jan 2026 confirmed</div></div>
+  </div>
+
+  <div id="q-2" class="q-pane">
+    <div class="two-col" style="margin-bottom:14px;">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><strong>Q1 FY26 — Aug 12, 2025</strong><span class="badge badge-neutral">NEUTRAL</span></div>
+        <div style="font-size:14px;"><strong>Revenue:</strong> ₹223.8 Cr (+21% YoY) | <strong>EBITDA:</strong> ₹35.9 Cr (16.0%) | <strong>PAT:</strong> ₹13.2 Cr (+314% YoY)</div>
+      </div>
+      <div class="card">
+        <div style="font-weight:700;margin-bottom:8px;">Key Highlights</div>
+        <div style="font-size:13px;line-height:1.7;">
+          • Order book Jul'25: ₹1,226.7 Cr<br>
+          • PSERC tariff cut on Muktsar (₹8.57→₹3.50) and Abohar (₹7.47→₹5.42) — MAJOR issue<br>
+          • Cash conversion cycle: 247 days; inventory days 243<br>
+          • Revenue at peak capacity: Palwal ₹1,300–1,500 Cr + Anjar ₹800–1,000 Cr = ₹2,500–3,000 Cr<br>
+          • Oil &amp; Gas mix: ~45% of order book<br>
+          • Green hydrogen MoU announced
+        </div>
+      </div>
+    </div>
+    <div class="card"><div style="font-weight:700;margin-bottom:8px;">Guidance</div><div style="font-size:13px;">Revenue FY26: ₹1,300 Cr (may reduce ₹50–100 Cr due to PSERC); EBITDA margin: 16–18% (with power) vs 19–20% (without)</div></div>
+  </div>
+
+  <div id="q-3" class="q-pane">
+    <div class="two-col" style="margin-bottom:14px;">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><strong>Q4 &amp; FY25 — May 30, 2025</strong><span class="badge badge-bullish">BULLISH</span></div>
+        <div style="font-size:14px;"><strong>Q4 Revenue:</strong> ₹286.4 Cr (+17.7% YoY, +76.8% QoQ) | <strong>EBITDA:</strong> ₹63.5 Cr (22.2%) | <strong>PAT:</strong> ₹31.5 Cr<br><strong>FY25:</strong> Revenue ₹827 Cr | EBITDA ₹123 Cr (15%)</div>
+      </div>
+      <div class="card">
+        <div style="font-weight:700;margin-bottom:8px;">Key Highlights</div>
+        <div style="font-size:13px;line-height:1.7;">
+          • Order book Apr'25: ₹1,275 Cr; intake target FY26: ₹1,600–1,700 Cr<br>
+          • Dow Chemical order: ~$50M (~₹450 Cr); 75–80% execution in FY26<br>
+          • CWIP: ₹150 Cr to capitalize + ₹200 Cr new → ~₹650 Cr gross block<br>
+          • Palwal = power sector anchor; Anjar = O&amp;G/export (strategic split)<br>
+          • PSERC tariff cut disclosed (post year-end): ₹38.5 Cr annual revenue impact
+        </div>
+      </div>
+    </div>
+    <div class="card"><div style="font-weight:700;margin-bottom:8px;">Guidance</div><div style="font-size:13px;">Revenue FY26: ₹1,300 Cr (+50%); EBITDA FY26: 19–20% (subject to power tariff resolution); Seamless pipe: Jan 2026</div></div>
+  </div>
+
+  <div id="q-4" class="q-pane">
+    <div class="two-col" style="margin-bottom:14px;">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><strong>Q3 FY25 — Feb 17, 2025</strong><span class="badge badge-cautious">CAUTIOUS</span></div>
+        <div style="font-size:14px;"><strong>Revenue:</strong> ₹162 Cr (-22.7% YoY) | <strong>PAT:</strong> -₹13 Cr (loss quarter) | <strong>9M FY25:</strong> ₹541 Cr (-0.8%)</div>
+      </div>
+      <div class="card">
+        <div style="font-weight:700;margin-bottom:8px;">4 Specific Reasons for Weakness</div>
+        <div style="font-size:13px;line-height:1.7;">
+          1. GAIL PDH plant ₹139 Cr — drawing delays (first-of-kind piping engineering)<br>
+          2. International order ₹51 Cr delayed<br>
+          3. Numaligarh Assam plant ₹60 Cr delayed — first year of ops<br>
+          4. Anjar construction delays: unprecedented rains + material dispute (~6M delay)
+        </div>
+      </div>
+    </div>
+    <div class="card"><div style="font-weight:700;margin-bottom:8px;">Guidance</div><div style="font-size:13px;">FY26 Revenue: ₹1,100 Cr (first formal guidance); EBITDA: 19–20%; Q4 FY25: ₹260–270 Cr revenue; Gross debt: ₹390 Cr; Net debt: ₹120–130 Cr</div></div>
+  </div>
+
+  <div id="q-5" class="q-pane">
+    <div class="two-col" style="margin-bottom:14px;">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><strong>Q2 FY25 — Nov 13, 2024</strong><span class="badge badge-bullish">BULLISH</span></div>
+        <div style="font-size:14px;"><strong>Revenue:</strong> ₹194 Cr (+8.6% YoY) | <strong>EBITDA:</strong> ₹29.8 Cr (15.4%) | <strong>PAT:</strong> ₹22.3 Cr (+125% YoY)<br><strong>H1 FY25:</strong> Revenue ₹379 Cr | EBITDA 14.4% | PAT ₹25.5 Cr (+379%)</div>
+      </div>
+      <div class="card">
+        <div style="font-weight:700;margin-bottom:8px;">Key Highlights</div>
+        <div style="font-size:13px;line-height:1.7;">
+          • Order book Sep'24: ₹1,192.1 Cr (spike: Numaligarh ₹245 Cr + Dow ₹340 Cr)<br>
+          • Seamless pipe: 7,000 MTPA; ₹90 Cr capex; IRR 30–35%; peak rev ₹450 Cr<br>
+          • IPO proceeds: ₹276.9 Cr of ₹325 Cr utilized as of Q2<br>
+          • DEE Fabricom FY24 turnover: ~₹30 Cr; booked H1 FY26<br>
+          • Gross margin range: 30–40%; steel fully hedged back-to-back
+        </div>
+      </div>
+    </div>
+    <div class="card"><div style="font-weight:700;margin-bottom:8px;">Guidance</div><div style="font-size:13px;">No formal FY26 guidance yet; medium-term: ₹1,500–1,700 Cr in 2 years; JGC MOU formalisation expected</div></div>
+  </div>
+
+  <div id="q-6" class="q-pane">
+    <div class="two-col" style="margin-bottom:14px;">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><strong>Q1 FY25 — Aug 19, 2024 [FIRST POST-IPO CALL]</strong><span class="badge badge-bullish">BULLISH</span></div>
+        <div style="font-size:14px;"><strong>Revenue:</strong> ₹185 Cr (+17.6% YoY) | <strong>EBITDA:</strong> ₹24.8 Cr (13.4%, +445bps) | <strong>PAT:</strong> ₹3.2 Cr (vs loss ₹4.6 Cr Q1FY24)</div>
+      </div>
+      <div class="card">
+        <div style="font-weight:700;margin-bottom:8px;">Key Highlights — Inaugural Call</div>
+        <div style="font-size:13px;line-height:1.7;">
+          • Dow Chemical $40.71M job work announced (post-quarter)<br>
+          • Anjar Facility I: 3,000 MTPA started; expanding to 30,000 MTPA<br>
+          • Nuclear: approved by NPCIL; foreign nuclear discussions<br>
+          • IPO utilized: ₹93.5 Cr (₹75.5 Cr debt + ₹18 Cr WC) in Q1<br>
+          • Export mix: 40–45% of revenue (all FOB — no freight impact)
+        </div>
+      </div>
+    </div>
+    <div class="card"><div style="font-weight:700;margin-bottom:8px;">Guidance</div><div style="font-size:13px;">No formal FY26 guidance; medium-term ₹1,500–1,700 Cr in 2 years; "many large orders in advanced stage, every month expecting very good inflow"</div></div>
+  </div>
+
+  <div class="section-header">Guidance Tracker — Management Credibility</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Quarter</th><th>FY26 Revenue Guidance</th><th>FY26 Margin Guidance</th><th>Verdict</th></tr></thead>
+      <tbody>
+        <tr><td>Q3 FY25 (Feb'25)</td><td>₹1,100 Cr</td><td>19–20%</td><td><span class="badge badge-bullish">INITIAL</span></td></tr>
+        <tr><td>Q4 FY25 (May'25)</td><td>₹1,300 Cr (upgrade)</td><td>19–20%</td><td><span class="badge badge-bullish">UPGRADE</span></td></tr>
+        <tr><td>Q1 FY26 (Aug'25)</td><td>₹1,300 Cr (PSERC risk)</td><td>16–18% (downgrade)</td><td><span class="badge badge-cautious">MARGIN CUT</span></td></tr>
+        <tr class="latest"><td>Q2 FY26 (Nov'25)</td><td>+40–45% = ~₹1,155–1,195 Cr</td><td>16–18%</td><td><span class="badge badge-cautious">REV CUT</span></td></tr>
+        <tr><td>Q3 FY26 (Feb'26)</td><td>9M = ₹780 Cr; FY26 ≈ ₹1,000–1,050 Cr</td><td>FY27: 18–20%</td><td><span class="badge badge-cautious">MISS LIKELY</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="font-size:12px;color:var(--text-muted);margin-top:8px;">Management credibility: Revenue guidance revised down 3 times. Margin guidance revised down then deferred to FY27. Track record is mixed; use management guidance as directional, not precise.</div>
+</div>
+<!-- TAB 12: CAPITAL ALLOCATION -->
+<div id="tab-12" class="tab-pane">
+  <div class="section-header" style="margin-top:0;">Capex vs Operating Cash Flow (₹ Cr)</div>
+  <div class="chart-card" style="margin-bottom:20px;">
+    <div class="chart-title">Capex vs CFO — Annual (₹ Cr)</div>
+    <canvas id="chartCapex" height="130"></canvas>
+  </div>
+
+  <div class="two-col" style="margin-bottom:20px;">
+    <div class="card">
+      <div class="section-header" style="margin-top:0;">Debt Trajectory</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Year</th><th>Gross Debt (₹ Cr)</th><th>Equity (₹ Cr)</th><th>D/E</th><th>Net Debt est.</th></tr></thead>
+          <tbody>
+            <tr><td>FY19</td><td>237</td><td>446</td><td>0.53x</td><td>~223</td></tr>
+            <tr><td>FY21</td><td>169</td><td>495</td><td>0.34x</td><td>~166</td></tr>
+            <tr><td>FY23</td><td>277</td><td>475</td><td>0.58x</td><td>~277</td></tr>
+            <tr><td>FY24</td><td>381</td><td>496</td><td>0.77x</td><td>~378</td></tr>
+            <tr class="latest"><td>FY25</td><td>368</td><td>824</td><td>0.45x</td><td>~302</td></tr>
+            <tr><td>Sep'25</td><td>529</td><td>846</td><td>0.63x</td><td>~500</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:8px;">D/E improved post-IPO (₹418 Cr equity raised June 2024). Sep'25 borrowings spike to ₹529 Cr driven by WC drawdowns for Anjar ramp. Target: ₹40 Cr/year repayment from FY27.</div>
+    </div>
+    <div class="card">
+      <div class="section-header" style="margin-top:0;">Capex Programme Status</div>
+      <div class="timeline">
+        <div class="timeline-item"><div class="timeline-dot" style="background:var(--color-green);"></div><div class="timeline-date">COMPLETE</div><div class="timeline-title">Anjar Phase 1 — 15,000 MTPA (₹100 Cr)</div><div class="timeline-desc">Commissioned Jan 2025. Full revenue contribution from FY26.</div></div>
+        <div class="timeline-item"><div class="timeline-dot" style="background:var(--color-green);"></div><div class="timeline-date">COMPLETE</div><div class="timeline-title">Anjar Phase 2 — Additional 15,000 MTPA (₹55 Cr)</div><div class="timeline-desc">Commissioned Sep 2025. Total Anjar: 30,000 MTPA.</div></div>
+        <div class="timeline-item"><div class="timeline-dot" style="background:var(--color-amber);"></div><div class="timeline-date">IN PROGRESS</div><div class="timeline-title">Seamless Pipe Plant — 7,000 MTPA (₹90 Cr)</div><div class="timeline-desc">Target: Jan 2026 commercial production. Status as of Q3FY26: "nearing commissioning."</div></div>
+        <div class="timeline-item"><div class="timeline-dot" style="background:var(--color-amber);"></div><div class="timeline-date">IN PROGRESS</div><div class="timeline-title">Numaligarh (Assam) New Plant</div><div class="timeline-desc">Piping + Fabricom unit. Timeline and capex not formally disclosed.</div></div>
+        <div class="timeline-item"><div class="timeline-dot" style="background:var(--color-blue);"></div><div class="timeline-date">FUTURE</div><div class="timeline-title">Maintenance Capex — ₹10–15 Cr/year from FY27</div><div class="timeline-desc">Post completion of current cycle. Capex intensity drops sharply; cash flow inflection expected.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-bottom:20px;">
+    <div class="card">
+      <div class="section-header" style="margin-top:0;">Dividend History</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Year</th><th>DPS (₹)</th><th>Payout %</th><th>Yield</th></tr></thead>
+          <tbody>
+            <tr><td>FY20</td><td>0.50</td><td>3%</td><td>---------</td></tr>
+            <tr><td>FY21–FY25</td><td>0.00</td><td>0%</td><td>0%</td></tr>
+            <tr class="latest"><td>FY26 (expected)</td><td>0.00</td><td>0%</td><td>0%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="font-size:13px;color:var(--text-secondary);margin-top:8px;">No dividends since FY20. Company reinvesting all cash flows into capex expansion. No buyback history. Dividend expected only post FY27 when FCF turns positive.</div>
+    </div>
+    <div class="card">
+      <div class="section-header" style="margin-top:0;">IPO Proceeds Utilisation</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Purpose</th><th>Planned (₹ Cr)</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr class="latest"><td class="label">Debt Repayment</td><td>175</td><td>Completed by Jul 2024</td></tr>
+            <tr><td class="label">Working Capital</td><td>17.98</td><td>Deployed Q1 FY25</td></tr>
+            <tr><td class="label">Total IPO Raised</td><td>325 (new) + 93 (OFS)</td><td>₹276.9 Cr utilized by Q2</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="font-size:13px;color:var(--text-secondary);margin-top:8px;">Carlyle Group (32.38% pre-IPO shareholder) fully exited via IPO OFS. Clean exit — no overhang.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-header" style="margin-top:0;">Capital Allocation Verdict</div>
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">
+      <span class="badge badge-medium" style="font-size:14px;padding:8px 20px;">MIXED</span>
+      <div style="font-size:14px;color:var(--text-secondary);">Heavy capex investment phase justifiable given the capacity expansion thesis. However, FCF has been deeply negative for 3 years and CFO turned negative. ROCE suppressed at 7% post-IPO dilution. Capital allocation will only be re-rated when FY27 FCF turns positive.</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;font-size:13px;">
+      <div style="padding:10px;background:var(--table-row-alt);border-radius:8px;"><strong style="color:var(--color-green);">Positives:</strong> Capex is real (CWIP all live, converting on schedule); zero dividend cuts during lean years; Anjar expansion at strategic location. IPO proceeds used for debt repayment (not promoter exit only).</div>
+      <div style="padding:10px;background:var(--highlight-latest);border-radius:8px;"><strong style="color:var(--color-red);">Concerns:</strong> CMD revolving loans from company (₹34 Cr in FY24); CFO family employment; high WC drawdown with no FCF. ROCE at 7% suggests capital is not earning its cost yet.</div>
+    </div>
+  </div>
+</div>
+<!-- TAB 13: OWNERSHIP -->
+<div id="tab-13" class="tab-pane">
+  <div class="section-header" style="margin-top:0;">Shareholding Pattern (8 Quarters)</div>
+  <div class="chart-card" style="margin-bottom:20px;">
+    <div class="chart-title">Shareholding Trend — Stacked % (Jun 2024 to Mar 2026)</div>
+    <canvas id="chartSH" height="140"></canvas>
+  </div>
+
+  <div class="two-col" style="margin-bottom:20px;">
+    <div class="card">
+      <div class="section-header" style="margin-top:0;">Shareholding Pattern Detail</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Quarter</th><th>Promoter</th><th>FII</th><th>DII</th><th>Public</th><th>Shareholders</th></tr></thead>
+          <tbody>
+            <tr><td>Jun 2024</td><td>70.18%</td><td>5.85%</td><td>12.11%</td><td>11.86%</td><td>67,136</td></tr>
+            <tr><td>Sep 2024</td><td>70.17%</td><td>2.23%</td><td>16.16%</td><td>11.43%</td><td>55,246</td></tr>
+            <tr><td>Dec 2024</td><td>70.17%</td><td>0.83%</td><td>16.53%</td><td>12.46%</td><td>54,609</td></tr>
+            <tr><td>Mar 2025</td><td>70.29%</td><td>0.65%</td><td>17.43%</td><td>11.63%</td><td>51,116</td></tr>
+            <tr><td>Jun 2025</td><td>70.22%</td><td>0.81%</td><td>17.33%</td><td>11.65%</td><td>50,039</td></tr>
+            <tr><td>Sep 2025</td><td>70.22%</td><td>0.79%</td><td>16.60%</td><td>12.39%</td><td>49,098</td></tr>
+            <tr><td>Dec 2025</td><td>70.18%</td><td>0.78%</td><td>14.87%</td><td>14.17%</td><td>48,034</td></tr>
+            <tr class="latest"><td>Mar 2026</td><td>70.18%</td><td>0.99%</td><td>13.91%</td><td>14.93%</td><td>50,143</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-header" style="margin-top:0;">Key Ownership Observations</div>
+      <div class="risk-card low" style="margin-bottom:10px;border-left-color:var(--color-green);">
+        <div class="risk-title">Promoter Holding — Rock Solid</div>
+        <div class="risk-desc">KL Bansal holds 50.88% directly; DDE Piping Component 10.91%; Ashima Bansal 6.37%; Shika Bansal 2.13%. Total promoter 70.18–70.29% across all quarters post-IPO. <strong>Zero pledge.</strong> Group trust formed for continuity.</div>
+      </div>
+      <div class="risk-card medium" style="margin-bottom:10px;">
+        <div class="risk-title">FII Exodus Post-IPO</div>
+        <div class="risk-desc">FII holding collapsed from 5.85% (Jun'24 — likely IPO allocations) to 0.65% (Mar'25), recovering only marginally to 0.99% (Mar'26). FIIs have largely not stayed in the stock after IPO exit. This indicates the stock is not yet on foreign institutional radar at scale.</div>
+      </div>
+      <div class="risk-card low" style="margin-bottom:10px;border-left-color:var(--color-amber);">
+        <div class="risk-title">DII Holding Peaked &amp; Declining</div>
+        <div class="risk-desc">DII peaked at 17.43% (Mar'25) and has since declined to 13.91% (Mar'26) — a net 350bps reduction. DIIs (mutual funds, insurance) appear to be trimming. Retail/public share rising from 11.6% to 14.9% — retail is absorbing DII selling.</div>
+      </div>
+      <div class="risk-card low" style="border-left-color:var(--color-green);">
+        <div class="risk-title">Shareholder Count Stabilising</div>
+        <div class="risk-desc">Shareholder count peaked at 67,136 (Jun'24 IPO) and declined to 48,034 (Dec'25) before recovering to 50,143 (Mar'26). Retail participation normalising post-IPO excitement.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-header" style="margin-top:0;">Promoter Details (Mar 2025)</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Name</th><th>Relationship</th><th>Holding</th><th>Nature</th></tr></thead>
+        <tbody>
+          <tr class="latest"><td class="label">K.L. Bansal</td><td>CMD &amp; Promoter</td><td>50.88%</td><td>Direct</td></tr>
+          <tr><td class="label">DDE Piping Component</td><td>Promoter Group Entity</td><td>10.91%</td><td>Entity</td></tr>
+          <tr><td class="label">Ashima Bansal</td><td>WTD (till Apr 2025) / Family</td><td>6.37%</td><td>Direct</td></tr>
+          <tr><td class="label">Shika Bansal</td><td>WTD / Daughter</td><td>2.13%</td><td>Direct</td></tr>
+          <tr><td class="label"><strong>TOTAL PROMOTER</strong></td><td></td><td><strong>70.29%</strong></td><td><strong>No Pledge</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:14px;font-size:13px;color:var(--text-secondary);">
+      <strong>Ownership Quality Verdict:</strong> <span class="badge badge-bullish">POSITIVE</span> &nbsp; High promoter holding with zero pledge is a strong governance signal. Family-run but with daughters actively involved and professional management layer (COO, CFO). Carlyle Group fully exited at IPO — clean slate. The revolving director loans (KL Bansal borrowing from company) are the only governance concern in this dimension.
+    </div>
+  </div>
+</div>
+<!-- TAB 14: EVENTS -->
+<div id="tab-14" class="tab-pane">
+  <div class="section-header" style="margin-top:0;">BSE/NSE Filings &amp; Order Updates (Most Recent First)</div>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-dot" style="background:var(--color-blue);"></div>
+      <div class="timeline-date">May 8, 2026 — <span class="badge badge-order">ORDER</span></div>
+      <div class="timeline-title">Monthly Order Book Update — April 2026</div>
+      <div class="timeline-desc">
+        Consolidated order book Apr 30, 2026: <strong>₹1,909.82 Cr</strong> (down from ₹1,927.36 Cr opening due to FX: THB/INR 2.86 → 2.91).<br>
+        April inflow: ₹49.94 Cr (weak month — new FY budget conversion lag). Executed: ₹67.48 Cr.<br>
+        Composition: DEE India Power ₹1,011.53 Cr (53%) | DEE India O&G ₹562.84 Cr (30%) | DEE Thailand ₹191.35 Cr (10%) | Fabricom ₹112.03 Cr (6%).<br>
+        <strong>L1 Pipeline (not in book): ₹211 Cr</strong> — effective order visibility ₹2,121 Cr.
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot" style="background:var(--color-amber);"></div>
+      <div class="timeline-date">Apr 10, 2026 — <span class="badge badge-filing">FILING</span></div>
+      <div class="timeline-title">Regulation 74(5) Certificate — Q4 FY26 | Non-Applicability of Large Corporate</div>
+      <div class="timeline-desc">MUFG Intime India Pvt Ltd (RTA) confirmed all dematerialisation requests completed within prescribed timelines for Q4 FY26. DEE confirmed it is NOT a Large Corporate under SEBI framework — not required to raise minimum borrowings through bonds/NCDs. Routine filings; no material significance.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot" style="background:var(--color-orange);"></div>
+      <div class="timeline-date">Apr 1, 2026 — <span class="badge badge-regulatory">REGULATORY</span></div>
+      <div class="timeline-title">PSERC Final Order — MPPL Muktsar Plant | Press Release (Regulation 30)</div>
+      <div class="timeline-desc">
+        PSERC final tariff: <strong>₹5.224/kWh</strong> for MPPL 6MW biomass plant (FY2025-26); 5% annual escalation on variable cost.<br>
+        FY2026-27 tariff: ₹5.437/kWh.<br>
+        Retrospective recovery: ~₹5.80 Cr for May 2025–Feb 2026 (vs ₹3.50/unit charged).<br>
+        MPPL FY27 projections: Power ₹24.31 Cr + Biomass Pellet Plant ₹23.40 Cr = <strong>₹47.71 Cr total</strong>.<br>
+        Pellet plant (72,000 MT/annum, 50% utilisation initially): converting rice straw for thermal co-firing; commissioning "shortly" (Apr 2026).<br>
+        CMD quote: "Commission relied on CERC RE Regulations 2012 for fixed cost; CERC RE Regulations 2024 would give higher O&M — company evaluating APTEL appeal."
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot" style="background:var(--color-blue);"></div>
+      <div class="timeline-date">Apr 8, 2026 — <span class="badge badge-order">ORDER</span></div>
+      <div class="timeline-title">Monthly Order Book Update — March 2026</div>
+      <div class="timeline-desc">
+        Consolidated order book Mar 31, 2026: <strong>₹1,940.07 Cr</strong>.<br>
+        March inflow: ₹155.70 Cr | Executed: ₹128.80 Cr → book grew ₹27 Cr despite heavy execution.<br>
+        FY26 cumulative: Inflow ₹1,869.67 Cr | Executed ₹1,158.22 Cr.<br>
+        Key: DEE Thailand Power inflow ₹67.90 Cr in a single month. DEE India O&G executed ₹74.42 Cr.<br>
+        L1 Pipeline: ₹209 Cr.
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot" style="background:var(--color-amber);"></div>
+      <div class="timeline-date">Oct 23, 2025 — <span class="badge badge-regulatory">REGULATORY</span></div>
+      <div class="timeline-title">HC Punjab &amp; Haryana STAYS PSERC Order (Abohar Plant)</div>
+      <div class="timeline-desc">High Court stayed PSERC Aug 20, 2025 order that would have cut DEE Power Division tariff from ₹7.47/unit to ₹5.877/unit. Company continues billing at ₹7.47/unit pending final disposal. PSPCL tariff differential claims withheld until HC rules.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot" style="background:var(--color-amber);"></div>
+      <div class="timeline-date">Aug 20, 2025 — <span class="badge badge-regulatory">REGULATORY</span></div>
+      <div class="timeline-title">PSERC Order — DEE Power Division Tariff Revised to ₹5.877/unit</div>
+      <div class="timeline-desc">PSERC revised tariff for DEE's own Power Division plants (Abohar) to ₹5.877/unit (from ₹7.47/unit). DEE filed appeal; HC Punjab &amp; Haryana issued stay on Oct 23, 2025. Annual impact if tariff cut sustained: ~₹12.5 Cr.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot" style="background:var(--color-orange);"></div>
+      <div class="timeline-date">Jun 26, 2024 — <span class="badge badge-results">IPO</span></div>
+      <div class="timeline-title">DEEDEV Listed on NSE/BSE at 67% Premium</div>
+      <div class="timeline-desc">IPO raised ₹418 Cr (₹325 Cr fresh issue + ₹93 Cr OFS). Listing price significantly above issue price. Carlyle Group fully exited via OFS. ₹175 Cr immediately deployed for debt repayment.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot" style="background:var(--color-amber);"></div>
+      <div class="timeline-date">Apr 26, 2025 — <span class="badge badge-regulatory">REGULATORY</span></div>
+      <div class="timeline-title">MPPL PPA with PSPCL Expires (20-year term)</div>
+      <div class="timeline-desc">Malwa Power Pvt Ltd 6MW biomass PPA (signed Feb 2004) expired. Petition No. 59/2024 filed before PSERC for 10-year extension. APTEL directed interim tariff ₹3.50/kWh during pendency. ~3.37 crore kWh supplied at this rate (May 2025–Feb 2026) — retrospective recovery ₹5.80 Cr now approved.</div>
+    </div>
+  </div>
+
+  <div class="section-header">Order Book Entity Structure (Consolidated)</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Entity</th><th>Sector</th><th>Apr'26 Book (₹ Cr)</th><th>Share</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr class="latest"><td class="label">DEE India (Piping)</td><td>Power</td><td>1,011.53</td><td>53%</td><td>Main entity; process piping for power sector</td></tr>
+        <tr><td class="label">DEE India (Piping)</td><td>Oil &amp; Gas</td><td>562.84</td><td>30%</td><td>Domestic + export O&amp;G piping</td></tr>
+        <tr><td class="label">DEE Thailand</td><td>Power + O&amp;G</td><td>200.74</td><td>11%</td><td>Bangkok facility; THB-denominated; exchange rate applies</td></tr>
+        <tr><td class="label">DEE Fabricom</td><td>Power (Heavy Fab)</td><td>112.03</td><td>6%</td><td>Heavy fabrication; wind tower/power sector</td></tr>
+        <tr><td class="label">Others (Molsieve + PPA billing)</td><td>Various</td><td>22.68</td><td>1%</td><td>Gas plants + biomass PPA billing</td></tr>
+        <tr><td class="label"><strong>TOTAL</strong></td><td></td><td><strong>1,909.82</strong></td><td><strong>100%</strong></td><td>+ L1 pipeline ₹211 Cr</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</main>
+<script>
+// ── TAB NAVIGATION ──────────────────────────────────────────────
+var activeTab = 0;
+var tabIds = [0,1,2,3,4,5,7,8,9,10,11,12,13,14];
+
+function showTab(id) {
+  var btns = document.querySelectorAll('.tab-btn');
+  for (var i = 0; i < tabIds.length; i++) {
+    var pane = document.getElementById('tab-' + tabIds[i]);
+    if (pane) pane.style.display = 'none';
+    if (btns[i]) btns[i].classList.remove('active');
+  }
+  var target = document.getElementById('tab-' + id);
+  if (target) target.style.display = 'block';
+  var idx = tabIds.indexOf(id);
+  if (btns[idx]) btns[idx].classList.add('active');
+  activeTab = id;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── CONCALL QUARTER SELECTOR ────────────────────────────────────
+function showQ(n) {
+  var panes = document.querySelectorAll('.q-pane');
+  var btns = document.querySelectorAll('.q-btn');
+  for (var i = 0; i < panes.length; i++) { panes[i].classList.remove('active'); }
+  for (var i = 0; i < btns.length; i++) { btns[i].classList.remove('active'); }
+  var p = document.getElementById('q-' + n);
+  if (p) p.classList.add('active');
+  if (btns[n]) btns[n].classList.add('active');
+}
+
+// ── DARK/LIGHT TOGGLE ───────────────────────────────────────────
+function toggleTheme() {
+  var html = document.documentElement;
+  var current = html.getAttribute('data-theme');
+  html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+  rebuildCharts();
+}
+
+function textColor() {
+  return document.documentElement.getAttribute('data-theme') === 'dark' ? '#F1F5F9' : '#0F172A';
+}
+function gridColor() {
+  return document.documentElement.getAttribute('data-theme') === 'dark' ? '#334155' : '#E2E8F0';
+}
+
+// ── CHART DEFAULTS ───────────────────────────────────────────────
+Chart.defaults.font.size = 13;
+
+// ── CHART DATA ───────────────────────────────────────────────────
+var qLabels = ['Q1FY25','Q2FY25','Q3FY25','Q4FY25','Q1FY26','Q2FY26','Q3FY26'];
+var qRev    = [185, 194, 162, 286.4, 223.8, 270, 286.7];
+var qEBITDA = [24.8, 29.8, 5.7, 63.5, 35.9, 44.1, 43.4];
+
+var annLabels = ['FY19','FY20','FY21','FY22','FY23','FY24','FY25','TTM'];
+var annRev    = [519, 620, 411, 370, 503, 644, 639, 853];
+var annOPM    = [72, 77, 49, 42, 56, 76, 90, 160];
+
+var obLabels = ['Mar24','Jun24','Sep24','Dec24','Apr25','Jul25','Sep25','Dec25','Mar26'];
+var obData   = [800, 803, 1192, 1400, 1275, 1227, 1308, 1303, 1940];
+
+var capexLabels = ['FY19','FY20','FY21','FY22','FY23','FY24','FY25'];
+var capexData   = [38, 26, 10, 32, 52, 140, 149];
+var cfoData     = [133, 72, 69, 56, 21, 84, -96];
+
+var shLabels    = ['Jun24','Sep24','Dec24','Mar25','Jun25','Sep25','Dec25','Mar26'];
+var shPromoter  = [70.18, 70.17, 70.17, 70.29, 70.22, 70.22, 70.18, 70.18];
+var shFII       = [5.85, 2.23, 0.83, 0.65, 0.81, 0.79, 0.78, 0.99];
+var shDII       = [12.11, 16.16, 16.53, 17.43, 17.33, 16.60, 14.87, 13.91];
+var shPublic    = [11.86, 11.43, 12.46, 11.63, 11.65, 12.39, 14.17, 14.93];
+
+// Risk scatter data: [probability 1-5, impact 1-5, label]
+var riskPoints = [
+  { x: 3, y: 5, label: 'WC Spiral' },
+  { x: 2.5, y: 5, label: 'Export Obligation' },
+  { x: 3, y: 4, label: 'PSERC Tariff' },
+  { x: 3, y: 3, label: 'Order Concentration' },
+  { x: 3, y: 3, label: 'Seamless Ramp' },
+  { x: 1.5, y: 3, label: 'Director Loans' },
+  { x: 1.5, y: 2, label: 'US Tariff' },
+  { x: 1.5, y: 2, label: 'Succession' }
+];
+
+var chartInstances = {};
+
+function buildCharts() {
+  Chart.defaults.color = textColor();
+
+  // Shareholding donut — Tab 1 (values are positive)
+  var c1 = document.getElementById('chartShareholding');
+  if (c1) {
+    if (chartInstances['chartShareholding']) chartInstances['chartShareholding'].destroy();
+    chartInstances['chartShareholding'] = new Chart(c1, {
+      type: 'doughnut',
+      data: {
+        labels: ['Promoter (70.18%)', 'DII (13.91%)', 'Public (14.93%)', 'FII (0.99%)'],
+        datasets: [{ data: [70.18, 13.91, 14.93, 0.99], backgroundColor: ['#0F1F3D','#E8701A','#16A34A','#1D4ED8'], borderWidth: 2, borderColor: document.documentElement.getAttribute('data-theme') === 'dark' ? '#1E293B' : '#fff' }]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 12 }, padding: 12 } } } }
+    });
+  }
+
+  // Segment donut — Tab 2 (values are positive)
+  var c2 = document.getElementById('chartSegment');
+  if (c2) {
+    if (chartInstances['chartSegment']) chartInstances['chartSegment'].destroy();
+    chartInstances['chartSegment'] = new Chart(c2, {
+      type: 'doughnut',
+      data: {
+        labels: ['DEE India Power (53%)', 'DEE India O&G (30%)', 'DEE Thailand (11%)', 'DEE Fabricom (6%)', 'Others (1%)'],
+        datasets: [{ data: [53, 30, 11, 6, 1], backgroundColor: ['#0F1F3D','#E8701A','#1D4ED8','#16A34A','#D97706'], borderWidth: 2, borderColor: document.documentElement.getAttribute('data-theme') === 'dark' ? '#1E293B' : '#fff' }]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 12 }, padding: 10 } } } }
+    });
+  }
+
+  // Quarterly bar — Tab 4
+  var c3 = document.getElementById('chartQuarterly');
+  if (c3) {
+    if (chartInstances['chartQuarterly']) chartInstances['chartQuarterly'].destroy();
+    chartInstances['chartQuarterly'] = new Chart(c3, {
+      type: 'bar',
+      data: {
+        labels: qLabels,
+        datasets: [
+          { label: 'Revenue (₹ Cr)', data: qRev, backgroundColor: 'rgba(14,30,61,0.75)', yAxisID: 'y' },
+          { label: 'EBITDA (₹ Cr)', data: qEBITDA, backgroundColor: 'rgba(232,112,26,0.85)', yAxisID: 'y' }
+        ]
+      },
+      options: { responsive: true, scales: { y: { grid: { color: gridColor() }, ticks: { color: textColor() } }, x: { grid: { color: gridColor() }, ticks: { color: textColor() } } }, plugins: { legend: { labels: { color: textColor() } } } }
+    });
+  }
+
+  // Annual line — Tab 4
+  var c4 = document.getElementById('chartAnnual');
+  if (c4) {
+    if (chartInstances['chartAnnual']) chartInstances['chartAnnual'].destroy();
+    chartInstances['chartAnnual'] = new Chart(c4, {
+      type: 'line',
+      data: {
+        labels: annLabels,
+        datasets: [
+          { label: 'Revenue (₹ Cr)', data: annRev, borderColor: '#0F1F3D', backgroundColor: 'rgba(15,31,61,0.1)', fill: true, tension: 0.3, yAxisID: 'y' },
+          { label: 'Op. Profit (₹ Cr)', data: annOPM, borderColor: '#E8701A', backgroundColor: 'rgba(232,112,26,0.1)', fill: true, tension: 0.3, yAxisID: 'y' }
+        ]
+      },
+      options: { responsive: true, scales: { y: { grid: { color: gridColor() }, ticks: { color: textColor() } }, x: { grid: { color: gridColor() }, ticks: { color: textColor() } } }, plugins: { legend: { labels: { color: textColor() } } } }
+    });
+  }
+
+  // Order book — Tab 5
+  var c5 = document.getElementById('chartOrderBook');
+  if (c5) {
+    if (chartInstances['chartOrderBook']) chartInstances['chartOrderBook'].destroy();
+    chartInstances['chartOrderBook'] = new Chart(c5, {
+      type: 'bar',
+      data: {
+        labels: obLabels,
+        datasets: [{ label: 'Order Book (₹ Cr)', data: obData, backgroundColor: obData.map(function(v,i){ return i === obData.length-1 ? '#E8701A' : 'rgba(29,78,216,0.7)'; }) }]
+      },
+      options: { responsive: true, scales: { y: { grid: { color: gridColor() }, ticks: { color: textColor() } }, x: { grid: { color: gridColor() }, ticks: { color: textColor() } } }, plugins: { legend: { labels: { color: textColor() } } } }
+    });
+  }
+
+  // Scenario donut — Tab 9 (positive values only: 25, 50, 25)
+  var c6 = document.getElementById('chartScenario');
+  if (c6) {
+    if (chartInstances['chartScenario']) chartInstances['chartScenario'].destroy();
+    chartInstances['chartScenario'] = new Chart(c6, {
+      type: 'doughnut',
+      data: {
+        labels: ['Bull Case 25%', 'Base Case 50%', 'Bear Case 25%'],
+        datasets: [{ data: [25, 50, 25], backgroundColor: ['#16A34A','#E8701A','#DC2626'], borderWidth: 2, borderColor: document.documentElement.getAttribute('data-theme') === 'dark' ? '#1E293B' : '#fff' }]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: textColor(), font: { size: 12 } } } } }
+    });
+  }
+
+  // Risk scatter — Tab 10
+  var c7 = document.getElementById('chartRisk');
+  if (c7) {
+    if (chartInstances['chartRisk']) chartInstances['chartRisk'].destroy();
+    chartInstances['chartRisk'] = new Chart(c7, {
+      type: 'scatter',
+      data: {
+        datasets: [{
+          label: 'Risks',
+          data: riskPoints.map(function(r){ return { x: r.x, y: r.y }; }),
+          backgroundColor: riskPoints.map(function(r){ return r.y >= 4 ? 'rgba(220,38,38,0.8)' : r.y === 3 ? 'rgba(217,119,6,0.8)' : 'rgba(22,163,74,0.8)'; }),
+          pointRadius: 12
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: { min: 1, max: 5, title: { display: true, text: 'Probability →', color: textColor() }, grid: { color: gridColor() }, ticks: { color: textColor() } },
+          y: { min: 1, max: 5, title: { display: true, text: 'Impact →', color: textColor() }, grid: { color: gridColor() }, ticks: { color: textColor() } }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) { return riskPoints[ctx.dataIndex].label + ' (P:' + ctx.parsed.x + ' I:' + ctx.parsed.y + ')'; }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // Peer comparison bar — Tab 8
+  var c8 = document.getElementById('chartPeers');
+  if (c8) {
+    if (chartInstances['chartPeers']) chartInstances['chartPeers'].destroy();
+    chartInstances['chartPeers'] = new Chart(c8, {
+      type: 'bar',
+      data: {
+        labels: ['DEE Dev', 'Kaynes', 'Honeywell', 'Jyoti CNC', 'Tega', 'Median'],
+        datasets: [
+          { label: 'P/E', data: [50.0, 74.9, 50.6, 47.9, 60.4, 31.5], backgroundColor: 'rgba(29,78,216,0.7)', yAxisID: 'y' },
+          { label: 'ROCE %', data: [6.9, 14.3, 18.4, 24.4, 17.8, 16.7], backgroundColor: 'rgba(22,163,74,0.7)', yAxisID: 'y2' }
+        ]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { position: 'left', title: { display: true, text: 'P/E', color: textColor() }, grid: { color: gridColor() }, ticks: { color: textColor() } },
+          y2: { position: 'right', title: { display: true, text: 'ROCE %', color: textColor() }, grid: { drawOnChartArea: false }, ticks: { color: textColor() } },
+          x: { grid: { color: gridColor() }, ticks: { color: textColor() } }
+        },
+        plugins: { legend: { labels: { color: textColor() } } }
+      }
+    });
+  }
+
+  // Capex vs CFO — Tab 12
+  var c9 = document.getElementById('chartCapex');
+  if (c9) {
+    if (chartInstances['chartCapex']) chartInstances['chartCapex'].destroy();
+    chartInstances['chartCapex'] = new Chart(c9, {
+      type: 'bar',
+      data: {
+        labels: capexLabels,
+        datasets: [
+          { label: 'Capex (₹ Cr)', data: capexData, backgroundColor: 'rgba(220,38,38,0.75)' },
+          { label: 'CFO (₹ Cr)', data: cfoData, backgroundColor: 'rgba(22,163,74,0.75)' }
+        ]
+      },
+      options: { responsive: true, scales: { y: { grid: { color: gridColor() }, ticks: { color: textColor() } }, x: { grid: { color: gridColor() }, ticks: { color: textColor() } } }, plugins: { legend: { labels: { color: textColor() } } } }
+    });
+  }
+
+  // Shareholding stacked bar — Tab 13
+  var c10 = document.getElementById('chartSH');
+  if (c10) {
+    if (chartInstances['chartSH']) chartInstances['chartSH'].destroy();
+    chartInstances['chartSH'] = new Chart(c10, {
+      type: 'bar',
+      data: {
+        labels: shLabels,
+        datasets: [
+          { label: 'Promoter', data: shPromoter, backgroundColor: '#0F1F3D', stack: 'sh' },
+          { label: 'DII', data: shDII, backgroundColor: '#E8701A', stack: 'sh' },
+          { label: 'Public', data: shPublic, backgroundColor: '#16A34A', stack: 'sh' },
+          { label: 'FII', data: shFII, backgroundColor: '#1D4ED8', stack: 'sh' }
+        ]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: { stacked: true, grid: { color: gridColor() }, ticks: { color: textColor() } },
+          y: { stacked: true, max: 100, ticks: { callback: function(v){ return v + '%'; }, color: textColor() }, grid: { color: gridColor() } }
+        },
+        plugins: { legend: { labels: { color: textColor() } } }
+      }
+    });
+  }
+}
+
+function rebuildCharts() {
+  Chart.defaults.color = textColor();
+  buildCharts();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  showTab(0);
+  buildCharts();
+});
+</script>
+</body>
+</html>

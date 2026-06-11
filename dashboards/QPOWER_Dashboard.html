@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QPOWER — Investment Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg-body: #F8F9FC;
+  --bg-card: #FFFFFF;
+  --bg-card-border: #E2E8F0;
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #94A3B8;
+  --color-navy: #0F1F3D;
+  --color-orange: #E8701A;
+  --color-green: #16A34A;
+  --color-red: #DC2626;
+  --color-amber: #D97706;
+  --color-blue: #1D4ED8;
+  --nav-bg: #0F1F3D;
+  --nav-text: #FFFFFF;
+  --table-header-bg: #F1F5F9;
+  --table-row-alt: #F8FAFC;
+  --highlight-latest: #FFF7ED;
+}
+[data-theme="dark"] {
+  --bg-body: #0F172A;
+  --bg-card: #1E293B;
+  --bg-card-border: #334155;
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  --color-navy: #1E40AF;
+  --color-orange: #F97316;
+  --color-green: #22C55E;
+  --color-red: #EF4444;
+  --color-amber: #F59E0B;
+  --color-blue: #3B82F6;
+  --nav-bg: #1E293B;
+  --nav-text: #F1F5F9;
+  --table-header-bg: #1E293B;
+  --table-row-alt: #0F172A;
+  --highlight-latest: #431407;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);font-size:16px;line-height:1.6}
+nav{background:var(--nav-bg);color:var(--nav-text);position:sticky;top:0;z-index:100;padding:0 16px}
+.nav-top{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.1)}
+.nav-ticker{font-weight:800;font-size:20px;color:#fff;letter-spacing:.04em}
+.nav-company{font-size:12px;color:rgba(255,255,255,.65);margin-left:10px}
+.nav-cmp{font-size:22px;font-weight:700;font-family:monospace;color:var(--color-orange)}
+.nav-tabs{display:flex;overflow-x:auto;gap:2px;padding:6px 0;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+.tab-btn{background:none;border:none;color:rgba(255,255,255,.65);font-size:12px;padding:7px 14px;cursor:pointer;border-radius:6px;white-space:nowrap;transition:.15s}
+.tab-btn:hover{background:rgba(255,255,255,.1);color:#fff}
+.tab-btn.active{background:var(--color-orange);color:#fff;font-weight:600}
+.theme-btn{background:rgba(255,255,255,.12);border:none;color:#fff;font-size:12px;padding:6px 12px;border-radius:6px;cursor:pointer}
+main{max-width:1280px;margin:0 auto;padding:24px 16px}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+.section-header{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--color-orange);border-left:4px solid var(--color-orange);padding-left:10px;border-bottom:1px solid var(--bg-card-border);padding-bottom:6px;margin:28px 0 16px}
+.card{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:12px;padding:20px;margin-bottom:16px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:20px}
+.kpi{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:10px;padding:16px;text-align:center}
+.kpi-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:6px}
+.kpi-value{font-size:22px;font-weight:800;font-family:monospace;color:var(--text-primary)}
+.kpi-sub{font-size:11px;color:var(--text-muted);margin-top:4px}
+.kpi-spark{height:30px;margin-top:8px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+@media(max-width:768px){.grid-2,.grid-3{grid-template-columns:1fr}}
+.table-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--bg-card-border)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{background:var(--table-header-bg);color:var(--text-secondary);font-size:12px;text-transform:uppercase;letter-spacing:.06em;padding:10px 14px;text-align:left;white-space:nowrap}
+td{padding:10px 14px;border-bottom:1px solid var(--bg-card-border);color:var(--text-primary);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+tr:nth-child(even) td{background:var(--table-row-alt)}
+.hl{background:var(--highlight-latest)!important}
+.num{font-family:monospace;text-align:right}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.badge-buy{background:#DCFCE7;color:#166534}
+.badge-acc{background:#FEF3C7;color:#92400E}
+.badge-watch{background:#FEF9C3;color:#713F12}
+.badge-high{background:#FEE2E2;color:#991B1B}
+.badge-med{background:#FEF3C7;color:#92400E}
+.badge-low{background:#DCFCE7;color:#166534}
+.badge-opt{background:#DBEAFE;color:#1E40AF}
+.badge-navy{background:#1E293B;color:#94A3B8}
+.badge-red{background:#FEE2E2;color:#991B1B}
+.badge-green{background:#DCFCE7;color:#166534}
+.badge-amber{background:#FEF3C7;color:#92400E}
+.badge-blue{background:#DBEAFE;color:#1E40AF}
+.verdict-big{font-size:48px;font-weight:900;letter-spacing:.04em;margin:8px 0}
+.conviction-bar{height:12px;background:var(--bg-card-border);border-radius:6px;overflow:hidden;margin:8px 0}
+.conviction-fill{height:100%;background:var(--color-orange);border-radius:6px;transition:.4s}
+.reason-list{list-style:none;padding:0}
+.reason-list li{padding:10px 0;border-bottom:1px solid var(--bg-card-border);font-size:15px;display:flex;gap:10px}
+.reason-list li:last-child{border-bottom:none}
+.reason-num{color:var(--color-orange);font-weight:800;font-family:monospace;min-width:24px}
+.chart-container{position:relative;height:280px}
+.chart-container-sm{position:relative;height:220px}
+.moat-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bg-card-border)}
+.moat-row:last-child{border-bottom:none}
+.moat-label{width:160px;font-size:13px;font-weight:600}
+.moat-rating{font-size:12px;font-weight:700;padding:2px 8px;border-radius:4px;min-width:70px;text-align:center}
+.moat-strong{background:#DCFCE7;color:#166534}
+.moat-moderate{background:#FEF3C7;color:#92400E}
+.moat-weak{background:#FEE2E2;color:#991B1B}
+.moat-desc{font-size:12px;color:var(--text-secondary);flex:1}
+.risk-card{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:10px;padding:16px;margin-bottom:12px;border-left:4px solid var(--color-red)}
+.risk-card.med{border-left-color:var(--color-amber)}
+.risk-card.low{border-left-color:var(--color-green)}
+.risk-title{font-weight:700;font-size:14px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.risk-desc{font-size:13px;color:var(--text-secondary);line-height:1.6}
+.event-item{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid var(--bg-card-border)}
+.event-date{font-family:monospace;font-size:12px;color:var(--text-muted);min-width:90px}
+.event-badge-wrap{min-width:90px}
+.event-content{flex:1;font-size:14px}
+.concall-quarter{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:10px;padding:18px;margin-bottom:14px}
+.concall-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.concall-qtr{font-weight:800;font-size:15px}
+.concall-date{font-size:12px;color:var(--text-muted)}
+.concall-bullets{list-style:none;padding:0}
+.concall-bullets li{padding:5px 0;padding-left:16px;position:relative;font-size:14px;color:var(--text-secondary)}
+.concall-bullets li::before{content:"▸";position:absolute;left:0;color:var(--color-orange)}
+.case-card{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:10px;padding:18px}
+.case-card.bull{border-top:4px solid var(--color-green)}
+.case-card.base{border-top:4px solid var(--color-amber)}
+.case-card.bear{border-top:4px solid var(--color-red)}
+.case-title{font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
+.progress-bar{height:8px;background:var(--bg-card-border);border-radius:4px;overflow:hidden;margin:4px 0}
+.pb-fill{height:100%;border-radius:4px}
+.forensic-row{display:grid;grid-template-columns:180px 1fr;gap:12px;padding:10px 0;border-bottom:1px solid var(--bg-card-border);align-items:start}
+.forensic-row:last-child{border-bottom:none}
+.forensic-key{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted)}
+.forensic-val{font-size:13px;color:var(--text-primary)}
+.tl-green{color:var(--color-green);font-weight:700}
+.tl-amber{color:var(--color-amber);font-weight:700}
+.tl-red{color:var(--color-red);font-weight:700}
+.milestone{display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--bg-card-border)}
+.milestone:last-child{border-bottom:none}
+.milestone-yr{font-family:monospace;font-weight:800;color:var(--color-orange);min-width:60px}
+.milestone-txt{font-size:13px;color:var(--text-secondary)}
+@media print{nav,.theme-btn{display:none}.tab-pane{display:block!important}body{background:#fff}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-top">
+    <div style="display:flex;align-items:center;gap:12px">
+      <span class="nav-ticker">QPOWER</span>
+      <span class="nav-company">Quality Power Electrical Equipments Ltd</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px">
+      <span class="nav-cmp">₹1,266</span>
+      <span style="font-size:12px;color:rgba(255,255,255,.5)">NSE · BSE:544367</span>
+      <button class="theme-btn" onclick="toggleTheme()">☀ / ☾</button>
+    </div>
+  </div>
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="showTab(0)">Exec Summary</button>
+    <button class="tab-btn" onclick="showTab(1)">Overview</button>
+    <button class="tab-btn" onclick="showTab(2)">Business</button>
+    <button class="tab-btn" onclick="showTab(3)">Industry</button>
+    <button class="tab-btn" onclick="showTab(4)">Financials</button>
+    <button class="tab-btn" onclick="showTab(5)">Growth</button>
+    <button class="tab-btn" onclick="showTab(6)">Forensics</button>
+    <button class="tab-btn" onclick="showTab(7)">Valuation</button>
+    <button class="tab-btn" onclick="showTab(8)">Thesis</button>
+    <button class="tab-btn" onclick="showTab(9)">Risks</button>
+    <button class="tab-btn" onclick="showTab(10)">Concall</button>
+    <button class="tab-btn" onclick="showTab(11)">Cap. Alloc.</button>
+    <button class="tab-btn" onclick="showTab(12)">Ownership</button>
+    <button class="tab-btn" onclick="showTab(13)">Events</button>
+  </div>
+</nav>
+<main id="dashboard">
+<!-- TAB 0: EXECUTIVE SUMMARY -->
+<div id="tab-0" class="tab-pane active">
+  <div style="display:grid;grid-template-columns:1fr 320px;gap:20px;margin-bottom:20px">
+    <div class="card">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);margin-bottom:6px">Analyst Verdict</div>
+      <div class="verdict-big" style="color:var(--color-orange)">ACCUMULATE</div>
+      <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;margin-bottom:14px">Quality Power is India's sole manufacturer of HVDC coils above 220kV — a structurally irreplaceable position in a global energy-transition supercycle. With the Sangli mega-factory completing in June 2026 (8x capacity expansion), Mehru margins marching toward 15%, the Hyosung GIS partnership entering commercial production, and a completely debt-free balance sheet, the company's revenue can compound from ₹950 Cr (FY26E) to ₹2,500+ Cr by FY28–29. Current TTM P/E of 209x is optically terrifying; FY27 forward P/E of ~25x on a genuine monopoly-in-the-making is not. Add on every meaningful dip.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <span class="badge badge-acc">Accumulate</span>
+        <span class="badge badge-green">Debt-Free</span>
+        <span class="badge badge-blue">HVDC Monopoly</span>
+        <span class="badge badge-amber">Capacity Constrained</span>
+      </div>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;gap:14px">
+      <div>
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:4px">Target Price (18-Month)</div>
+        <div style="font-size:28px;font-weight:800;font-family:monospace;color:var(--color-green)">₹1,800</div>
+        <div style="font-size:12px;color:var(--text-muted)">+42% upside from ₹1,266 CMP</div>
+      </div>
+      <div>
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:4px">Conviction Score</div>
+        <div style="font-size:24px;font-weight:800;font-family:monospace">7 <span style="font-size:14px;color:var(--text-muted)">/ 10</span></div>
+        <div class="conviction-bar"><div class="conviction-fill" style="width:70%"></div></div>
+      </div>
+      <div>
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:4px">Forensic Rating</div>
+        <div style="font-size:14px;font-weight:700;" class="tl-amber">⚠ AMBER FLAGS</div>
+        <div style="font-size:12px;color:var(--text-muted)">Small auditor; NCI complexity; Turkey IAS-29</div>
+      </div>
+      <div>
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:4px">Market Cap</div>
+        <div style="font-size:18px;font-weight:800;font-family:monospace">₹9,802 Cr</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-header">5 Key Reasons to Own</div>
+  <ul class="reason-list">
+    <li><span class="reason-num">01</span><span><strong>Global HVDC monopoly</strong> — Only Indian manufacturer of HVDC coils above 220kV; nearest competitor Trench Electric (PE-owned) carries $1.5 Bn backlog with 3+ year lead times. Europe closed its last competing factories 6–7 years ago. QPOWER wins 2/10 HVDC bids deliberately (capacity constrained). Demand-supply gap "will last decades."</span></li>
+    <li><span class="reason-num">02</span><span><strong>Sangli factory = step-change in revenue capacity</strong> — The 300,000 sq.ft. E5/E6 expansion (June 2026 completion) increases coil capacity 8–9x. Post 40–50 customer qualification audits, peak revenue potential is ₹1,500 Cr from Sangli alone at 75% utilization. Capex is mostly funded; no equity dilution required.</span></li>
+    <li><span class="reason-num">03</span><span><strong>Mehru margin lever</strong> — Acquired at 6% EBITDA (FY24); already at 16.4% in Q3 FY26 — ahead of the "15% by FY27" target. Full normalization adds ₹50–60 Cr incremental EBITDA on ₹350+ Cr revenue base. Fabrication demerger pending NCLT will further clean up the business.</span></li>
+    <li><span class="reason-num">04</span><span><strong>Hyosung GIS partnership — a new ₹500+ Cr revenue optionality</strong> — Partnership with Hyosung ($17 Bn, world's largest GIS maker) for instrument transformers at 220kV–765kV. First product June/July 2026. &lt;6 global competitors outside China. QPOWER enters with zero royalty on Hyosung-branded products. India transitioning from AIS to GIS substations nationwide.</span></li>
+    <li><span class="reason-num">05</span><span><strong>Debt-free with ₹200+ Cr cash + strategic capital discipline</strong> — Zero borrowings as at March 31, 2026 (confirmed in SEBI filing). Called off STATCON acquisition when valuation mismatched. 98% fixed-price contracts. Promoter soft loan at repo+0.5% (below market). Under-promise/over-deliver: guided ₹700–800 Cr FY26, delivered ₹697 Cr in just 9M.</span></li>
+  </ul>
+
+  <div class="section-header">Top 3 Risks to Thesis</div>
+  <ul class="reason-list">
+    <li><span class="reason-num" style="color:var(--color-red)">R1</span><span><strong>Chinese competition</strong> — Chinese manufacturers competing for global market share, not profit. Undercutting on price systematically. QPOWER's mitigation (own magnet wire factory) won't reach first-stage capacity until Q3 FY27. If Chinese players capture European utility tenders, win rates could compress from 2/10 to lower.</span></li>
+    <li><span class="reason-num" style="color:var(--color-red)">R2</span><span><strong>Sangli factory qualification delay</strong> — June 2026 is the third timeline (original was Q4 FY26, then H2 FY27, now June 2026). Post-completion, 40–50 customer qualification audits take 9–12 months before order intake. Any delay pushes the ₹1,500 Cr peak revenue scenario by a year, materially impacting FY27 consensus estimates.</span></li>
+    <li><span class="reason-num" style="color:var(--color-red)">R3</span><span><strong>Turkey hyperinflation accounting noise / Endoks concentration</strong> — Endoks contributes ~₹150–200 Cr quarterly revenue (55% of group before Mehru scale-up). IAS-29 gains inflated historical "other income" and PAT. As TL stabilizes, these gains disappear, making reported PAT growth look slower than operational reality. Turkey currency risk on non-USD contracts is real.</span></li>
+  </ul>
+
+  <div class="section-header">Investment Snapshot</div>
+  <div class="kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr))">
+    <div class="kpi"><div class="kpi-label">CMP</div><div class="kpi-value">₹1,266</div><div class="kpi-sub">NSE · May 2026</div></div>
+    <div class="kpi"><div class="kpi-label">52W H/L</div><div class="kpi-value" style="font-size:16px">₹1,443/₹349</div><div class="kpi-sub">Range</div></div>
+    <div class="kpi"><div class="kpi-label">TTM P/E</div><div class="kpi-value">209x</div><div class="kpi-sub">FY27E ~25x</div></div>
+    <div class="kpi"><div class="kpi-label">EV/EBITDA</div><div class="kpi-value">150x</div><div class="kpi-sub">TTM basis</div></div>
+    <div class="kpi"><div class="kpi-label">FY26E Rev</div><div class="kpi-value">₹950Cr</div><div class="kpi-sub">9M = ₹697 Cr</div></div>
+    <div class="kpi"><div class="kpi-label">Order Book</div><div class="kpi-value">₹895Cr</div><div class="kpi-sub">Q3 FY26</div></div>
+    <div class="kpi"><div class="kpi-label">ROCE</div><div class="kpi-value">17.9%</div><div class="kpi-sub">TTM</div></div>
+    <div class="kpi"><div class="kpi-label">D/E</div><div class="kpi-value">0.00</div><div class="kpi-sub">NIL as Mar-26</div></div>
+  </div>
+</div>
+<!-- TAB 1: OVERVIEW -->
+<div id="tab-1" class="tab-pane">
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">Revenue (FY25 Consol)</div><div class="kpi-value">₹392Cr</div><div class="kpi-sub">+18% YoY</div><canvas id="spark-rev" class="kpi-spark"></canvas></div>
+    <div class="kpi"><div class="kpi-label">EBITDA Margin (FY25)</div><div class="kpi-value">22%</div><div class="kpi-sub">FY24: 8%</div><canvas id="spark-ebitda" class="kpi-spark"></canvas></div>
+    <div class="kpi"><div class="kpi-label">PAT (FY25 Consol)</div><div class="kpi-value">₹101Cr</div><div class="kpi-sub">+74% YoY</div><canvas id="spark-pat" class="kpi-spark"></canvas></div>
+    <div class="kpi"><div class="kpi-label">ROCE (TTM)</div><div class="kpi-value">17.9%</div><div class="kpi-sub">FY23: 24%</div><canvas id="spark-roce" class="kpi-spark"></canvas></div>
+    <div class="kpi"><div class="kpi-label">Order Book</div><div class="kpi-value">₹895Cr</div><div class="kpi-sub">+73% vs Q3 FY25</div><canvas id="spark-ob" class="kpi-spark"></canvas></div>
+    <div class="kpi"><div class="kpi-label">Market Cap</div><div class="kpi-value">₹9,802Cr</div><div class="kpi-sub">CMP ₹1,266</div></div>
+    <div class="kpi"><div class="kpi-label">Net Cash (Mar-25)</div><div class="kpi-value">₹94Cr</div><div class="kpi-sub">Zero debt Mar-26</div></div>
+    <div class="kpi"><div class="kpi-label">Promoter Hold.</div><div class="kpi-value">73.91%</div><div class="kpi-sub">Stable all quarters</div></div>
+    <div class="kpi"><div class="kpi-label">Headcount</div><div class="kpi-value">2,000+</div><div class="kpi-sub">Group incl. Mehru</div></div>
+    <div class="kpi"><div class="kpi-label">Countries</div><div class="kpi-value">100+</div><div class="kpi-sub">210+ customers</div></div>
+  </div>
+
+  <div class="section-header">Price Performance</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Period</th><th class="num">QPOWER</th><th class="num">vs Nifty 50</th></tr></thead>
+      <tbody>
+        <tr><td>Since IPO (Feb 2025)</td><td class="num tl-green">+198%</td><td class="num tl-green">+12% outperformance</td></tr>
+        <tr><td>1 Year</td><td class="num tl-green">+139%</td><td class="num tl-amber">Significant outperform</td></tr>
+        <tr><td>6 Months</td><td class="num tl-amber">~+20%</td><td class="num">Broadly in-line</td></tr>
+        <tr><td>3 Months</td><td class="num tl-red">~-8%</td><td class="num tl-amber">Mild underperform</td></tr>
+        <tr class="hl"><td>IPO Price</td><td class="num">₹425</td><td class="num">Listing: Feb 24, 2025</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-header">Key Milestones</div>
+  <div class="card" style="padding:16px">
+    <div class="milestone"><span class="milestone-yr">2001</span><span class="milestone-txt">Incorporated as Quality Power Electrical Equipments Pvt. Ltd., Sangli, Maharashtra</span></div>
+    <div class="milestone"><span class="milestone-yr">2011</span><span class="milestone-txt">Acquired 51% of Endoks Enerji (Turkey) — entered STATCOMs/SVCs for global markets</span></div>
+    <div class="milestone"><span class="milestone-yr">2019</span><span class="milestone-txt">Acquired 100% of S&amp;S Transformers (Kerala) — cast resin transformers</span></div>
+    <div class="milestone"><span class="milestone-yr">2022</span><span class="milestone-txt">Acquired EPEC (Bangalore); invested in Nebeskie Labs (IoT/EMS); Toshiba T&amp;D machinery</span></div>
+    <div class="milestone"><span class="milestone-yr">Feb 2025</span><span class="milestone-txt">IPO on NSE+BSE at ₹425/share — raised ₹858 Cr total; ₹225 Cr fresh issue</span></div>
+    <div class="milestone"><span class="milestone-yr">Mar 2025</span><span class="milestone-txt">Acquired 51% of Mehru Electrical &amp; Mechanical Engineers (Bhiwadi, NCR) for ₹120 Cr — 500kV instrument transformers</span></div>
+    <div class="milestone"><span class="milestone-yr">Aug 2025</span><span class="milestone-txt">Won world's largest 500kV HVDC smoothing coil order; Sukrut JV (1,000+ global transformer customers)</span></div>
+    <div class="milestone"><span class="milestone-yr">Nov 2025</span><span class="milestone-txt">Rihand-Dadri HVDC retrofit won; Hyosung GIS partnership (₹2,000–3,000 Cr global market)</span></div>
+    <div class="milestone"><span class="milestone-yr">Q3 FY26</span><span class="milestone-txt">Sukrut acquisition completed; Sangli factory ETA June 2026; GETC approved</span></div>
+    <div class="milestone"><span class="milestone-yr">Mar 2026</span><span class="milestone-txt">Zero outstanding borrowings confirmed in SEBI Large Corporate disclosure</span></div>
+  </div>
+
+  <div class="section-header">Shareholding (Mar 2026)</div>
+  <div class="grid-2">
+    <div class="card"><div class="chart-container-sm"><canvas id="chart-holding-pie"></canvas></div></div>
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Category</th><th class="num">Mar-25</th><th class="num">Sep-25</th><th class="num">Mar-26</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Promoters</strong></td><td class="num">73.91%</td><td class="num">73.91%</td><td class="num hl">73.91%</td></tr>
+            <tr><td>FII</td><td class="num">3.99%</td><td class="num">2.13%</td><td class="num hl">2.28%</td></tr>
+            <tr><td>DII</td><td class="num">8.76%</td><td class="num">5.92%</td><td class="num hl">5.97%</td></tr>
+            <tr><td>Public</td><td class="num">13.35%</td><td class="num">18.05%</td><td class="num hl">17.85%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:12px;font-size:12px;color:var(--text-muted)">No promoter pledge. No OFS since IPO. Founders steadily waived dividend in FY25 to retain capital in business.</div>
+    </div>
+  </div>
+</div>
+<!-- TAB 2: BUSINESS -->
+<div id="tab-2" class="tab-pane">
+  <div class="card">
+    <p style="font-size:15px;line-height:1.8;color:var(--text-secondary)">Quality Power manufactures critical energy-transition equipment — the "pipes and valves" of the global power grid. Its products are not commodity components; they are bespoke, high-specification systems that enable HVDC (long-distance, low-loss power transmission), FACTS (grid stability in renewable-heavy networks), and instrument transformers (metering/protection for high-voltage substations). The company serves utilities, EPCs, and OEMs across 100+ countries. Revenue is ~81% international. Entry barriers are extreme: bespoke engineering, NABL-accredited test labs up to 2,500kV, and decades of reference projects at 220kV–765kV. Replacement cost of capabilities would run thousands of crores.</p>
+  </div>
+
+  <div class="section-header">Revenue Segments (FY26E Annualised, ₹ Cr)</div>
+  <div class="grid-2">
+    <div class="card"><div class="chart-container"><canvas id="chart-seg-pie"></canvas></div></div>
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Segment</th><th>Entity</th><th class="num">Rev (Cr)</th><th class="num">EBITDA%</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Coil Products &amp; Systems</strong></td><td>QP Sangli+Cochin</td><td class="num">~320</td><td class="num tl-green">34%</td></tr>
+            <tr><td><strong>Power Quality (FACTS)</strong></td><td>Endoks Turkey</td><td class="num">~200</td><td class="num tl-green">30%</td></tr>
+            <tr><td><strong>Instrument Transformers</strong></td><td>Mehru Bhiwadi</td><td class="num">~350</td><td class="num tl-amber">16%→15%+</td></tr>
+            <tr><td><strong>Sukrut / Other</strong></td><td>Sukrut + S&amp;S</td><td class="num">~80</td><td class="num">—</td></tr>
+            <tr class="hl"><td><strong>Group Total (FY26E)</strong></td><td>Consolidated</td><td class="num">~950</td><td class="num tl-green">~27%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-header">Product Portfolio</div>
+  <div class="grid-3">
+    <div class="card">
+      <div style="font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--color-orange);margin-bottom:10px">⚡ Coil Products (up to 765kV)</div>
+      <ul style="list-style:none;font-size:13px;color:var(--text-secondary)">
+        <li>▸ HVDC Smoothing Coils (500kV class)</li>
+        <li>▸ VSC/LCC Converter Reactors</li>
+        <li>▸ Shunt Reactors (up to 300 MVAr)</li>
+        <li>▸ Inrush / Iron Core / Air Core Reactors</li>
+        <li>▸ Wave Traps, Line Traps</li>
+        <li>▸ Oil-Filled Reactors</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div style="font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--color-orange);margin-bottom:10px">🔧 Power Quality / FACTS</div>
+      <ul style="list-style:none;font-size:13px;color:var(--text-secondary)">
+        <li>▸ STATCOMs (up to 5 MVAr)</li>
+        <li>▸ SVCs (Static VAR Compensators)</li>
+        <li>▸ Capacitor Banks (up to 245kV)</li>
+        <li>▸ Harmonic Filters (up to 145kV)</li>
+        <li>▸ TCT, TSC, MCR systems</li>
+        <li>▸ Endoks Turkey — specialised FACTS</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div style="font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--color-orange);margin-bottom:10px">📡 Instrument Transformers</div>
+      <ul style="list-style:none;font-size:13px;color:var(--text-secondary)">
+        <li>▸ Current Transformers (CT) up to 500kV+</li>
+        <li>▸ Capacitive Voltage Transformers (CVT)</li>
+        <li>▸ Inductive Voltage Transformers (VT)</li>
+        <li>▸ Discharge Coils</li>
+        <li>▸ GIS Instrument Transformers (Hyosung JV)</li>
+        <li>▸ Oil-filled and dry-type variants</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-header">Competitive Moat Scorecard</div>
+  <div class="card">
+    <div class="moat-row"><div class="moat-label">Regulatory / Certifications</div><span class="badge moat-strong">STRONG</span><div class="moat-desc">NABL ISO17025 accreditation for 2,500kV testing; 765kV-capable test lab unique in India; customer qualifications take 12–24 months.</div></div>
+    <div class="moat-row"><div class="moat-label">Technical Expertise</div><span class="badge moat-strong">STRONG</span><div class="moat-desc">24+ years of bespoke high-voltage design; Turkey R&amp;D center (0–4% tax); 5.75% of expenses on R&amp;D (FY24). World's only second source for 500kV HVDC coils after Trench Electric.</div></div>
+    <div class="moat-row"><div class="moat-label">Scale / Cost Advantage</div><span class="badge moat-moderate">MODERATE</span><div class="moat-desc">Currently sub-scale vs Trench/Hitachi. Post-Sangli factory: one of the largest dedicated coil facilities globally. Backward integration (magnet wire) will lower BoM 10–15%.</div></div>
+    <div class="moat-row"><div class="moat-label">Customer Switching Costs</div><span class="badge moat-strong">STRONG</span><div class="moat-desc">Long qualification cycles (40–50 audits for HVDC acceptance), bespoke designs for each project, multi-year reference project lists required for new bids.</div></div>
+    <div class="moat-row"><div class="moat-label">Network Effects</div><span class="badge moat-weak">WEAK</span><div class="moat-desc">Limited direct network effects; some indirect effect through reference project list and Sukrut's 1,000+ customer network access.</div></div>
+    <div class="moat-row"><div class="moat-label">Brand / Intangibles</div><span class="badge moat-moderate">MODERATE</span><div class="moat-desc">Strong B2B brand with utilities, EPCs. Hyosung partnership lends global brand halo in GIS. Mehru brand established in 50+ country IT market.</div></div>
+  </div>
+
+  <div class="section-header">Key Customers &amp; Sales Channels</div>
+  <div class="card" style="font-size:14px;color:var(--text-secondary)">
+    <strong>Anchor OEM customers:</strong> GE T&amp;D India (Hitachi Energy), Hitachi Energy Limited, Kalpataru Projects International<br><br>
+    <strong>International geography:</strong> Australia (HVDC links), Abu Dhabi (Lightning Link HVDC), Korea (STATCOM+HVDC), Romania, Italy, Sweden (FACTS), Finland (shunt reactor), Hong Kong CLP, Burkina Faso, Brazil, Canada<br><br>
+    <strong>India domestic:</strong> Power Grid Corporation (Rihand-Dadri HVDC retrofit), state utilities (STATCOM orders), traction/locomotives sector<br><br>
+    <strong>Revenue split:</strong> ~81% international, ~19% domestic (FY25 basis)
+  </div>
+</div>
+<!-- TAB 3: INDUSTRY -->
+<div id="tab-3" class="tab-pane">
+  <div class="section-header">Market Context &amp; TAM</div>
+  <div class="grid-3">
+    <div class="card" style="border-top:4px solid var(--color-blue)">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px">India T&amp;D Market</div>
+      <div style="font-size:22px;font-weight:800;font-family:monospace">USD 1.7Bn</div>
+      <div style="font-size:12px;color:var(--text-muted)">by 2028 | CAGR: 18%</div>
+    </div>
+    <div class="card" style="border-top:4px solid var(--color-orange)">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px">Global HVDC TAM (QPOWER)</div>
+      <div style="font-size:22px;font-weight:800;font-family:monospace">Decades</div>
+      <div style="font-size:12px;color:var(--text-muted)">Demand-supply gap "will last decades" — management</div>
+    </div>
+    <div class="card" style="border-top:4px solid var(--color-green)">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px">GIS IT Market (Hyosung JV)</div>
+      <div style="font-size:22px;font-weight:800;font-family:monospace">₹2,000–3,000Cr</div>
+      <div style="font-size:12px;color:var(--text-muted)">Global addressable | &lt;6 non-Chinese competitors</div>
+    </div>
+  </div>
+
+  <div class="section-header">Industry Structure</div>
+  <div class="grid-2">
+    <div class="card">
+      <div style="font-weight:700;margin-bottom:12px;font-size:14px">HVDC Coils / Smoothing Reactors</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+        <span class="badge badge-red">Oligopoly</span>
+        <span class="badge badge-blue">Growth Stage</span>
+        <span class="badge badge-green">USD-Denominated</span>
+      </div>
+      <p style="font-size:13px;color:var(--text-secondary)">Only 5–6 manufacturers globally. European factories shuttered 6–7 years ago. Trench Electric (Siemens spin-off, now PE-owned) is nearest competitor — $1.5 Bn backlog, 3+ year lead times. China competes for market share not profit. QPOWER is only Indian / non-Chinese manufacturer at 220kV+ class. Post-Sangli commissioning, QPOWER becomes one of top 3 global capacity providers.</p>
+    </div>
+    <div class="card">
+      <div style="font-weight:700;margin-bottom:12px;font-size:14px">Instrument Transformers (Mehru)</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+        <span class="badge badge-amber">Fragmented</span>
+        <span class="badge badge-blue">Growth Stage</span>
+      </div>
+      <p style="font-size:13px;color:var(--text-secondary)">More competitive than HVDC coils. India growing through Power Grid expansion and PGCIL upgrades. Mehru has established 50+ country customer base. GIS transition in India (AIS to GIS substations) creates durable structural growth over 10–15 year horizon. Capacity constrained — Mehru win rate ~100% (turned away orders due to capacity).</p>
+    </div>
+  </div>
+
+  <div class="section-header">Structural Tailwinds</div>
+  <ul class="reason-list">
+    <li><span class="reason-num" style="color:var(--color-blue)">T1</span><span><strong>Global HVDC buildout acceleration</strong> — Spain/Portugal blackout (May 2025) proved HVDC+FACTS necessity. Every European nation is accelerating interconnection. India planned 2 more HVDC lines (Power Grid announcement); Australia, Korea, Abu Dhabi active projects. Data center hyperscale (40–50 GW in India alone) requires HVDC transmission backbone.</span></li>
+    <li><span class="reason-num" style="color:var(--color-blue)">T2</span><span><strong>Renewable energy integration driving FACTS demand</strong> — Solar and wind generation creates voltage instability. STATCOMs and SVCs are non-negotiable for grid codes worldwide. India's 500 GW renewable target by 2030 implies ₹15,000+ Cr in FACTS equipment over the decade.</span></li>
+    <li><span class="reason-num" style="color:var(--color-blue)">T3</span><span><strong>Supply chain nationalisation post-COVID</strong> — Governments and utilities diversifying away from single-source Chinese supply. QPOWER is a "China+1" beneficiary. BIS import licensing for HVDC magnet wire (affecting Chinese competitors) is a direct regulatory tailwind.</span></li>
+    <li><span class="reason-num" style="color:var(--color-blue)">T4</span><span><strong>India substation upgrade cycle (AIS to GIS)</strong> — India utilities transitioning to gas-insulated switchgear for urban space efficiency and reliability. Hyosung JV positions QPOWER in this decade-long transition cycle ahead of qualification curve.</span></li>
+    <li><span class="reason-num" style="color:var(--color-blue)">T5</span><span><strong>Low-cost HVDC magnet wire capability</strong> — QPOWER's own CPC (magnet wire) factory (Q3 FY27) will be India's first HVDC-grade magnet wire producer — enabling supply security while lowering BoM 10–15% vs imports.</span></li>
+  </ul>
+
+  <div class="section-header">Structural Headwinds</div>
+  <ul class="reason-list">
+    <li><span class="reason-num" style="color:var(--color-red)">H1</span><span><strong>Chinese pricing aggression</strong> — China competing for global market dominance at loss-making prices. QPOWER's only defence is technology differentiation and backward integration speed. If Chinese players achieve 765kV certification in the next 2–3 years, pricing pressure could intensify.</span></li>
+    <li><span class="reason-num" style="color:var(--color-red)">H2</span><span><strong>Supply chain bottlenecks (insulators, magnet wire)</strong> — Insulators are globally constrained. HVDC magnet wire subject to BIS import licensing. These supply-side constraints limit order intake velocity even when demand is robust. QPOWER is already stockpiling insulators strategically.</span></li>
+    <li><span class="reason-num" style="color:var(--color-red)">H3</span><span><strong>Long customer qualification cycles</strong> — New factories (like Sangli) require 40–50 customer qualification audits before HVDC order intake. This creates a structural 9–12 month lag between capacity commissioning and revenue realisation.</span></li>
+  </ul>
+
+  <div class="section-header">Competitive Landscape — HVDC/FACTS</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Player</th><th>Segment</th><th>Strength</th><th>Threat Level</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Trench Electric (PE-owned)</strong></td><td>HVDC Coils</td><td>$1.5Bn backlog; 3+ yr lead times — capacity constrained</td><td><span class="badge badge-med">MEDIUM</span></td></tr>
+        <tr><td><strong>Chinese Mfrs (multiple)</strong></td><td>All segments</td><td>Price aggression; competing for market share not profit</td><td><span class="badge badge-high">HIGH</span></td></tr>
+        <tr><td><strong>Hitachi Energy / ABB</strong></td><td>HVDC systems</td><td>System integrators, not coil manufacturers; QPOWER supplies to them</td><td><span class="badge badge-low">LOW</span></td></tr>
+        <tr><td><strong>GE Vernova T&amp;D</strong></td><td>Transformers/IT</td><td>Instrument transformer overlap; QPOWER is supplier to GE T&amp;D India</td><td><span class="badge badge-low">LOW</span></td></tr>
+        <tr class="hl"><td><strong>QPOWER</strong></td><td>HVDC/FACTS/IT</td><td>Only Indian 220kV+ coil manufacturer; growing global footprint</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<!-- TAB 4: FINANCIALS -->
+<div id="tab-4" class="tab-pane">
+  <div class="section-header">Quarterly P&amp;L — Consolidated (₹ Cr) | Metrics as rows · Periods as columns</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th class="num">Q2 FY25</th>
+          <th class="num">Q3 FY25</th>
+          <th class="num">Q4 FY25</th>
+          <th class="num">Q1 FY26</th>
+          <th class="num">Q2 FY26</th>
+          <th class="num hl">Q3 FY26</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Revenue</td><td class="num">94</td><td class="num">73</td><td class="num">164</td><td class="num">194</td><td class="num">219</td><td class="num hl">284</td></tr>
+        <tr><td>QoQ Growth</td><td class="num">—</td><td class="num tl-red">-23%</td><td class="num tl-green">+125%</td><td class="num tl-green">+18%</td><td class="num tl-green">+13%</td><td class="num hl tl-green">+30%</td></tr>
+        <tr><td>YoY Growth</td><td class="num">—</td><td class="num tl-red">-49%*</td><td class="num tl-green">—</td><td class="num tl-green">+143%</td><td class="num tl-green">+112%</td><td class="num hl tl-green">+250%+</td></tr>
+        <tr><td>EBITDA</td><td class="num">8</td><td class="num">17</td><td class="num">36</td><td class="num">60</td><td class="num">49</td><td class="num hl">79</td></tr>
+        <tr><td>EBITDA Margin %</td><td class="num">8.6%</td><td class="num">24.0%</td><td class="num">22.0%</td><td class="num">31.0%</td><td class="num">22.5%</td><td class="num hl">28.0%</td></tr>
+        <tr><td>PBT</td><td class="num">—</td><td class="num">22</td><td class="num">—</td><td class="num">—</td><td class="num">44</td><td class="num hl">74</td></tr>
+        <tr><td>PAT</td><td class="num">13</td><td class="num">20</td><td class="num">~25</td><td class="num">~52</td><td class="num">35</td><td class="num hl">~63</td></tr>
+        <tr><td>PAT Margin %</td><td class="num">13.8%</td><td class="num">24.5%</td><td class="num">~15%</td><td class="num">~27%</td><td class="num">16.1%</td><td class="num hl">~22%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="font-size:11px;color:var(--text-muted);margin-top:6px">*Q3 FY25 YoY revenue decline due to project execution timing; EBITDA/PAT grew strongly. PAT includes Turkey IAS-29 other income.</div>
+
+  <div class="section-header">Annual P&amp;L — Standalone (₹ Cr, Screener data) &amp; Consolidated</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th class="num">FY22 S/A</th>
+          <th class="num">FY23 S/A</th>
+          <th class="num">FY24 S/A</th>
+          <th class="num">FY24 Consol</th>
+          <th class="num">FY25 Consol</th>
+          <th class="num hl">FY26E Consol</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Revenue</td><td class="num">74</td><td class="num">95</td><td class="num">130</td><td class="num">302</td><td class="num">392</td><td class="num hl">~950</td></tr>
+        <tr><td>EBITDA Margin</td><td class="num">14%</td><td class="num">18%</td><td class="num">18%</td><td class="num">~8%</td><td class="num">~22%</td><td class="num hl">~27%</td></tr>
+        <tr><td>PAT</td><td class="num">8</td><td class="num">13</td><td class="num">18</td><td class="num">58</td><td class="num">101</td><td class="num hl">~200</td></tr>
+        <tr><td>EPS (₹)</td><td class="num">—</td><td class="num">—</td><td class="num">2.43</td><td class="num">5.19</td><td class="num">9.10</td><td class="num hl">~25–28</td></tr>
+        <tr><td>Revenue Growth</td><td class="num">28%</td><td class="num">28%</td><td class="num">37%</td><td class="num">—</td><td class="num">+30%</td><td class="num hl">~142%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="font-size:11px;color:var(--text-muted);margin-top:6px">S/A = Standalone. FY22-FY24 standalone from Screener. Consol FY24-FY25 from Annual Report. FY26E based on 9M=₹697 Cr + Q4 estimated ₹250+ Cr.</div>
+
+  <div class="grid-2" style="margin-top:16px">
+    <div class="card"><div class="section-header" style="margin-top:0">Revenue &amp; PAT Trend</div><div class="chart-container"><canvas id="chart-revpat"></canvas></div></div>
+    <div class="card"><div class="section-header" style="margin-top:0">EBITDA Margin Trend</div><div class="chart-container"><canvas id="chart-margin"></canvas></div></div>
+  </div>
+
+  <div class="section-header">Cash Flow Quality (Consolidated, ₹ Cr)</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Item</th><th class="num">FY24</th><th class="num hl">FY25</th></tr></thead>
+      <tbody>
+        <tr><td>CFO (Operating)</td><td class="num">51.5</td><td class="num hl">62.5</td></tr>
+        <tr><td>CFI (Investing)</td><td class="num">-38.6</td><td class="num hl">-92.7</td></tr>
+        <tr><td>CFF (Financing)</td><td class="num">25.4</td><td class="num hl">171.0</td></tr>
+        <tr><td>Net Change in Cash</td><td class="num">-3.9</td><td class="num hl">133.6</td></tr>
+        <tr><td>Free Cash Flow</td><td class="num">~17.6</td><td class="num hl">~40</td></tr>
+        <tr><td>CFO / EBITDA</td><td class="num">~100%</td><td class="num hl">~72%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="font-size:12px;color:var(--text-muted);margin-top:6px">Note: FY26 OCF/EBITDA ratio compressed to ~0.1x in H1 due to strategic inventory build (insulators). Expected to normalise H2 FY26 / FY27.</div>
+
+  <div class="section-header">Balance Sheet Snapshot (Consolidated, ₹ Cr)</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Item</th><th class="num">Mar-24</th><th class="num hl">Mar-25</th></tr></thead>
+      <tbody>
+        <tr><td>Total Assets</td><td class="num">359</td><td class="num hl">814</td></tr>
+        <tr><td>PP&amp;E (net)</td><td class="num">65</td><td class="num hl">217</td></tr>
+        <tr><td>Goodwill</td><td class="num">0</td><td class="num hl">14</td></tr>
+        <tr><td>Cash &amp; Equivalents</td><td class="num">47</td><td class="num hl">181</td></tr>
+        <tr><td>Trade Receivables</td><td class="num">79</td><td class="num hl">137</td></tr>
+        <tr><td>Total Debt (borrowings)</td><td class="num">38</td><td class="num hl">9</td></tr>
+        <tr><td>Total Equity</td><td class="num">190</td><td class="num hl">594</td></tr>
+        <tr><td>D/E Ratio</td><td class="num">0.20x</td><td class="num hl tl-green">0.01x</td></tr>
+        <tr><td>Net Debt / (Cash)</td><td class="num">-8.9</td><td class="num hl tl-green">Net Cash ₹172 Cr</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-header">Efficiency Ratios</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Ratio</th><th class="num">FY23</th><th class="num">FY24</th><th class="num hl">FY25</th></tr></thead>
+      <tbody>
+        <tr><td>ROCE %</td><td class="num">24%</td><td class="num">25%</td><td class="num hl">18%</td></tr>
+        <tr><td>ROE %</td><td class="num">—</td><td class="num">—</td><td class="num hl">14.2%</td></tr>
+        <tr><td>Debtor Days</td><td class="num">84</td><td class="num">46</td><td class="num hl">97</td></tr>
+        <tr><td>Working Capital Days</td><td class="num">47</td><td class="num">18</td><td class="num hl">81</td></tr>
+        <tr><td>Interest Coverage</td><td class="num">~18x</td><td class="num">~24x</td><td class="num hl tl-green">~28x+</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="font-size:12px;color:var(--text-muted);margin-top:6px">ROCE diluted by IPO-inflated equity base (₹225 Cr fresh issue). Pre-IPO ROCE (FY24 standalone) was 25%. Debtor days expanded due to large HVDC milestone contracts and Mehru mix.</div>
+</div>
+<!-- TAB 5: GROWTH -->
+<div id="tab-5" class="tab-pane">
+  <div class="kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
+    <div class="kpi"><div class="kpi-label">Revenue CAGR 3Y (S/A)</div><div class="kpi-value">27%</div><div class="kpi-sub">Screener data</div></div>
+    <div class="kpi"><div class="kpi-label">Revenue CAGR 5Y (S/A)</div><div class="kpi-value">27%</div><div class="kpi-sub">Screener data</div></div>
+    <div class="kpi"><div class="kpi-label">9M FY26 vs FY25</div><div class="kpi-value">+78%</div><div class="kpi-sub">₹697 Cr vs ₹392 Cr</div></div>
+    <div class="kpi"><div class="kpi-label">Order Book Growth</div><div class="kpi-value">+73%</div><div class="kpi-sub">₹895 Cr vs ₹517 Cr (Q3 FY25)</div></div>
+    <div class="kpi"><div class="kpi-label">Mehru Margin (Q3 FY26)</div><div class="kpi-value">16.4%</div><div class="kpi-sub">vs 6% at acquisition</div></div>
+    <div class="kpi"><div class="kpi-label">Peak Revenue Potential</div><div class="kpi-value">₹2,500Cr+</div><div class="kpi-sub">Sangli + Mehru + GIS (FY28-29)</div></div>
+  </div>
+
+  <div class="section-header">Order Book Trajectory (₹ Cr)</div>
+  <div class="card"><div class="chart-container"><canvas id="chart-orderbook"></canvas></div></div>
+
+  <div class="section-header">Growth Trigger Cards</div>
+
+  <div class="card" style="border-left:4px solid var(--color-red)">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <span class="badge badge-high">HIGH IMPACT</span>
+      <strong style="font-size:15px">Sangli Global Coil Factory — 8x Capacity</strong>
+    </div>
+    <p style="font-size:13px;color:var(--text-secondary);line-height:1.6">June 2026 completion → 40–50 customer qualification audits → order intake Q2 FY27. Peak revenue ₹1,500 Cr at 75% utilization from Sangli alone. Capex ~₹272 Mn (funded from IPO). 2,500kV AC high-power test lab — only such facility in India. Creates 8–9x current coil capacity in one step.</p>
+    <div style="font-size:12px;color:var(--text-muted);margin-top:8px"><strong>Timeline:</strong> Revenue from H2 FY27 | <strong>Bear pushback:</strong> Qualification audits take 9–18 months; third timeline revision (was Q4 FY26, H2 FY27, now June 2026) — execution risk real</div>
+  </div>
+
+  <div class="card" style="border-left:4px solid var(--color-amber)">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <span class="badge badge-med">MEDIUM IMPACT</span>
+      <strong style="font-size:15px">Mehru Margin Normalisation to 15%+</strong>
+    </div>
+    <p style="font-size:13px;color:var(--text-secondary);line-height:1.6">Mehru acquired at 6% EBITDA (FY24). Now at 16.4% in Q3 FY26 — ahead of schedule. Target 15%+ (being exceeded). ₹350+ Cr revenue base in FY26E. Full normalisation adds ₹50–60 Cr incremental EBITDA annually. Fabrication business demerger (NCLT pending) will further clean P&amp;L.</p>
+    <div style="font-size:12px;color:var(--text-muted);margin-top:8px"><strong>Timeline:</strong> FY27 full year | <strong>Bear pushback:</strong> Competition in ITs could pressure realizations; NCLT demerger timeline uncertain</div>
+  </div>
+
+  <div class="card" style="border-left:4px solid var(--color-blue)">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <span class="badge badge-opt">OPTIONALITY</span>
+      <strong style="font-size:15px">Hyosung GIS Instrument Transformers Partnership</strong>
+    </div>
+    <p style="font-size:13px;color:var(--text-secondary);line-height:1.6">Strategic partnership with Hyosung ($17 Bn, world's largest GIS manufacturer) for 220–765kV GIS instrument transformers. First trial product June/July 2026. Market entry: Africa → LATAM → Europe. &lt;6 global competitors outside China. ₹2,000–3,000 Cr global addressable market. Zero royalty on Hyosung-branded sales. India utility GIS transition is a decade-long structural driver.</p>
+    <div style="font-size:12px;color:var(--text-muted);margin-top:8px"><strong>Timeline:</strong> Revenue from FY27–28 | <strong>Bear pushback:</strong> Commercial revenue 2+ years away; India utility qualification adds another 1–2 years; Africa/LATAM market development risk</div>
+  </div>
+
+  <div class="card" style="border-left:4px solid var(--color-amber)">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <span class="badge badge-med">MEDIUM IMPACT</span>
+      <strong style="font-size:15px">Sukrut — 1,000+ Customer Network Unlock</strong>
+    </div>
+    <p style="font-size:13px;color:var(--text-secondary);line-height:1.6">50% stake acquired in Q3 FY26. Sukrut turned profitable in first month under QPOWER management (first time in 5 years). The primary value is access to 1,000+ global transformer customers — cross-selling QPOWER's product suite. FY26 Sukrut revenue: ₹28 Cr (growing). Order book ₹4–5 Cr in Q3 FY26 (early stage).</p>
+    <div style="font-size:12px;color:var(--text-muted);margin-top:8px"><strong>Timeline:</strong> FY27–28 cross-sell monetisation | <strong>Bear pushback:</strong> Customer network ≠ guaranteed revenue; integration and cultural fit risk</div>
+  </div>
+
+  <div class="card" style="border-left:4px solid var(--color-green)">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <span class="badge badge-opt">OPTIONALITY</span>
+      <strong style="font-size:15px">Backward Integration: HVDC Magnet Wire (CPC)</strong>
+    </div>
+    <p style="font-size:13px;color:var(--text-secondary);line-height:1.6">Own factory for HVDC-grade magnet wire (Continuously Pervious Conductor) — India's first. BIS licensing required for imports creates supply insecurity vs Chinese supply. First-stage capacity Q3 FY27. Target: supply 50% of own needs. Benefits: BoM reduction 10–15%, supply security, possible third-party sales to global OEMs.</p>
+    <div style="font-size:12px;color:var(--text-muted);margin-top:8px"><strong>Timeline:</strong> Cost benefit from FY28 | <strong>Bear pushback:</strong> Capital-intensive; technology risk in new manufacturing process; BIS approval uncertainty</div>
+  </div>
+</div>
+<!-- TAB 6: FORENSICS -->
+<div id="tab-6" class="tab-pane">
+  <div class="grid-2">
+    <div class="card">
+      <div class="section-header" style="margin-top:0">Auditor &amp; Governance</div>
+      <div class="forensic-row"><div class="forensic-key">Auditor</div><div class="forensic-val">Kishor Gujar &amp; Associates, Chartered Accountants<br><span style="font-size:12px;color:var(--text-muted)">Pimpri, Pune | Firm Reg: 116747W | Small regional firm (not Big 4 / mid-tier)</span></div></div>
+      <div class="forensic-row"><div class="forensic-key">Lead Partner</div><div class="forensic-val">CA Javedkhan Saudagar (M.No. 139006) | UDIN: 25139006BMIEDO3742</div></div>
+      <div class="forensic-row"><div class="forensic-key">Firm Type</div><div class="forensic-val tl-amber">⚠ Small regional firm — amber flag for a ₹9,800 Cr market cap company</div></div>
+      <div class="forensic-row"><div class="forensic-key">IFC Opinion</div><div class="forensic-val tl-green">✓ Clean — no IFC qualifications noted</div></div>
+      <div class="forensic-row"><div class="forensic-key">Going Concern</div><div class="forensic-val tl-green">✓ No issues noted</div></div>
+      <div class="forensic-row"><div class="forensic-key">Audit Trail</div><div class="forensic-val tl-green">✓ SAP B-1 software; audit trail operational throughout FY25</div></div>
+      <div class="forensic-row"><div class="forensic-key">Subsidiary Auditors</div><div class="forensic-val tl-amber">⚠ 3 subsidiaries (incl. Endoks step-down) audited by OTHER auditors — principal auditor relies on component auditor reports for 55%+ of group revenue</div></div>
+    </div>
+    <div class="card">
+      <div class="section-header" style="margin-top:0">Key Audit Matters (KAMs)</div>
+      <div class="forensic-row"><div class="forensic-key">KAM 1</div><div class="forensic-val"><strong>Revenue recognition on long-term contracts</strong><br><span style="font-size:12px;color:var(--text-muted)">Percentage of Completion (PoC) method using cost-input approach. Subjective — estimated costs vs actual. Unchanged from prior year.</span></div></div>
+      <div class="forensic-row"><div class="forensic-key">KAM 2</div><div class="forensic-val"><strong>Acquisition of Mehru Electrical &amp; Mechanical Engineers Pvt. Ltd.</strong><br><span style="font-size:12px;color:var(--text-muted)">51% stake at ₹120 Cr; Goodwill ₹14 Cr arising. New KAM this year (acquisition-related).</span></div></div>
+      <div class="forensic-row"><div class="forensic-key">KAM Change</div><div class="forensic-val tl-amber">⚠ New KAM (Mehru acquisition) added; PoC KAM unchanged</div></div>
+    </div>
+  </div>
+
+  <div class="section-header">Related Party Transactions (Standalone FY25)</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Counterparty</th><th>Nature</th><th class="num">₹ Mn</th><th class="num">% Revenue</th><th>Risk Flag</th></tr></thead>
+      <tbody>
+        <tr><td>QPEP (subsidiary)</td><td>Purchases (coil mfg)</td><td class="num">123.97</td><td class="num">8.1%</td><td><span class="badge badge-med">MEDIUM</span></td></tr>
+        <tr><td>QPEP (subsidiary)</td><td>Manpower services</td><td class="num">7.20</td><td class="num">0.5%</td><td><span class="badge badge-low">LOW</span></td></tr>
+        <tr><td>Endoks (subsidiary)</td><td>Sales of HVDC products</td><td class="num">54.20</td><td class="num">3.6%</td><td><span class="badge badge-low">LOW</span></td></tr>
+        <tr><td>S&amp;S Transformers</td><td>Royalty paid</td><td class="num">1.20</td><td class="num">0.1%</td><td><span class="badge badge-low">LOW</span></td></tr>
+        <tr><td>T. Pandyan (CMD)</td><td>Remuneration</td><td class="num">20.70</td><td class="num">1.4%</td><td><span class="badge badge-med">MEDIUM</span></td></tr>
+        <tr><td>B. Pandyan (JMD)</td><td>Remuneration</td><td class="num">20.70</td><td class="num">1.4%</td><td><span class="badge badge-med">MEDIUM</span></td></tr>
+        <tr><td>Nivetha Pandyan (relative)</td><td>Salary (relative of director)</td><td class="num">8.64</td><td class="num">0.6%</td><td><span class="badge badge-med">MEDIUM</span></td></tr>
+        <tr><td>Mehru (subsidiary)</td><td>Acquisition consideration</td><td class="num">1,200</td><td class="num">79%</td><td><span class="badge badge-low">LOW (one-time)</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="font-size:12px;color:var(--text-muted);margin-top:6px">Promoter soft loans fully repaid from IPO proceeds (₹235 Mn). No related party loans outstanding.</div>
+
+  <div class="section-header">Contingent Liabilities &amp; CWIP</div>
+  <div class="grid-2">
+    <div class="card">
+      <div style="font-weight:700;margin-bottom:10px">Contingent Liabilities (Standalone FY25)</div>
+      <p style="font-size:13px;color:var(--text-secondary)">Bank guarantees: ₹68.62 Mn (working capital secured). No disputed income tax / indirect tax items disclosed of material size. No legal proceedings flagged by auditors. Total contingents appear low relative to balance sheet.</p>
+      <div style="margin-top:10px"><span class="badge badge-low">LOW RISK</span></div>
+    </div>
+    <div class="card">
+      <div style="font-weight:700;margin-bottom:10px">CWIP (Consolidated FY25)</div>
+      <div class="forensic-row" style="border:none;padding:4px 0"><div class="forensic-key">Opening (Mar-24)</div><div class="forensic-val">₹17.27 Mn</div></div>
+      <div class="forensic-row" style="border:none;padding:4px 0"><div class="forensic-key">Closing (Mar-25)</div><div class="forensic-val">₹16.13 Mn (minimal; Sangli expansion in early stages)</div></div>
+      <div class="forensic-row" style="border:none;padding:4px 0"><div class="forensic-key">Sep-25 CWIP</div><div class="forensic-val">₹7 Cr (from Screener — Sangli ramp)</div></div>
+      <div style="margin-top:10px"><span class="badge badge-low">LOW RISK</span></div>
+    </div>
+  </div>
+
+  <div class="section-header">Accounting Policy Notes</div>
+  <div class="card">
+    <div class="forensic-row"><div class="forensic-key">Revenue Policy</div><div class="forensic-val">PoC (percentage of completion) for project contracts; point-in-time for discrete product sales. Contract assets (unbilled) reclassified to receivables on billing. <span class="tl-amber">Amber: PoC is inherently subjective — cost overruns can flip margins quickly.</span></div></div>
+    <div class="forensic-row"><div class="forensic-key">Endoks / IAS-29</div><div class="forensic-val">Turkey hyperinflationary economy since April 2022. IAS-29 restates P&amp;L and balance sheet using CPI index (March 2025: 2,954.69). Previously boosted "other income"; now normalising. <span class="tl-amber">Amber: Makes consolidated PAT/margins non-comparable YoY without normalisation.</span></div></div>
+    <div class="forensic-row"><div class="forensic-key">Depreciation</div><div class="forensic-val">WDV method (India); SLM (Endoks). Schedule II useful lives. No unusual policy changes in FY25.</div></div>
+    <div class="forensic-row"><div class="forensic-key">Goodwill</div><div class="forensic-val">₹140.03 Mn from Mehru acquisition. Subject to annual impairment test (not amortised). <span class="tl-amber">Amber: If Mehru underperforms, impairment charge possible.</span></div></div>
+    <div class="forensic-row"><div class="forensic-key">Deferred Tax</div><div class="forensic-val">Consol DTL ₹284.35 Mn — primarily Endoks TL restatement. Standalone DTA ₹41.70 Mn. Tax rate optics distorted by Turkey R&amp;D center (0–4%).</div></div>
+    <div class="forensic-row"><div class="forensic-key">NCI Complexity</div><div class="forensic-val tl-amber">⚠ NCI = ₹169 Cr (Mar-25). Endoks 49% NCI + Mehru 49% NCI. PAT attributable to owners (₹66 Cr) vs total PAT (₹100 Cr) — investors should track owners' PAT, not total.</div></div>
+  </div>
+
+  <div class="section-header">Forensic Scorecard</div>
+  <div class="card">
+    <div class="grid-3">
+      <div style="text-align:center;padding:12px"><div style="font-size:11px;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px">Auditor Quality</div><div class="tl-amber" style="font-size:20px;font-weight:800">⚠ AMBER</div><div style="font-size:11px;color:var(--text-muted)">Small regional firm</div></div>
+      <div style="text-align:center;padding:12px"><div style="font-size:11px;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px">RPT Risk</div><div class="tl-amber" style="font-size:20px;font-weight:800">⚠ AMBER</div><div style="font-size:11px;color:var(--text-muted)">Family salaries + QPEP</div></div>
+      <div style="text-align:center;padding:12px"><div style="font-size:11px;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px">Revenue Policy</div><div class="tl-amber" style="font-size:20px;font-weight:800">⚠ AMBER</div><div style="font-size:11px;color:var(--text-muted)">PoC subjectivity</div></div>
+      <div style="text-align:center;padding:12px"><div style="font-size:11px;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px">Contingent Liabs</div><div class="tl-green" style="font-size:20px;font-weight:800">✓ CLEAN</div><div style="font-size:11px;color:var(--text-muted)">Low and disclosed</div></div>
+      <div style="text-align:center;padding:12px"><div style="font-size:11px;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px">CWIP</div><div class="tl-green" style="font-size:20px;font-weight:800">✓ CLEAN</div><div style="font-size:11px;color:var(--text-muted)">Minimal; disclosed</div></div>
+      <div style="text-align:center;padding:12px"><div style="font-size:11px;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px">Debt / Cash</div><div class="tl-green" style="font-size:20px;font-weight:800">✓ CLEAN</div><div style="font-size:11px;color:var(--text-muted)">Zero debt Mar-26</div></div>
+    </div>
+    <div style="text-align:center;padding:16px;border-top:1px solid var(--bg-card-border);margin-top:10px">
+      <div style="font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);margin-bottom:6px">Overall Forensic Verdict</div>
+      <span class="badge badge-amber" style="font-size:14px;padding:6px 18px">⚠ AMBER FLAGS</span>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:8px">Small auditor + NCI complexity + IAS-29 noise are flags but not red flags. No evidence of manipulation or aggressive accounting. Promoters repaid all soft loans; called off overpriced acquisition; zero debt. Governance direction is positive.</div>
+    </div>
+  </div>
+</div>
+<!-- TAB 7: VALUATION -->
+<div id="tab-7" class="tab-pane">
+  <div class="section-header">Current Valuation Metrics</div>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">TTM P/E</div><div class="kpi-value">209x</div><div class="kpi-sub">EPS TTM ~₹6.05</div></div>
+    <div class="kpi"><div class="kpi-label">FY26E P/E</div><div class="kpi-value">~49x</div><div class="kpi-sub">EPS ~₹25–28</div></div>
+    <div class="kpi"><div class="kpi-label">FY27E P/E</div><div class="kpi-value">~19-25x</div><div class="kpi-sub">EPS ~₹50–65</div></div>
+    <div class="kpi"><div class="kpi-label">EV/EBITDA TTM</div><div class="kpi-value">150x</div><div class="kpi-sub">Screener data</div></div>
+    <div class="kpi"><div class="kpi-label">P/B</div><div class="kpi-value">27.5x</div><div class="kpi-sub">BV ₹46/share</div></div>
+    <div class="kpi"><div class="kpi-label">M.Cap/Sales</div><div class="kpi-value">50x</div><div class="kpi-sub">TTM basis</div></div>
+  </div>
+
+  <div class="section-header">Peer Valuation Comparison</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Company</th><th class="num">MCap (Cr)</th><th class="num">P/E</th><th class="num">EV/EBITDA</th><th class="num">P/BV</th><th class="num">ROCE%</th><th class="num">OPM%</th><th class="num">Rev Growth%</th></tr></thead>
+      <tbody>
+        <tr><td>Hitachi Energy India</td><td class="num">1,51,568</td><td class="num">172</td><td class="num">114</td><td class="num">33.1</td><td class="num">19.4%</td><td class="num">14.3%</td><td class="num">17%</td></tr>
+        <tr><td>ABB India</td><td class="num">1,48,601</td><td class="num">98</td><td class="num">65</td><td class="num">19.0</td><td class="num">29.9%</td><td class="num">14.1%</td><td class="num">8%</td></tr>
+        <tr><td>CG Power &amp; Industrial</td><td class="num">1,37,579</td><td class="num">112</td><td class="num">73</td><td class="num">17.3</td><td class="num">27.0%</td><td class="num">13.1%</td><td class="num">25%</td></tr>
+        <tr><td>Siemens India</td><td class="num">1,36,131</td><td class="num">83</td><td class="num">52</td><td class="num">10.3</td><td class="num">15.8%</td><td class="num">11.7%</td><td class="num">10%</td></tr>
+        <tr><td>GE Vernova T&amp;D India</td><td class="num">1,18,436</td><td class="num">106</td><td class="num">75</td><td class="num">56.8</td><td class="num">54.7%</td><td class="num">26.1%</td><td class="num">41%</td></tr>
+        <tr><td>Siemens Energy India</td><td class="num">1,13,360</td><td class="num">93</td><td class="num">61</td><td class="num">25.9</td><td class="num">67.8%</td><td class="num">19.9%</td><td class="num">—</td></tr>
+        <tr><td>BHEL</td><td class="num">1,40,884</td><td class="num">88</td><td class="num">43</td><td class="num">5.4</td><td class="num">8.5%</td><td class="num">6.9%</td><td class="num">19%</td></tr>
+        <tr><td>Sector Median</td><td class="num">~5,856</td><td class="num">38</td><td class="num">23</td><td class="num">6.4</td><td class="num">22.5%</td><td class="num">14.2%</td><td class="num">28%</td></tr>
+        <tr class="hl"><td><strong>Quality Power (QPOWER)</strong></td><td class="num">9,802</td><td class="num">209</td><td class="num">150</td><td class="num">27.5</td><td class="num">17.9%</td><td class="num">30.2%</td><td class="num">40%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="font-size:12px;color:var(--text-muted);margin-top:6px">QPOWER trades at 2x premium to large-cap peers on most metrics. Justified by: (1) unique HVDC monopoly position; (2) highest OPM among peers; (3) multi-year revenue CAGR of 40%+; (4) Sangli factory step-change not yet in numbers.</div>
+
+  <div class="section-header">Target Price Derivation</div>
+  <div class="card">
+    <div class="grid-3">
+      <div style="padding:12px;border-right:1px solid var(--bg-card-border)">
+        <div style="font-size:11px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Method 1: P/E on FY27E</div>
+        <div style="font-size:13px;color:var(--text-secondary)">FY27E PAT: ₹400 Cr (Sangli 50% util)<br>EPS: ₹51.6/share<br>Multiple: 35x (HVDC monopoly premium)<br><strong style="color:var(--color-green);font-size:16px">Target: ₹1,806</strong></div>
+      </div>
+      <div style="padding:12px;border-right:1px solid var(--bg-card-border)">
+        <div style="font-size:11px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Method 2: EV/EBITDA FY27E</div>
+        <div style="font-size:13px;color:var(--text-secondary)">FY27E EBITDA: ₹600 Cr<br>Multiple: 30x (sector 23x + premium)<br>EV: ₹18,000 Cr<br>Net cash: ₹300 Cr<br><strong style="color:var(--color-green);font-size:16px">Target: ₹1,914</strong></div>
+      </div>
+      <div style="padding:12px">
+        <div style="font-size:11px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Blended Target</div>
+        <div style="font-size:13px;color:var(--text-secondary)">Avg of Method 1 &amp; 2<br>18-month horizon<br>From CMP ₹1,266<br><strong style="color:var(--color-green);font-size:20px">₹1,800 (+42%)</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-header">Valuation Band Chart (P/E Multiple)</div>
+  <div class="card"><div class="chart-container"><canvas id="chart-valband"></canvas></div></div>
+
+  <div class="section-header">Valuation Verdict</div>
+  <div class="card" style="border-left:4px solid var(--color-amber)">
+    <div style="font-weight:800;font-size:15px;margin-bottom:10px"><span class="badge badge-watch">EXPENSIVE ON TTM BASIS — FAIR ON FY27E</span></div>
+    <p style="font-size:14px;color:var(--text-secondary);line-height:1.7">TTM P/E of 209x is not a buy argument. However, FY27 forward P/E of 19–25x for India's only HVDC coil manufacturer with a 8x capacity factory completing in 6 months is a compelling entry point. The market is pricing in execution risk on Sangli. The risk is timing, not structural. Accumulate in tranches; add aggressively on 15–20% corrections. Stop-loss: Sangli factory delays beyond Q4 FY26 or Chinese qualification at 500kV class.</p>
+  </div>
+</div>
+<!-- TAB 8: THESIS -->
+<div id="tab-8" class="tab-pane">
+  <div class="section-header">Conviction Score</div>
+  <div class="card" style="text-align:center;padding:24px">
+    <div style="font-size:14px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);margin-bottom:8px">Conviction</div>
+    <div style="font-size:52px;font-weight:900;font-family:monospace;color:var(--color-orange)">7 <span style="font-size:24px;color:var(--text-muted)">/10</span></div>
+    <div class="conviction-bar" style="max-width:400px;margin:12px auto"><div class="conviction-fill" style="width:70%"></div></div>
+    <div style="font-size:13px;color:var(--text-secondary);max-width:500px;margin:0 auto">High conviction on the structural story and moat. Docked 3 points for: small auditor, Sangli timeline risk (third revision), and 15–18 month gap before Sangli factory revenue flows in.</div>
+  </div>
+
+  <div class="section-header">Scenario Analysis</div>
+  <div class="grid-3">
+    <div class="case-card bull">
+      <div class="case-title" style="color:var(--color-green)">🐂 Bull Case</div>
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:10px">Sangli completes June 2026, first orders Q2 FY27. Mehru reaches 18% EBITDA. Hyosung GIS gets 3–4 major utility tenders in Africa/LATAM by FY27. Endoks wins 2–3 major European HVDC tenders post-Spain blackout acceleration. Group FY27 revenue ₹1,800 Cr, EBITDA margin 30%, PAT ₹400 Cr.</p>
+      <div style="font-size:13px;font-weight:700;color:var(--color-green)">Target: ₹2,500 | P/E 35x | +98%</div>
+      <div style="margin-top:8px"><div style="font-size:11px;color:var(--text-muted)">Probability</div><div class="progress-bar"><div class="pb-fill" style="width:25%;background:var(--color-green)"></div></div><div style="font-size:12px;color:var(--text-muted)">25%</div></div>
+    </div>
+    <div class="case-card base">
+      <div class="case-title" style="color:var(--color-amber)">📊 Base Case</div>
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:10px">Sangli completes Q3 FY26; order intake from Q3 FY27. Mehru stabilises at 15% EBITDA. Hyosung GIS enters Africa by FY28. Endoks steady at ₹200 Cr/year. Group FY27 revenue ₹1,300–1,400 Cr, EBITDA 27–28%, PAT ₹280–320 Cr.</p>
+      <div style="font-size:13px;font-weight:700;color:var(--color-amber)">Target: ₹1,800 | P/E 30x | +42%</div>
+      <div style="margin-top:8px"><div style="font-size:11px;color:var(--text-muted)">Probability</div><div class="progress-bar"><div class="pb-fill" style="width:55%;background:var(--color-amber)"></div></div><div style="font-size:12px;color:var(--text-muted)">55%</div></div>
+    </div>
+    <div class="case-card bear">
+      <div class="case-title" style="color:var(--color-red)">🐻 Bear Case</div>
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:10px">Sangli delayed to Q2 FY27; Chinese competitors qualify for 500kV; Endoks loses EU market share. Mehru margins stall at 12%. GIS product takes 3+ years to commercialise. Group FY27 revenue ₹900–1,000 Cr, EBITDA margin 22%, PAT ₹150 Cr.</p>
+      <div style="font-size:13px;font-weight:700;color:var(--color-red)">Target: ₹900 | P/E 25x | -29%</div>
+      <div style="margin-top:8px"><div style="font-size:11px;color:var(--text-muted)">Probability</div><div class="progress-bar"><div class="pb-fill" style="width:20%;background:var(--color-red)"></div></div><div style="font-size:12px;color:var(--text-muted)">20%</div></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:12px;text-align:center">
+    <div style="font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);margin-bottom:8px">Probability-Weighted Target</div>
+    <div style="font-size:32px;font-weight:800;font-family:monospace;color:var(--color-green)">₹1,660 <span style="font-size:16px;color:var(--text-muted)">(+31% from ₹1,266)</span></div>
+    <div style="font-size:12px;color:var(--text-muted)">(2500×0.25) + (1800×0.55) + (900×0.20) = ₹625 + ₹990 + ₹180</div>
+  </div>
+
+  <div class="section-header">Key Monitorables</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Metric</th><th>Current</th><th>Bull Threshold</th><th>Bear Threshold</th></tr></thead>
+      <tbody>
+        <tr><td>Sangli factory status</td><td>Completing Jun 2026</td><td>Customer audits start by Q2 FY27</td><td>Third delay past Q4 FY26</td></tr>
+        <tr><td>Mehru EBITDA margin</td><td>16.4% (Q3 FY26)</td><td>18%+ by FY27</td><td>Falls below 12%</td></tr>
+        <tr><td>Consolidated order book</td><td>₹895 Cr (Q3 FY26)</td><td>₹1,200+ Cr by Q2 FY27</td><td>Flat or declining</td></tr>
+        <tr><td>Hyosung GIS progress</td><td>First product Jun/Jul 2026</td><td>First Africa order FY27</td><td>Product delayed 12+ months</td></tr>
+        <tr><td>EBITDA margin (group)</td><td>28% (Q3 FY26)</td><td>30%+ sustained</td><td>Drops below 20%</td></tr>
+        <tr><td>Chinese competition wins</td><td>No 500kV Chinese wins disclosed</td><td>No escalation</td><td>China qualifies 500kV class</td></tr>
+        <tr class="hl"><td>FY26 full-year revenue</td><td>9M = ₹697 Cr</td><td>Q4 &gt;₹270 Cr → FY26 &gt;₹970 Cr</td><td>Q4 &lt;₹200 Cr</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-header">Catalyst Calendar</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Period</th><th>Expected Catalyst</th><th>Bull/Bear</th></tr></thead>
+      <tbody>
+        <tr><td>May 13, 2026</td><td>Q4 FY26 results + enabling fundraise resolution board meeting</td><td><span class="badge badge-blue">KEY DATE</span></td></tr>
+        <tr><td>May 14, 2026</td><td>Q4 FY26 Earnings Call (12 PM IST, Asit C. Mehta moderator)</td><td><span class="badge badge-blue">KEY DATE</span></td></tr>
+        <tr><td>Jun–Jul 2026</td><td>Sangli factory commissioning confirmation + Hyosung first GIS prototype</td><td><span class="badge badge-green">BULL TRIGGER</span></td></tr>
+        <tr><td>Q2 FY27 (Aug–Nov 2026)</td><td>First orders received from Sangli factory; Hyosung product testing outcome</td><td><span class="badge badge-green">BULL TRIGGER</span></td></tr>
+        <tr><td>FY27 H1</td><td>Mehru Turkey facility decision ($6 Mn) — incremental capacity optionality</td><td><span class="badge badge-amber">WATCH</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<!-- TAB 9: RISKS -->
+<div id="tab-9" class="tab-pane">
+  <div class="section-header">Risk Matrix</div>
+  <div class="card"><div class="chart-container"><canvas id="chart-riskmatrix"></canvas></div></div>
+
+  <div class="section-header">Risk Cards</div>
+
+  <div class="risk-card">
+    <div class="risk-title"><span class="badge badge-high">HIGH</span> Chinese Competition — Structural Threat</div>
+    <div class="risk-desc">Chinese manufacturers are competing for global HVDC/FACTS market share, not profit — a state-driven market capture strategy. They undercut on price systemically. If China qualifies 500kV HVDC coils in the next 2–3 years, QPOWER's 2/10 global win rate could compress. Mitigation: backward integration (own magnet wire) to lower BoM; differentiation on quality certification and test lab capability. Status: <strong>ACTIVE — monitored quarterly</strong></div>
+  </div>
+
+  <div class="risk-card">
+    <div class="risk-title"><span class="badge badge-high">HIGH</span> Sangli Factory Execution Risk</div>
+    <div class="risk-desc">June 2026 is the third stated completion timeline (original: Q4 FY26 → H2 FY27 → June 2026). Each 6-month delay pushes Sangli revenue contribution by a year. Post-completion, 40–50 customer qualification audits take 9–12+ months — meaning revenue from Sangli earliest by H2 FY27. Any further delay makes FY27 consensus estimates unachievable and could trigger a 20–30% re-rating. Mitigation: Management has visited Sangli multiple times; external construction contractors; no disclosed cost overruns yet. Status: <strong>ACTIVE — binary outcome June 2026</strong></div>
+  </div>
+
+  <div class="risk-card med">
+    <div class="risk-title"><span class="badge badge-med">MEDIUM</span> Turkey / Endoks Currency and Accounting Noise</div>
+    <div class="risk-desc">Endoks contributes ~₹150–200 Cr quarterly revenue. Turkish Lira (TL) has devalued 90%+ since 2021. IAS-29 hyperinflationary accounting inflated "other income" and PAT in FY24–FY25 — now normalising to zero. Most contracts are USD-denominated (protection) but some aren't. TL devaluation resumes risk is real — each 20% TL devaluation reduces Endoks INR revenue by 4–6%. Mitigation: USD contracts as default; R&amp;D center status (0–4% tax). Status: <strong>MONITORING</strong></div>
+  </div>
+
+  <div class="risk-card med">
+    <div class="risk-title"><span class="badge badge-med">MEDIUM</span> Customer Concentration</div>
+    <div class="risk-desc">A single customer exceeded 10% of standalone revenue both in India and export (FY25 AR disclosures). GE T&amp;D India and Hitachi Energy are anchor customers — any revenue pause at GE/Hitachi directly impacts QPOWER. Mehru similarly depends on a few large Southeast Asia/Africa utilities. Mitigation: Geographic diversification (100+ countries), new product lines (GIS, BESS), direct utility relationships reducing OEM dependence. Status: <strong>MONITORING</strong></div>
+  </div>
+
+  <div class="risk-card med">
+    <div class="risk-title"><span class="badge badge-med">MEDIUM</span> Working Capital Elongation</div>
+    <div class="risk-desc">Debtor days expanded from 46 (FY24) to 97 (FY25). Working capital days from 18 to 81. Strategic insulator stockpiling in H1 FY26 compressed OCF/EBITDA to 0.1x. If elongation persists, FCF generation will lag PAT significantly — making the company a PAT-story but not an FCF story at current scale. Mitigation: Management targets normalisation in H2 FY26 as inventory is consumed; milestone billing structure for HVDC contracts. Status: <strong>ACTIVE — watch H2 FY26 working capital</strong></div>
+  </div>
+
+  <div class="risk-card low">
+    <div class="risk-title"><span class="badge badge-low">LOW</span> Fundraising Dilution Risk</div>
+    <div class="risk-desc">Board passed enabling resolution for fundraising (May 13, 2026 board meeting) — QIP, rights issue, or NCDs possible. Company is debt-free so new capital would be for Sangli capex residuals, M&amp;A, or GIS JV capital. Given zero debt and ₹200+ Cr cash, equity dilution would be a negative signal. Mitigation: Enabling resolution ≠ commitment to raise; management has shown capital discipline (called off STATCON). Status: <strong>MONITORING — watch post-Q4 FY26 call guidance</strong></div>
+  </div>
+
+  <div class="risk-card low">
+    <div class="risk-title"><span class="badge badge-low">LOW</span> Governance / Related Party Risk</div>
+    <div class="risk-desc">Small auditor for a ₹9,800 Cr company. Family member (Nivetha Pandyan) on payroll at ₹8.64 Mn. Promoter family total remuneration ₹46.35 Mn. NCI complexity (49% minority in Endoks + Mehru). However: promoters repaid soft loans voluntarily; called off overpriced acquisition; zero OFS in 15 months post-IPO; dividend waived by promoters in FY25. Direction of governance is positive. Status: <strong>MONITORING</strong></div>
+  </div>
+</div>
+<!-- TAB 10: CONCALL -->
+<div id="tab-10" class="tab-pane">
+  <div class="section-header">Guidance Tracker</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Metric</th><th>Guided</th><th>Actual / Status</th><th>Hit/Miss</th></tr></thead>
+      <tbody>
+        <tr><td>FY26 Revenue</td><td>₹700–800 Cr</td><td>9M = ₹697 Cr → FY26E ~₹950 Cr</td><td><span class="badge badge-green">BEAT</span></td></tr>
+        <tr><td>EBITDA Margin</td><td>17–18% (Q3 FY25 guidance)</td><td>Q3 FY26: 28%; 9M avg: 27%</td><td><span class="badge badge-green">MASSIVE BEAT</span></td></tr>
+        <tr><td>Mehru EBITDA Target</td><td>15% by FY27</td><td>16.4% in Q3 FY26 — ahead of schedule</td><td><span class="badge badge-green">AHEAD</span></td></tr>
+        <tr><td>Sangli completion</td><td>H2 FY27 (Q1 FY26 guidance)</td><td>June 2026 (advanced)</td><td><span class="badge badge-green">ACCELERATED</span></td></tr>
+        <tr><td>STATCON acquisition</td><td>Authorised due diligence</td><td>Called off — valuation mismatch</td><td><span class="badge badge-amber">DISCIPLINED EXIT</span></td></tr>
+        <tr><td>Sukrut consolidation</td><td>"Next few quarters" (Q2 FY26)</td><td>Closed Q3 FY26</td><td><span class="badge badge-green">ON TIME</span></td></tr>
+        <tr><td>Hyosung first product</td><td>June/July 2026</td><td>In progress</td><td><span class="badge badge-blue">PENDING</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="font-size:12px;color:var(--text-muted);margin-top:6px;margin-bottom:20px">Management credibility: Consistent under-promise / over-deliver. Raised EBITDA margin guidance twice (17-18% → 20%+ → 22%+). Revenue guidance was conservative — FY26 target met in 9M.</div>
+
+  <div class="section-header">Q3 FY26 (Feb 2026) — Latest Call</div>
+  <div class="concall-quarter">
+    <div class="concall-header"><div class="concall-qtr">Q3 FY26</div><div class="concall-date">Feb 5, 2026 | Asit C. Mehta</div><span class="badge badge-green">BULLISH</span></div>
+    <ul class="concall-bullets">
+      <li>Revenue ₹284 Cr (+250%+ YoY, +30% QoQ). 9M FY26 = ₹697 Cr vs full-year FY25 ₹392 Cr</li>
+      <li>EBITDA margin upgraded to 22%+ floor (vs 20%+ previously). Q3 blended: 28%</li>
+      <li>Sukrut acquisition closed — turned profitable in first month under QPOWER (first time in 5 years)</li>
+      <li>Sangli factory ETA advanced to June 2026; Global Engineering &amp; Technology Center (GETC) approved</li>
+      <li>Mehru margin 16.4% — ahead of 15% target. Turkey Mehru facility under evaluation ($6 Mn)</li>
+      <li>Hyosung GIS first trial product: June/July 2026. Strategy: Africa → LATAM → Europe</li>
+      <li>Order book ₹895 Cr; pipeline next 45 days: ~₹370–390 Cr additional</li>
+      <li>Sanjog Mhatre elevated to CEO (from CBO) — first non-family CEO; professionalisation signal</li>
+      <li>OCF/EBITDA compressed to 0.1x (H1 FY26) due to insulator stockpiling; expected to normalise</li>
+    </ul>
+  </div>
+
+  <div class="section-header">Q2 FY26 (Nov 2025)</div>
+  <div class="concall-quarter">
+    <div class="concall-header"><div class="concall-qtr">Q2 FY26</div><div class="concall-date">Nov 13, 2025 | Asit C. Mehta</div><span class="badge badge-green">BULLISH</span></div>
+    <ul class="concall-bullets">
+      <li>Revenue ₹219 Cr (+112% YoY), H1 FY26 ₹413 Cr — already exceeded full-year FY25</li>
+      <li>Hyosung GIS partnership announced — 220–765kV gas-insulated switchgear instrument transformers</li>
+      <li>Rihand-Dadri LCC HVDC smoothing reactor order won (India's iconic first HVDC link, 1989)</li>
+      <li>VSC HVDC converter reactor order for a G20 nation; FACTS orders in Sweden</li>
+      <li>Mehru EBITDA margin: Q2 = 12% (vs 6% acquisition, 8.2% Q4 FY25, 9.5% Q1 FY26)</li>
+      <li>100% capacity utilisation across group; insulators stockpiled for supply security</li>
+      <li>Own magnet wire (CPC) factory: First-stage capacity Q3 FY27</li>
+    </ul>
+  </div>
+
+  <div class="section-header">Q1 FY26 (Aug 2025)</div>
+  <div class="concall-quarter">
+    <div class="concall-header"><div class="concall-qtr">Q1 FY26</div><div class="concall-date">August 2025 | Asit C. Mehta</div><span class="badge badge-green">BULLISH</span></div>
+    <ul class="concall-bullets">
+      <li>Revenue ₹194 Cr (+143% YoY). Order book ₹775 Cr. Group net cash ₹237 Cr (debt ₹13 Cr, cash ₹250 Cr)</li>
+      <li>Won world's largest 500kV HVDC smoothing coil order (Pagre/Hitachi; global capability validation)</li>
+      <li>Sukrut Electric JV signed — 50% stake; 1,000+ global transformer customers; ₹24–26 Cr FY26 revenue expected</li>
+      <li>BESS pilots: 5MW + 4MW. Own EMS + power conversion. 1–1.5 years to utility tender qualification</li>
+      <li>Nebeskie stake increased — ML-based unmanned substation management</li>
+      <li>Backward integration: Own magnet wire (CPC) factory — first-of-its-kind HVDC wire in India</li>
+      <li>India planning 40–50 GW hyperscale data centers; each GW requires HVDC transmission backbone</li>
+    </ul>
+  </div>
+
+  <div class="section-header">Q4 FY25 (May 2025)</div>
+  <div class="concall-quarter">
+    <div class="concall-header"><div class="concall-qtr">Q4 FY25</div><div class="concall-date">May 2025 | Asit C. Mehta</div><span class="badge badge-amber">NEUTRAL → POSITIVE</span></div>
+    <ul class="concall-bullets">
+      <li>FY25 full year consol: Revenue ₹392 Cr (+18%), PAT ₹101 Cr (+74%), EPS ₹9.10</li>
+      <li>STATCON Energiaa acquisition CALLED OFF — "Valuation not matching expectations; synergies insufficient"</li>
+      <li>Mehru full-year FY24 (pre-acquisition): Revenue ₹213 Cr, EBITDA 6% → path to 15%+</li>
+      <li>Spain/Portugal power blackout (May 2025): "Every country in Europe will now accelerate HVDC buildout"</li>
+      <li>China strategy: "Competing for global domination, not profit" — backward integration is QPOWER's response</li>
+      <li>Order backlog ₹750 Cr at Q4 end; FY26 guidance maintained ₹700–800 Cr (which they already exceeded)</li>
+    </ul>
+  </div>
+
+  <div class="section-header">Q3 FY25 (Mar 2025) — First Post-IPO Call</div>
+  <div class="concall-quarter">
+    <div class="concall-header"><div class="concall-qtr">Q3 FY25</div><div class="concall-date">Mar 18, 2025 | Asit C. Mehta</div><span class="badge badge-green">BULLISH</span></div>
+    <ul class="concall-bullets">
+      <li>Revenue ₹73 Cr (-49% YoY due to project timing) but EBITDA +63% YoY; PAT +45% YoY</li>
+      <li>Order book ₹517 Cr; pipeline ₹700 Cr. Mehru acquisition completed (₹120 Cr for 51%)</li>
+      <li>HVDC wins: Australia, Abu Dhabi Lightning Link, Korea, multiple STATCOM orders globally</li>
+      <li>Demand-supply gap for 220kV+ coils: "Will last decades" — European factories closed 6–7 years ago</li>
+      <li>Win rate: HVDC 2/10 (deliberate), FACTS 6–7/10, Mehru ~100% (capacity constrained)</li>
+      <li>FY26 guidance: ₹700–800 Cr consolidated, EBITDA 17–18% blended</li>
+    </ul>
+  </div>
+</div>
+<!-- TAB 11: CAPITAL ALLOCATION -->
+<div id="tab-11" class="tab-pane">
+  <div class="section-header">Capital Allocation Philosophy</div>
+  <div class="card" style="border-left:4px solid var(--color-green)">
+    <div style="font-weight:800;font-size:15px;margin-bottom:8px"><span class="badge badge-green">GOOD</span> — Disciplined with improving track record</div>
+    <p style="font-size:14px;color:var(--text-secondary);line-height:1.7">Management has demonstrated capital discipline in three ways: (1) Called off STATCON acquisition when valuation didn't make sense; (2) Promoters repaid their entire soft loan (₹23.5 Cr) from IPO proceeds; (3) 98% of contracts are fixed-price — no speculative open positions. The IPO proceeds (₹225 Cr fresh issue) were deployed logically: Mehru acquisition ₹120 Cr + Sangli capex ₹27 Cr utilised (₹24.5 Cr pending). Balance held in FDs generating interest. Zero debt as at March 31, 2026 — impressive for a fast-growing industrial company.</p>
+  </div>
+
+  <div class="section-header">Capex vs Operating Cash Flow (₹ Cr)</div>
+  <div class="card"><div class="chart-container"><canvas id="chart-capex"></canvas></div></div>
+
+  <div class="section-header">Dividend History</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Year</th><th class="num">DPS (₹)</th><th class="num">Payout %</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>FY22</td><td class="num">—</td><td class="num">-0%</td><td>Pre-IPO; nil dividend</td></tr>
+        <tr><td>FY23</td><td class="num">—</td><td class="num">-0%</td><td>Pre-IPO; nil dividend</td></tr>
+        <tr><td>FY24</td><td class="num">—</td><td class="num">-0%</td><td>Pre-IPO; nil dividend</td></tr>
+        <tr class="hl"><td>FY25</td><td class="num">₹1</td><td class="num">~26%</td><td>First dividend post-IPO; promoters waived dividend right; pending AGM approval</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-header">IPO Proceeds Deployment (Fresh Issue ₹225 Cr)</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Purpose</th><th class="num">Approved (₹ Mn)</th><th class="num">Utilised (₹ Mn)</th><th class="num">Balance (₹ Mn)</th></tr></thead>
+      <tbody>
+        <tr><td>Mehru 51% acquisition</td><td class="num">1,200</td><td class="num tl-green">1,200</td><td class="num">0</td></tr>
+        <tr><td>Plant &amp; Machinery (Sangli)</td><td class="num">272.17</td><td class="num">27.22</td><td class="num tl-amber">244.95</td></tr>
+        <tr><td>Inorganic growth (unidentified)</td><td class="num">611.76</td><td class="num">61.17</td><td class="num tl-amber">550.59</td></tr>
+        <tr><td>Issue expenses</td><td class="num">204.86</td><td class="num">204.86</td><td class="num">0</td></tr>
+        <tr><td>Undeployed (FDs/savings)</td><td class="num">—</td><td class="num">87.93</td><td class="num">—</td></tr>
+        <tr class="hl"><td><strong>Total Fresh Issue</strong></td><td class="num">2,250</td><td class="num tl-green">~1,493</td><td class="num tl-amber">~796 pending</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="font-size:12px;color:var(--text-muted);margin-top:6px">Pending capex and inorganic funds available for Sangli completion, magnet wire factory, and potential M&amp;A. Enabling resolution for further fundraising passed at May 2026 board.</div>
+
+  <div class="section-header">Debt Trajectory &amp; ROCE</div>
+  <div class="grid-2">
+    <div class="card"><div class="chart-container-sm"><canvas id="chart-debt"></canvas></div></div>
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Year</th><th class="num">Borrowings (₹ Cr)</th><th class="num">ROCE %</th></tr></thead>
+          <tbody>
+            <tr><td>FY22 (S/A)</td><td class="num">9</td><td class="num">17%</td></tr>
+            <tr><td>FY23 (S/A)</td><td class="num">6</td><td class="num">24%</td></tr>
+            <tr><td>FY24 (S/A)</td><td class="num">23</td><td class="num">25%</td></tr>
+            <tr><td>FY25 (S/A)</td><td class="num">7</td><td class="num">18%*</td></tr>
+            <tr class="hl"><td>Mar-26</td><td class="num tl-green">NIL</td><td class="num">—</td></tr>
+          </tbody>
+        </table>
+        <div style="font-size:11px;color:var(--text-muted);padding:8px">*ROCE diluted by IPO-inflated equity base. Pre-IPO ROCE was 25%.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 12: OWNERSHIP -->
+<div id="tab-12" class="tab-pane">
+  <div class="section-header">Shareholding Pattern Trend (5 Quarters)</div>
+  <div class="card"><div class="chart-container"><canvas id="chart-sh-trend"></canvas></div></div>
+
+  <div class="section-header">Promoter Analysis</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="forensic-row"><div class="forensic-key">Total Promoter %</div><div class="forensic-val tl-green">73.91% — Absolutely stable across all 5 quarters since IPO</div></div>
+      <div class="forensic-row"><div class="forensic-key">T. Pandyan (CMD)</div><div class="forensic-val">12.73% direct</div></div>
+      <div class="forensic-row"><div class="forensic-key">B. Pandyan (JMD)</div><div class="forensic-val">36.96% direct</div></div>
+      <div class="forensic-row"><div class="forensic-key">Promoter Trust</div><div class="forensic-val">24.22%</div></div>
+      <div class="forensic-row"><div class="forensic-key">Pledge</div><div class="forensic-val tl-green">✓ ZERO pledged shares — confirmed</div></div>
+      <div class="forensic-row"><div class="forensic-key">OFS post-IPO</div><div class="forensic-val tl-green">✓ NONE — no secondary sales in 15 months since listing</div></div>
+    </div>
+    <div class="card">
+      <div style="font-weight:700;margin-bottom:10px">Ownership Quality Verdict</div>
+      <span class="badge badge-green" style="margin-bottom:12px;display:inline-block">STRONG PROMOTER ALIGNMENT</span>
+      <p style="font-size:13px;color:var(--text-secondary);line-height:1.6">Promoter shareholding has been 73.91% unchanged across every single quarter since IPO — zero dilution signals. No pledges. No OFS. Promoters waived dividend in FY25 to retain capital. Soft loans repaid voluntarily. All three signals point to genuine long-term alignment rather than IPO exit.</p>
+    </div>
+  </div>
+
+  <div class="section-header">Institutional Ownership Trend</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Category</th><th class="num">Mar-25</th><th class="num">Jun-25</th><th class="num">Sep-25</th><th class="num">Dec-25</th><th class="num hl">Mar-26</th></tr></thead>
+      <tbody>
+        <tr><td>Promoters</td><td class="num">73.91%</td><td class="num">73.91%</td><td class="num">73.91%</td><td class="num">73.91%</td><td class="num hl">73.91%</td></tr>
+        <tr><td>FII / FPI</td><td class="num">3.99%</td><td class="num">1.97%</td><td class="num">2.13%</td><td class="num">1.97%</td><td class="num hl">2.28%</td></tr>
+        <tr><td>DII</td><td class="num">8.76%</td><td class="num">6.00%</td><td class="num">5.92%</td><td class="num">6.03%</td><td class="num hl">5.97%</td></tr>
+        <tr><td>Public / Others</td><td class="num">13.35%</td><td class="num">18.14%</td><td class="num">18.05%</td><td class="num">18.10%</td><td class="num hl">17.85%</td></tr>
+        <tr><td>No. of Shareholders</td><td class="num">81,106</td><td class="num">58,129</td><td class="num">62,596</td><td class="num">64,048</td><td class="num hl">73,930</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="font-size:12px;color:var(--text-muted);margin-top:8px">FII stake fell from 3.99% (Mar-25 post-IPO allocation) to 2.28% (Mar-26) — FIIs reducing post-listing gains. DII also reduced from 8.76% to 5.97%. Public/retail absorption rising (13.35% → 17.85%). Number of shareholders recovering from post-IPO lows.</div>
+
+  <div class="section-header">Ownership Current (Mar 2026)</div>
+  <div class="card"><div class="chart-container-sm"><canvas id="chart-sh-current"></canvas></div></div>
+</div>
+<!-- TAB 13: EVENTS -->
+<div id="tab-13" class="tab-pane">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+    <button class="tab-btn active" id="ev-all" onclick="filterEvents('all')">All</button>
+    <button class="tab-btn" id="ev-results" onclick="filterEvents('results')">Results</button>
+    <button class="tab-btn" id="ev-orders" onclick="filterEvents('orders')">Orders</button>
+    <button class="tab-btn" id="ev-filings" onclick="filterEvents('filings')">Filings</button>
+    <button class="tab-btn" id="ev-corporate" onclick="filterEvents('corporate')">Corporate</button>
+  </div>
+  <div id="events-container">
+    <div class="event-item" data-cat="filings"><div class="event-date">08-May-2026</div><div class="event-badge-wrap"><span class="badge badge-blue">FILING</span></div><div class="event-content"><strong>Board Meeting Addendum — Enabling Resolution for Fundraise</strong><br><span style="font-size:12px;color:var(--text-muted)">Additional agenda added to May 13 board meeting. Board to consider enabling resolution for capital raise in one or more tranches via permissible modes (QIP/rights/NCD). No quantum disclosed. Context: Sangli factory, M&amp;A strategy, Sukrut consolidation, GIS development.</span></div></div>
+    <div class="event-item" data-cat="results"><div class="event-date">13-May-2026</div><div class="event-badge-wrap"><span class="badge badge-green">RESULTS</span></div><div class="event-content"><strong>Q4 FY26 Board Meeting — Results, Dividend &amp; Fundraise Resolution</strong><br><span style="font-size:12px;color:var(--text-muted)">Expected: Q4 FY26 standalone + consolidated audited results (Q4 is first quarter with Sukrut consolidated). FY26 full-year results. Dividend recommendation. Enabling fundraise resolution. Key: confirm Sangli commissioning status.</span></div></div>
+    <div class="event-item" data-cat="results"><div class="event-date">14-May-2026</div><div class="event-badge-wrap"><span class="badge badge-green">CONCALL</span></div><div class="event-content"><strong>Q4 FY26 Earnings Conference Call — 12 PM IST</strong><br><span style="font-size:12px;color:var(--text-muted)">Organiser: Asit C. Mehta (ACMIIL). Dial-in: +91-22-6280-1371. Participants: B. Pandyan (JMD), S. Mhatre (CEO), R. Jayaraman (CFO), S. Jadhav (SVP Finance).</span></div></div>
+    <div class="event-item" data-cat="filings"><div class="event-date">28-Apr-2026</div><div class="event-badge-wrap"><span class="badge badge-navy">SEBI</span></div><div class="event-content"><strong>Zero Outstanding Borrowings Confirmed — SEBI Large Corporate Disclosure</strong><br><span style="font-size:12px;color:var(--text-muted)">Filed initial and annual Large Corporate disclosures. Confirmed: Outstanding borrowings as at March 31, 2026 = NIL. Incremental borrowing FY26 = NIL. Company declared "NOT a Large Corporate." Signed by CFO + CS.</span></div></div>
+    <div class="event-item" data-cat="filings"><div class="event-date">07-May-2026</div><div class="event-badge-wrap"><span class="badge badge-blue">FILING</span></div><div class="event-content"><strong>Q4 FY26 Earnings Call Intimation (SEBI LODR 30)</strong><br><span style="font-size:12px;color:var(--text-muted)">Formal intimation of Q4 FY26 earnings conference call. Management team confirmed for participation.</span></div></div>
+    <div class="event-item" data-cat="corporate"><div class="event-date">Q3 FY26 (Feb 2026)</div><div class="event-badge-wrap"><span class="badge badge-blue">CORP ACTION</span></div><div class="event-content"><strong>Sukrut Electric 50% Stake Acquisition Completed</strong><br><span style="font-size:12px;color:var(--text-muted)">Closed Q3 FY26. Sukrut turned profitable in first month under QPOWER management (first time in 5 years). 1,000+ global transformer customers — strategic customer access for cross-selling QPOWER products.</span></div></div>
+    <div class="event-item" data-cat="corporate"><div class="event-date">Q3 FY26 (Feb 2026)</div><div class="event-badge-wrap"><span class="badge badge-blue">CORP ACTION</span></div><div class="event-content"><strong>Global Engineering &amp; Technology Center (GETC) Approved — Sangli</strong><br><span style="font-size:12px;color:var(--text-muted)">GETC approved by Board. Will house R&amp;D + global application engineering teams at Sangli. Signals serious R&amp;D commitment alongside factory expansion.</span></div></div>
+    <div class="event-item" data-cat="orders"><div class="event-date">Q2 FY26 (Nov 2025)</div><div class="event-badge-wrap"><span class="badge badge-red">ORDER</span></div><div class="event-content"><strong>Rihand-Dadri LCC HVDC Smoothing Reactors Won</strong><br><span style="font-size:12px;color:var(--text-muted)">India's iconic first HVDC link (operational since 1989) retrofit order. Validates QPOWER for national heritage infrastructure. First major India utility reference for HVDC.</span></div></div>
+    <div class="event-item" data-cat="orders"><div class="event-date">Q2 FY26 (Nov 2025)</div><div class="event-badge-wrap"><span class="badge badge-red">ORDER</span></div><div class="event-content"><strong>VSC HVDC Converter Reactors — G20 Nation</strong><br><span style="font-size:12px;color:var(--text-muted)">Next-generation VSC (Voltage Source Converter) HVDC technology order from a G20 country. VSC technology is more flexible than legacy LCC — QPOWER demonstrating next-gen capability.</span></div></div>
+    <div class="event-item" data-cat="corporate"><div class="event-date">Q2 FY26 (Nov 2025)</div><div class="event-badge-wrap"><span class="badge badge-blue">PARTNERSHIP</span></div><div class="event-content"><strong>Hyosung GIS Instrument Transformer Partnership — $17 Bn Partner</strong><br><span style="font-size:12px;color:var(--text-muted)">Strategic partnership with Hyosung (South Korea, $17 Bn revenue, world's largest GIS manufacturer). Products: 220–765kV GIS instrument transformers. First commercial product June/July 2026. Market: Africa → LATAM → Europe. Royalty: Zero on Hyosung-branded; small % on QPOWER-branded (expires 5 years).</span></div></div>
+    <div class="event-item" data-cat="orders"><div class="event-date">Q1 FY26 (Aug 2025)</div><div class="event-badge-wrap"><span class="badge badge-red">ORDER</span></div><div class="event-content"><strong>World's Largest 500kV HVDC Smoothing Coil Order Won</strong><br><span style="font-size:12px;color:var(--text-muted)">Won contract for world's largest HVDC smoothing coils. Partner: Pagre/Hitachi. Technical validation at 500kV class — world capability level. Demonstrator order for Sangli qualification pipeline.</span></div></div>
+    <div class="event-item" data-cat="corporate"><div class="event-date">Mar-2025</div><div class="event-badge-wrap"><span class="badge badge-blue">ACQUISITION</span></div><div class="event-content"><strong>Mehru Electrical &amp; Mechanical Engineers Pvt. Ltd. — 51% Acquired</strong><br><span style="font-size:12px;color:var(--text-muted)">Acquisition closed w.e.f. March 6, 2025 for ₹120 Cr (51% stake). Instrument transformers up to 500kV; 8 NABL labs; 5-acre Bhiwadi facility; 50+ country customer base. Fabrication demerger (NCLT) pending.</span></div></div>
+    <div class="event-item" data-cat="corporate"><div class="event-date">Feb-2025</div><div class="event-badge-wrap"><span class="badge badge-green">IPO</span></div><div class="event-content"><strong>IPO Listed on NSE and BSE at ₹425/Share</strong><br><span style="font-size:12px;color:var(--text-muted)">Listed February 24, 2025. Total raised ₹858 Cr (fresh issue ₹225 Cr + OFS ₹634 Cr). 2,02,04,600 shares allotted. Current CMP ₹1,266 = +198% in 15 months.</span></div></div>
+  </div>
+</div>
+
+</main>
+<script>
+// ─── TAB MANAGEMENT ────────────────────────────────────────────────────────
+function showTab(n) {
+  for (var i = 0; i < 14; i++) {
+    var pane = document.getElementById('tab-' + i);
+    var btn  = document.querySelectorAll('.tab-btn')[i];
+    if (pane) pane.style.display = (i === n ? 'block' : 'none');
+    if (btn)  btn.classList.toggle('active', i === n);
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── THEME TOGGLE ──────────────────────────────────────────────────────────
+function toggleTheme() {
+  var t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+}
+
+function textColor() {
+  return document.documentElement.getAttribute('data-theme') === 'dark' ? '#F1F5F9' : '#0F172A';
+}
+
+// ─── EVENT FILTER ──────────────────────────────────────────────────────────
+function filterEvents(cat) {
+  document.querySelectorAll('.event-item').forEach(function(el) {
+    el.style.display = (cat === 'all' || el.dataset.cat === cat) ? 'flex' : 'none';
+  });
+  document.querySelectorAll('#tab-13 .tab-btn').forEach(function(b) {
+    b.classList.remove('active');
+  });
+  var active = document.getElementById('ev-' + cat);
+  if (active) active.classList.add('active');
+}
+
+// ─── SPARKLINES ────────────────────────────────────────────────────────────
+function sparkline(id, data, color) {
+  var ctx = document.getElementById(id);
+  if (!ctx) return;
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: data.map(function(_, i) { return i; }),
+      datasets: [{ data: data, borderColor: color, borderWidth: 2, pointRadius: 0, fill: false, tension: 0.4 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      scales: { x: { display: false }, y: { display: false } }
+    }
+  });
+}
+
+// ─── CHART DATA ────────────────────────────────────────────────────────────
+var REV_CONSOL  = [302, 392, 950];
+var PAT_CONSOL  = [58, 101, 200];
+var EBITDA_PCT  = [8, 22, 27];
+var QUARTERS    = ['Q2FY25','Q3FY25','Q4FY25','Q1FY26','Q2FY26','Q3FY26'];
+var Q_REV       = [94, 73, 164, 194, 219, 284];
+var Q_EBITDA    = [8.6, 24.0, 22.0, 31.0, 22.5, 28.0];
+var OB          = [517, 750, 775, 830, 895];
+var OB_LABELS   = ['Q3FY25','Q4FY25','Q1FY26','Q2FY26','Q3FY26'];
+var SH_QTRS     = ['Mar-25','Jun-25','Sep-25','Dec-25','Mar-26'];
+var PROM        = [73.91, 73.91, 73.91, 73.91, 73.91];
+var FII         = [3.99, 1.97, 2.13, 1.97, 2.28];
+var DII         = [8.76, 6.00, 5.92, 6.03, 5.97];
+var PUB         = [13.35, 18.14, 18.05, 18.10, 17.85];
+
+// ─── CHARTS ────────────────────────────────────────────────────────────────
+Chart.defaults.font.size = 13;
+
+// Sparklines
+sparkline('spark-rev',   [74, 95, 130, 302, 392, 950], '#16A34A');
+sparkline('spark-ebitda',[14, 18, 18, 8, 22, 27], '#E8701A');
+sparkline('spark-pat',   [8, 13, 18, 58, 101, 200], '#16A34A');
+sparkline('spark-roce',  [17, 24, 25, 18], '#1D4ED8');
+sparkline('spark-ob',    [400, 430, 517, 750, 775, 830, 895], '#E8701A');
+
+// Pie: Current Shareholding (Tab 1)
+var ctx1 = document.getElementById('chart-holding-pie');
+if (ctx1) {
+  new Chart(ctx1, {
+    type: 'doughnut',
+    data: {
+      labels: ['Promoters', 'DII', 'Public', 'FII'],
+      datasets: [{ data: [73.91, 5.97, 17.85, 2.28], backgroundColor: ['#0F1F3D','#1D4ED8','#94A3B8','#E8701A'], borderWidth: 2 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'right', labels: { font: { size: 12 }, color: textColor() } } }
+    }
+  });
+}
+
+// Pie: Segment Revenue (Tab 2)
+var ctx2 = document.getElementById('chart-seg-pie');
+if (ctx2) {
+  new Chart(ctx2, {
+    type: 'doughnut',
+    data: {
+      labels: ['Coil Products (QP)', 'Endoks FACTS', 'Mehru IT', 'Sukrut/Other'],
+      datasets: [{ data: [320, 200, 350, 80], backgroundColor: ['#0F1F3D','#E8701A','#1D4ED8','#94A3B8'], borderWidth: 2 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'right', labels: { font: { size: 12 }, color: textColor() } } }
+    }
+  });
+}
+
+// Revenue + PAT bar/line (Tab 4)
+var ctx3 = document.getElementById('chart-revpat');
+if (ctx3) {
+  new Chart(ctx3, {
+    type: 'bar',
+    data: {
+      labels: ['FY22S/A','FY23S/A','FY24S/A','FY24C','FY25C','FY26E'],
+      datasets: [
+        { label: 'Revenue (Cr)', data: [74, 95, 130, 302, 392, 950], backgroundColor: '#0F1F3D', yAxisID: 'y' },
+        { label: 'PAT (Cr)', data: [8, 13, 18, 58, 101, 200], backgroundColor: '#E8701A', yAxisID: 'y' }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: textColor() } } },
+      scales: {
+        y: { ticks: { color: textColor() }, grid: { color: 'rgba(148,163,184,.2)' } },
+        x: { ticks: { color: textColor() }, grid: { color: 'transparent' } }
+      }
+    }
+  });
+}
+
+// EBITDA Margin trend (Tab 4)
+var ctx4 = document.getElementById('chart-margin');
+if (ctx4) {
+  new Chart(ctx4, {
+    type: 'line',
+    data: {
+      labels: QUARTERS,
+      datasets: [{ label: 'EBITDA Margin %', data: Q_EBITDA, borderColor: '#E8701A', backgroundColor: 'rgba(232,112,26,.15)', fill: true, tension: 0.4, pointRadius: 5, pointBackgroundColor: '#E8701A' }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: textColor() } } },
+      scales: {
+        y: { ticks: { color: textColor(), callback: function(v) { return v + '%'; } }, grid: { color: 'rgba(148,163,184,.2)' } },
+        x: { ticks: { color: textColor() }, grid: { color: 'transparent' } }
+      }
+    }
+  });
+}
+
+// Order book bar (Tab 5)
+var ctx5 = document.getElementById('chart-orderbook');
+if (ctx5) {
+  new Chart(ctx5, {
+    type: 'bar',
+    data: {
+      labels: OB_LABELS,
+      datasets: [{ label: 'Order Book (₹ Cr)', data: OB, backgroundColor: ['#1D4ED8','#1D4ED8','#1D4ED8','#1D4ED8','#E8701A'], borderRadius: 6 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: textColor() } } },
+      scales: {
+        y: { ticks: { color: textColor() }, grid: { color: 'rgba(148,163,184,.2)' } },
+        x: { ticks: { color: textColor() }, grid: { color: 'transparent' } }
+      }
+    }
+  });
+}
+
+// Valuation band chart (Tab 7) — P/E band visual
+var ctx6 = document.getElementById('chart-valband');
+if (ctx6) {
+  new Chart(ctx6, {
+    type: 'bar',
+    data: {
+      labels: ['Sector Median P/E','ABB India','Hitachi Energy','GE Vernova T&D','CG Power','QPOWER TTM','QPOWER FY26E','QPOWER FY27E'],
+      datasets: [{ label: 'P/E Multiple', data: [38, 98, 172, 106, 112, 209, 49, 22], backgroundColor: ['#94A3B8','#94A3B8','#94A3B8','#94A3B8','#94A3B8','#DC2626','#E8701A','#16A34A'], borderRadius: 6 }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: textColor() }, grid: { color: 'rgba(148,163,184,.2)' } },
+        y: { ticks: { color: textColor(), font: { size: 12 } }, grid: { color: 'transparent' } }
+      }
+    }
+  });
+}
+
+// Risk matrix scatter (Tab 9)
+var ctx7 = document.getElementById('chart-riskmatrix');
+if (ctx7) {
+  new Chart(ctx7, {
+    type: 'scatter',
+    data: {
+      datasets: [
+        { label: 'High Risk', data: [{x:8,y:9},{x:7,y:8}], backgroundColor: '#DC2626', pointRadius: 10 },
+        { label: 'Medium Risk', data: [{x:5,y:6},{x:4,y:7},{x:5,y:5},{x:3,y:7}], backgroundColor: '#D97706', pointRadius: 8 },
+        { label: 'Low Risk', data: [{x:3,y:4},{x:2,y:5}], backgroundColor: '#16A34A', pointRadius: 7 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: textColor() } },
+        tooltip: {
+          callbacks: {
+            label: function(c) {
+              var names = ['Chinese Competition','Sangli Delay','Turkey/IAS-29','Customer Concentration','Working Capital','Fundraise Dilution','Governance','Auditor Quality'];
+              var idx = 0;
+              if (c.datasetIndex === 0) idx = c.dataIndex;
+              else if (c.datasetIndex === 1) idx = 2 + c.dataIndex;
+              else idx = 6 + c.dataIndex;
+              return (names[idx] || 'Risk') + ' (Impact:' + c.raw.y + ' Prob:' + c.raw.x + ')';
+            }
+          }
+        }
+      },
+      scales: {
+        x: { title: { display: true, text: 'Probability →', color: textColor() }, min: 0, max: 10, ticks: { color: textColor() }, grid: { color: 'rgba(148,163,184,.2)' } },
+        y: { title: { display: true, text: '← Impact', color: textColor() }, min: 0, max: 10, ticks: { color: textColor() }, grid: { color: 'rgba(148,163,184,.2)' } }
+      }
+    }
+  });
+}
+
+// Capex vs OCF bar (Tab 11)
+var ctx8 = document.getElementById('chart-capex');
+if (ctx8) {
+  new Chart(ctx8, {
+    type: 'bar',
+    data: {
+      labels: ['FY23','FY24','FY25'],
+      datasets: [
+        { label: 'CFO (₹ Cr)', data: [18, 51, 62], backgroundColor: '#16A34A' },
+        { label: 'Capex (₹ Cr)', data: [2, 36, 16], backgroundColor: '#DC2626' },
+        { label: 'FCF (₹ Cr)', data: [16, 8, 40], backgroundColor: '#E8701A' }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: textColor() } } },
+      scales: {
+        y: { ticks: { color: textColor() }, grid: { color: 'rgba(148,163,184,.2)' } },
+        x: { ticks: { color: textColor() }, grid: { color: 'transparent' } }
+      }
+    }
+  });
+}
+
+// Debt trajectory line (Tab 11)
+var ctx9 = document.getElementById('chart-debt');
+if (ctx9) {
+  new Chart(ctx9, {
+    type: 'line',
+    data: {
+      labels: ['FY22','FY23','FY24','FY25','Mar-26'],
+      datasets: [{ label: 'Borrowings (₹ Cr)', data: [9, 6, 23, 7, 0], borderColor: '#DC2626', backgroundColor: 'rgba(220,38,38,.15)', fill: true, tension: 0.3, pointRadius: 5, pointBackgroundColor: '#DC2626' }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: textColor() } } },
+      scales: {
+        y: { ticks: { color: textColor() }, grid: { color: 'rgba(148,163,184,.2)' } },
+        x: { ticks: { color: textColor() }, grid: { color: 'transparent' } }
+      }
+    }
+  });
+}
+
+// Shareholding stacked bar trend (Tab 12)
+var ctx10 = document.getElementById('chart-sh-trend');
+if (ctx10) {
+  new Chart(ctx10, {
+    type: 'bar',
+    data: {
+      labels: SH_QTRS,
+      datasets: [
+        { label: 'Promoters', data: PROM, backgroundColor: '#0F1F3D', stack: 's' },
+        { label: 'FII', data: FII, backgroundColor: '#E8701A', stack: 's' },
+        { label: 'DII', data: DII, backgroundColor: '#1D4ED8', stack: 's' },
+        { label: 'Public', data: PUB, backgroundColor: '#94A3B8', stack: 's' }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: textColor() } } },
+      scales: {
+        y: { stacked: true, ticks: { color: textColor(), callback: function(v) { return v + '%'; } }, grid: { color: 'rgba(148,163,184,.2)' }, max: 100 },
+        x: { stacked: true, ticks: { color: textColor() }, grid: { color: 'transparent' } }
+      }
+    }
+  });
+}
+
+// Current shareholding doughnut (Tab 12)
+var ctx11 = document.getElementById('chart-sh-current');
+if (ctx11) {
+  new Chart(ctx11, {
+    type: 'doughnut',
+    data: {
+      labels: ['Promoters 73.91%', 'DII 5.97%', 'Public 17.85%', 'FII 2.28%'],
+      datasets: [{ data: [73.91, 5.97, 17.85, 2.28], backgroundColor: ['#0F1F3D','#1D4ED8','#94A3B8','#E8701A'], borderWidth: 2 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'right', labels: { font: { size: 12 }, color: textColor() } } }
+    }
+  });
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+  showTab(0);
+});
+</script>
+</body>
+</html>
