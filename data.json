@@ -1,0 +1,3935 @@
+{
+  "positions": [
+    {
+      "id": "b52aae06-a890-46ff-8aef-22edee81cbf3",
+      "account": "vibhanshu",
+      "stock_name": "Neuland Laboratories Limited",
+      "ticker": "NSE:NEULANDLAB",
+      "yahoo_ticker": "NEULANDLAB.NS",
+      "avg_buy_price": 1187.14,
+      "quantity": 60,
+      "cmp": 17188.0,
+      "currency": "INR",
+      "buy_date": "2023-04-01",
+      "pe": 127.13,
+      "max_price": 19747.0,
+      "allowed_price": 17703.52174,
+      "active": true,
+      "market_cap": 22773.037,
+      "sector": "CDMO",
+      "notes": "",
+      "conviction": 5,
+      "peak_price": 17837.0,
+      "trades": [
+        {
+          "id": "f2e6dc3a-5745-4ff1-9279-f5d4d3ea5db3",
+          "date": "2023-04-01",
+          "type": "buy",
+          "qty": 60,
+          "price": 1187.14,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "44932fe6-a33e-49aa-851f-c1d35193b25f",
+      "account": "vibhanshu",
+      "stock_name": "Narayana Hrudayalaya Limited",
+      "ticker": "NSE:NH",
+      "yahoo_ticker": "NH.NS",
+      "avg_buy_price": 758.33,
+      "quantity": 600,
+      "cmp": 1925.0,
+      "currency": "INR",
+      "buy_date": null,
+      "pe": 47.38,
+      "max_price": 2370.2,
+      "allowed_price": 2115.59545,
+      "active": false,
+      "market_cap": 36964.1636,
+      "sector": "Hospitals",
+      "notes": "",
+      "peak_price": 2257.88,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "7c983313-1c9a-43db-b223-bbb0fef8acd8",
+          "date": "2026-06-10",
+          "type": "buy",
+          "qty": 600,
+          "price": 758.33,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "631d5cfa-0b29-41b3-83f3-7f585a53c393",
+      "account": "vibhanshu",
+      "stock_name": "JM Financial Limited",
+      "ticker": "NSE:JMFINANCIL",
+      "yahoo_ticker": "JMFINANCIL.NS",
+      "avg_buy_price": 137.4402799,
+      "quantity": 3930,
+      "cmp": 119.37,
+      "currency": "INR",
+      "buy_date": "2024-10-01",
+      "pe": 11.16,
+      "max_price": 199.8,
+      "allowed_price": 168.8382082,
+      "active": false,
+      "market_cap": 13904.14868,
+      "sector": "Banking",
+      "notes": "",
+      "peak_price": 191.14,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "259c1f8f-cbc5-4b0f-898b-c2c6f9b2c5a4",
+          "date": "2024-10-01",
+          "type": "buy",
+          "qty": 3930,
+          "price": 137.4402799,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "91cd0c4c-c536-4ba7-bcfd-b54f4584e1e0",
+      "account": "vibhanshu",
+      "stock_name": "Solara Active Pharma Sciences Limited",
+      "ticker": "NSE:SOLARA",
+      "yahoo_ticker": "SOLARA.NS",
+      "avg_buy_price": 705.33,
+      "quantity": 772,
+      "cmp": 580.0,
+      "currency": "INR",
+      "buy_date": "2024-11-02",
+      "pe": null,
+      "max_price": 770.0,
+      "allowed_price": 575.9454996,
+      "active": false,
+      "market_cap": 2266.120878,
+      "sector": "CDMO",
+      "notes": "",
+      "conviction": null,
+      "peak_price": 705.33,
+      "trades": [
+        {
+          "id": "f1249f08-aac7-421f-a708-3ea947d4fe8d",
+          "date": "2024-11-02",
+          "type": "buy",
+          "qty": 772,
+          "price": 705.33,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "351e5c43-37d7-4be2-8b6a-407f09df3173",
+      "account": "vibhanshu",
+      "stock_name": "Windlas Biotech Limited",
+      "ticker": "NSE:WINDLAS",
+      "yahoo_ticker": "WINDLAS.NS",
+      "avg_buy_price": 965,
+      "quantity": 1000,
+      "cmp": 830.0,
+      "currency": "INR",
+      "buy_date": "2024-11-01",
+      "pe": 26.26,
+      "max_price": 1198.25,
+      "allowed_price": 900.7816456,
+      "active": false,
+      "market_cap": 1745.009353,
+      "sector": "CDMO",
+      "notes": "",
+      "conviction": null,
+      "peak_price": 1047.5,
+      "trades": [
+        {
+          "id": "43bd00e6-38d1-4441-ba36-d8d82f6be55c",
+          "date": "2024-11-01",
+          "type": "buy",
+          "qty": 1000,
+          "price": 965,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "f501ce0c-7dbc-4629-9f75-0e3d72d442f5",
+      "account": "vibhanshu",
+      "stock_name": "TD Power Systems Limited",
+      "ticker": "NSE:TDPOWERSYS",
+      "yahoo_ticker": "TDPOWERSYS.NS",
+      "avg_buy_price": 421.17,
+      "quantity": 1053,
+      "cmp": 1232.1,
+      "currency": "INR",
+      "buy_date": "2024-11-03",
+      "pe": 87.37,
+      "max_price": 1289.2,
+      "allowed_price": 1194.32717,
+      "active": true,
+      "market_cap": 19183.28562,
+      "sector": "Electrification Theme",
+      "notes": "",
+      "conviction": null,
+      "peak_price": 1328.0,
+      "trades": [
+        {
+          "id": "9ea22b1e-e45c-45d5-a53c-bfffda746676",
+          "date": "2024-11-03",
+          "type": "buy",
+          "qty": 1053,
+          "price": 421.17,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "7945c9e0-3b55-4426-a48d-f388bb4ac94c",
+      "account": "vibhanshu",
+      "stock_name": "Laurus Labs Limited",
+      "ticker": "NSE:LAURUSLABS",
+      "yahoo_ticker": "LAURUSLABS.NS",
+      "avg_buy_price": 589.86,
+      "quantity": 1610,
+      "cmp": 1424.8,
+      "currency": "INR",
+      "buy_date": "2025-01-01",
+      "pe": 74.57,
+      "max_price": 1237.9,
+      "allowed_price": 1094.607317,
+      "active": true,
+      "market_cap": 66276.94208,
+      "sector": "CDMO",
+      "notes": "",
+      "peak_price": 1446.8,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "55b5c268-cefc-42cf-8189-da3ef65939d3",
+          "date": "2025-01-01",
+          "type": "buy",
+          "qty": 1610,
+          "price": 589.86,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "5f57489d-91c6-431e-b336-86b2d620a083",
+      "account": "vibhanshu",
+      "stock_name": "Entero Healthcare Solutions Limited",
+      "ticker": "NSE:ENTERO",
+      "yahoo_ticker": "ENTERO.NS",
+      "avg_buy_price": 1164,
+      "quantity": 489,
+      "cmp": 1147.3,
+      "currency": "INR",
+      "buy_date": "2025-02-01",
+      "pe": 47.22,
+      "max_price": 1584.25,
+      "allowed_price": 1275.039474,
+      "active": false,
+      "market_cap": 5312.684553,
+      "sector": "Pharma",
+      "notes": "",
+      "peak_price": 1479.5,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "bfa8d89b-a73c-416b-aa22-285c66dc4bd4",
+          "date": "2025-02-01",
+          "type": "buy",
+          "qty": 489,
+          "price": 1164,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "719b1e19-eaa3-4cd2-a92b-0bef8e0b4d45",
+      "account": "vibhanshu",
+      "stock_name": "Interarch Building Solutions Limited",
+      "ticker": "NSE:INTERARCH",
+      "yahoo_ticker": "INTERARCH.NS",
+      "avg_buy_price": 1823.84,
+      "quantity": 203,
+      "cmp": 1723.1,
+      "currency": "INR",
+      "buy_date": "2025-02-06",
+      "pe": 26.57,
+      "max_price": 2762.6,
+      "allowed_price": 2042.845023,
+      "active": true,
+      "market_cap": 3593.368863,
+      "sector": "Building Materials",
+      "notes": "",
+      "peak_price": 2584.5,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "93c2bec7-389e-45bb-8890-a966d7ccc116",
+          "date": "2025-02-06",
+          "type": "buy",
+          "qty": 203,
+          "price": 1823.84,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "39ef90b6-ec71-4997-99db-f2e87261b1f2",
+      "account": "vibhanshu",
+      "stock_name": "Nippon India ETF Silver BeES",
+      "ticker": "NSE:SILVERBEES",
+      "yahoo_ticker": "SILVERBEES.NS",
+      "avg_buy_price": 128.0,
+      "quantity": 800.0,
+      "cmp": 232.2,
+      "currency": "INR",
+      "buy_date": "2025-09-01",
+      "pe": null,
+      "max_price": 360.0,
+      "allowed_price": 164.1666667,
+      "active": true,
+      "market_cap": null,
+      "sector": "Silver Commodity ETF",
+      "notes": "",
+      "peak_price": 292.73,
+      "trades": [
+        {
+          "id": "7a2b5014-659b-4844-ba7d-c825b460d241",
+          "date": "2025-09-01",
+          "type": "buy",
+          "qty": 800.0,
+          "price": 128.0,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "5933737a-6a2a-4e3b-87fa-3c8c17786dec",
+      "account": "vibhanshu",
+      "stock_name": "ICICI Prudential Gold ETF",
+      "ticker": "NSE:GOLDIETF",
+      "yahoo_ticker": "GOLDIETF.NS",
+      "avg_buy_price": 93.8,
+      "quantity": 1000.0,
+      "cmp": 129.91,
+      "currency": "INR",
+      "buy_date": "2025-09-02",
+      "pe": null,
+      "max_price": 158.0,
+      "allowed_price": 40.5,
+      "active": true,
+      "market_cap": null,
+      "sector": "Gold Commodity ETF",
+      "notes": "",
+      "peak_price": 136.29,
+      "trades": [
+        {
+          "id": "39f7c64e-ace9-4645-85a7-0db5199250d5",
+          "date": "2025-09-02",
+          "type": "buy",
+          "qty": 1000.0,
+          "price": 93.8,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "c660f397-7608-441b-b11b-d7918f68d59b",
+      "account": "vibhanshu",
+      "stock_name": "CSB Bank Limited",
+      "ticker": "NSE:CSBBANK",
+      "yahoo_ticker": "CSBBANK.NS",
+      "avg_buy_price": 382.7959,
+      "quantity": 1300,
+      "cmp": 353.0,
+      "currency": "INR",
+      "buy_date": "2025-10-22",
+      "pe": 10,
+      "max_price": 574.4,
+      "allowed_price": 482.2431373,
+      "active": false,
+      "market_cap": 6185.92875,
+      "sector": "Gold Financiers",
+      "notes": "",
+      "peak_price": 505.7,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "75def361-73be-439b-95d9-0d6aa0ebff57",
+          "date": "2025-10-22",
+          "type": "buy",
+          "qty": 1300,
+          "price": 382.7959,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "d35db1e6-dd86-461e-a9b8-e202c9e17927",
+      "account": "vibhanshu",
+      "stock_name": "Multi Commodity Exchange of India Limited",
+      "ticker": "NSE:MCX",
+      "yahoo_ticker": "MCX.NS",
+      "avg_buy_price": 1903.272,
+      "quantity": 275,
+      "cmp": 2824.8,
+      "currency": "INR",
+      "buy_date": "2025-11-11",
+      "pe": 155.56,
+      "max_price": 3136.0,
+      "allowed_price": 2773.065637,
+      "active": true,
+      "market_cap": 78786.69293,
+      "sector": "Commodities",
+      "notes": "",
+      "peak_price": 3426.0,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "23a0fd69-9fd9-4763-9a46-ebe21ea1dbbb",
+          "date": "2025-11-11",
+          "type": "buy",
+          "qty": 275,
+          "price": 1903.272,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "bf747091-39a0-46a5-b7aa-deef2b954df1",
+      "account": "vibhanshu",
+      "stock_name": "Acutaas Chemicals Limited",
+      "ticker": "NSE:ACUTAAS",
+      "yahoo_ticker": "ACUTAAS.NS",
+      "avg_buy_price": 1727.5,
+      "quantity": 200,
+      "cmp": 3195.0,
+      "currency": "INR",
+      "buy_date": "2025-11-29",
+      "pe": 63.29,
+      "max_price": 2759.0,
+      "allowed_price": 1819.0,
+      "active": true,
+      "market_cap": 22474.43921,
+      "sector": "CDMO",
+      "notes": "",
+      "peak_price": 3400.0,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "7e966a61-e3ce-4211-b151-e613ea79ca09",
+          "date": "2025-11-29",
+          "type": "buy",
+          "qty": 200,
+          "price": 1727.5,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "4f43a201-0bfc-4fe7-979e-7cc29030978f",
+      "account": "vibhanshu",
+      "stock_name": "Sansera Engineering Limited",
+      "ticker": "NSE:SANSERA",
+      "yahoo_ticker": "SANSERA.NS",
+      "avg_buy_price": 1820.0,
+      "quantity": 50.0,
+      "cmp": 2960.0,
+      "currency": "INR",
+      "buy_date": "2025-12-20",
+      "pe": 59.87,
+      "max_price": 2672.5,
+      "allowed_price": 1548.098086,
+      "active": true,
+      "market_cap": 15718.89667,
+      "sector": "Aerospace",
+      "notes": "",
+      "peak_price": 2961.4,
+      "trades": [
+        {
+          "id": "4be07537-888e-4fa3-a080-3b607e60b0eb",
+          "date": "2025-12-20",
+          "type": "buy",
+          "qty": 50.0,
+          "price": 1820.0,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "3480bf33-a3a9-4f1e-bd2a-1fdd2044d4ec",
+      "account": "vibhanshu",
+      "stock_name": "Sona BLW Precision Forgings Limited",
+      "ticker": "NSE:SONACOMS",
+      "yahoo_ticker": "SONACOMS.NS",
+      "avg_buy_price": 524.17,
+      "quantity": 600.0,
+      "cmp": 599.5,
+      "currency": "INR",
+      "buy_date": "2026-02-07",
+      "pe": 56.28,
+      "max_price": 839.9,
+      "allowed_price": 578.7888889,
+      "active": true,
+      "market_cap": 36055.87193,
+      "sector": "Automotive - Ancilliary",
+      "notes": "",
+      "peak_price": 612.0,
+      "trades": [
+        {
+          "id": "bb8c35e5-f38e-48d2-aa8d-c536a71b9e87",
+          "date": "2026-02-07",
+          "type": "buy",
+          "qty": 600.0,
+          "price": 524.17,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "83684707-ae86-4119-a3e9-0df8cc72e69a",
+      "account": "vibhanshu",
+      "stock_name": "Jammu & Kashmir Bank Limited",
+      "ticker": "NSE:J&KBANK",
+      "yahoo_ticker": "J&KBANK.NS",
+      "avg_buy_price": 116.19,
+      "quantity": 207,
+      "cmp": 157.25,
+      "currency": "INR",
+      "buy_date": "2026-02-26",
+      "pe": 6.59,
+      "max_price": 152.5,
+      "allowed_price": 72.52722477,
+      "active": true,
+      "market_cap": 15599.02999,
+      "sector": "Banking",
+      "notes": "",
+      "peak_price": 157.25,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "d464010b-aa90-4c69-b138-eec42d948f5d",
+          "date": "2026-02-26",
+          "type": "buy",
+          "qty": 207,
+          "price": 116.19,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "f4559a99-86fa-4161-90f2-99b4f8dc2a89",
+      "account": "manjari",
+      "stock_name": "Neuland Laboratories Limited",
+      "ticker": "NSE:NEULANDLAB",
+      "yahoo_ticker": "NEULANDLAB.NS",
+      "avg_buy_price": 1354.29,
+      "quantity": 60,
+      "cmp": 17188.0,
+      "currency": "INR",
+      "buy_date": null,
+      "pe": 127.13,
+      "max_price": 19747.0,
+      "allowed_price": 17703.52174,
+      "active": true,
+      "market_cap": 22773.037,
+      "sector": "CDMO",
+      "notes": "",
+      "peak_price": 17837.0,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "823284a6-946c-4371-9f79-056e9830650a",
+          "date": "2026-06-10",
+          "type": "buy",
+          "qty": 60,
+          "price": 1354.29,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "16a3c2ed-e31b-46e8-a3c1-34b6bfd763c3",
+      "account": "manjari",
+      "stock_name": "Narayana Hrudayalaya Limited",
+      "ticker": "NSE:NH",
+      "yahoo_ticker": "NH.NS",
+      "avg_buy_price": 724.7678,
+      "quantity": 596.0,
+      "cmp": 1925.0,
+      "currency": "INR",
+      "buy_date": null,
+      "pe": 47.38,
+      "max_price": 2370.2,
+      "allowed_price": 2115.59545,
+      "active": false,
+      "market_cap": 36964.1636,
+      "sector": "Hospitals",
+      "notes": "",
+      "peak_price": 2257.88,
+      "trades": [
+        {
+          "id": "23266cfc-6e26-4bd8-ac77-fb5e6cddeded",
+          "date": "2026-06-10",
+          "type": "buy",
+          "qty": 596.0,
+          "price": 724.7678,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "e6a64ade-b60d-48d9-82c8-216302e955d6",
+      "account": "manjari",
+      "stock_name": "Samhi Hotels Limited",
+      "ticker": "NSE:SAMHI",
+      "yahoo_ticker": "SAMHI.NS",
+      "avg_buy_price": 185.48,
+      "quantity": 2616.0,
+      "cmp": 160.66,
+      "currency": "INR",
+      "buy_date": "2024-03-01",
+      "pe": 16.62,
+      "max_price": 254.5,
+      "allowed_price": 166.5014978,
+      "active": false,
+      "market_cap": 3522.612113,
+      "sector": "Hospitality",
+      "notes": "",
+      "peak_price": 245.82,
+      "trades": [
+        {
+          "id": "b14ffd0c-ba30-4386-a2ea-2ce2e30486a5",
+          "date": "2024-03-01",
+          "type": "buy",
+          "qty": 2616.0,
+          "price": 185.48,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "ad42ce05-ca42-47a8-b200-7a6c05133ce8",
+      "account": "manjari",
+      "stock_name": "JM Financial Limited",
+      "ticker": "NSE:JMFINANCIL",
+      "yahoo_ticker": "JMFINANCIL.NS",
+      "avg_buy_price": 135.7407,
+      "quantity": 5400,
+      "cmp": 119.37,
+      "currency": "INR",
+      "buy_date": "2024-10-01",
+      "pe": 11.16,
+      "max_price": 199.8,
+      "allowed_price": 168.8382082,
+      "active": false,
+      "market_cap": 13904.14868,
+      "sector": "Banking",
+      "notes": "",
+      "peak_price": 191.14,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "3be2e830-d07e-442b-9ff1-f6d778a2ab9b",
+          "date": "2024-10-01",
+          "type": "buy",
+          "qty": 5400,
+          "price": 135.7407,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "42b58b6d-a054-4e8b-bd14-5574c0467724",
+      "account": "manjari",
+      "stock_name": "TD Power Systems Limited",
+      "ticker": "NSE:TDPOWERSYS",
+      "yahoo_ticker": "TDPOWERSYS.NS",
+      "avg_buy_price": 414.98,
+      "quantity": 2550.0,
+      "cmp": 1232.1,
+      "currency": "INR",
+      "buy_date": "2024-11-03",
+      "pe": 87.37,
+      "max_price": 1289.2,
+      "allowed_price": 1194.32717,
+      "active": true,
+      "market_cap": 19183.28562,
+      "sector": "Electrification Theme",
+      "notes": "",
+      "peak_price": 1328.0,
+      "trades": [
+        {
+          "id": "ee232f0d-c434-489e-bad5-9909b4721aa7",
+          "date": "2024-11-03",
+          "type": "buy",
+          "qty": 2550.0,
+          "price": 414.98,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "83772a02-a08c-417c-a946-08f5b2f50e14",
+      "account": "manjari",
+      "stock_name": "Solara Active Pharma Sciences Limited",
+      "ticker": "NSE:SOLARA",
+      "yahoo_ticker": "SOLARA.NS",
+      "avg_buy_price": 609.125,
+      "quantity": 800,
+      "cmp": 580.0,
+      "currency": "INR",
+      "buy_date": "2024-11-02",
+      "pe": null,
+      "max_price": 770.0,
+      "allowed_price": 575.9454996,
+      "active": false,
+      "market_cap": 2266.120878,
+      "sector": "CDMO",
+      "notes": "",
+      "peak_price": 697.0,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "970961f0-0ac6-47c7-82e9-6fb356967eda",
+          "date": "2024-11-02",
+          "type": "buy",
+          "qty": 800,
+          "price": 609.125,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "0bcd9d6c-a669-42bc-b4f8-b34172d0e8bd",
+      "account": "manjari",
+      "stock_name": "Laurus Labs Limited",
+      "ticker": "NSE:LAURUSLABS",
+      "yahoo_ticker": "LAURUSLABS.NS",
+      "avg_buy_price": 560.0,
+      "quantity": 550.0,
+      "cmp": 1424.8,
+      "currency": "INR",
+      "buy_date": "2025-01-01",
+      "pe": 74.57,
+      "max_price": 1237.9,
+      "allowed_price": 1094.607317,
+      "active": true,
+      "market_cap": 66276.94208,
+      "sector": "CDMO",
+      "notes": "",
+      "peak_price": 1446.8,
+      "trades": [
+        {
+          "id": "8c21a486-64d8-4a2e-bbcd-c017c1ee3d5c",
+          "date": "2025-01-01",
+          "type": "buy",
+          "qty": 550.0,
+          "price": 560.0,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "2bfb1655-8a69-4284-9d68-776bc11c8ef1",
+      "account": "manjari",
+      "stock_name": "Entero Healthcare Solutions Limited",
+      "ticker": "NSE:ENTERO",
+      "yahoo_ticker": "ENTERO.NS",
+      "avg_buy_price": 1203.87,
+      "quantity": 546.0,
+      "cmp": 1147.3,
+      "currency": "INR",
+      "buy_date": "2025-02-01",
+      "pe": 47.22,
+      "max_price": 1584.25,
+      "allowed_price": 1275.039474,
+      "active": false,
+      "market_cap": 5312.684553,
+      "sector": "Pharma",
+      "notes": "",
+      "peak_price": 1479.5,
+      "trades": [
+        {
+          "id": "1cb6ec34-3482-4e67-b14f-d1734fb6fbca",
+          "date": "2025-02-01",
+          "type": "buy",
+          "qty": 546.0,
+          "price": 1203.87,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "6d49f7d4-80db-414f-9e7e-44c47f51c530",
+      "account": "manjari",
+      "stock_name": "Interarch Building Solutions Limited",
+      "ticker": "NSE:INTERARCH",
+      "yahoo_ticker": "INTERARCH.NS",
+      "avg_buy_price": 1845.0,
+      "quantity": 200.0,
+      "cmp": 1723.1,
+      "currency": "INR",
+      "buy_date": "2025-02-06",
+      "pe": 26.57,
+      "max_price": 2762.6,
+      "allowed_price": 2042.845023,
+      "active": true,
+      "market_cap": 3593.368863,
+      "sector": "Building Materials",
+      "notes": "",
+      "peak_price": 2584.5,
+      "trades": [
+        {
+          "id": "eae1df23-5a1a-4f3a-9be4-6ec800f573e0",
+          "date": "2025-02-06",
+          "type": "buy",
+          "qty": 200.0,
+          "price": 1845.0,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "e4df2d59-a0cc-443a-ba53-b7f9b216ead6",
+      "account": "manjari",
+      "stock_name": "FDC Limited",
+      "ticker": "NSE:FDC",
+      "yahoo_ticker": "FDC.NS",
+      "avg_buy_price": 464.9571,
+      "quantity": 1400.0,
+      "cmp": 393.5,
+      "currency": "INR",
+      "buy_date": null,
+      "pe": 28.57,
+      "max_price": 658.85,
+      "allowed_price": 531.822973,
+      "active": false,
+      "market_cap": 6190.85025,
+      "sector": "Pharma",
+      "notes": "",
+      "peak_price": 495.04,
+      "trades": [
+        {
+          "id": "280cd695-b8d4-415a-b5a9-a1e8b23bebef",
+          "date": "2026-06-10",
+          "type": "buy",
+          "qty": 1400.0,
+          "price": 464.9571,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "942a6829-72d8-4cf7-8cc4-29573361ec69",
+      "account": "manjari",
+      "stock_name": "Nippon India ETF Silver BeES",
+      "ticker": "NSE:SILVERBEES",
+      "yahoo_ticker": "SILVERBEES.NS",
+      "avg_buy_price": 121.8,
+      "quantity": 800,
+      "cmp": 232.2,
+      "currency": "INR",
+      "buy_date": "2025-09-01",
+      "pe": null,
+      "max_price": 360.0,
+      "allowed_price": 164.1666667,
+      "active": true,
+      "market_cap": null,
+      "sector": "Silver Commodity ETF",
+      "notes": "",
+      "peak_price": 292.73,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "c43a510c-f3a3-46fb-a41a-8c6d324bfe66",
+          "date": "2025-09-01",
+          "type": "buy",
+          "qty": 800,
+          "price": 121.8,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "627f2e2e-08d2-47be-99d4-476c5583ab08",
+      "account": "manjari",
+      "stock_name": "ICICI Prudential Gold ETF",
+      "ticker": "NSE:GOLDIETF",
+      "yahoo_ticker": "GOLDIETF.NS",
+      "avg_buy_price": 96.38,
+      "quantity": 1000.0,
+      "cmp": 129.91,
+      "currency": "INR",
+      "buy_date": "2025-09-02",
+      "pe": null,
+      "max_price": 158.0,
+      "allowed_price": 40.5,
+      "active": true,
+      "market_cap": null,
+      "sector": "Gold Commodity ETF",
+      "notes": "",
+      "peak_price": 136.29,
+      "trades": [
+        {
+          "id": "6da15fea-c5ea-4f8f-858c-1b79dd067da3",
+          "date": "2025-09-02",
+          "type": "buy",
+          "qty": 1000.0,
+          "price": 96.38,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "2c7e187e-eb65-46ba-981a-26e40a74c364",
+      "account": "manjari",
+      "stock_name": "CSB Bank Limited",
+      "ticker": "NSE:CSBBANK",
+      "yahoo_ticker": "CSBBANK.NS",
+      "avg_buy_price": 378.5882,
+      "quantity": 1700,
+      "cmp": 353.0,
+      "currency": "INR",
+      "buy_date": "2025-10-22",
+      "pe": 10,
+      "max_price": 574.4,
+      "allowed_price": 482.2431373,
+      "active": false,
+      "market_cap": 6185.92875,
+      "sector": "Gold Financiers",
+      "notes": "",
+      "peak_price": 505.7,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "daacaaa8-3ab1-4c6d-93eb-69eddbdbea35",
+          "date": "2025-10-22",
+          "type": "buy",
+          "qty": 1700,
+          "price": 378.5882,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "22c745ee-b2ed-417a-8b8f-bca06a5d65c1",
+      "account": "manjari",
+      "stock_name": "Multi Commodity Exchange of India Limited",
+      "ticker": "NSE:MCX",
+      "yahoo_ticker": "MCX.NS",
+      "avg_buy_price": 1888.8095,
+      "quantity": 420,
+      "cmp": 2824.8,
+      "currency": "INR",
+      "buy_date": "2025-11-11",
+      "pe": 155.56,
+      "max_price": 3136.0,
+      "allowed_price": 2773.065637,
+      "active": true,
+      "market_cap": 78786.69293,
+      "sector": "Commodities",
+      "notes": "",
+      "peak_price": 3426.0,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "1fef6971-8deb-4b04-84f9-b0f7031940f8",
+          "date": "2025-11-11",
+          "type": "buy",
+          "qty": 420,
+          "price": 1888.8095,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "0234e7dd-1e61-40ab-b07c-4fba57c14c81",
+      "account": "manjari",
+      "stock_name": "Acutaas Chemicals Limited",
+      "ticker": "NSE:ACUTAAS",
+      "yahoo_ticker": "ACUTAAS.NS",
+      "avg_buy_price": 1700.0,
+      "quantity": 100.0,
+      "cmp": 3195.0,
+      "currency": "INR",
+      "buy_date": "2025-11-29",
+      "pe": 63.29,
+      "max_price": 2759.0,
+      "allowed_price": 1819.0,
+      "active": true,
+      "market_cap": 22474.43921,
+      "sector": "CDMO",
+      "notes": "",
+      "peak_price": 3400.0,
+      "trades": [
+        {
+          "id": "ab90f007-1f4a-44f7-9b99-f3b7324dda7c",
+          "date": "2025-11-29",
+          "type": "buy",
+          "qty": 100.0,
+          "price": 1700.0,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "d59ceaa6-7db9-43e7-985b-20bec6278079",
+      "account": "manjari",
+      "stock_name": "Sansera Engineering Limited",
+      "ticker": "NSE:SANSERA",
+      "yahoo_ticker": "SANSERA.NS",
+      "avg_buy_price": 1697.19,
+      "quantity": 180.0,
+      "cmp": 2960.0,
+      "currency": "INR",
+      "buy_date": "2025-12-20",
+      "pe": 59.87,
+      "max_price": 2672.5,
+      "allowed_price": 1548.098086,
+      "active": true,
+      "market_cap": 15718.89667,
+      "sector": "Aerospace",
+      "notes": "",
+      "peak_price": 2961.4,
+      "trades": [
+        {
+          "id": "b7e74408-a087-4a07-83cd-c5882d9b63e3",
+          "date": "2025-12-20",
+          "type": "buy",
+          "qty": 180.0,
+          "price": 1697.19,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "fe3cd4d2-7eb7-4f39-8d37-53c3fcc94ffc",
+      "account": "manjari",
+      "stock_name": "Sona BLW Precision Forgings Limited",
+      "ticker": "NSE:SONACOMS",
+      "yahoo_ticker": "SONACOMS.NS",
+      "avg_buy_price": 535.52,
+      "quantity": 600.0,
+      "cmp": 599.5,
+      "currency": "INR",
+      "buy_date": "2026-02-07",
+      "pe": 56.28,
+      "max_price": 839.9,
+      "allowed_price": 578.7888889,
+      "active": true,
+      "market_cap": 36055.87193,
+      "sector": "Automotive - Ancilliary",
+      "notes": "",
+      "peak_price": 612.0,
+      "trades": [
+        {
+          "id": "1aaeaeaf-25fd-4f37-82fe-2718c8192e41",
+          "date": "2026-02-07",
+          "type": "buy",
+          "qty": 600.0,
+          "price": 535.52,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "17b7dbf2-5fc6-4b06-b027-f91a86cb7286",
+      "account": "manjari",
+      "stock_name": "Jammu & Kashmir Bank Limited",
+      "ticker": "NSE:J&KBANK",
+      "yahoo_ticker": "J&KBANK.NS",
+      "avg_buy_price": 115.78,
+      "quantity": 2670,
+      "cmp": 157.25,
+      "currency": "INR",
+      "buy_date": "2026-02-26",
+      "pe": 6.59,
+      "max_price": 152.5,
+      "allowed_price": 72.52722477,
+      "active": true,
+      "market_cap": 15599.02999,
+      "sector": "Banking",
+      "notes": "",
+      "peak_price": 157.25,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "ab01c969-8208-431e-8101-d3021f6826b0",
+          "date": "2026-02-26",
+          "type": "buy",
+          "qty": 2670,
+          "price": 115.78,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "1308267a-d46d-470a-9d6c-a22d3a278dca",
+      "account": "huf",
+      "stock_name": "Narayana Hrudayalaya Limited",
+      "ticker": "NSE:NH",
+      "yahoo_ticker": "NH.NS",
+      "avg_buy_price": 808.27,
+      "quantity": 650.0,
+      "cmp": 1925.0,
+      "currency": "INR",
+      "buy_date": null,
+      "pe": 47.38,
+      "max_price": 2370.2,
+      "allowed_price": 2115.59545,
+      "active": false,
+      "market_cap": 36964.1636,
+      "sector": "Hospitals",
+      "notes": "",
+      "peak_price": 2257.88,
+      "trades": [
+        {
+          "id": "a90e08a7-dddf-45bd-a7d4-e772d88c6b99",
+          "date": "2026-06-10",
+          "type": "buy",
+          "qty": 650.0,
+          "price": 808.27,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "f7d320da-d227-48cc-82ff-b5f41e9b5176",
+      "account": "huf",
+      "stock_name": "Neuland Laboratories Limited",
+      "ticker": "NSE:NEULANDLAB",
+      "yahoo_ticker": "NEULANDLAB.NS",
+      "avg_buy_price": 5900,
+      "quantity": 60,
+      "cmp": 17188.0,
+      "currency": "INR",
+      "buy_date": null,
+      "pe": 127.13,
+      "max_price": 19747.0,
+      "allowed_price": 17703.52174,
+      "active": true,
+      "market_cap": 22773.037,
+      "sector": "CDMO",
+      "notes": "",
+      "peak_price": 17837.0,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "9f823b6c-44e9-4b2d-9f6d-364312b89790",
+          "date": "2026-06-10",
+          "type": "buy",
+          "qty": 60,
+          "price": 5900,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "2926c597-a411-4b06-a29b-1172a1be9956",
+      "account": "huf",
+      "stock_name": "Samhi Hotels Limited",
+      "ticker": "NSE:SAMHI",
+      "yahoo_ticker": "SAMHI.NS",
+      "avg_buy_price": 184.27,
+      "quantity": 2725,
+      "cmp": 160.66,
+      "currency": "INR",
+      "buy_date": "2024-03-01",
+      "pe": 16.62,
+      "max_price": 254.5,
+      "allowed_price": 166.5014978,
+      "active": false,
+      "market_cap": 3522.612113,
+      "sector": "Hospitality",
+      "notes": "",
+      "peak_price": 245.82,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "6a62e1d5-1cd8-4d49-aa6d-19c1df65861a",
+          "date": "2024-03-01",
+          "type": "buy",
+          "qty": 2725,
+          "price": 184.27,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "7cd4afde-f26f-474c-bcb4-b6e89a46c334",
+      "account": "huf",
+      "stock_name": "JM Financial Limited",
+      "ticker": "NSE:JMFINANCIL",
+      "yahoo_ticker": "JMFINANCIL.NS",
+      "avg_buy_price": 132.1726,
+      "quantity": 5850,
+      "cmp": 119.37,
+      "currency": "INR",
+      "buy_date": "2024-10-01",
+      "pe": 11.16,
+      "max_price": 199.8,
+      "allowed_price": 168.8382082,
+      "active": false,
+      "market_cap": 13904.14868,
+      "sector": "Banking",
+      "notes": "",
+      "peak_price": 191.14,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "88eb7a39-6efb-4d40-8936-188f075f03f7",
+          "date": "2024-10-01",
+          "type": "buy",
+          "qty": 5850,
+          "price": 132.1726,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "596d8f43-6fc6-453c-9fe7-2d0a65f16a2d",
+      "account": "huf",
+      "stock_name": "Solara Active Pharma Sciences Limited",
+      "ticker": "NSE:SOLARA",
+      "yahoo_ticker": "SOLARA.NS",
+      "avg_buy_price": 598.2471,
+      "quantity": 850,
+      "cmp": 580.0,
+      "currency": "INR",
+      "buy_date": "2024-11-02",
+      "pe": null,
+      "max_price": 770.0,
+      "allowed_price": 575.9454996,
+      "active": false,
+      "market_cap": 2266.120878,
+      "sector": "CDMO",
+      "notes": "",
+      "peak_price": 697.0,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "9f2f02de-f062-4493-ba88-6f6fced1761e",
+          "date": "2024-11-02",
+          "type": "buy",
+          "qty": 850,
+          "price": 598.2471,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "bfb1e152-0a97-46bb-8b9c-cf8a03d838c1",
+      "account": "huf",
+      "stock_name": "TD Power Systems Limited",
+      "ticker": "NSE:TDPOWERSYS",
+      "yahoo_ticker": "TDPOWERSYS.NS",
+      "avg_buy_price": 353.4189,
+      "quantity": 1351.0,
+      "cmp": 1232.1,
+      "currency": "INR",
+      "buy_date": "2024-11-03",
+      "pe": 87.37,
+      "max_price": 1289.2,
+      "allowed_price": 1194.32717,
+      "active": true,
+      "market_cap": 19183.28562,
+      "sector": "Electrification Theme",
+      "notes": "",
+      "peak_price": 1328.0,
+      "trades": [
+        {
+          "id": "a41890cc-599d-4796-a500-c112111e4c9a",
+          "date": "2024-11-03",
+          "type": "buy",
+          "qty": 1351.0,
+          "price": 353.4189,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "60bd651c-b7c6-40c4-bd83-9ef2bdb3a06d",
+      "account": "huf",
+      "stock_name": "Laurus Labs Limited",
+      "ticker": "NSE:LAURUSLABS",
+      "yahoo_ticker": "LAURUSLABS.NS",
+      "avg_buy_price": 549.37,
+      "quantity": 1120.0,
+      "cmp": 1424.8,
+      "currency": "INR",
+      "buy_date": "2025-01-01",
+      "pe": 74.57,
+      "max_price": 1237.9,
+      "allowed_price": 1094.607317,
+      "active": true,
+      "market_cap": 66276.94208,
+      "sector": "CDMO",
+      "notes": "",
+      "peak_price": 1446.8,
+      "trades": [
+        {
+          "id": "35e08cbc-96a6-4ad2-90d2-eb876234b535",
+          "date": "2025-01-01",
+          "type": "buy",
+          "qty": 1120.0,
+          "price": 549.37,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "be724d11-3f0a-4a6f-a4e3-065972c8deb2",
+      "account": "huf",
+      "stock_name": "Entero Healthcare Solutions Limited",
+      "ticker": "NSE:ENTERO",
+      "yahoo_ticker": "ENTERO.NS",
+      "avg_buy_price": 1217.7474,
+      "quantity": 475.0,
+      "cmp": 1147.3,
+      "currency": "INR",
+      "buy_date": "2025-02-01",
+      "pe": 47.22,
+      "max_price": 1584.25,
+      "allowed_price": 1275.039474,
+      "active": false,
+      "market_cap": 5312.684553,
+      "sector": "Pharma",
+      "notes": "",
+      "peak_price": 1479.5,
+      "trades": [
+        {
+          "id": "27e4c56d-7c61-487b-ab04-e13e1dc900b1",
+          "date": "2025-02-01",
+          "type": "buy",
+          "qty": 475.0,
+          "price": 1217.7474,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "e918944d-f1b2-4d38-8700-662ef92b1b27",
+      "account": "huf",
+      "stock_name": "Interarch Building Solutions Limited",
+      "ticker": "NSE:INTERARCH",
+      "yahoo_ticker": "INTERARCH.NS",
+      "avg_buy_price": 1902.0,
+      "quantity": 250.0,
+      "cmp": 1723.1,
+      "currency": "INR",
+      "buy_date": "2025-02-06",
+      "pe": 26.57,
+      "max_price": 2762.6,
+      "allowed_price": 2042.845023,
+      "active": true,
+      "market_cap": 3593.368863,
+      "sector": "Building Materials",
+      "notes": "",
+      "peak_price": 2584.5,
+      "trades": [
+        {
+          "id": "0b27391c-48cf-4f90-9ebb-2c0bc87084c4",
+          "date": "2025-02-06",
+          "type": "buy",
+          "qty": 250.0,
+          "price": 1902.0,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "b8a843fd-dca5-4216-88ec-e74148a71e6d",
+      "account": "huf",
+      "stock_name": "FDC Limited",
+      "ticker": "NSE:FDC",
+      "yahoo_ticker": "FDC.NS",
+      "avg_buy_price": 490.65,
+      "quantity": 2300.0,
+      "cmp": 393.5,
+      "currency": "INR",
+      "buy_date": null,
+      "pe": 28.57,
+      "max_price": 658.85,
+      "allowed_price": 531.822973,
+      "active": false,
+      "market_cap": 6190.85025,
+      "sector": "Pharma",
+      "notes": "",
+      "peak_price": 495.04,
+      "trades": [
+        {
+          "id": "e7db5b35-065e-492f-8d4d-6dfb04884084",
+          "date": "2026-06-10",
+          "type": "buy",
+          "qty": 2300.0,
+          "price": 490.65,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "a6c2bb30-95a3-436f-9c3d-8db0fe2d679e",
+      "account": "huf",
+      "stock_name": "Nippon India ETF Silver BeES",
+      "ticker": "NSE:SILVERBEES",
+      "yahoo_ticker": "SILVERBEES.NS",
+      "avg_buy_price": 122.0,
+      "quantity": 800.0,
+      "cmp": 232.2,
+      "currency": "INR",
+      "buy_date": "2025-09-01",
+      "pe": null,
+      "max_price": 360.0,
+      "allowed_price": 164.1666667,
+      "active": true,
+      "market_cap": null,
+      "sector": "Silver Commodity ETF",
+      "notes": "",
+      "peak_price": 292.73,
+      "trades": [
+        {
+          "id": "13e03d0d-6c60-4022-bc70-cc9b37e5b5cc",
+          "date": "2025-09-01",
+          "type": "buy",
+          "qty": 800.0,
+          "price": 122.0,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "16556545-6da6-45fa-82b1-ee02fcfaa2ea",
+      "account": "huf",
+      "stock_name": "ICICI Prudential Gold ETF",
+      "ticker": "NSE:GOLDIETF",
+      "yahoo_ticker": "GOLDIETF.NS",
+      "avg_buy_price": 95.15,
+      "quantity": 2000.0,
+      "cmp": 129.91,
+      "currency": "INR",
+      "buy_date": "2025-09-02",
+      "pe": null,
+      "max_price": 158.0,
+      "allowed_price": 40.5,
+      "active": true,
+      "market_cap": null,
+      "sector": "Gold Commodity ETF",
+      "notes": "",
+      "peak_price": 136.29,
+      "trades": [
+        {
+          "id": "ac057ff8-d245-4175-aa11-2c1ffaa374ee",
+          "date": "2025-09-02",
+          "type": "buy",
+          "qty": 2000.0,
+          "price": 95.15,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "864d75ea-4f89-4014-a09e-2914f37a53db",
+      "account": "huf",
+      "stock_name": "CSB Bank Limited",
+      "ticker": "NSE:CSBBANK",
+      "yahoo_ticker": "CSBBANK.NS",
+      "avg_buy_price": 376.2319,
+      "quantity": 2100,
+      "cmp": 353.0,
+      "currency": "INR",
+      "buy_date": "2025-10-22",
+      "pe": 10,
+      "max_price": 574.4,
+      "allowed_price": 482.2431373,
+      "active": false,
+      "market_cap": 6185.92875,
+      "sector": "Gold Financiers",
+      "notes": "",
+      "peak_price": 505.7,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "b7c5393b-f134-4472-b412-b969c89e7308",
+          "date": "2025-10-22",
+          "type": "buy",
+          "qty": 2100,
+          "price": 376.2319,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "3d72a244-b0db-4e74-b547-3f171f5a347d",
+      "account": "huf",
+      "stock_name": "Multi Commodity Exchange of India Limited",
+      "ticker": "NSE:MCX",
+      "yahoo_ticker": "MCX.NS",
+      "avg_buy_price": 1892.5,
+      "quantity": 600,
+      "cmp": 2824.8,
+      "currency": "INR",
+      "buy_date": "2025-11-11",
+      "pe": 155.56,
+      "max_price": 3136.0,
+      "allowed_price": 2773.065637,
+      "active": true,
+      "market_cap": 78786.69293,
+      "sector": "Commodities",
+      "notes": "",
+      "peak_price": 3426.0,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "553050f4-31df-4bdd-a197-8aaf1f60a2c5",
+          "date": "2025-11-11",
+          "type": "buy",
+          "qty": 600,
+          "price": 1892.5,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "4de21554-4c75-4d7e-9315-eaf385dd0066",
+      "account": "huf",
+      "stock_name": "Acutaas Chemicals Limited",
+      "ticker": "NSE:ACUTAAS",
+      "yahoo_ticker": "ACUTAAS.NS",
+      "avg_buy_price": 1740.0,
+      "quantity": 200.0,
+      "cmp": 3195.0,
+      "currency": "INR",
+      "buy_date": "2025-11-29",
+      "pe": 63.29,
+      "max_price": 2759.0,
+      "allowed_price": 1819.0,
+      "active": true,
+      "market_cap": 22474.43921,
+      "sector": "CDMO",
+      "notes": "",
+      "peak_price": 3400.0,
+      "trades": [
+        {
+          "id": "5b5f1a5c-e307-4a1e-800c-b0d998ec59f4",
+          "date": "2025-11-29",
+          "type": "buy",
+          "qty": 200.0,
+          "price": 1740.0,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "600fe632-7850-4490-b99a-e05a05081635",
+      "account": "huf",
+      "stock_name": "Sansera Engineering Limited",
+      "ticker": "NSE:SANSERA",
+      "yahoo_ticker": "SANSERA.NS",
+      "avg_buy_price": 1701.71,
+      "quantity": 188.0,
+      "cmp": 2960.0,
+      "currency": "INR",
+      "buy_date": "2025-12-20",
+      "pe": 59.87,
+      "max_price": 2672.5,
+      "allowed_price": 1548.098086,
+      "active": true,
+      "market_cap": 15718.89667,
+      "sector": "Aerospace",
+      "notes": "",
+      "peak_price": 2961.4,
+      "trades": [
+        {
+          "id": "b4cade5e-585b-4546-a0cc-224381432bb7",
+          "date": "2025-12-20",
+          "type": "buy",
+          "qty": 188.0,
+          "price": 1701.71,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "9ccf0b30-786d-43c8-ac9f-113d56703a78",
+      "account": "huf",
+      "stock_name": "Sona BLW Precision Forgings Limited",
+      "ticker": "NSE:SONACOMS",
+      "yahoo_ticker": "SONACOMS.NS",
+      "avg_buy_price": 535.795,
+      "quantity": 600.0,
+      "cmp": 599.5,
+      "currency": "INR",
+      "buy_date": "2026-02-07",
+      "pe": 56.28,
+      "max_price": 839.9,
+      "allowed_price": 578.7888889,
+      "active": true,
+      "market_cap": 36055.87193,
+      "sector": "Automotive - Ancilliary",
+      "notes": "",
+      "peak_price": 612.0,
+      "trades": [
+        {
+          "id": "f52b9107-df9d-4251-b592-1720876637a3",
+          "date": "2026-02-07",
+          "type": "buy",
+          "qty": 600.0,
+          "price": 535.795,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "61a7948a-414e-4fc2-b99e-ccf382e0a9fb",
+      "account": "huf",
+      "stock_name": "Jammu & Kashmir Bank Limited",
+      "ticker": "NSE:J&KBANK",
+      "yahoo_ticker": "J&KBANK.NS",
+      "avg_buy_price": 115.6,
+      "quantity": 3000,
+      "cmp": 157.25,
+      "currency": "INR",
+      "buy_date": "2026-02-26",
+      "pe": 6.59,
+      "max_price": 152.5,
+      "allowed_price": 72.52722477,
+      "active": true,
+      "market_cap": 15599.02999,
+      "sector": "Banking",
+      "notes": "",
+      "peak_price": 157.25,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "402ba3ae-ac6d-4697-9839-57e7681ec67a",
+          "date": "2026-02-26",
+          "type": "buy",
+          "qty": 3000,
+          "price": 115.6,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "e3e379c1-19b4-4b32-9363-549955f71b4c",
+      "account": "manjbhawna",
+      "stock_name": "TD Power Systems Limited",
+      "ticker": "NSE:TDPOWERSYS",
+      "yahoo_ticker": "TDPOWERSYS.NS",
+      "avg_buy_price": 410.0,
+      "quantity": 350.0,
+      "cmp": 1232.1,
+      "currency": "INR",
+      "buy_date": "2024-11-03",
+      "pe": 87.37,
+      "max_price": 1289.2,
+      "allowed_price": 1194.32717,
+      "active": true,
+      "market_cap": 19183.28562,
+      "sector": "Electrification Theme",
+      "notes": "",
+      "peak_price": 1328.0,
+      "trades": [
+        {
+          "id": "3eca9de8-d05b-40cf-8f1a-ae15426496b4",
+          "date": "2024-11-03",
+          "type": "buy",
+          "qty": 350.0,
+          "price": 410.0,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "d96d2b9c-25d4-4ab5-8867-e8dae5950926",
+      "account": "manjbhawna",
+      "stock_name": "Nippon India ETF Gold BeES",
+      "ticker": "NSE:GOLDBEES",
+      "yahoo_ticker": "GOLDBEES.NS",
+      "avg_buy_price": 124.39,
+      "quantity": 3000,
+      "cmp": 125.36,
+      "currency": "INR",
+      "buy_date": null,
+      "pe": null,
+      "max_price": null,
+      "allowed_price": null,
+      "active": true,
+      "market_cap": null,
+      "sector": "Gold Commodity ETF",
+      "notes": "",
+      "peak_price": 131.6,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "10ddd9a6-159d-4302-b4c3-4493a578b8f2",
+          "date": "2026-06-10",
+          "type": "buy",
+          "qty": 3000,
+          "price": 124.39,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "475ffff6-1542-4ea6-abbd-62330d27dbd5",
+      "account": "manjbhawna",
+      "stock_name": "CSB Bank Limited",
+      "ticker": "NSE:CSBBANK",
+      "yahoo_ticker": "CSBBANK.NS",
+      "avg_buy_price": 420.44,
+      "quantity": 410,
+      "cmp": 353.0,
+      "currency": "INR",
+      "buy_date": "2025-10-22",
+      "pe": 10,
+      "max_price": 574.4,
+      "allowed_price": 482.2431373,
+      "active": false,
+      "market_cap": 6185.92875,
+      "sector": "Gold Financiers",
+      "notes": "",
+      "peak_price": 505.7,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "4358e014-5afd-43bc-943c-0f61049e04ad",
+          "date": "2025-10-22",
+          "type": "buy",
+          "qty": 410,
+          "price": 420.44,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "4f50e062-b81a-4ef4-89d6-b3aa92ae1ddc",
+      "account": "manjbhawna",
+      "stock_name": "Multi Commodity Exchange of India Limited",
+      "ticker": "NSE:MCX",
+      "yahoo_ticker": "MCX.NS",
+      "avg_buy_price": 2190,
+      "quantity": 135,
+      "cmp": 2824.8,
+      "currency": "INR",
+      "buy_date": "2025-11-11",
+      "pe": 155.56,
+      "max_price": 3136.0,
+      "allowed_price": 2773.065637,
+      "active": true,
+      "market_cap": 78786.69293,
+      "sector": "Commodities",
+      "notes": "",
+      "peak_price": 3426.0,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "ac396146-598c-46a3-ac15-891166b37e78",
+          "date": "2025-11-11",
+          "type": "buy",
+          "qty": 135,
+          "price": 2190,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "ba240344-51ea-47f9-ab81-86eeac3ec612",
+      "account": "manjbhawna",
+      "stock_name": "Solara Active Pharma Sciences Limited",
+      "ticker": "NSE:SOLARA",
+      "yahoo_ticker": "SOLARA.NS",
+      "avg_buy_price": 512,
+      "quantity": 170,
+      "cmp": 580.0,
+      "currency": "INR",
+      "buy_date": "2024-11-02",
+      "pe": null,
+      "max_price": 770.0,
+      "allowed_price": 575.9454996,
+      "active": false,
+      "market_cap": 2266.120878,
+      "sector": "CDMO",
+      "notes": "",
+      "peak_price": 697.0,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "dd7a6cb0-5482-4f9a-998b-9331e17d4c34",
+          "date": "2024-11-02",
+          "type": "buy",
+          "qty": 170,
+          "price": 512,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "d1fc3891-be9e-433a-aadc-fbfca3ed2ff6",
+      "account": "us_manjari",
+      "stock_name": "SIL",
+      "ticker": "SIL",
+      "yahoo_ticker": "SIL",
+      "avg_buy_price": 85.09,
+      "quantity": 23.43646,
+      "cmp": 77.76,
+      "currency": "USD",
+      "buy_date": null,
+      "pe": null,
+      "max_price": null,
+      "allowed_price": null,
+      "active": true,
+      "market_cap": null,
+      "sector": "Silver Miners",
+      "notes": "",
+      "peak_price": 101.95,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "a9a751a4-eaa6-48eb-9897-807b4037ee44",
+          "date": "2026-06-10",
+          "type": "buy",
+          "qty": 23.43646,
+          "price": 85.09,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "cdf9d960-4e8b-4996-8d0b-d44ccc51d975",
+      "account": "us_manjari",
+      "stock_name": "REMX",
+      "ticker": "REMX",
+      "yahoo_ticker": "REMX",
+      "avg_buy_price": 87.06,
+      "quantity": 14.888834,
+      "cmp": 88.03,
+      "currency": "USD",
+      "buy_date": null,
+      "pe": null,
+      "max_price": null,
+      "allowed_price": null,
+      "active": true,
+      "market_cap": null,
+      "sector": "Commodities",
+      "notes": "",
+      "peak_price": 110.64,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "8ddb8d8e-8a0c-45ed-8ee0-b56ab037e592",
+          "date": "2026-06-10",
+          "type": "buy",
+          "qty": 14.888834,
+          "price": 87.06,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "76333640-d2d1-4616-ac90-20baaf8d537f",
+      "account": "us_manjari",
+      "stock_name": "GDX",
+      "ticker": "GDX",
+      "yahoo_ticker": "GDX",
+      "avg_buy_price": 84.2,
+      "quantity": 11.841568,
+      "cmp": 77.6,
+      "currency": "USD",
+      "buy_date": null,
+      "pe": null,
+      "max_price": null,
+      "allowed_price": null,
+      "active": true,
+      "market_cap": null,
+      "sector": "Gold Miners",
+      "notes": "",
+      "peak_price": 97.6,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "aa11efdf-f201-4006-a5e2-3b5deccd9965",
+          "date": "2026-06-10",
+          "type": "buy",
+          "qty": 11.841568,
+          "price": 84.2,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "967076cc-ba8c-4b40-b954-fc629b507e83",
+      "account": "us_manjari",
+      "stock_name": "BE",
+      "ticker": "BE",
+      "yahoo_ticker": "BE",
+      "avg_buy_price": 274.08,
+      "quantity": 14.551524,
+      "cmp": 259.44,
+      "currency": "USD",
+      "buy_date": "2026-05-20",
+      "pe": null,
+      "max_price": null,
+      "allowed_price": null,
+      "active": true,
+      "market_cap": null,
+      "sector": "Alternative Energy",
+      "notes": "",
+      "peak_price": 303.04,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "76e6c256-b513-4612-82d3-b6064b90a30f",
+          "date": "2026-05-20",
+          "type": "buy",
+          "qty": 14.551524,
+          "price": 274.08,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "4f3212e9-f795-443e-930e-01382901e6d5",
+      "account": "us_manjari",
+      "stock_name": "GLD",
+      "ticker": "GLD",
+      "yahoo_ticker": "GLD",
+      "avg_buy_price": 425.15,
+      "quantity": 14.794255,
+      "cmp": 390.87,
+      "currency": "USD",
+      "buy_date": null,
+      "pe": null,
+      "max_price": null,
+      "allowed_price": null,
+      "active": true,
+      "market_cap": null,
+      "sector": "Gold Commodity ETF",
+      "notes": "",
+      "peak_price": 434.65,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "922a8afe-a501-44fc-89d5-59d17b913ec4",
+          "date": "2026-06-10",
+          "type": "buy",
+          "qty": 14.794255,
+          "price": 425.15,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "d32d92aa-d3aa-4d02-be8c-480ee8bccf1e",
+      "account": "us_manjari",
+      "stock_name": "URNM",
+      "ticker": "URNM",
+      "yahoo_ticker": "URNM",
+      "avg_buy_price": 60.45,
+      "quantity": 57.726142,
+      "cmp": 53.77,
+      "currency": "USD",
+      "buy_date": "2026-05-01",
+      "pe": null,
+      "max_price": null,
+      "allowed_price": null,
+      "active": true,
+      "market_cap": null,
+      "sector": "Commodities",
+      "notes": "",
+      "peak_price": 68.19,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "ec2f1dbc-dc6f-45fe-9d9f-62ec6dd0f02b",
+          "date": "2026-05-01",
+          "type": "buy",
+          "qty": 57.726142,
+          "price": 60.45,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "1e9a13f6-da08-4067-9cd3-3b23b821d073",
+      "account": "us_manjari",
+      "stock_name": "SLV",
+      "ticker": "SLV",
+      "yahoo_ticker": "SLV",
+      "avg_buy_price": 66.87,
+      "quantity": 44.728597,
+      "cmp": 58.99,
+      "currency": "USD",
+      "buy_date": "2026-05-01",
+      "pe": null,
+      "max_price": null,
+      "allowed_price": null,
+      "active": true,
+      "market_cap": null,
+      "sector": "Silver Commodity ETF",
+      "notes": "",
+      "peak_price": 73.01,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "dd4fee69-7bd5-47a5-a9f5-972c41218834",
+          "date": "2026-05-01",
+          "type": "buy",
+          "qty": 44.728597,
+          "price": 66.87,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "9214eb8f-a344-4042-b9b2-6f0063b66012",
+      "account": "us_manjari",
+      "stock_name": "Rocket labs",
+      "ticker": "RKLB",
+      "yahoo_ticker": "RKLB",
+      "avg_buy_price": 45,
+      "quantity": 10,
+      "cmp": 108.21,
+      "currency": "USD",
+      "buy_date": null,
+      "pe": null,
+      "max_price": null,
+      "allowed_price": null,
+      "active": true,
+      "market_cap": null,
+      "sector": "Space Tech",
+      "notes": "",
+      "peak_price": 143.49,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "ad78e04c-83ea-436d-b386-c9d76bad0b64",
+          "date": "2026-06-10",
+          "type": "buy",
+          "qty": 10,
+          "price": 45,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "141a9039-3ab9-4a9b-b503-ecdabbbe227f",
+      "account": "us_manjari",
+      "stock_name": "COPX",
+      "ticker": "COPX",
+      "yahoo_ticker": "COPX",
+      "avg_buy_price": 79.62,
+      "quantity": 33.812533,
+      "cmp": 80.2,
+      "currency": "USD",
+      "buy_date": "2026-05-01",
+      "pe": null,
+      "max_price": null,
+      "allowed_price": null,
+      "active": true,
+      "market_cap": null,
+      "sector": "Commodities",
+      "notes": "",
+      "peak_price": 93.67,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "a612a30a-5977-474e-85cf-93b2180f584b",
+          "date": "2026-05-01",
+          "type": "buy",
+          "qty": 33.812533,
+          "price": 79.62,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "72e9061b-1d76-4ed0-bb11-6151998ee38c",
+      "account": "us_manjari",
+      "stock_name": "GRID",
+      "ticker": "GRID",
+      "yahoo_ticker": "GRID",
+      "avg_buy_price": 168.76,
+      "quantity": 10.043631,
+      "cmp": 187.51,
+      "currency": "USD",
+      "buy_date": null,
+      "pe": null,
+      "max_price": null,
+      "allowed_price": null,
+      "active": true,
+      "market_cap": null,
+      "sector": "Electrification Theme",
+      "notes": "",
+      "peak_price": 199.8,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "2f918679-2160-4b88-8416-2f3ce2dab5f8",
+          "date": "2026-06-10",
+          "type": "buy",
+          "qty": 10.043631,
+          "price": 168.76,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "22d03403-1218-4b1f-9f52-f62df14f22d9",
+      "account": "us_manjari",
+      "stock_name": "PAVE",
+      "ticker": "PAVE",
+      "yahoo_ticker": "PAVE",
+      "avg_buy_price": 54.6,
+      "quantity": 45.652195,
+      "cmp": 57.21,
+      "currency": "USD",
+      "buy_date": "2026-05-01",
+      "pe": null,
+      "max_price": null,
+      "allowed_price": null,
+      "active": true,
+      "market_cap": null,
+      "sector": "Electrification Theme",
+      "notes": "",
+      "peak_price": 57.21,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "e3649cfb-e74e-49a9-baa8-715d303ec0d0",
+          "date": "2026-05-01",
+          "type": "buy",
+          "qty": 45.652195,
+          "price": 54.6,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "62ab66d4-4ee3-48c2-bcc1-25b0372c00c3",
+      "account": "us_manjari",
+      "stock_name": "SII",
+      "ticker": "SII",
+      "yahoo_ticker": "SII",
+      "avg_buy_price": 138.49,
+      "quantity": 32.397152,
+      "cmp": 118.08,
+      "currency": "USD",
+      "buy_date": "2026-05-01",
+      "pe": null,
+      "max_price": null,
+      "allowed_price": null,
+      "active": true,
+      "market_cap": null,
+      "sector": "Commodities",
+      "notes": "",
+      "peak_price": 143.83,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "960d0517-c424-4784-9a86-190c2c9e7aaf",
+          "date": "2026-05-01",
+          "type": "buy",
+          "qty": 32.397152,
+          "price": 138.49,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "5a2fed91-57ec-48e6-968d-d55c31fd0218",
+      "account": "us_vibhanshu",
+      "stock_name": "SIL",
+      "ticker": "SIL",
+      "yahoo_ticker": "SIL",
+      "avg_buy_price": 90.2,
+      "quantity": 44.2177,
+      "cmp": 77.76,
+      "currency": "USD",
+      "buy_date": null,
+      "pe": null,
+      "max_price": null,
+      "allowed_price": null,
+      "active": true,
+      "market_cap": null,
+      "sector": "Silver Miners",
+      "notes": "",
+      "peak_price": 101.95,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "5ce84139-46c2-4cab-b7f8-892cbeb0273e",
+          "date": "2026-06-10",
+          "type": "buy",
+          "qty": 44.2177,
+          "price": 90.2,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "19a876c7-11e0-4058-913d-7f150574021a",
+      "account": "us_vibhanshu",
+      "stock_name": "SII",
+      "ticker": "SII",
+      "yahoo_ticker": "SII",
+      "avg_buy_price": 135.46,
+      "quantity": 22.081365,
+      "cmp": 118.08,
+      "currency": "USD",
+      "buy_date": null,
+      "pe": null,
+      "max_price": null,
+      "allowed_price": null,
+      "active": true,
+      "market_cap": null,
+      "sector": "Commodities",
+      "notes": "",
+      "peak_price": 143.83,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "37dfba70-889a-4552-9dfa-fadb1d863c34",
+          "date": "2026-06-10",
+          "type": "buy",
+          "qty": 22.081365,
+          "price": 135.46,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "735fa07a-a22a-4969-a28d-a991309134cb",
+      "account": "us_vibhanshu",
+      "stock_name": "GDX",
+      "ticker": "GDX",
+      "yahoo_ticker": "GDX",
+      "avg_buy_price": 90.76,
+      "quantity": 39.549971,
+      "cmp": 77.6,
+      "currency": "USD",
+      "buy_date": null,
+      "pe": null,
+      "max_price": null,
+      "allowed_price": null,
+      "active": true,
+      "market_cap": null,
+      "sector": "Gold Miners",
+      "notes": "",
+      "peak_price": 97.6,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "76a9ffaf-dcc8-4f4c-83a6-52b0292c1ad5",
+          "date": "2026-06-10",
+          "type": "buy",
+          "qty": 39.549971,
+          "price": 90.76,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "638dc4a9-2bb6-4907-bfd4-9e15a623908e",
+      "account": "us_vibhanshu",
+      "stock_name": "BE",
+      "ticker": "BE",
+      "yahoo_ticker": "BE",
+      "avg_buy_price": 253.65356993090725,
+      "quantity": 14.544077000000001,
+      "cmp": 259.44,
+      "currency": "USD",
+      "buy_date": null,
+      "pe": null,
+      "max_price": null,
+      "allowed_price": null,
+      "active": true,
+      "market_cap": null,
+      "sector": "Alternative Energy",
+      "notes": "",
+      "peak_price": 303.04,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "c192f15a-3731-4dac-815e-a2885b0459de",
+          "date": "2026-06-10",
+          "type": "buy",
+          "qty": 14.544077000000001,
+          "price": 253.65356993090725,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "ca95afb9-cf83-4d12-9335-bec67da4ec17",
+      "account": "us_vibhanshu",
+      "stock_name": "COPX",
+      "ticker": "COPX",
+      "yahoo_ticker": "COPX",
+      "avg_buy_price": 82.1,
+      "quantity": 48.576,
+      "cmp": 80.2,
+      "currency": "USD",
+      "buy_date": null,
+      "pe": null,
+      "max_price": null,
+      "allowed_price": null,
+      "active": true,
+      "market_cap": null,
+      "sector": "Commodities",
+      "notes": "",
+      "peak_price": 93.67,
+      "trades": [
+        {
+          "id": "ee46483c-1377-4e38-a11e-333b5d8fcbfe",
+          "date": "2026-06-10",
+          "type": "buy",
+          "qty": 48.576,
+          "price": 82.1,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "900924ed-2306-4c29-af87-be8d5f9afe57",
+      "account": "us_vibhanshu",
+      "stock_name": "URNM",
+      "ticker": "URNM",
+      "yahoo_ticker": "URNM",
+      "avg_buy_price": 67.51,
+      "quantity": 44.310226,
+      "cmp": 53.77,
+      "currency": "USD",
+      "buy_date": null,
+      "pe": null,
+      "max_price": null,
+      "allowed_price": null,
+      "active": true,
+      "market_cap": null,
+      "sector": "Commodities",
+      "notes": "",
+      "peak_price": 68.19,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "4e1e8303-6c6a-48ee-ac79-a340a78749de",
+          "date": "2026-06-10",
+          "type": "buy",
+          "qty": 44.310226,
+          "price": 67.51,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "ef33f651-fece-4295-99e3-fd97f8ac3c11",
+      "account": "us_vibhanshu",
+      "stock_name": "GRID",
+      "ticker": "GRID",
+      "yahoo_ticker": "GRID",
+      "avg_buy_price": 178.68,
+      "quantity": 19.530595,
+      "cmp": 187.51,
+      "currency": "USD",
+      "buy_date": null,
+      "pe": null,
+      "max_price": null,
+      "allowed_price": null,
+      "active": true,
+      "market_cap": null,
+      "sector": "Electrification Theme",
+      "notes": "",
+      "peak_price": 199.8,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "b4816522-29e4-484f-ab8b-cd9dc340e78d",
+          "date": "2026-06-10",
+          "type": "buy",
+          "qty": 19.530595,
+          "price": 178.68,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "26713215-f8a0-48f6-a7cc-f07a51c15831",
+      "account": "us_vibhanshu",
+      "stock_name": "GLD",
+      "ticker": "GLD",
+      "yahoo_ticker": "GLD",
+      "avg_buy_price": 435.89,
+      "quantity": 10.2935,
+      "cmp": 390.87,
+      "currency": "USD",
+      "buy_date": null,
+      "pe": null,
+      "max_price": null,
+      "allowed_price": null,
+      "active": true,
+      "market_cap": null,
+      "sector": "Gold Commodity ETF",
+      "notes": "",
+      "peak_price": 435.89,
+      "trades": [
+        {
+          "id": "1f2781f9-424f-48a7-a154-3177d0c95c3c",
+          "date": "2026-06-10",
+          "type": "buy",
+          "qty": 10.2935,
+          "price": 435.89,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "bd0735d2-489c-4835-be22-3bcfdcf9b3ff",
+      "account": "us_vibhanshu",
+      "stock_name": "SLV",
+      "ticker": "SLV",
+      "yahoo_ticker": "SLV",
+      "avg_buy_price": 68.86,
+      "quantity": 51.839275,
+      "cmp": 58.99,
+      "currency": "USD",
+      "buy_date": null,
+      "pe": null,
+      "max_price": null,
+      "allowed_price": null,
+      "active": true,
+      "market_cap": null,
+      "sector": "Silver Commodity ETF",
+      "notes": "",
+      "peak_price": 73.03,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "ff011a53-0ad8-40c5-994e-92594be016f5",
+          "date": "2026-06-10",
+          "type": "buy",
+          "qty": 51.839275,
+          "price": 68.86,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "id": "8067f9ef-15b7-439b-b94d-50207f70efc6",
+      "account": "us_vibhanshu",
+      "stock_name": "PAVE",
+      "ticker": "PAVE",
+      "yahoo_ticker": "PAVE",
+      "avg_buy_price": 54.3,
+      "quantity": 45.904434,
+      "cmp": 57.21,
+      "currency": "USD",
+      "buy_date": null,
+      "pe": null,
+      "max_price": null,
+      "allowed_price": null,
+      "active": true,
+      "market_cap": null,
+      "sector": "Electrification Theme",
+      "notes": "",
+      "peak_price": 57.21,
+      "conviction": null,
+      "trades": [
+        {
+          "id": "a13045d7-c28f-4abc-8ed1-a7a323138b77",
+          "date": "2026-06-10",
+          "type": "buy",
+          "qty": 45.904434,
+          "price": 54.3,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "account": "huf",
+      "stock_name": "Sai Life Sciences Ltd",
+      "ticker": "NSE:SAILIFE",
+      "avg_buy_price": 1125.0,
+      "quantity": 250.0,
+      "buy_date": "2026-05-21",
+      "currency": "INR",
+      "pe": null,
+      "market_cap": null,
+      "sector": "CDMO",
+      "conviction": 10.0,
+      "notes": "Sai life i might have bought at higher price but the reason is simple .Its one of the best and some movement from neuland to sai liofe is needed",
+      "active": true,
+      "id": "09c87375-6601-4139-a7e1-bd07dc4600b9",
+      "created_at": "2026-05-21",
+      "cmp": 1233.9,
+      "peak_price": 1233.9,
+      "yahoo_ticker": "SAILIFE.NS",
+      "trades": [
+        {
+          "id": "175887f5-41ae-491a-8ae6-98ad6eb7b5a3",
+          "date": "2026-05-21",
+          "type": "buy",
+          "qty": 250.0,
+          "price": 1125.0,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "account": "manjari",
+      "stock_name": "Sai Life Sciences Ltd",
+      "ticker": "NSE:SAILIFE",
+      "avg_buy_price": 1140.0,
+      "quantity": 250.0,
+      "buy_date": "2026-05-20",
+      "currency": "INR",
+      "pe": null,
+      "market_cap": null,
+      "sector": "CDMO",
+      "conviction": 10.0,
+      "notes": "Sai life i might have bought at higher price but the reason is simple .Its one of the best and some movement from neuland to sai liofe is needed",
+      "active": true,
+      "id": "58686a3c-3d27-4203-979c-a21e74ee4ed0",
+      "created_at": "2026-05-21",
+      "cmp": 1233.9,
+      "peak_price": 1233.9,
+      "yahoo_ticker": "SAILIFE.NS",
+      "trades": [
+        {
+          "id": "1d4ef1ba-16f6-4d8e-8187-1c66f68d776d",
+          "date": "2026-05-20",
+          "type": "buy",
+          "qty": 250.0,
+          "price": 1140.0,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "account": "vibhanshu",
+      "stock_name": "Sai Life Sciences Ltd",
+      "ticker": "NSE:SAILIFE",
+      "avg_buy_price": 1140.0,
+      "quantity": 250.0,
+      "buy_date": "2026-05-20",
+      "currency": "INR",
+      "pe": null,
+      "market_cap": null,
+      "sector": "CDMO",
+      "conviction": 10.0,
+      "notes": "",
+      "active": true,
+      "id": "c523d897-435a-4742-8179-2765b4833949",
+      "created_at": "2026-05-21",
+      "cmp": 1233.9,
+      "peak_price": 1233.9,
+      "yahoo_ticker": "SAILIFE.NS",
+      "trades": [
+        {
+          "id": "c691debb-b558-4b97-827f-04ba747c24c2",
+          "date": "2026-05-20",
+          "type": "buy",
+          "qty": 250.0,
+          "price": 1140.0,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "account": "vibhanshu",
+      "stock_name": "Quality Power Electrical Equipments Ltd",
+      "ticker": "NSE:QPOWER",
+      "avg_buy_price": 1045.81,
+      "quantity": 514,
+      "buy_date": "2026-05-20",
+      "currency": "INR",
+      "pe": null,
+      "market_cap": null,
+      "sector": "Electrification Theme",
+      "conviction": null,
+      "notes": "",
+      "active": true,
+      "id": "caa2d395-58c1-4617-a4d4-6e1b19e24d80",
+      "created_at": "2026-05-21",
+      "cmp": 1148.0,
+      "peak_price": 1396.4,
+      "yahoo_ticker": "QPOWER.NS",
+      "trades": [
+        {
+          "id": "846f291a-0be4-4a9b-a917-6eacf44080ab",
+          "date": "2026-05-20",
+          "type": "buy",
+          "qty": 514,
+          "price": 1045.81,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "account": "manjari",
+      "stock_name": "Quality Power Electrical Equipments Ltd",
+      "ticker": "NSE:QPOWER",
+      "avg_buy_price": 1042.56,
+      "quantity": 554,
+      "buy_date": "2026-05-20",
+      "currency": "INR",
+      "pe": null,
+      "market_cap": null,
+      "sector": "Electrification Theme",
+      "conviction": 10,
+      "notes": "Electrification and data centre theme",
+      "active": true,
+      "id": "608eaa91-9c1c-457d-98ce-aa7d9d441c4d",
+      "created_at": "2026-05-21",
+      "cmp": 1148.0,
+      "peak_price": 1396.4,
+      "yahoo_ticker": "QPOWER.NS",
+      "trades": [
+        {
+          "id": "cf2e452f-dc80-431d-b734-b96398e2d0aa",
+          "date": "2026-05-20",
+          "type": "buy",
+          "qty": 554,
+          "price": 1042.56,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "account": "huf",
+      "stock_name": "Shilpa Medicare Ltd",
+      "ticker": "NSE:SHILPAMED",
+      "avg_buy_price": 503.33,
+      "quantity": 750,
+      "buy_date": "2026-05-26",
+      "currency": "INR",
+      "pe": null,
+      "market_cap": null,
+      "sector": "CDMO",
+      "conviction": null,
+      "notes": "",
+      "active": true,
+      "id": "3f4825ce-4563-48ca-a28a-db41efcc706d",
+      "created_at": "2026-05-31",
+      "cmp": 568.8,
+      "peak_price": 569.15,
+      "yahoo_ticker": "SHILPAMED.NS",
+      "trades": [
+        {
+          "id": "597f3f25-b137-4923-9d10-d1b3416079f2",
+          "date": "2026-05-26",
+          "type": "buy",
+          "qty": 750,
+          "price": 503.33,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "account": "huf",
+      "stock_name": "DEE Development Engineers Ltd",
+      "ticker": "NSE:DEEDEV",
+      "avg_buy_price": 569.95,
+      "quantity": 400,
+      "buy_date": "2026-05-27",
+      "currency": "INR",
+      "pe": null,
+      "market_cap": null,
+      "sector": "Energy",
+      "conviction": null,
+      "notes": "",
+      "active": true,
+      "id": "e5bf2cc1-f76f-47ac-8371-0538a9ba8441",
+      "created_at": "2026-05-31",
+      "cmp": 688.7,
+      "peak_price": 700.0,
+      "yahoo_ticker": "DEEDEV.NS",
+      "trades": [
+        {
+          "id": "1d40609c-ee51-4ea7-99b0-3c6bbc043df6",
+          "date": "2026-05-27",
+          "type": "buy",
+          "qty": 400,
+          "price": 569.95,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "account": "huf",
+      "stock_name": "Jayaswal Neco Industries Ltd",
+      "ticker": "NSE:JAYNECOIND",
+      "avg_buy_price": 100.66,
+      "quantity": 3000,
+      "buy_date": "2026-05-27",
+      "currency": "INR",
+      "pe": null,
+      "market_cap": null,
+      "sector": "Metals",
+      "conviction": null,
+      "notes": "",
+      "active": true,
+      "id": "2e86ed61-1da7-4f76-9dbd-d17a41a5776e",
+      "created_at": "2026-05-31",
+      "cmp": 90.65,
+      "peak_price": 114.69,
+      "yahoo_ticker": "JAYNECOIND.NS",
+      "trades": [
+        {
+          "id": "9f14aa9e-4cf5-4ec5-98bb-b183eef462dc",
+          "date": "2026-05-27",
+          "type": "buy",
+          "qty": 3000,
+          "price": 100.66,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "account": "manjari",
+      "stock_name": "DEE Development Engineers Ltd",
+      "ticker": "NSE:DEEDEV",
+      "avg_buy_price": 555.0,
+      "quantity": 600.0,
+      "buy_date": "2026-05-27",
+      "currency": "INR",
+      "pe": null,
+      "market_cap": null,
+      "sector": "Energy",
+      "conviction": null,
+      "notes": "",
+      "active": true,
+      "id": "18e4ba46-043f-4415-bcf0-96b7f1d54a5d",
+      "created_at": "2026-05-31",
+      "cmp": 688.7,
+      "peak_price": 700.0,
+      "yahoo_ticker": "DEEDEV.NS",
+      "trades": [
+        {
+          "id": "3d61b3e8-31a3-4bb7-a1dc-8dbae0da84fd",
+          "date": "2026-05-27",
+          "type": "buy",
+          "qty": 600.0,
+          "price": 555.0,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "account": "manjari",
+      "stock_name": "Jayaswal Neco Industries Ltd",
+      "ticker": "NSE:JAYNECOIND",
+      "avg_buy_price": 101.33,
+      "quantity": 3000,
+      "buy_date": "2026-05-27",
+      "currency": "INR",
+      "pe": null,
+      "market_cap": null,
+      "sector": "Metals",
+      "conviction": null,
+      "notes": "",
+      "active": true,
+      "id": "7ed12a88-c414-4d15-8e6f-57b8e6fabd18",
+      "created_at": "2026-05-31",
+      "cmp": 90.65,
+      "peak_price": 114.69,
+      "yahoo_ticker": "JAYNECOIND.NS",
+      "trades": [
+        {
+          "id": "2b047698-fdf9-43e3-8c91-19e447af3c9f",
+          "date": "2026-05-27",
+          "type": "buy",
+          "qty": 3000,
+          "price": 101.33,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "account": "manjari",
+      "stock_name": "Shilpa Medicare Ltd",
+      "ticker": "NSE:SHILPAMED",
+      "avg_buy_price": 503.57,
+      "quantity": 700,
+      "buy_date": "2026-05-27",
+      "currency": "INR",
+      "pe": null,
+      "market_cap": null,
+      "sector": "CDMO",
+      "conviction": null,
+      "notes": "",
+      "active": true,
+      "id": "a887e31c-b066-40da-abcc-59064c05a102",
+      "created_at": "2026-05-31",
+      "cmp": 568.8,
+      "peak_price": 569.15,
+      "yahoo_ticker": "SHILPAMED.NS",
+      "trades": [
+        {
+          "id": "797e66e1-5412-418a-96c7-5c633b497ea6",
+          "date": "2026-05-27",
+          "type": "buy",
+          "qty": 700,
+          "price": 503.57,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "account": "vibhanshu",
+      "stock_name": "DEE Development Engineers Ltd",
+      "ticker": "NSE:DEEDEV",
+      "avg_buy_price": 550.0,
+      "quantity": 300.0,
+      "buy_date": "2026-05-27",
+      "currency": "INR",
+      "pe": null,
+      "market_cap": null,
+      "sector": "Energy",
+      "conviction": null,
+      "notes": "",
+      "active": true,
+      "id": "acc44fa1-4aea-46ae-8706-cf0e538cc0b5",
+      "created_at": "2026-05-31",
+      "cmp": 688.7,
+      "peak_price": 700.0,
+      "yahoo_ticker": "DEEDEV.NS",
+      "trades": [
+        {
+          "id": "a4dba2ae-cec1-4774-920a-4473fcf4f39c",
+          "date": "2026-05-27",
+          "type": "buy",
+          "qty": 300.0,
+          "price": 550.0,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "account": "vibhanshu",
+      "stock_name": "Jayaswal Neco Industries Ltd",
+      "ticker": "NSE:JAYNECOIND",
+      "avg_buy_price": 101.2,
+      "quantity": 2500,
+      "buy_date": "2026-05-27",
+      "currency": "INR",
+      "pe": null,
+      "market_cap": null,
+      "sector": "Metals",
+      "conviction": null,
+      "notes": "",
+      "active": true,
+      "id": "83bcef0d-c03a-4668-992c-d8572cd0e9c0",
+      "created_at": "2026-05-31",
+      "cmp": 90.65,
+      "peak_price": 114.69,
+      "yahoo_ticker": "JAYNECOIND.NS",
+      "trades": [
+        {
+          "id": "56869c16-3574-4746-9d6c-3ef5c1c07e95",
+          "date": "2026-05-27",
+          "type": "buy",
+          "qty": 2500,
+          "price": 101.2,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "account": "vibhanshu",
+      "stock_name": "Shilpa Medicare Ltd",
+      "ticker": "NSE:SHILPAMED",
+      "avg_buy_price": 503.33,
+      "quantity": 750,
+      "buy_date": "2026-05-27",
+      "currency": "INR",
+      "pe": null,
+      "market_cap": null,
+      "sector": "CDMO",
+      "conviction": null,
+      "notes": "",
+      "active": true,
+      "id": "082e9a6d-4eac-4812-886d-0c0e2db2104d",
+      "created_at": "2026-05-31",
+      "cmp": 568.8,
+      "peak_price": 569.15,
+      "yahoo_ticker": "SHILPAMED.NS",
+      "trades": [
+        {
+          "id": "645018df-fb7d-4dbf-9853-1b0757419b67",
+          "date": "2026-05-27",
+          "type": "buy",
+          "qty": 750,
+          "price": 503.33,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "account": "huf",
+      "stock_name": "Quality Power Electrical Equipments Ltd",
+      "ticker": "NSE:QPOWER",
+      "avg_buy_price": 1070.0,
+      "quantity": 250.0,
+      "buy_date": "2026-06-01",
+      "currency": "INR",
+      "pe": null,
+      "market_cap": null,
+      "sector": "Electrification Theme",
+      "conviction": null,
+      "notes": "",
+      "active": true,
+      "id": "9bf60ffa-f574-4524-b4ed-d08671f3bb4c",
+      "created_at": "2026-06-02",
+      "cmp": 1148.0,
+      "peak_price": 1396.4,
+      "yahoo_ticker": "QPOWER.NS",
+      "trades": [
+        {
+          "id": "0a4cf936-92b4-4c74-9df7-e824f31c7564",
+          "date": "2026-06-01",
+          "type": "buy",
+          "qty": 250.0,
+          "price": 1070.0,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "account": "us_manjari",
+      "stock_name": "GE Vernova LLC",
+      "ticker": "GEV",
+      "avg_buy_price": 944.98,
+      "quantity": 0.527554,
+      "buy_date": "2026-06-05",
+      "currency": "INR",
+      "pe": null,
+      "market_cap": null,
+      "sector": "Electrification Theme",
+      "conviction": null,
+      "notes": "",
+      "active": true,
+      "id": "735dbdb3-93e4-4e5d-a8d5-fac2ada9b2ad",
+      "created_at": "2026-06-08",
+      "cmp": 944.98,
+      "peak_price": 944.98,
+      "yahoo_ticker": "GEV.NS",
+      "trades": [
+        {
+          "id": "bf002bb7-8ae8-4ed8-aed1-b5b2676e4d6f",
+          "date": "2026-06-05",
+          "type": "buy",
+          "qty": 0.527554,
+          "price": 944.98,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "account": "huf",
+      "stock_name": "Shivalik Bimetal Controls Ltd",
+      "ticker": "NSE:SBCL",
+      "avg_buy_price": 720.0,
+      "quantity": 500.0,
+      "buy_date": "2026-06-09",
+      "currency": "INR",
+      "pe": null,
+      "market_cap": null,
+      "sector": "Electrification Theme",
+      "conviction": null,
+      "notes": "\"What doesn't kill you makes you stronger.\" Vishay de-risked from 40% \u2192 10\u201312% of revenue. Vishay expected to return to FY21\u201322 peak this year. Entering busbars (Bajaj/Ather supply chain). Founder buying at \u20b9705 open market. Potential Nvidia tier-2 angle (Nvidia Vega/Rubin uses Vishay components).\n\u20b9705\nFounder buy price\n10\u201312%\nVishay % of revenue now\n\u20b91,300cr\nBase revenue target\nFull Thesis\nVishay business: was 40% of revenue FY21\u201322; fell to 10\u201312% due to destocking; expected to recover to FY21\u201322 peak \u2192 \"growth in the bag\"\nCompetitor Bimetals: exited the business \u2192 competitive landscape improved\nBusbars: supplying to Bajaj + Ather via auto ancillary; high asset turns; capex \u20b9250\u2013300cr; can be doubled quickly\nBMS (Battery Management Systems): backward/forward integrated\nFounder: sold at peak when Vishay destocking started; now buying at \u20b9705 open market \u2192 strong conviction signal\nFund global desk also long Vishay (Vish) and wolf/STM in power semi\nPotential AI angle: Nvidia Vega/Rubin uses Vishay components \u2192 Shivalik potential tier-2 Nvidia supplier. \"We are not pricing this in but there is that potential for an AI narrative\"",
+      "active": true,
+      "id": "6d2f1a1d-9069-4a96-83bb-26a0491b74e5",
+      "created_at": "2026-06-10",
+      "cmp": 731.3,
+      "peak_price": 731.3,
+      "yahoo_ticker": "SBCL.NS",
+      "trades": [
+        {
+          "id": "aa4342e6-f082-4b1d-89f9-7e5155620a51",
+          "date": "2026-06-09",
+          "type": "buy",
+          "qty": 500.0,
+          "price": 720.0,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "account": "manjari",
+      "stock_name": "Shivalik Bimetal Controls Ltd",
+      "ticker": "NSE:SBCL",
+      "avg_buy_price": 728.0,
+      "quantity": 500.0,
+      "buy_date": "2026-06-08",
+      "currency": "INR",
+      "pe": null,
+      "market_cap": null,
+      "sector": "Electrification Theme",
+      "conviction": null,
+      "notes": "\"What doesn't kill you makes you stronger.\" Vishay de-risked from 40% \u2192 10\u201312% of revenue. Vishay expected to return to FY21\u201322 peak this year. Entering busbars (Bajaj/Ather supply chain). Founder buying at \u20b9705 open market. Potential Nvidia tier-2 angle (Nvidia Vega/Rubin uses Vishay components).\n\u20b9705\nFounder buy price\n10\u201312%\nVishay % of revenue now\n\u20b91,300cr\nBase revenue target\nFull Thesis\nVishay business: was 40% of revenue FY21\u201322; fell to 10\u201312% due to destocking; expected to recover to FY21\u201322 peak \u2192 \"growth in the bag\"\nCompetitor Bimetals: exited the business \u2192 competitive landscape improved\nBusbars: supplying to Bajaj + Ather via auto ancillary; high asset turns; capex \u20b9250\u2013300cr; can be doubled quickly\nBMS (Battery Management Systems): backward/forward integrated\nFounder: sold at peak when Vishay destocking started; now buying at \u20b9705 open market \u2192 strong conviction signal\nFund global desk also long Vishay (Vish) and wolf/STM in power semi\nPotential AI angle: Nvidia Vega/Rubin uses Vishay components \u2192 Shivalik potential tier-2 Nvidia supplier. \"We are not pricing this in but there is that potential for an AI narrative\"",
+      "active": true,
+      "id": "2ced79a3-6a52-4eb8-a920-1fe18f9e383c",
+      "created_at": "2026-06-10",
+      "cmp": 731.3,
+      "peak_price": 731.3,
+      "yahoo_ticker": "SBCL.NS",
+      "trades": [
+        {
+          "id": "fcf15b34-a11d-4179-bd9b-656f9c25c7ea",
+          "date": "2026-06-08",
+          "type": "buy",
+          "qty": 500.0,
+          "price": 728.0,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "account": "vibhanshu",
+      "stock_name": "Shivalik Bimetal Controls Ltd",
+      "ticker": "NSE:SBCL",
+      "avg_buy_price": 715.0,
+      "quantity": 500.0,
+      "buy_date": "2026-06-09",
+      "currency": "INR",
+      "pe": null,
+      "market_cap": null,
+      "sector": null,
+      "conviction": null,
+      "notes": "\"What doesn't kill you makes you stronger.\" Vishay de-risked from 40% \u2192 10\u201312% of revenue. Vishay expected to return to FY21\u201322 peak this year. Entering busbars (Bajaj/Ather supply chain). Founder buying at \u20b9705 open market. Potential Nvidia tier-2 angle (Nvidia Vega/Rubin uses Vishay components).\n\u20b9705\nFounder buy price\n10\u201312%\nVishay % of revenue now\n\u20b91,300cr\nBase revenue target\nFull Thesis\nVishay business: was 40% of revenue FY21\u201322; fell to 10\u201312% due to destocking; expected to recover to FY21\u201322 peak \u2192 \"growth in the bag\"\nCompetitor Bimetals: exited the business \u2192 competitive landscape improved\nBusbars: supplying to Bajaj + Ather via auto ancillary; high asset turns; capex \u20b9250\u2013300cr; can be doubled quickly\nBMS (Battery Management Systems): backward/forward integrated\nFounder: sold at peak when Vishay destocking started; now buying at \u20b9705 open market \u2192 strong conviction signal\nFund global desk also long Vishay (Vish) and wolf/STM in power semi\nPotential AI angle: Nvidia Vega/Rubin uses Vishay components \u2192 Shivalik potential tier-2 Nvidia supplier. \"We are not pricing this in but there is that potential for an AI narrative\"",
+      "active": true,
+      "id": "0a28b0df-618e-4212-a20f-4b8dbdaae041",
+      "created_at": "2026-06-10",
+      "cmp": 715.0,
+      "peak_price": 715.0,
+      "yahoo_ticker": "Shivalik Bimetal Controls Ltd.NS",
+      "trades": [
+        {
+          "id": "40e08564-7c5d-4576-ac96-d58de7cfd387",
+          "date": "2026-06-09",
+          "type": "buy",
+          "qty": 500.0,
+          "price": 715.0,
+          "note": "Initial buy"
+        }
+      ]
+    }
+  ],
+  "watchlist": [
+    {
+      "stock_name": "BHAGYANAGAR",
+      "ticker": "NSE:BHAGYANGR",
+      "target_buy_price": null,
+      "sector": "Metals",
+      "notes": "",
+      "id": "8e7c43f7-5cf6-493c-9900-0e569bae3a23",
+      "added_date": "2026-05-09",
+      "yahoo_ticker": "BHAGYANGR.NS",
+      "added_price": 311.45
+    },
+    {
+      "stock_name": "Quality Power Electrical Equipments Ltd",
+      "ticker": "NSE:QPOWER",
+      "target_buy_price": null,
+      "sector": "Electrification Theme",
+      "notes": "",
+      "id": "da362190-8972-4f70-ac52-1951a0e95ab4",
+      "added_date": "2026-05-09",
+      "yahoo_ticker": "QPOWER.NS",
+      "added_price": 1265.7
+    },
+    {
+      "stock_name": "Kilburn Engineering",
+      "ticker": "BSE:KLBRENG-B",
+      "target_buy_price": null,
+      "sector": "Energy",
+      "notes": "",
+      "id": "1f81a054-94ad-4c91-86a4-3e161078056c",
+      "added_date": "2026-05-12",
+      "yahoo_ticker": "KLBRENG-B.BO",
+      "added_price": 504.2,
+      "dashboard_url": "https://ephemeral-platypus-08955b.netlify.app/"
+    },
+    {
+      "stock_name": "Dee development engineers",
+      "ticker": "NSE:DEEDEV",
+      "target_buy_price": null,
+      "sector": "Building Materials",
+      "notes": "",
+      "id": "1d1909cc-8bed-443d-a745-74b8cb2beb5b",
+      "added_date": "2026-05-12",
+      "yahoo_ticker": "DEEDEV.NS",
+      "added_price": 490.45
+    },
+    {
+      "stock_name": "Jayswal Neco",
+      "ticker": "NSE:JAYNECOIND",
+      "target_buy_price": null,
+      "sector": "Metals",
+      "notes": "",
+      "id": "ab5a2f17-5cc1-4df1-a7c1-f7a759212649",
+      "added_date": "2026-05-12",
+      "yahoo_ticker": "JAYNECOIND.NS",
+      "added_price": 103.6
+    },
+    {
+      "stock_name": "Azad Engineering Ltd",
+      "ticker": "NSE:AZAD",
+      "target_buy_price": null,
+      "sector": "Aerospace",
+      "notes": "Sajal bouth this on 20th May",
+      "id": "3cccc6fb-85d8-4e5b-81e8-fd2e07f8d490",
+      "added_date": "2026-05-22",
+      "yahoo_ticker": "AZAD.NS",
+      "added_price": 2039.6
+    },
+    {
+      "stock_name": "Shilpa Medicare Ltd",
+      "ticker": "NSE:SHILPAMED",
+      "target_buy_price": null,
+      "sector": "Pharma",
+      "notes": "Both sajal and ishmohit covered it",
+      "id": "f0f7eb25-aeec-446f-9aea-0803d8f8aa5e",
+      "added_date": "2026-05-25",
+      "yahoo_ticker": "SHILPAMED.NS",
+      "added_price": 512.15
+    },
+    {
+      "stock_name": "Shivalik Bimetal Controls Ltd",
+      "ticker": "NSE:SBCL",
+      "target_buy_price": null,
+      "added_price": 712.7,
+      "sector": "Electrification Theme",
+      "notes": "Shivalik Bimetals (SBCL)\nBimetals \u00b7 Busbars \u00b7 BMS \u00b7 Potential AI Angle\nActive\nTailwind\nConviction\nHigh\n\"What doesn't kill you makes you stronger.\" Vishay de-risked from 40% \u2192 10\u201312% of revenue. Vishay expected to return to FY21\u201322 peak this year. Entering busbars (Bajaj/Ather supply chain). Founder buying at \u20b9705 open market. Potential Nvidia tier-2 angle (Nvidia Vega/Rubin uses Vishay components).\n\u20b9705\nFounder buy price\n10\u201312%\nVishay % of revenue now\n\u20b91,300cr\nBase revenue target\nFull Thesis\nVishay business: was 40% of revenue FY21\u201322; fell to 10\u201312% due to destocking; expected to recover to FY21\u201322 peak \u2192 \"growth in the bag\"\nCompetitor Bimetals: exited the business \u2192 competitive landscape improved\nBusbars: supplying to Bajaj + Ather via auto ancillary; high asset turns; capex \u20b9250\u2013300cr; can be doubled quickly\nBMS (Battery Management Systems): backward/forward integrated\nFounder: sold at peak when Vishay destocking started; now buying at \u20b9705 open market \u2192 strong conviction signal\nFund global desk also long Vishay (Vish) and wolf/STM in power semi\nPotential AI angle: Nvidia Vega/Rubin uses Vishay components \u2192 Shivalik potential tier-2 Nvidia supplier. \"We are not pricing this in but there is that potential for an AI narrative\"",
+      "id": "be62781b-2f3a-4933-b80a-5f8497fef5bb",
+      "added_date": "2026-06-08",
+      "yahoo_ticker": "SBCL.NS"
+    },
+    {
+      "stock_name": "Goldiam International Ltd",
+      "ticker": "NSE:GOLDIAM",
+      "target_buy_price": null,
+      "added_price": 421.6,
+      "sector": "Precious Metals",
+      "notes": "Goldiam International\nLGD Exporter \u00b7 Origam Retail \u00b7 Dual Casting Strategy\nActive\nTailwind\nConviction\nMedium-High\nDual casting strategy (US + India mfg) since Aug 2025 \u2192 tariff circumventing + margin benefit (2 more quarters coming). Origam LGD retail: lowest cost in India, 40\u201345% gross margins, scaling 24 \u2192 50 stores this year. Share of wallet with US retailers still low single digits.\n18\u201320%\nQ4 Revenue growth\n50 stores\nOrigam target (from 24)\n40\u201345%\nOrigam gross margin",
+      "id": "c9c619c7-9d8d-4cf6-81c1-98018a3946d1",
+      "added_date": "2026-06-08",
+      "yahoo_ticker": "GOLDIAM.NS"
+    }
+  ],
+  "settings": {
+    "usd_inr_rate": 94.47,
+    "portfolio_risk_pct": 2.0,
+    "aif_invested": 12000000.0,
+    "target_cash_pct": 10.0
+  },
+  "aif_nav": [
+    {
+      "month": "2025-05",
+      "value": 13338528.0
+    },
+    {
+      "month": "2026-06",
+      "value": 13647600.0
+    }
+  ],
+  "huf_transfers": [],
+  "cash_balances": {
+    "vibhanshu": 0,
+    "manjari": 0,
+    "huf": 0,
+    "manjbhawna": 0
+  },
+  "us_watchlist": [
+    {
+      "stock_name": "Rocket Labs",
+      "ticker": "RKLB",
+      "target_buy_price": null,
+      "sector": "Space Tech",
+      "notes": "",
+      "id": "c9d3ce46-74cf-4c31-a70e-1759e88c9119",
+      "added_date": "2026-05-31",
+      "yahoo_ticker": "RKLB",
+      "added_price": 143.48
+    },
+    {
+      "stock_name": "STMicroelectronics",
+      "ticker": "STM",
+      "target_buy_price": null,
+      "sector": "AI / Semiconductors",
+      "notes": "",
+      "id": "a4d5c714-c3a2-49a0-ba5e-d664d54411ca",
+      "added_date": "2026-05-31",
+      "yahoo_ticker": "STM",
+      "added_price": 69.31
+    },
+    {
+      "stock_name": "ON Semiconductor",
+      "ticker": "ON",
+      "target_buy_price": null,
+      "sector": "AI / Semiconductors",
+      "notes": "",
+      "id": "9acd983b-24a1-4712-9dce-4f650f2393c2",
+      "added_date": "2026-05-31",
+      "yahoo_ticker": "ON",
+      "added_price": 120.62
+    },
+    {
+      "stock_name": "Nu Bank",
+      "ticker": "NU",
+      "target_buy_price": null,
+      "sector": "Technology",
+      "notes": "Nubank (NU) as a high-quality \"category leader\" within the fintech sector that is currently being undervalued by the market\n. The investment thesis for Nubank is built on three main pillars: its growth profile, its valuation compared to historical norms, and its ability to leverage AI.\nGrowth and Market Position\nNubank is identified as a category leader with a \"superior business model\"\n. Despite a broader market sell-off in fintech and internet stocks, Nubank continues to show strong fundamental performance, growing its business at a rate of +20% to +50% year-over-year\n.\nValuation and Potential Re-rating\nThe analysis emphasizes a significant disconnect between Nubank's growth and its current market valuation:\nHistorical Context: Businesses with Nubank's model have historically commanded price-to-earnings (P/E) multiples of ~25x or higher\n.\nCurrent Discount: Nubank is currently trading at approximately 10 \u2013 12x P/E on a 3-year forward basis\n. The sources note that this type of valuation is typically reserved for \"cyclical, slow-growing businesses,\" which does not reflect Nubank\u2019s actual trajectory\n.\nUpside Opportunity: If Nubank can prove its earnings growth over the next few years, the author believes the stock could experience a 2 \u2013 3x re-rating as it returns to more appropriate historical valuation levels\n.\nAI-Driven Competitive Advantage\nNubank is categorized as a \"user of AI\" rather than an infrastructure provider\n. The analysis argues that forward-looking incumbents like Nubank will benefit most from AI by leveraging their \"large proprietary datasets\" to:\nKnow Customers Better: Use data to predict consumer behavior and determine when to re-engage them\n.\nImprove Economics: Specifically, Nubank can use AI to more accurately underwrite loans, which is a critical function for a digital bank\n.\nEnhance Product Stickiness: By embedding AI within their existing platforms, the author believes incumbents like Nubank will pull further away from slower-to-adopt competitors\n.\nInvestment Monitoring\nTo manage the risks associated with fintech investments, the sources mention that AI-driven web-scraping tools and automated data pulls from government databases are used to triangulate loan quality across fintech holdings like Nubank\n. This allow the investor to monitor the health of the underlying loan portfolio in real-time\n.",
+      "id": "489e1615-5cef-420c-b1ce-bb3eed8cc4d3",
+      "added_date": "2026-05-31",
+      "yahoo_ticker": "NU",
+      "added_price": 13.13
+    },
+    {
+      "stock_name": "Service Now",
+      "ticker": "NOW",
+      "target_buy_price": null,
+      "sector": "Technology",
+      "notes": "",
+      "id": "27f56989-2f9c-4719-810b-df0ad0aae6da",
+      "added_date": "2026-05-31",
+      "yahoo_ticker": "NOW",
+      "added_price": 124.37
+    },
+    {
+      "stock_name": "App Lovin",
+      "ticker": "APP",
+      "target_buy_price": null,
+      "sector": "Technology",
+      "notes": "AppLovin is another of the portfolio's larger positions\n.\nMarket Leadership: It is described as the \"best-in-class performance ad platform\" in the mobile gaming sector\n.\nMarket Share: AppLovin currently captures approximately 25-30% of user-acquisition spend in mobile gaming\n.\nFinancial Efficiency: The author highlights its exceptional efficiency, noting that the company generates 70% Free Cash Flow margins\n.",
+      "id": "af823ede-23ab-4e8b-9d1b-fe8debf7a0a5",
+      "added_date": "2026-05-31",
+      "yahoo_ticker": "APP",
+      "added_price": 613.09
+    },
+    {
+      "stock_name": "Unity ",
+      "ticker": "U",
+      "target_buy_price": null,
+      "sector": "Gaming",
+      "notes": "A newer addition to the portfolio, Unity is viewed as a \"great business buried under years of self-inflicted wounds\"\n.\nOperational Turnaround: The thesis relies on new CEO Matt Bromberg, who has a track record of rebuilding monetization stacks at Zynga\n.\nUnique Data Advantage: Unity's engine powers ~70% of mobile games, giving it \"engine-level\" visibility into user behavior (session length, in-app purchases) that competitors like AppLovin cannot see\n.\nThe \"Vector\" Platform: Unity is ramping its new AI-driven ad targeting platform, Vector, toward a $1BN run-rate\n. The author expects the stock to compound at 25% or better annually over the next 3-5 years\n.",
+      "id": "ec64385d-b1d1-4ac7-9b27-13daecad1af4",
+      "added_date": "2026-05-31",
+      "yahoo_ticker": "U",
+      "added_price": 30.47
+    },
+    {
+      "stock_name": "Door Dash",
+      "ticker": "DASH",
+      "target_buy_price": null,
+      "sector": "Technology",
+      "notes": "DoorDash is cited as a high-quality platform that has been \"abandoned\" as capital flows into semiconductors\n.\nResilient Business Model: The author uses the example of ChatGPT's failed commerce initiative to argue that incumbent platforms like DoorDash have durable business models because consumer habits (saved payments, loyalty points) are sticky\n.\nEfficiency Gains: Like other portfolio holdings, DoorDash is expected to use AI to enhance existing products and pull away from slower competitors\n.\nDeep Discount: It is currently trading at a valuation typically reserved for slow-growing, cyclical businesses, providing what the author considers an attractive entry point for long-term investors\n.",
+      "id": "1fadd423-6fff-4637-8ed8-847716861fc9",
+      "added_date": "2026-05-31",
+      "yahoo_ticker": "DASH",
+      "added_price": 159.29
+    },
+    {
+      "stock_name": "Sea Ltd",
+      "ticker": "SE",
+      "target_buy_price": null,
+      "sector": "Technology",
+      "notes": "Sea Ltd is one of Hayden Capital\u2019s larger positions\n. The investment thesis centers on the belief that the company is undergoing a proactive reinvestment cycle rather than a defensive one\n.\nThe Flywheel Effect: The author compares Sea\u2019s current investments in Shopee VIP and its logistics network to Amazon\u2019s launch of Prime and FBA in 2005-2006\n. This creates a \"flywheel\" where free shipping drives order density, which lowers logistics costs, allowing for further reinvestment\n.\nProven Results: Shopee VIP members already drive 20% of total GMV and order 3x more frequently than non-members\n.\nValuation Gap: Despite generating $4.5BN in Free Cash Flow in 2025 and seeing GMV growth accelerate to +30% y/y, the stock trades at its lowest multiples since 2023\n.",
+      "id": "480f05ac-f2c4-465d-98fa-fb99f0ce3e3d",
+      "added_date": "2026-05-31",
+      "yahoo_ticker": "SE",
+      "added_price": 90.53
+    },
+    {
+      "stock_name": "Mercado Libre",
+      "ticker": "MELI",
+      "target_buy_price": null,
+      "sector": "Technology",
+      "notes": "Mercado Libre is identified as the leading e-commerce platform in Latin America\n.\nCategory Dominance: It is grouped among \"category leaders\" with superior business models that are growing between +20-50% year-over-year\n.\nAI Implementation: As a \"user of AI,\" Mercado Libre is expected to leverage its large proprietary datasets to know customers better and improve conversion rates, making its business model more durable\n.\nValuation Potential: Trading at roughly 10-12x P/E on a 3-year forward basis, the author believes the stock could see a 2-3x re-rating if it continues to prove its earnings growth\n.",
+      "id": "48519861-ba30-45f4-b904-509e5b8c4768",
+      "added_date": "2026-05-31",
+      "yahoo_ticker": "MELI",
+      "added_price": 1695.65
+    }
+  ],
+  "aif_investor_meets": [
+    {
+      "id": "f7c444c3",
+      "month": "2026-05",
+      "title": "Persistence Capital - Portfolio Update May 2026",
+      "youtube_url": "https://www.youtube.com/watch?v=vWqhtj_MxT0",
+      "summary_url": "https://persistentcapital-youtube-6june-notes.netlify.app/",
+      "notes": "# Prompt: Portfolio Intelligence Report \u2014 Single-File HTML Dashboard\n\n---\n\n## ROLE\n\nYou are a senior equity research analyst AND a world-class frontend engineer. You will produce a fully self-contained, single-file HTML investment portfolio intelligence report that is production-ready, visually polished, and deployable directly to Netlify by dropping the file into the deploy zone.\n\n---\n\n## TASK\n\nBuild a single `index.html` file that is a **tabbed portfolio intelligence dashboard** for [FUND NAME] based on the structured extraction below. The report must be:\n\n- Fully self-contained (no external JS dependencies except Google Fonts)\n- Deployable as a single file on Netlify with zero build step\n- Presentable to investors \u2014 editorial quality, not a dev tool\n- Interactive: tab navigation, company card expand/collapse, bucket filter, search\n\n---\n\n## DESIGN SYSTEM\n\n### Typography\n- Headings: `'Playfair Display'` serif (import from Google Fonts, weights 400/500/700/900)\n- Body + UI: `'DM Sans'` sans-serif (weights 300/400/500/600)\n- Numbers/codes: `'DM Mono'` monospace (weights 400/500)\n\n### Color Palette (CSS variables in `:root`)\n```css\n--ink: #0d0d0d;        /* primary text */\n--ink2: #2a2a2a;       /* secondary text */\n--ink3: #5a5a5a;       /* muted text */\n--ink4: #999;          /* hint text */\n--paper: #faf8f4;      /* page background */\n--paper2: #f3f0e8;     /* surface background */\n--paper3: #e8e4d8;     /* border-adjacent fills */\n--accent: #b8460a;     /* primary accent (burnt orange) */\n--accent2: #d4520c;    /* lighter accent */\n--green: #1a5c3a;  --green-bg: #e8f4ed;\n--amber: #8a5200;  --amber-bg: #fef6e4;\n--red: #8a1a1a;    --red-bg: #fef0f0;\n--blue: #1a3a6c;   --blue-bg: #eef2fb;\n--border: #d8d4c8;\n--shadow: 0 2px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);\n--shadow-lg: 0 8px 32px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06);\n```\n\n### Layout Rules\n- Max content width: 1160px, centered, padding 0 32px\n- Cards: white bg, 1px solid `--border`, border-radius 12px\n- Badges/tags: font-family mono, font-size 9\u201310px, uppercase, letter-spacing 0.08\u20130.1em\n- Section headings: Playfair Display, 28px, font-weight 700, letter-spacing -0.02em\n- Conviction meter: thin 4px bar, gradient left=accent \u2192 right=green\n- Tables: `--ink` header background with white text; alternating row tints\n- No gradients on backgrounds. No box-shadows except on cards.\n\n---\n\n## PAGE STRUCTURE\n\nThe report has a **sticky top navigation bar** with tabs. Clicking a tab hides all other sections and shows only that one. All sections start hidden on load except the first.\n\n### Tabs (in order):\n1. **Market Outlook** \u2014 macro data, earnings table, core thesis\n2. **Portfolio** \u2014 all company cards (filterable + searchable)\n3. **Exits** \u2014 exited positions with rationale\n4. **Peer Map** \u2014 comparison table\n5. **Names Index** \u2014 every proper noun mentioned\n6. **Analyst Note** \u2014 synthesis paragraph\n\nSub-navigation within Portfolio tab:\n- Sub-tabs: Cyclicals | Misunderstood | Tailwinds (jump to bucket within the Portfolio section)\n\n### Portfolio filter buttons (inside the Portfolio tab):\n- All Holdings | Cyclicals | Misunderstood | Tailwinds\n- Clicking a filter shows only cards with matching `data-bucket` attribute and hides empty bucket sections\n\n### Search bar (inside Portfolio tab):\n- Text input matching against `data-name` attribute and card inner text\n\n---\n\n## JAVASCRIPT RULES (CRITICAL \u2014 these bugs must be avoided)\n\n1. **Never name a function `scrollTo`** \u2014 it shadows `window.scrollTo` and breaks silently. Use `showPage(id)` instead.\n2. Tab switching must use `showPage(id)` which: (a) hides all sections in `PAGE_SECTIONS` array, (b) shows the target section, (c) updates active class on nav buttons by matching `onclick` attribute string.\n3. Sub-bucket nav calls `showBucket(bucketId)` which calls `showPage('portfolio')` then smooth-scrolls to the bucket div after a 60ms delay.\n4. Filter buttons must have `data-bucket=\"...\"` attribute so the reset function can find the \"All\" button with `querySelector('.filter-btn[data-bucket=\"all\"]')`.\n5. `DOMContentLoaded` must hide all sections except `market` on initial load.\n6. Card expand/collapse: `toggleCard(btn)` toggles `.expanded` class on `btn.closest('.company-card')`. The `.card-modules` div inside is `display: none` by default and `display: block` when `.expanded` is present.\n7. Scroll-to-top button: fixed position, bottom-right, appears when `scrollY > 300`, triggers `window.scrollTo({top:0, behavior:'smooth'})`.\n\n---\n\n## HTML STRUCTURE TEMPLATES\n\n### Masthead\n```html\n<div class=\"masthead\">\n  <!-- dark background (#0d0d0d), fund name in Playfair Display -->\n  <!-- top-right: alpha stat in accent color -->\n  <!-- sub-line: report description in muted text -->\n</div>\n\n<div class=\"summary-bar\">\n  <!-- dark bar (#2a2a2a), 8 quick-stats: fund age, alpha, holdings count, exits, cash %, bucket % weights -->\n</div>\n\n<div class=\"sticky-nav\">\n  <!-- nav buttons calling showPage() and showBucket() -->\n</div>\n\n<div class=\"strip\">\n  <!-- single-line data ticker: key market stats -->\n</div>\n```\n\n### Company Card\n```html\n<div class=\"company-card\" data-bucket=\"[cyclical|misunderstood|tailwind]\" data-name=\"[searchable keywords]\">\n  <div class=\"card-header\">\n    <!-- company name (Playfair serif), ticker subtitle (mono), badges (hold/exited/trimmed + bucket type) -->\n  </div>\n  <div class=\"card-body\">\n    <!-- conviction meter (label + 4px gradient bar) -->\n    <!-- 2-3 sentence thesis paragraph -->\n    <!-- 3-column metrics grid (metric-val in mono + metric-lbl in uppercase mono) -->\n    <!-- 2-column risk/catalyst row (red-bg risk block + green-bg catalyst block) -->\n    <!-- card-toggle button calling toggleCard(this) with \u2193 icon -->\n    <div class=\"card-modules\">\n      <!-- 2-column module-grid with module-block divs -->\n      <!-- each module-block: module-title in accent mono uppercase + ul list -->\n      <!-- quote-block: dark background, Playfair italic, accent opening quote mark -->\n    </div>\n  </div>\n</div>\n```\n\n### Bucket Section\n```html\n<div class=\"bucket-section\" id=\"[cyclicals|misunderstood|tailwinds]\">\n  <div class=\"bucket-header\">\n    <!-- colored dot (10px circle) + bucket name (Playfair 20px) + weight tag (right-aligned) -->\n  </div>\n  <div class=\"company-grid\">\n    <!-- company cards -->\n  </div>\n</div>\n```\n\n### Exit Card\n```html\n<div class=\"exit-card\">\n  <!-- red top border (3px solid --red) -->\n  <!-- company name + exited badge -->\n  <!-- entry/exit/current price line in mono -->\n  <!-- \"Why Sold\" label in mono red uppercase -->\n  <!-- rationale paragraph -->\n</div>\n```\n\n### Peer Comparison Table\n```html\n<div class=\"comp-table-wrap\">\n  <table class=\"comp-table\">\n    <thead><!-- Portfolio Co. | Compared To | Nature of Comparison | Fund Verdict --></thead>\n    <tbody><!-- one row per comparison; verdict cell uses green-cell/amber-cell/red-cell class --></tbody>\n  </table>\n</div>\n```\n\n### Names Index\n```html\n<div class=\"names-grid\">\n  <!-- grid of name-chip divs: name-chip-title (600 weight) + name-chip-ctx (muted 11px) -->\n</div>\n```\n\n---\n\n## CONTENT TO POPULATE\n\nPaste the full structured extraction below. The extraction is organized as:\n\n### GLOBAL CONTEXT\n- Market outlook data (index-wise PAT growth, earnings season results)\n- Fund performance stats\n- Portfolio bucket framework\n- Core macro thesis\n\n### PER COMPANY (repeat for each holding):\n- **[A] Identification** \u2014 full name, aliases, holding status, bucket\n- **[B] Investment thesis** \u2014 every reason, every number\n- **[C] Anti-thesis / risks** \u2014 explicitly stated concerns\n- **[D] Valuation** \u2014 all multiples, price levels, targets\n- **[E] Transaction history** \u2014 bought/added/trimmed/sold with reasons\n- **[F] Comparisons** \u2014 every peer comparison made\n- **[G] Management** \u2014 named individuals and observations\n- **[H] Catalysts** \u2014 near and medium term\n- **[I] Passing mentions** \u2014 incidental references\n- **[J] Verbatim quotes** \u2014 2\u20135 high-signal direct quotes\n\n### EXITS\n- Why each position was sold, rotation rationale\n\n### GLOBAL SECTIONS\n- **[K]** Macro & sector views\n- **[L]** Portfolio construction philosophy\n- **[M]** Master names list \u2014 every proper noun with context\n\n### ANALYST SYNTHESIS\n- Conviction map, notable contradictions, key risks to monitor\n\n---\n\n## BUCKET CLASSIFICATION\n\nAssign each company to exactly one bucket based on the extraction:\n\n| Bucket | Description | Badge color | ~% of book |\n|--------|-------------|-------------|------------|\n| `cyclical` | Commodity-linked; lowest-cost producer play | amber | ~4% |\n| `misunderstood` | Business model not recognized by street; re-rating potential | accent (burnt orange) | ~20% |\n| `tailwind` | Clean story; well-understood; growing fast; re-rating + earnings combo | green | ~76% |\n\n---\n\n## CONVICTION LEVELS \u2192 BAR WIDTH\n\nMap qualitative conviction to bar fill width:\n- Very High \u2192 90\u201395%\n- High \u2192 78\u201385%\n- Medium-High \u2192 70\u201376%\n- Medium \u2192 58\u201365%\n\n---\n\n## REQUIRED SECTIONS CHECKLIST\n\nBefore finalizing, verify the HTML contains:\n- [ ] Masthead with fund name, alpha stat, description\n- [ ] Summary bar with 8 quick stats\n- [ ] Sticky nav with all tab buttons using `showPage()` / `showBucket()`\n- [ ] Data strip ticker\n- [ ] Market Outlook section: metric cards grid (2x3), earnings table, thesis box\n- [ ] Portfolio section: filter bar with `data-bucket` attrs, search input, 3 bucket sections\n- [ ] Each company card: conviction meter, thesis, metrics (3 cols), risks/catalysts, expand toggle, modules, quote\n- [ ] Exits section: exit cards with red top border\n- [ ] Peer comparison table\n- [ ] Names index grid\n- [ ] Analyst note box (dark background)\n- [ ] Footer\n- [ ] Scroll-to-top fixed button\n- [ ] JS: `showPage()`, `showBucket()`, `filterCards()`, `searchCards()`, `toggleCard()`, `DOMContentLoaded` init\n- [ ] NO function named `scrollTo` anywhere in the file\n\n---\n\n## OUTPUT FORMAT\n\nOutput a single complete `index.html` file. No explanatory text before or after \u2014 just the raw HTML from `<!DOCTYPE html>` to `</html>`. The file must be ready to rename and drop into Netlify.\n\n---\n\n## EXTRACTION TO USE\n\n[PASTE YOUR FULL EXTRACTION HERE \u2014 the markdown document generated from the investor meet transcript, including all company modules A\u2013J, global sections K\u2013M, exits, and analyst synthesis]",
+      "added_date": "2026-06-06"
+    }
+  ],
+  "mutual_funds": [
+    {
+      "id": "1e035fc7-d77e-4ee8-bc78-31fdb57be34e",
+      "fund_name": "ICICI Prudential ELSS Tax Saver Fund - Growth",
+      "amc": "ICICI Prudential",
+      "scheme_code": null,
+      "holder": "vibhanshu",
+      "units": 242.002,
+      "nav": 889.38,
+      "nav_date": "2026-06-05",
+      "sip_amount": null,
+      "sip_frequency": "monthly",
+      "sip_start_date": null,
+      "total_invested": 174000.0,
+      "notes": "ELSS - Folio 7214305"
+    },
+    {
+      "id": "ff96110a-aad4-4a73-992b-5d5fbb399a9d",
+      "fund_name": "Parag Parikh Flexi Cap Fund - Direct Plan Growth",
+      "amc": "PPFAS",
+      "scheme_code": null,
+      "holder": "vibhanshu",
+      "units": 1029.942,
+      "nav": 89.1488,
+      "nav_date": "2026-06-05",
+      "sip_amount": null,
+      "sip_frequency": "monthly",
+      "sip_start_date": null,
+      "total_invested": 92000.0,
+      "notes": "Folio 11754149"
+    },
+    {
+      "id": "c8ab317c-b61e-40a7-9627-17d448c48269",
+      "fund_name": "Nippon India Pharma Fund - Direct Growth Plan",
+      "amc": "Nippon India",
+      "scheme_code": null,
+      "holder": "vibhanshu",
+      "units": 149.617,
+      "nav": 599.1954,
+      "nav_date": "2026-06-05",
+      "sip_amount": null,
+      "sip_frequency": "monthly",
+      "sip_start_date": null,
+      "total_invested": 84000.0,
+      "notes": "Folio 404120770036"
+    },
+    {
+      "id": "057c768d-1dd8-4372-81bd-cf97887b1768",
+      "fund_name": "DSP Small Cap Fund - Direct Plan - Growth",
+      "amc": "DSP",
+      "scheme_code": null,
+      "holder": "vibhanshu",
+      "units": 328.096,
+      "nav": 230.591,
+      "nav_date": "2026-06-05",
+      "sip_amount": null,
+      "sip_frequency": "monthly",
+      "sip_start_date": null,
+      "total_invested": 69000.0,
+      "notes": "Folio 2765162"
+    },
+    {
+      "id": "2f583809-2c37-4640-8299-b40cdd46e6ca",
+      "fund_name": "Aditya Birla Sun Life Midcap Fund - Regular Plan Growth",
+      "amc": "Aditya Birla Sun Life",
+      "scheme_code": null,
+      "holder": "vibhanshu",
+      "units": 89.999,
+      "nav": 804.16,
+      "nav_date": "2026-06-05",
+      "sip_amount": null,
+      "sip_frequency": "monthly",
+      "sip_start_date": null,
+      "total_invested": 69000.0,
+      "notes": "Folio 1014766407"
+    },
+    {
+      "id": "a4564755-1ba3-44d6-a724-a67bea43e614",
+      "fund_name": "Mirae Asset Large and Midcap Fund - Direct Plan",
+      "amc": "Mirae Asset",
+      "scheme_code": null,
+      "holder": "vibhanshu",
+      "units": 416.278,
+      "nav": 169.398,
+      "nav_date": "2026-06-05",
+      "sip_amount": null,
+      "sip_frequency": "monthly",
+      "sip_start_date": null,
+      "total_invested": 69000.0,
+      "notes": "Folio 79917438226"
+    },
+    {
+      "id": "b0dd785d-7f8d-4e9b-86a7-304e881244d5",
+      "fund_name": "Franklin India Small Cap Fund - Direct Plan - Growth",
+      "amc": "Franklin Templeton",
+      "scheme_code": null,
+      "holder": "vibhanshu",
+      "units": 362.175,
+      "nav": 193.6928,
+      "nav_date": "2026-06-05",
+      "sip_amount": null,
+      "sip_frequency": "monthly",
+      "sip_start_date": null,
+      "total_invested": 69000.0,
+      "notes": "Folio 20063783"
+    },
+    {
+      "id": "be3a2641-71dc-4113-8f17-6afdbc704a91",
+      "fund_name": "Parag Parikh Flexi Cap Fund - Direct Plan Growth",
+      "amc": "PPFAS",
+      "scheme_code": null,
+      "holder": "manjari",
+      "units": 1282.613,
+      "nav": 89.1488,
+      "nav_date": "2026-06-05",
+      "sip_amount": null,
+      "sip_frequency": "monthly",
+      "sip_start_date": null,
+      "total_invested": 115000.0,
+      "notes": "Folio 11753916"
+    },
+    {
+      "id": "ace5bd5c-1321-4746-aabd-1f1089fe1bc3",
+      "fund_name": "Mirae Asset Large and Midcap Fund - Direct Plan",
+      "amc": "Mirae Asset",
+      "scheme_code": null,
+      "holder": "manjari",
+      "units": 348.305,
+      "nav": 169.398,
+      "nav_date": "2026-06-05",
+      "sip_amount": null,
+      "sip_frequency": "monthly",
+      "sip_start_date": null,
+      "total_invested": 57500.0,
+      "notes": "Folio 79949397236"
+    },
+    {
+      "id": "a3b72687-a4b5-47d2-bcad-2cfd2cfd1cab",
+      "fund_name": "DSP India T.I.G.E.R. Fund - Regular Plan - Growth",
+      "amc": "DSP",
+      "scheme_code": null,
+      "holder": "manjari",
+      "units": 140.29,
+      "nav": 351.23,
+      "nav_date": "2026-06-05",
+      "sip_amount": null,
+      "sip_frequency": "monthly",
+      "sip_start_date": null,
+      "total_invested": 44000.0,
+      "notes": "Folio 2765216"
+    },
+    {
+      "id": "3d695312-5302-4a29-aefe-ca6d2ba2f166",
+      "fund_name": "DSP Mid Cap Fund - Regular Plan - Growth",
+      "amc": "DSP",
+      "scheme_code": null,
+      "holder": "manjari",
+      "units": 320.694,
+      "nav": 148.142,
+      "nav_date": "2026-06-05",
+      "sip_amount": null,
+      "sip_frequency": "monthly",
+      "sip_start_date": null,
+      "total_invested": 46000.0,
+      "notes": "Folio 2765163"
+    }
+  ],
+  "fixed_income": [
+    {
+      "name": "vibhanshu jha",
+      "type": "PPF",
+      "holder": "vibhanshu",
+      "principal": 886953.0,
+      "rate": 7.1,
+      "start_date": "2026-06-07",
+      "maturity_date": "2027-07-07",
+      "compounding": "annually",
+      "current_value": null,
+      "notes": "",
+      "id": "458b5794",
+      "added_date": "2026-06-07"
+    },
+    {
+      "name": "manjari malpani",
+      "type": "PPF",
+      "holder": "vibhanshu",
+      "principal": 2232321,
+      "rate": 7.1,
+      "start_date": "2026-06-08",
+      "maturity_date": "2030-01-01",
+      "compounding": "annually",
+      "current_value": null,
+      "notes": "",
+      "id": "40888362",
+      "added_date": "2026-06-08"
+    }
+  ],
+  "unlisted": [
+    {
+      "company_name": "Airllfe Gases Pvt. Ltd.",
+      "sector": "Commodity-Helium",
+      "holder": "vibhanshu",
+      "invested_amount": 2500000.0,
+      "current_valuation": null,
+      "investment_date": "2026-06-15",
+      "stage": "Unlisted space",
+      "notes": "https://majestic-starlight-803f04.netlify.app/",
+      "id": "99e04ca7",
+      "added_date": "2026-06-07"
+    }
+  ],
+  "capital_transferred": {
+    "vibhanshu": [
+      {
+        "id": "509e7aa0-895d-43e1-bf65-b4c270cba05b",
+        "date": "",
+        "amount": 4754589,
+        "note": "Initial transfer"
+      }
+    ],
+    "manjari": [
+      {
+        "id": "6d98497e-70f4-4c1c-a2f2-d00a5ac1c9d0",
+        "date": "",
+        "amount": 7290000,
+        "note": "Initial transfer"
+      }
+    ],
+    "huf": [
+      {
+        "id": "5280e432-f99c-4da5-a669-37c1e45b6ef2",
+        "date": "",
+        "amount": 7816638,
+        "note": "Initial transfer"
+      }
+    ],
+    "us_vibhanshu": [
+      {
+        "id": "e95e57bd-12ca-4210-91a5-cc8123d0fd12",
+        "date": "2025-09-16",
+        "amount": 5572.47,
+        "inr_amount": 500000.0,
+        "rate": 89.63,
+        "type": "deposit",
+        "note": "\u20b95,00,000 @ 89.63 | M2WMM0102723"
+      },
+      {
+        "id": "65d7b2f7-aae6-416d-a938-a929ada8ff8f",
+        "date": "2025-11-29",
+        "amount": 7348.14,
+        "inr_amount": 702942.81,
+        "rate": 90.96,
+        "type": "deposit",
+        "note": "\u20b97,02,943 @ 90.96 | M2WMM0191656"
+      },
+      {
+        "id": "03318cf0-fd15-498c-b45b-91e013252866",
+        "date": "2026-01-29",
+        "amount": 4479.98,
+        "inr_amount": 500000.34,
+        "rate": 92.92,
+        "type": "deposit",
+        "note": "\u20b95,00,000 @ 92.92 | M2WMM0275579"
+      },
+      {
+        "id": "f7dfc740-cf57-45a0-a4bc-7a74364620ae",
+        "date": "2026-01-29",
+        "amount": 4479.98,
+        "inr_amount": 502044.74,
+        "rate": 93.3,
+        "type": "deposit",
+        "note": "\u20b95,02,045 @ 93.30 | M2WMM0275666"
+      },
+      {
+        "id": "485057c4-3d0f-44be-ab37-9a097a576f74",
+        "date": "2026-02-10",
+        "amount": 9050.37,
+        "inr_amount": 1000000.22,
+        "rate": 92.0,
+        "type": "deposit",
+        "note": "\u20b910,00,000 @ 92.00 | M2WMM0301921"
+      }
+    ],
+    "us_manjari": [
+      {
+        "id": "5bb8dd89-c7ca-4dcc-a90c-b569082d5850",
+        "date": "2025-09-22",
+        "amount": 4448.84,
+        "type": "deposit",
+        "note": ""
+      },
+      {
+        "id": "19920508-3a3d-465a-a324-0f47fb75bfaf",
+        "date": "2025-11-04",
+        "amount": 5540.0,
+        "type": "deposit",
+        "note": ""
+      },
+      {
+        "id": "241bfa3c-eca8-438d-b980-e1e54f4ec00e",
+        "date": "2025-12-02",
+        "amount": 4752.0,
+        "type": "deposit",
+        "note": ""
+      },
+      {
+        "id": "e9ab658b-65d6-4096-9433-2d600c5f2e7a",
+        "date": "2026-01-28",
+        "amount": 8897.56,
+        "type": "deposit",
+        "note": ""
+      },
+      {
+        "id": "8d9dc402-af27-4b5b-98ac-23371761be1f",
+        "date": "2026-05-07",
+        "amount": 5182.2,
+        "type": "deposit",
+        "note": ""
+      },
+      {
+        "id": "5c2c17d4-a90a-44ab-a62e-c8ff472faea4",
+        "date": "2026-05-07",
+        "amount": 5182.2,
+        "type": "deposit",
+        "note": ""
+      }
+    ]
+  },
+  "sold_positions": [
+    {
+      "id": "c478d82c-2036-4173-8ee1-fb89da08baac",
+      "original_id": "d9ce8b90-844e-4cec-8ea8-27168374eebd",
+      "account": "huf",
+      "stock_name": "Windlas Biotech Limited",
+      "ticker": "NSE:WINDLAS",
+      "sector": "CDMO",
+      "currency": "INR",
+      "buy_date": "2024-11-01",
+      "sell_date": "2026-06-08",
+      "avg_buy_price": 807.7733,
+      "sell_price": 825.0,
+      "sell_qty": 450,
+      "invested": 363497.98,
+      "proceeds": 371250,
+      "realized_pnl": 7752.02,
+      "realized_pnl_pct": 2.13,
+      "peak_price": 1047.5,
+      "trades": [
+        {
+          "id": "3c60aa23-0f09-4441-b1d8-311ddbaaff7c",
+          "date": "2026-06-08",
+          "type": "sell",
+          "qty": 450,
+          "price": 825,
+          "note": "Windlas Biotech Exited Pharma CRAMS Why Sold Management phenomenal (ESOPs, buybacks, codeine switch handled). Fund believes guidance of 18% growth is sandbagging. BUT: CSB Bank and Samhi Hotels were materially cheaper, more stable, and more liquid \u2014 offering the same IRR in a superior risk profile. \"If you can get the same IRR with lower P&L volatility and better liquidity, take it every time.\" Fund also used this to improve portfolio liquidity profile in Q4 strength."
+        }
+      ],
+      "thesis": "",
+      "antithesis": "",
+      "lessons": "Windlas Biotech Exited Pharma CRAMS Why Sold Management phenomenal (ESOPs, buybacks, codeine switch handled). Fund believes guidance of 18% growth is sandbagging. BUT: CSB Bank and Samhi Hotels were materially cheaper, more stable, and more liquid \u2014 offering the same IRR in a superior risk profile. \"If you can get the same IRR with lower P&L volatility and better liquidity, take it every time.\" Fund also used this to improve portfolio liquidity profile in Q4 strength.",
+      "archived_at": "2026-06-08",
+      "auto_archived": true
+    },
+    {
+      "id": "ed0d29bd-12c5-4d9b-a594-5813f9b8a180",
+      "original_id": "e136bffc-8282-4895-89cb-def578a5307f",
+      "account": "huf",
+      "stock_name": "Pondy Oxides And Chemicals Limited",
+      "ticker": "NSE:POCL",
+      "sector": "Recycling",
+      "currency": "INR",
+      "buy_date": null,
+      "sell_date": "2026-06-08",
+      "avg_buy_price": 1340.71,
+      "sell_price": 1250.51,
+      "sell_qty": 440,
+      "invested": 589912.4,
+      "proceeds": 550224.4,
+      "realized_pnl": -39688.0,
+      "realized_pnl_pct": -6.73,
+      "peak_price": 1544.8,
+      "trades": [
+        {
+          "id": "b65abd0d-0d46-4a25-822b-a69d2956d6f2",
+          "date": "2026-06-08",
+          "type": "sell",
+          "qty": 440,
+          "price": 1250.51,
+          "note": "Pondicherry Recycling Exited Lead recycling \u00b7 India sector Why Sold India importing lead even though capacities are ready \u2014 sourcing constraint is a near-term headwind. Q4 had high trading profits from copper \u2014 \"didn't understand too much.\" FY27/28 triggers present but FY26 rate of change too slow. De-risked position going into earnings; exited in orderly fashion at attractive prices. Also: Gravit Recycling cited as facing same lead headwinds."
+        }
+      ],
+      "thesis": "",
+      "antithesis": "",
+      "lessons": "",
+      "archived_at": "2026-06-08",
+      "auto_archived": true
+    },
+    {
+      "id": "460f6849-18e1-4ab5-bb6a-29dbcc1cb9b8",
+      "original_id": "7406c252-fa3b-4da0-807a-2501236577d0",
+      "account": "manjari",
+      "stock_name": "Pondy Oxides And Chemicals Limited",
+      "ticker": "NSE:POCL",
+      "sector": "Recycling",
+      "currency": "INR",
+      "buy_date": "2025-11-03",
+      "sell_date": "2026-06-08",
+      "avg_buy_price": 1337.63,
+      "sell_price": 1251.21,
+      "sell_qty": 283,
+      "invested": 378549.29,
+      "proceeds": 354092.43,
+      "realized_pnl": -24456.86,
+      "realized_pnl_pct": -6.46,
+      "peak_price": 1544.8,
+      "trades": [
+        {
+          "id": "6f733da9-f821-499c-b777-a987ef77e07f",
+          "date": "2026-06-08",
+          "type": "sell",
+          "qty": 283,
+          "price": 1251.21,
+          "note": "Pondicherry Recycling Exited Lead recycling \u00b7 India sector Why Sold India importing lead even though capacities are ready \u2014 sourcing constraint is a near-term headwind. Q4 had high trading profits from copper \u2014 \"didn't understand too much.\" FY27/28 triggers present but FY26 rate of change too slow. De-risked position going into earnings; exited in orderly fashion at attractive prices. Also: Gravit Recycling cited as facing same lead headwinds."
+        }
+      ],
+      "thesis": "",
+      "antithesis": "",
+      "lessons": "",
+      "archived_at": "2026-06-08",
+      "auto_archived": true
+    },
+    {
+      "id": "f3a7d166-c593-4481-b328-e89708e38978",
+      "original_id": "c2993f49-b73a-4e0c-838d-535afa8e365b",
+      "account": "manjari",
+      "stock_name": "Ujjivan Small Finance Bank Limited",
+      "ticker": "NSE:UJJIVANSFB",
+      "sector": "SFB",
+      "currency": "INR",
+      "buy_date": "2025-02-08",
+      "sell_date": "2026-06-08",
+      "avg_buy_price": 43.77,
+      "sell_price": 53.55,
+      "sell_qty": 13000,
+      "invested": 569010.0,
+      "proceeds": 696150.0,
+      "realized_pnl": 127140.0,
+      "realized_pnl_pct": 22.34,
+      "peak_price": 63.06,
+      "trades": [
+        {
+          "id": "1764451b-9836-482e-9c91-e18b0353d9a7",
+          "date": "2026-06-08",
+          "type": "sell",
+          "qty": 13000,
+          "price": 53.55,
+          "note": "Why Sold Rotated out of microfinance entirely. Core argument: \"Why take microfinance risk when you are getting less IRR for that?\" CSB Bank offered the same or better IRR with a far more stable P&L \u2014 gold loans don't generate NPAs the way microfinance does, the business model is less volatile, and the stock was materially cheaper on a forward basis. Ujjivan was being gradually trimmed from Feb through April (4.7% \u2192 4.6% \u2192 4.4%) before full exit. The Windlas rotation logic applied here too \u2014 if a superior business model at the same IRR is available and more liquid, the switch is a no-brainer. Microfinance as a category was also facing sector-level headwinds at the time of exit. Proceeds \u2192 sized up CSB Bank. Fund explicitly stated: \"Why take microfinance risk for less IRR?\" in the Q4 webinar."
+        }
+      ],
+      "thesis": "",
+      "antithesis": "",
+      "lessons": "",
+      "archived_at": "2026-06-08",
+      "auto_archived": true
+    },
+    {
+      "id": "f4d168e3-7272-4146-a18f-8bbebebdede8",
+      "original_id": "94a7c5f2-5d39-4391-b75e-ae46a4503852",
+      "account": "vibhanshu",
+      "stock_name": "Pondy Oxides And Chemicals Limited",
+      "ticker": "NSE:POCL",
+      "sector": "Recycling",
+      "currency": "INR",
+      "buy_date": "2025-11-03",
+      "sell_date": "2026-06-08",
+      "avg_buy_price": 1348.18,
+      "sell_price": 1251.27,
+      "sell_qty": 197,
+      "invested": 265591.46,
+      "proceeds": 246500.19,
+      "realized_pnl": -19091.27,
+      "realized_pnl_pct": -7.19,
+      "peak_price": 1544.8,
+      "trades": [
+        {
+          "id": "607d64a8-c245-4177-b82e-4a8274284b37",
+          "date": "2026-06-08",
+          "type": "sell",
+          "qty": 197,
+          "price": 1251.27,
+          "note": "Pondicherry Recycling Exited Lead recycling \u00b7 India sector Why Sold India importing lead even though capacities are ready \u2014 sourcing constraint is a near-term headwind. Q4 had high trading profits from copper \u2014 \"didn't understand too much.\" FY27/28 triggers present but FY26 rate of change too slow. De-risked position going into earnings; exited in orderly fashion at attractive prices. Also: Gravit Recycling cited as facing same lead headwinds."
+        }
+      ],
+      "thesis": "",
+      "antithesis": "",
+      "lessons": "",
+      "archived_at": "2026-06-08",
+      "auto_archived": true
+    },
+    {
+      "id": "55b4eb2c-36b1-4e36-801b-70f64991a0af",
+      "original_id": "a0cd1414-f67e-4ddd-8b87-d918e8945e48",
+      "account": "vibhanshu",
+      "stock_name": "Ujjivan Small Finance Bank Limited",
+      "ticker": "NSE:UJJIVANSFB",
+      "sector": "SFB",
+      "currency": "INR",
+      "buy_date": "2025-02-08",
+      "sell_date": "2026-06-08",
+      "avg_buy_price": 43.81,
+      "sell_price": 53.6,
+      "sell_qty": 10000,
+      "invested": 438100.0,
+      "proceeds": 536000.0,
+      "realized_pnl": 97900.0,
+      "realized_pnl_pct": 22.35,
+      "peak_price": 63.06,
+      "trades": [
+        {
+          "id": "7e76a4f2-4fd7-42fa-a384-9651d09a15d8",
+          "date": "2026-06-08",
+          "type": "sell",
+          "qty": 10000,
+          "price": 53.6,
+          "note": "Ujjivan Small Finance Bank Exited Small Finance Bank \u00b7 Microfinance exposure \u00b7 Peak allocation ~4.7% Why Sold Rotated out of microfinance entirely. Core argument: \"Why take microfinance risk when you are getting less IRR for that?\" CSB Bank offered the same or better IRR with a far more stable P&L \u2014 gold loans don't generate NPAs the way microfinance does, the business model is less volatile, and the stock was materially cheaper on a forward basis. Ujjivan was being gradually trimmed from Feb through April (4.7% \u2192 4.6% \u2192 4.4%) before full exit. The Windlas rotation logic applied here too \u2014 if a superior business model at the same IRR is available and more liquid, the switch is a no-brainer. Microfinance as a category was also facing sector-level headwinds at the time of exit. Proceeds \u2192 sized up CSB Bank. Fund explicitly stated: \"Why take microfinance risk for less IRR?\" in the Q4 webinar."
+        }
+      ],
+      "thesis": "",
+      "antithesis": "",
+      "lessons": "",
+      "archived_at": "2026-06-08",
+      "auto_archived": true
+    },
+    {
+      "id": "5fa16a94-f601-4ba6-85c0-6c2eef830bb8",
+      "original_id": "d9775eb0-c55a-4c51-bb4c-bc3e60a487f1",
+      "account": "manjbhawna",
+      "stock_name": "Aarti Pharmalabs Limited",
+      "ticker": "NSE:AARTIPHARM",
+      "sector": "CDMO",
+      "currency": "INR",
+      "buy_date": "2026-01-21",
+      "sell_date": "2026-06-08",
+      "avg_buy_price": 760.0,
+      "sell_price": 610.5,
+      "sell_qty": 161,
+      "invested": 122360.0,
+      "proceeds": 98290.5,
+      "realized_pnl": -24069.5,
+      "realized_pnl_pct": -19.67,
+      "peak_price": 946.73,
+      "trades": [
+        {
+          "id": "b2069ad4-c153-4de8-b2e9-c293e856423f",
+          "date": "2026-06-08",
+          "type": "sell",
+          "qty": 161,
+          "price": 610.5,
+          "note": "Sajal kapoor didnt sound so bullish .Ishmohit also said 2 3 quarters of pain still there .Also it seems like its playing on commodity side .Also one more important thing is too much of my investment in cdmo and there are better opportuniies like concorde , shila medicare and sai life where i should invest"
+        }
+      ],
+      "thesis": "",
+      "antithesis": "",
+      "lessons": "",
+      "archived_at": "2026-06-08",
+      "auto_archived": true
+    },
+    {
+      "id": "1eba4141-dfe0-4d7c-851a-be0a11a49bd6",
+      "original_id": "1520acbc-3047-499c-83e2-470ef2a20090",
+      "account": "manjbhawna",
+      "stock_name": "Ujjivan Small Finance Bank Limited",
+      "ticker": "NSE:UJJIVANSFB",
+      "sector": "SFB",
+      "currency": "INR",
+      "buy_date": "2025-02-08",
+      "sell_date": "2026-06-08",
+      "avg_buy_price": 44.5,
+      "sell_price": 52.93,
+      "sell_qty": 4000,
+      "invested": 178000.0,
+      "proceeds": 211720.0,
+      "realized_pnl": 33720.0,
+      "realized_pnl_pct": 18.94,
+      "peak_price": 63.06,
+      "trades": [
+        {
+          "id": "98466783-5ba0-4c30-8f14-02b1009dcfbb",
+          "date": "2026-06-08",
+          "type": "sell",
+          "qty": 4000,
+          "price": 52.93,
+          "note": "Ujjivan Small Finance Bank Exited Small Finance Bank \u00b7 Microfinance exposure \u00b7 Peak allocation ~4.7% Why Sold Rotated out of microfinance entirely. Core argument: \"Why take microfinance risk when you are getting less IRR for that?\" CSB Bank offered the same or better IRR with a far more stable P&L \u2014 gold loans don't generate NPAs the way microfinance does, the business model is less volatile, and the stock was materially cheaper on a forward basis. Ujjivan was being gradually trimmed from Feb through April (4.7% \u2192 4.6% \u2192 4.4%) before full exit. The Windlas rotation logic applied here too \u2014 if a superior business model at the same IRR is available and more liquid, the switch is a no-brainer. Microfinance as a category was also facing sector-level headwinds at the time of exit. Proceeds \u2192 sized up CSB Bank. Fund explicitly stated: \"Why take microfinance risk for less IRR?\" in the Q4 webinar."
+        }
+      ],
+      "thesis": "",
+      "antithesis": "",
+      "lessons": "Ujjivan Small Finance Bank Exited Small Finance Bank \u00b7 Microfinance exposure \u00b7 Peak allocation ~4.7% Why Sold Rotated out of microfinance entirely. Core argument: \"Why take microfinance risk when you are getting less IRR for that?\" CSB Bank offered the same or better IRR with a far more stable P&L \u2014 gold loans don't generate NPAs the way microfinance does, the business model is less volatile, and the stock was materially cheaper on a forward basis. Ujjivan was being gradually trimmed from Feb through April (4.7% \u2192 4.6% \u2192 4.4%) before full exit. The Windlas rotation logic applied here too \u2014 if a superior business model at the same IRR is available and more liquid, the switch is a no-brainer. Microfinance as a category was also facing sector-level headwinds at the time of exit. Proceeds \u2192 sized up CSB Bank. Fund explicitly stated: \"Why take microfinance risk for less IRR?\" in the Q4 webinar.",
+      "archived_at": "2026-06-08",
+      "auto_archived": true
+    },
+    {
+      "id": "9450ef8d-fe74-40d4-9946-570f4b878d04",
+      "original_id": "9221a7e8-42d7-4d71-8723-7a23e7afe160",
+      "account": "huf",
+      "stock_name": "Ujjivan Small Finance Bank Limited",
+      "ticker": "NSE:UJJIVANSFB",
+      "sector": "SFB",
+      "currency": "INR",
+      "buy_date": "2025-02-08",
+      "sell_date": "2026-06-09",
+      "avg_buy_price": 43.69,
+      "sell_price": 53.8,
+      "sell_qty": 13000,
+      "invested": 567970.0,
+      "proceeds": 699400.0,
+      "realized_pnl": 131430.0,
+      "realized_pnl_pct": 23.14,
+      "peak_price": 63.06,
+      "trades": [
+        {
+          "id": "43585944-4ebe-4926-a7b4-ef422fdf8e35",
+          "date": "2026-06-09",
+          "type": "sell",
+          "qty": 13000,
+          "price": 53.8,
+          "note": "Why Sold Rotated out of microfinance entirely. Core argument: \"Why take microfinance risk when you are getting less IRR for that?\" CSB Bank offered the same or better IRR with a far more stable P&L \u2014 gold loans don't generate NPAs the way microfinance does, the business model is less volatile, and the stock was materially cheaper on a forward basis. Ujjivan was being gradually trimmed from Feb through April (4.7% \u2192 4.6% \u2192 4.4%) before full exit. The Windlas rotation logic applied here too \u2014 if a superior business model at the same IRR is available and more liquid, the switch is a no-brainer. Microfinance as a category was also facing sector-level headwinds at the time of exit. Proceeds \u2192 sized up CSB Bank. Fund explicitly stated: \"Why take microfinance risk for less IRR?\" in the Q4 webinar."
+        }
+      ],
+      "thesis": "",
+      "antithesis": "",
+      "lessons": "",
+      "archived_at": "2026-06-10",
+      "auto_archived": true
+    }
+  ],
+  "nps": [
+    {
+      "holder": "vibhanshu",
+      "pran": "110102678546",
+      "tier": "Tier I",
+      "fund_manager": "SBI",
+      "scheme": "E",
+      "total_invested": 400000.0,
+      "current_value": 615553.0,
+      "as_of_date": "2026-06-08",
+      "notes": "",
+      "id": "c84ebad4"
+    },
+    {
+      "holder": "manjari",
+      "pran": "111102632711",
+      "tier": "Tier I",
+      "fund_manager": "SBI",
+      "scheme": "E",
+      "total_invested": 370000,
+      "current_value": 555532,
+      "as_of_date": "2025-12-31",
+      "notes": "",
+      "id": "bb4cfd9f"
+    }
+  ]
+}
