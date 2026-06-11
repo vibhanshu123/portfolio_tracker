@@ -527,9 +527,30 @@ def refresh_technicals():
             "progress": dict(_refresh_progress)}
 
 
+def _download_batch(tickers: list, retries: int = 3) -> "pd.DataFrame":
+    """Download 2Y weekly data for a batch of tickers, retrying on rate-limit."""
+    import yfinance as yf, time
+    for attempt in range(retries):
+        try:
+            raw = yf.download(tickers, period="2y", interval="1wk",
+                              progress=False, auto_adjust=True, group_by="ticker")
+            if raw.shape[0] > 0:
+                return raw
+            if attempt < retries - 1:
+                time.sleep(15 * (attempt + 1))
+        except Exception as e:
+            err = str(e)
+            if "rate" in err.lower() or "RateLimit" in type(e).__name__:
+                wait = 30 * (attempt + 1)
+                time.sleep(wait)
+            else:
+                break
+    return pd.DataFrame()
+
+
 def _do_refresh_technicals():
     """Background worker: download 2Y weekly data + compute signals for all INR tickers."""
-    import yfinance as yf
+    import yfinance as yf, time
 
     _refresh_progress.update({
         "running": True, "phase": "loading",
@@ -555,35 +576,58 @@ def _do_refresh_technicals():
             _refresh_progress.update({"running": False, "phase": "done", "error": "No tickers"})
             return
 
-        _refresh_progress["total"] = len(ticker_map)
+        all_yt = list(ticker_map.keys())
+        _refresh_progress["total"] = len(all_yt)
         _refresh_progress["phase"] = "downloading"
 
-        all_dl = list(ticker_map.keys()) + ["^NSEI"]
-        try:
-            raw = yf.download(all_dl, period="2y", interval="1wk",
-                              progress=False, auto_adjust=True, group_by="ticker")
-        except Exception as e:
-            _refresh_progress.update({"running": False, "phase": "done", "error": str(e)})
-            return
+        # Download in batches of 12 to avoid rate limits
+        BATCH = 12
+        nifty_close = pd.Series(dtype=float)
+        raw_data: dict[str, dict] = {}   # yt → {close, high, low}
 
-        def series(ticker, field):
-            try:
-                return raw[ticker][field].dropna()
-            except Exception:
-                return pd.Series(dtype=float)
+        for batch_start in range(0, len(all_yt), BATCH):
+            batch = all_yt[batch_start : batch_start + BATCH] + ["^NSEI"]
+            raw = _download_batch(batch)
+            if raw.empty:
+                continue
 
-        nifty_close = series("^NSEI", "Close")
+            def _s(raw, ticker, field):
+                try:
+                    return raw[ticker][field].dropna()
+                except Exception:
+                    return pd.Series(dtype=float)
+
+            if len(nifty_close) == 0:
+                nc = _s(raw, "^NSEI", "Close")
+                if len(nc) > 0:
+                    nifty_close = nc
+
+            for yt in all_yt[batch_start : batch_start + BATCH]:
+                close = _s(raw, yt, "Close")
+                if len(close) >= 42:
+                    raw_data[yt] = {
+                        "close": close,
+                        "high":  _s(raw, yt, "High"),
+                        "low":   _s(raw, yt, "Low"),
+                    }
+
+            if batch_start + BATCH < len(all_yt):
+                time.sleep(3)   # polite pause between batches
+
         results: dict = {}
-
         _refresh_progress["phase"] = "computing"
 
         for i, (yt, orig) in enumerate(ticker_map.items()):
             _refresh_progress["done"]    = i
             _refresh_progress["current"] = orig
             try:
-                close = series(yt, "Close")
-                high  = series(yt, "High")
-                low   = series(yt, "Low")
+                td = raw_data.get(yt)
+                if not td:
+                    results[orig] = {"error": "download failed or insufficient history"}
+                    continue
+                close = td["close"]
+                high  = td["high"]
+                low   = td["low"]
                 if len(close) < 42:
                     results[orig] = {"error": "insufficient history"}
                     continue
@@ -693,11 +737,9 @@ def _compute_ticker_technicals(orig_ticker: str) -> dict:
     if not yt:
         return {"error": "invalid ticker"}
 
-    try:
-        raw = yf.download([yt, benchmark], period="2y", interval="1wk",
-                          progress=False, auto_adjust=True, group_by="ticker")
-    except Exception as e:
-        return {"error": str(e)}
+    raw = _download_batch([yt, benchmark])
+    if raw.empty:
+        return {"error": "download failed (rate limited or no data — try again shortly)"}
 
     def _s(ticker, field):
         try:
@@ -814,7 +856,7 @@ def _save_scans_cache(cache: dict):
     with open(SCANS_CACHE_FILE, "w") as f:
         json.dump(cache, f, indent=2)
 
-def _fetch_scans_for_ticker(ticker: str) -> dict | None:
+def _fetch_scans_for_ticker(ticker: str) -> Optional[dict]:
     """Call stockscans.in API for one ticker. Returns parsed JSON or None on error."""
     import urllib.request, ssl, time
     ctx = ssl.create_default_context()

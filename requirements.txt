@@ -1,6 +1,6 @@
 fastapi[standard]
 uvicorn
 openpyxl
-yfinance
+yfinance>=1.2.0
 pydantic
 pandas
