@@ -4202,84 +4202,72 @@ async function refreshStockScans() {
   }
 }
 
-// ─── All-signals refresh (non-blocking, server runs in background) ────────────
-let _progressInterval = null;
+// ─── All-signals refresh via WebSocket ────────────────────────────────────────
+let _signalsWs = null;
 
-async function startAllSignalsRefresh() {
-  const btn = document.getElementById('all-signals-btn');
-  if (btn) { btn.textContent = '⟳ Starting…'; btn.disabled = true; }
-  try {
-    await fetch('/api/technicals/refresh', { method: 'POST' });
-  } catch { /* server returns 200 immediately */ }
-  _startProgressPolling();
-}
+function startAllSignalsRefresh() {
+  if (_signalsWs && _signalsWs.readyState === WebSocket.OPEN) return;
 
-function _startProgressPolling() {
-  if (_progressInterval) return;   // already polling
-  document.getElementById('signals-progress')?.classList.remove('hidden');
-  _progressInterval = setInterval(_pollProgress, 2000);
-  _pollProgress();  // immediate first tick
-}
+  const btn      = document.getElementById('all-signals-btn');
+  const progBar  = document.getElementById('signals-progress');
+  const pb       = document.getElementById('signals-pb');
+  const progText = document.getElementById('signals-prog-text');
 
-async function _pollProgress() {
-  try {
-    const res  = await fetch('/api/technicals/progress');
-    const prog = await res.json();
-    _updateProgressUI(prog);
+  if (btn) { btn.textContent = '⟳ Connecting…'; btn.disabled = true; }
+  progBar?.classList.remove('hidden');
 
-    if (!prog.running) {
-      _stopProgressPolling();
-      // Reload and re-render with fresh data
-      await loadTechnicals();
-      await fetchData();
-      renderTab();
-      const btn = document.getElementById('all-signals-btn');
-      const ok  = prog.last_result?.updated ?? '';
+  const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+  _signalsWs  = new WebSocket(`${proto}//${location.host}/ws/signals`);
+
+  _signalsWs.onmessage = (e) => {
+    const msg = JSON.parse(e.data);
+    if (msg.type === 'start') {
+      if (pb)       pb.style.width      = '0%';
+      if (progText) progText.textContent = `0/${msg.total}`;
+      if (btn)      btn.textContent      = `⟳ 0/${msg.total}`;
+    } else if (msg.type === 'ticker') {
+      if (!msg.data.error) {
+        technicals[msg.ticker] = msg.data;
+        renderTab();
+      }
+      const pct = msg.total > 0 ? (msg.done / msg.total * 100) : 0;
+      if (pb)       pb.style.width      = pct + '%';
+      if (progText) progText.textContent = `${msg.done}/${msg.total}`;
+      if (btn)      btn.textContent      = `⟳ ${msg.done}/${msg.total}`;
+    } else if (msg.type === 'done') {
       const now = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
       const ts  = document.getElementById('signals-ts');
-      if (ts) ts.textContent = prog.error ? '' : `signals ${now}`;
-      if (btn) {
-        if (prog.error) { btn.textContent = '⚠ Error'; }
-        else            { btn.textContent = ok ? `✓ ${ok} signals` : '✓ Done'; }
-        setTimeout(() => {
-          btn.textContent = '⟳ Signals';
-          btn.disabled    = false;
-          document.getElementById('signals-progress')?.classList.add('hidden');
-        }, 4000);
-      }
+      if (ts)  ts.textContent  = `signals ${now}`;
+      if (pb)  pb.style.width  = '100%';
+      if (btn) btn.textContent = `✓ ${msg.updated}/${msg.total} signals`;
+      loadTechnicals().then(() => { fetchData().then(() => renderTab()); });
+      setTimeout(() => {
+        if (btn) { btn.textContent = '⟳ Signals'; btn.disabled = false; }
+        progBar?.classList.add('hidden');
+      }, 4000);
+    } else if (msg.type === 'error') {
+      if (btn) { btn.textContent = '⚠ Error'; btn.disabled = false; }
+      progBar?.classList.add('hidden');
     }
-  } catch { /* ignore network hiccup */ }
-}
+  };
 
-function _stopProgressPolling() {
-  clearInterval(_progressInterval);
-  _progressInterval = null;
-}
+  _signalsWs.onerror = () => {
+    if (btn) { btn.textContent = '⚠ Error'; btn.disabled = false; }
+    progBar?.classList.add('hidden');
+  };
 
-function _updateProgressUI(prog) {
-  const pb   = document.getElementById('signals-pb');
-  const text = document.getElementById('signals-prog-text');
-  const btn  = document.getElementById('all-signals-btn');
-
-  if (!prog.running) return;
-
-  const pct = prog.total > 0 ? (prog.done / prog.total * 100) : 0;
-  if (pb)   pb.style.width  = pct + '%';
-
-  if (prog.phase === 'downloading') {
-    if (text) text.textContent = 'downloading…';
-    if (btn)  btn.textContent  = '⟳ Downloading…';
-  } else if (prog.phase === 'computing') {
-    if (text) text.textContent = `${prog.done}/${prog.total}`;
-    if (btn)  btn.textContent  = `⟳ ${prog.done}/${prog.total}`;
-  } else {
-    if (text) text.textContent = '…';
-    if (btn)  btn.textContent  = '⟳ …';
-  }
+  _signalsWs.onclose = () => {
+    _signalsWs = null;
+    if (btn && btn.disabled) {
+      btn.textContent = '⟳ Signals';
+      btn.disabled    = false;
+      progBar?.classList.add('hidden');
+    }
+  };
 }
 
 // "⟳ Signals" button in Consolidated tab — delegates to the same flow
-async function refreshTechnicals() {
+function refreshTechnicals() {
   startAllSignalsRefresh();
 }
 

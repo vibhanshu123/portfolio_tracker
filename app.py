@@ -560,8 +560,8 @@ def _download_batch(tickers: list, retries: int = 3) -> "pd.DataFrame":
 
 
 def _do_refresh_technicals():
-    """Background worker: download 2Y weekly data + compute signals for all INR tickers."""
-    import yfinance as yf, time
+    """Background worker: fetch signals one ticker at a time, saving incrementally."""
+    import time
 
     _refresh_progress.update({
         "running": True, "phase": "loading",
@@ -570,160 +570,51 @@ def _do_refresh_technicals():
 
     try:
         data = load()
-        ticker_map: dict[str, str] = {}  # yahoo_ticker → original NSE: ticker
+        seen: set = set()
+        tickers: list = []
+        for p in data.get("positions", []):
+            t = p.get("ticker", "")
+            if t and t not in seen:
+                seen.add(t); tickers.append(t)
+        for w in data.get("watchlist", []):
+            t = w.get("ticker", "")
+            if t and t not in seen:
+                seen.add(t); tickers.append(t)
+        for w in data.get("us_watchlist", []):
+            t = w.get("ticker", "")
+            if t and t not in seen:
+                seen.add(t); tickers.append(t)
 
-        for p in data["positions"]:
-            if p.get("currency", "INR") == "INR":
-                yt = p.get("yahoo_ticker") or _to_yahoo(p.get("ticker", ""), "INR")
-                if yt:
-                    ticker_map[yt] = p.get("ticker", "")
-
-        for w in data["watchlist"]:
-            yt = w.get("yahoo_ticker") or _to_yahoo(w.get("ticker", ""), "INR")
-            if yt:
-                ticker_map[yt] = w.get("ticker", "")
-
-        if not ticker_map:
+        if not tickers:
             _refresh_progress.update({"running": False, "phase": "done", "error": "No tickers"})
             return
 
-        all_yt = list(ticker_map.keys())
-        _refresh_progress["total"] = len(all_yt)
-        _refresh_progress["phase"] = "downloading"
-
-        # Download in batches of 8 to avoid Yahoo Finance rate limits
-        BATCH_SIZE = 8
-        all_dl = list(ticker_map.keys()) + ["^NSEI"]
-        frames = []
-        for i in range(0, len(all_dl), BATCH_SIZE):
-            batch = all_dl[i:i + BATCH_SIZE]
-            try:
-                f = yf.download(batch, period="2y", interval="1wk",
-                                progress=False, auto_adjust=True)
-                frames.append(f)
-            except Exception:
-                pass
-            time.sleep(2)
-
-        if not frames:
-            _refresh_progress.update({"running": False, "phase": "done", "error": "All downloads failed (rate limited)"})
-            return
-
-        raw = pd.concat(frames, axis=1) if len(frames) > 1 else frames[0]
-
-        # yfinance ≥0.2 returns MultiIndex columns: (field, ticker)
-        _multi = isinstance(raw.columns, pd.MultiIndex)
-
-        def series(ticker, field):
-            try:
-                if _multi:
-                    return raw[field][ticker].dropna()
-                return raw[ticker][field].dropna()
-            except Exception:
-                return pd.Series(dtype=float)
-
-        nifty_close = series("^NSEI", "Close")
-        results: dict = {}
-
+        _refresh_progress["total"] = len(tickers)
         _refresh_progress["phase"] = "computing"
 
-        for i, (yt, orig) in enumerate(ticker_map.items()):
+        ok = 0
+        for i, orig in enumerate(tickers):
             _refresh_progress["done"]    = i
             _refresh_progress["current"] = orig
-            try:
-                td = raw_data.get(yt)
-                if not td:
-                    results[orig] = {"error": "download failed or insufficient history"}
-                    continue
-                close = td["close"]
-                high  = td["high"]
-                low   = td["low"]
-                if len(close) < 42:
-                    results[orig] = {"error": "insufficient history"}
-                    continue
 
-                e10 = _ema(close, 10);  e21 = _ema(close, 21)
-                e30 = _ema(close, 30);  e40 = _ema(close, 40)
-                rsi_s = _rsi(close)
-                adx_s = _adx(high, low, close) if len(high) >= 42 else None
+            result = _compute_ticker_technicals(orig)
 
-                cmp   = float(close.iloc[-1])
-                e10v  = float(e10.iloc[-1]); e21v = float(e21.iloc[-1])
-                e30v  = float(e30.iloc[-1]); e40v = float(e40.iloc[-1])
-                rsiv  = float(rsi_s.iloc[-1])
-                adxv  = float(adx_s.iloc[-1]) if adx_s is not None else None
-                adxp5 = float(adx_s.iloc[-5]) if adx_s is not None and len(adx_s) >= 5 else None
-                p52   = float(close.tail(52).max())
+            if "error" not in result:
+                tech = load_technicals()
+                tech[orig] = result
+                save_technicals(tech)
+                ok += 1
+                for p in data.get("positions", []):
+                    if p.get("ticker") == orig and "peak_52w" in result:
+                        p["peak_price"] = round(
+                            max(p.get("peak_price") or 0, result["peak_52w"]), 2
+                        )
+                save(data)
 
-                e30_4w     = float(e30.iloc[-4])
-                e30_rising = e30v > e30_4w
-                e30_flat   = abs((e30v - e30_4w) / e30_4w) < 0.015 if e30_4w else False
+            time.sleep(5)
 
-                crs_above_ma = None
-                if len(nifty_close) > 0:
-                    nf = nifty_close.reindex(close.index).ffill()
-                    crs = close / nf
-                    crs_ma = crs.rolling(52).mean()
-                    if not pd.isna(crs_ma.iloc[-1]):
-                        crs_above_ma = bool(float(crs.iloc[-1]) > float(crs_ma.iloc[-1]))
-
-                if cmp > e30v and e30_rising:       stage = 2
-                elif cmp < e30v and not e30_rising: stage = 4
-                elif cmp >= e30v:                   stage = 3
-                else:                               stage = 1
-
-                adx_declining = bool(adxp5 and adxv and adxp5 > 28 and adxv < adxp5 - 3)
-                s3_count = sum([
-                    cmp < e30v, e30_flat or not e30_rising,
-                    crs_above_ma is False, rsiv < 50, adx_declining,
-                ])
-
-                sell_signals = {
-                    "below_10w_ema":  cmp < e10v,
-                    "below_21w_ema":  cmp < e21v,
-                    "below_40w_ema":  cmp < e40v,
-                    "below_30w_ema":  cmp < e30v,
-                    "rsi_weak":       rsiv < 45,
-                    "stage3_warning": s3_count >= 2,
-                    "crs_broken":     crs_above_ma is False,
-                }
-                entry_signals = {
-                    "above_30w_ema":     cmp > e30v,
-                    "ema30_rising":      e30_rising,
-                    "rsi_buy_zone":      rsiv >= 45,
-                    "adx_trending":      bool(adxv >= 20) if adxv else False,
-                    "crs_outperforming": crs_above_ma is True,
-                    "near_52w_high":     cmp >= p52 * 0.97,
-                }
-                results[orig] = {
-                    "updated":      date.today().isoformat(),
-                    "cmp":    round(cmp, 2),
-                    "ema10":  round(e10v, 2),  "ema21": round(e21v, 2),
-                    "ema30":  round(e30v, 2),  "ema40": round(e40v, 2),
-                    "rsi":    round(rsiv, 1),
-                    "adx":    round(adxv, 1) if adxv else None,
-                    "crs_above_ma": crs_above_ma,
-                    "peak_52w":     round(p52, 2),
-                    "stage":        stage,
-                    "ema30_rising": e30_rising,
-                    "sell_signals":  sell_signals,
-                    "entry_signals": entry_signals,
-                    "entry_score":   sum(entry_signals.values()),
-                }
-            except Exception as e:
-                results[orig] = {"error": str(e)}
-
-        save_technicals(results)
-
-        for p in data["positions"]:
-            ot = p.get("ticker", "")
-            if ot in results and "peak_52w" in results[ot]:
-                p["peak_price"] = round(max(p.get("peak_price") or 0, results[ot]["peak_52w"]), 2)
-        save(data)
-
-        ok = len([r for r in results.values() if "error" not in r])
-        _refresh_progress["last_result"] = {"updated": ok, "total": len(results)}
-        _refresh_progress["done"] = len(ticker_map)
+        _refresh_progress["last_result"] = {"updated": ok, "total": len(tickers)}
+        _refresh_progress["done"] = len(tickers)
 
     except Exception as e:
         _refresh_progress["error"] = str(e)
@@ -734,15 +625,11 @@ def _do_refresh_technicals():
 
 def _compute_ticker_technicals(orig_ticker: str) -> dict:
     """Download 2Y weekly data for a single ticker and compute all signals."""
-    import yfinance as yf
-
     t = orig_ticker.strip()
-    # Detect INR (NSE/BSE) vs bare US ticker
     is_inr = (t.upper().startswith("NSE:") or t.upper().startswith("BSE:")
               or t.endswith(".NS") or t.endswith(".BO"))
-    yt          = _to_yahoo(t, "INR") if is_inr else t.upper()
-    benchmark   = "^NSEI" if is_inr else "^GSPC"
-    bench_label = "Nifty 50" if is_inr else "S&P 500"
+    yt        = _to_yahoo(t, "INR") if is_inr else t.upper()
+    benchmark = "^NSEI" if is_inr else "^GSPC"
 
     if not yt:
         return {"error": "invalid ticker"}
@@ -751,18 +638,8 @@ def _compute_ticker_technicals(orig_ticker: str) -> dict:
     if raw.empty:
         return {"error": "download failed (rate limited or no data — try again shortly)"}
 
-    try:
-        raw = yf.download([yt, benchmark], period="2y", interval="1wk",
-                          progress=False, auto_adjust=True)
-    except Exception as e:
-        return {"error": str(e)}
-
-    _multi = isinstance(raw.columns, pd.MultiIndex)
-
     def _s(ticker, field):
         try:
-            if _multi:
-                return raw[field][ticker].dropna()
             return raw[ticker][field].dropna()
         except Exception:
             return pd.Series(dtype=float)
@@ -1066,36 +943,122 @@ def _ws_fetch_pe() -> dict:
     return pe_data
 
 
-@app.websocket("/ws/prices")
-async def ws_prices(websocket: WebSocket):
-    await websocket.accept()
-    loop   = asyncio.get_event_loop()
-    tick   = 0
-    try:
-        while True:
-            tick += 1
-            # Every tick: CMP (fast batch download)
-            cmp_data = await loop.run_in_executor(None, _ws_fetch_cmp)
+# Single shared price loop — one Yahoo Finance download per 30 s for all clients.
+_ws_clients:   set  = set()
+_ws_last_msg:  dict = {}
+_ws_loop_task        = None
 
-            # Every 10th tick (~5 min): also fetch PE + % change via fast_info
+
+async def _ws_broadcast_loop():
+    loop = asyncio.get_event_loop()
+    tick = 0
+    while True:
+        tick += 1
+        try:
+            cmp_data = await loop.run_in_executor(None, _ws_fetch_cmp)
             pe_data: dict = {}
             if tick % 10 == 1:
                 pe_data = await loop.run_in_executor(None, _ws_fetch_pe)
-
-            await websocket.send_json({
+            msg = {
                 "type":      "update",
                 "prices":    cmp_data.get("prices", {}),
                 "usd_inr":   cmp_data.get("usd_inr"),
                 "pe":        pe_data,
                 "timestamp": datetime.now().strftime("%H:%M:%S"),
                 "count":     len(cmp_data.get("prices", {})),
-            })
+            }
+            _ws_last_msg.clear()
+            _ws_last_msg.update(msg)
+            dead = set()
+            for ws in list(_ws_clients):
+                try:
+                    await ws.send_json(msg)
+                except Exception:
+                    dead.add(ws)
+            _ws_clients.difference_update(dead)
+        except Exception:
+            pass
+        await asyncio.sleep(30)
 
-            await asyncio.sleep(30)
+
+@app.websocket("/ws/prices")
+async def ws_prices(websocket: WebSocket):
+    global _ws_loop_task
+    await websocket.accept()
+    _ws_clients.add(websocket)
+    if _ws_loop_task is None or _ws_loop_task.done():
+        _ws_loop_task = asyncio.create_task(_ws_broadcast_loop())
+    if _ws_last_msg:
+        try:
+            await websocket.send_json(_ws_last_msg)
+        except Exception:
+            pass
+    try:
+        while True:
+            await websocket.receive_text()
+    except (WebSocketDisconnect, Exception):
+        pass
+    finally:
+        _ws_clients.discard(websocket)
+
+
+@app.websocket("/ws/signals")
+async def ws_signals(websocket: WebSocket):
+    """Stream per-ticker signal results live. Opens on button press, closes when done."""
+    await websocket.accept()
+    loop = asyncio.get_event_loop()
+    try:
+        data = load()
+        seen: set = set()
+        tickers: list = []
+        for p in data.get("positions", []):
+            t = p.get("ticker", "")
+            if t and t not in seen:
+                seen.add(t); tickers.append(t)
+        for w in data.get("watchlist", []):
+            t = w.get("ticker", "")
+            if t and t not in seen:
+                seen.add(t); tickers.append(t)
+        for w in data.get("us_watchlist", []):
+            t = w.get("ticker", "")
+            if t and t not in seen:
+                seen.add(t); tickers.append(t)
+
+        await websocket.send_json({"type": "start", "total": len(tickers)})
+
+        ok = 0
+        for i, orig in enumerate(tickers):
+            result = await loop.run_in_executor(None, _compute_ticker_technicals, orig)
+            if "error" not in result:
+                tech = load_technicals()
+                tech[orig] = result
+                save_technicals(tech)
+                ok += 1
+                for p in data.get("positions", []):
+                    if p.get("ticker") == orig and "peak_52w" in result:
+                        p["peak_price"] = round(
+                            max(p.get("peak_price") or 0, result["peak_52w"]), 2
+                        )
+                save(data)
+            await websocket.send_json({
+                "type": "ticker", "ticker": orig, "data": result,
+                "done": i + 1, "total": len(tickers),
+            })
+            await asyncio.sleep(5)
+
+        await websocket.send_json({"type": "done", "updated": ok, "total": len(tickers)})
     except WebSocketDisconnect:
         pass
-    except Exception:
-        pass
+    except Exception as e:
+        try:
+            await websocket.send_json({"type": "error", "message": str(e)})
+        except Exception:
+            pass
+    finally:
+        try:
+            await websocket.close()
+        except Exception:
+            pass
 
 
 # ─── Position CRUD ─────────────────────────────────────────────────────────────
