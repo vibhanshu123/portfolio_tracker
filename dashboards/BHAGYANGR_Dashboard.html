@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BHAGYANGR | Bhagyanagar India Ltd — Investment Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bg-body:#F8F9FC;--bg-card:#FFFFFF;--bg-card-border:#E2E8F0;--text-primary:#0F172A;--text-secondary:#475569;--text-muted:#94A3B8;--color-navy:#0F1F3D;--color-orange:#E8701A;--color-green:#16A34A;--color-red:#DC2626;--color-amber:#D97706;--color-blue:#1D4ED8;--nav-bg:#0F1F3D;--nav-text:#FFFFFF;--table-header-bg:#F1F5F9;--table-row-alt:#F8FAFC;--highlight-latest:#FFF7ED;}
+[data-theme="dark"]{--bg-body:#0F172A;--bg-card:#1E293B;--bg-card-border:#334155;--text-primary:#F1F5F9;--text-secondary:#94A3B8;--text-muted:#64748B;--color-navy:#1E40AF;--color-orange:#F97316;--color-green:#22C55E;--color-red:#EF4444;--color-amber:#F59E0B;--color-blue:#3B82F6;--nav-bg:#1E293B;--nav-text:#F1F5F9;--table-header-bg:#1E293B;--table-row-alt:#0F172A;--highlight-latest:#431407;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;font-size:16px;line-height:1.6;background:var(--bg-body);color:var(--text-primary)}
+nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 8px;box-shadow:0 2px 8px rgba(0,0,0,.3);align-items:center}
+nav::-webkit-scrollbar{display:none}
+nav button{background:none;border:none;color:var(--nav-text);padding:12px 13px;cursor:pointer;font-size:13px;white-space:nowrap;border-bottom:3px solid transparent;opacity:.7;transition:all .15s;font-family:inherit}
+nav button:hover{opacity:1;background:rgba(255,255,255,.08)}
+nav button.active{opacity:1;border-bottom-color:#E8701A}
+.theme-toggle{margin-left:auto;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);color:#fff;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;white-space:nowrap;flex-shrink:0;margin-right:6px;font-family:inherit}
+main{max-width:1380px;margin:0 auto;padding:24px 20px}
+.tab-pane{display:none}
+.stitle{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--color-orange);border-left:4px solid var(--color-orange);padding:2px 0 4px 10px;border-bottom:1px solid var(--bg-card-border);margin:28px 0 16px}
+.card{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:12px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:20px}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:20px}
+.g4{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:20px}
+.g5{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
+.kl{font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.kv{font-size:24px;font-weight:700;font-family:ui-monospace,monospace;line-height:1.2}
+.ks{font-size:12px;color:var(--text-muted);margin-top:3px}
+.kd{font-size:12px;font-weight:600;margin-top:2px}
+.up{color:var(--color-green)}.down{color:var(--color-red)}.flat{color:var(--color-amber)}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px;border:1px solid var(--bg-card-border)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{background:var(--table-header-bg);font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:9px 13px;text-align:right;font-weight:600;color:var(--text-secondary);white-space:nowrap}
+th:first-child{text-align:left}
+td{padding:9px 13px;text-align:right;font-family:ui-monospace,monospace;font-size:14px;border-top:1px solid var(--bg-card-border)}
+td:first-child{text-align:left;font-family:inherit;font-weight:500;font-size:14px;white-space:nowrap}
+tr:nth-child(even) td{background:var(--table-row-alt)}
+.hl{background:var(--highlight-latest)!important;font-weight:700;color:var(--color-orange)}
+.badge{display:inline-block;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.b-watch{background:#FEF3C7;color:#78350F}.b-buy{background:#D1FAE5;color:#065F46}
+.b-avoid{background:#F1F5F9;color:#1E3A5F}.b-acc{background:#FED7AA;color:#92400E}
+.b-high{background:#FEE2E2;color:#991B1B}.b-med{background:#FEF3C7;color:#92400E}
+.b-low{background:#D1FAE5;color:#065F46}.b-opt{background:#DBEAFE;color:#1E40AF}
+.b-amber{background:#FEF3C7;color:#78350F}.b-green{background:#D1FAE5;color:#065F46}
+.b-red{background:#FEE2E2;color:#991B1B}.b-blue{background:#DBEAFE;color:#1E40AF}
+.b-grey{background:#F1F5F9;color:#475569}.b-navy{background:#E0E7FF;color:#1E1B4B}
+.verdict-hero{text-align:center;padding:32px 20px;background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:16px;margin-bottom:24px}
+.vbadge{font-size:20px;font-weight:900;padding:12px 32px;border-radius:12px;letter-spacing:.08em;display:inline-block;margin-bottom:14px;background:#FEF3C7;color:#78350F}
+.cvtrack{width:200px;height:10px;background:var(--bg-card-border);border-radius:5px;margin:10px auto 0;overflow:hidden}
+.cvfill{height:100%;border-radius:5px;background:var(--color-amber)}
+.rl li{padding:8px 0;border-bottom:1px solid var(--bg-card-border);list-style:none;display:flex;gap:10px;align-items:flex-start;font-size:14px}
+.rl li:last-child{border-bottom:none}
+.chartbox{position:relative;height:260px;margin-bottom:8px}
+.chartbox-sm{position:relative;height:200px}
+.chartbox-lg{position:relative;height:320px}
+.risk-card{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:10px;padding:16px;border-left:4px solid var(--color-red);margin-bottom:12px}
+.risk-card.med{border-left-color:var(--color-amber)}
+.risk-card.low-r{border-left-color:var(--color-green)}
+.thesis-col{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:12px;padding:20px}
+.thesis-col.bull{border-top:4px solid var(--color-green)}
+.thesis-col.base{border-top:4px solid var(--color-blue)}
+.thesis-col.bear{border-top:4px solid var(--color-red)}
+.cq{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:10px;padding:18px;margin-bottom:16px}
+.tli{position:relative;padding:0 0 22px 30px}
+.tli::before{content:'';position:absolute;left:9px;top:0;bottom:0;width:2px;background:var(--bg-card-border)}
+.tl-dot{position:absolute;left:3px;top:4px;width:14px;height:14px;border-radius:50%;background:var(--color-orange);border:2px solid var(--bg-body);z-index:1}
+.tl-dot.blue{background:var(--color-blue)}.tl-dot.green{background:var(--color-green)}
+.tl-dot.red{background:var(--color-red)}.tl-dot.grey{background:var(--text-muted)}
+.frow{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--bg-card-border);gap:12px;font-size:14px}
+.frow:last-child{border-bottom:none}
+.spark{display:block;width:80px;height:28px;flex-shrink:0}
+@media print{nav,.theme-toggle{display:none!important}main{padding:0}.tab-pane{display:block!important}body{background:#fff;color:#000}}
+@media(max-width:640px){.kv{font-size:20px}main{padding:12px 10px}.g4,.g5{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body><nav>
+<button onclick="showTab(0)" id="btn-0" class="active">Summary</button>
+<button onclick="showTab(1)" id="btn-1">Overview</button>
+<button onclick="showTab(2)" id="btn-2">Business</button>
+<button onclick="showTab(3)" id="btn-3">Industry</button>
+<button onclick="showTab(4)" id="btn-4">Financials</button>
+<button onclick="showTab(5)" id="btn-5">Growth</button>
+<button onclick="showTab(6)" id="btn-6">Forensics</button>
+<button onclick="showTab(7)" id="btn-7">Valuation</button>
+<button onclick="showTab(8)" id="btn-8">Thesis</button>
+<button onclick="showTab(9)" id="btn-9">Risks</button>
+<button onclick="showTab(10)" id="btn-10">Concall</button>
+<button onclick="showTab(11)" id="btn-11">Cap Alloc</button>
+<button onclick="showTab(12)" id="btn-12">Ownership</button>
+<button onclick="showTab(13)" id="btn-13">Events</button>
+<button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">Dark</button>
+</nav>
+<main id="dashboard">
+<div id="tab-0" class="tab-pane" style="display:block">
+<div class="verdict-hero">
+  <div class="vbadge">WATCH</div>
+  <div style="font-size:14px;color:var(--text-secondary);margin-bottom:6px">Conviction Score</div>
+  <div style="font-size:32px;font-weight:900;font-family:ui-monospace,monospace">5 <span style="font-size:18px;color:var(--text-muted)">/ 10</span></div>
+  <div class="cvtrack"><div class="cvfill" style="width:50%"></div></div>
+  <div style="margin-top:14px;font-size:13px;color:var(--text-secondary)">Forensic Rating: <span class="badge b-amber">AMBER FLAGS</span> &nbsp; Report Date: 08 May 2026</div>
+</div>
+
+<div class="card" style="margin-bottom:20px">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+    <div>
+      <div style="font-size:24px;font-weight:800;color:var(--color-navy)">Bhagyanagar India Limited</div>
+      <div style="font-size:14px;color:var(--text-secondary);margin-top:4px">NSE: BHAGYANGR &nbsp;|&nbsp; BSE: 512296 &nbsp;|&nbsp; Non-Ferrous Metals — Copper Products</div>
+      <div style="font-size:14px;color:var(--text-secondary)">Hyderabad, Telangana &nbsp;|&nbsp; Founded 1982 &nbsp;|&nbsp; Three Generations of Surana Family &nbsp;|&nbsp; 35,000 MT Capacity</div>
+    </div>
+    <div style="text-align:right;flex-shrink:0">
+      <div style="font-size:30px;font-weight:800;font-family:ui-monospace,monospace">&#8377;305</div>
+      <div style="font-size:12px;color:var(--text-muted)">CMP &nbsp;|&nbsp; Mkt Cap &#8377;970 Cr</div>
+      <div style="font-size:13px;margin-top:4px"><span class="up">&#8679; 285% 1Y return</span></div>
+      <div style="font-size:12px;color:var(--text-muted)">52W: &#8377;306 / &#8377;65.1</div>
+    </div>
+  </div>
+</div>
+
+<div class="stitle">Investment Thesis</div>
+<div class="card" style="margin-bottom:20px">
+  <p style="color:var(--text-secondary);line-height:1.85;font-size:15px">
+    Bhagyanagar India Limited delivered its best year in 40 years in FY26: revenue crossed &#8377;2,000 Cr for the first time, operational EBITDA crossed &#8377;100 Cr, and PAT crossed &#8377;50 Cr — all firsts. The pivot from commodity copper to value-added products (VAP 59% of revenue, up from ~35% in FY22) is structural and measurable — EBITDA/kg rose from &#8377;14 (FY22) to &#8377;43 (FY26 avg) to &#8377;62 (Q4 FY26). ROCE leapt from 8% to 21% in a single year. The NCLT demerger hearing (9 June 2026) is the next binary catalyst: approval separates high-growth copper (Tieramet Ltd) from Hyderabad land assets (BIL). However, the stock has already delivered 285% in 12 months and now trades at its 52-week high (&#8377;305/&#8377;306). Base-case fair value is &#8377;310–340, implying minimal near-term upside. The bear case (&#8377;120) reflects &#8377;169 Cr in contingent liabilities (66% of equity), ongoing management churn (MD, CFO, CS all changed in 18 months), and potential margin reversion. <strong>We rate WATCH</strong>: existing holders should stay; new investors should await NCLT outcome and a better entry below &#8377;260.
+  </p>
+</div>
+
+<div class="g2">
+  <div>
+    <div class="stitle">5 Key Points to Monitor</div>
+    <div class="card">
+      <ul class="rl">
+        <li><span style="color:var(--color-green);font-size:18px;font-weight:800;flex-shrink:0">&#10003;</span><div><strong>Operating Leverage — Structural, Not Cyclical</strong><br><span style="color:var(--text-secondary)">EBITDA/kg: &#8377;14 (FY22) &#8594; &#8377;43 (FY26 avg) &#8594; &#8377;62 (Q4). VAP mix Q1 52% &#8594; Q4 62%. EBITDA nearly doubled; PAT up 3.6x vs FY25.</span></div></li>
+        <li><span style="color:var(--color-green);font-size:18px;font-weight:800;flex-shrink:0">&#10003;</span><div><strong>NCLT Demerger — Binary Catalyst (9 June 2026)</strong><br><span style="color:var(--text-secondary)">Copper &#8594; Tieramet Ltd (new listed entity). Upal land: 16L sq ft FSI, Hyderabad. Book value &#8377;200–300 Cr; market value higher. Shareholder vote already passed.</span></div></li>
+        <li><span style="color:var(--color-green);font-size:18px;font-weight:800;flex-shrink:0">&#10003;</span><div><strong>Secular Copper Demand — Multi-decade Tailwind</strong><br><span style="color:var(--text-secondary)">AI data-center silver bus bars (USD 12,500/MT premium), solar PV ribbons, EV, power grid. India &#8594; 2nd largest copper economy. World demand doubles by 2050.</span></div></li>
+        <li><span style="color:var(--color-amber);font-size:18px;font-weight:800;flex-shrink:0">&#9888;</span><div><strong>Contingent Liabilities — Unresolved &#8377;169 Cr Overhang</strong><br><span style="color:var(--text-secondary)">GST &#8377;103 Cr + IT &#8377;66 Cr = &#8377;169 Cr. No provision made. Both under appeal. 66% of FY26 equity. Any adverse ruling = material equity erosion.</span></div></li>
+        <li><span style="color:var(--color-amber);font-size:18px;font-weight:800;flex-shrink:0">&#9888;</span><div><strong>Management Churn — Governance Red Flag</strong><br><span style="color:var(--text-secondary)">Narender Surana (founder MD) resigned Jan 2025. Multiple CS changes. CFO changed Q3&#8594;Q4 FY26. Surana family multi-gen concentration. Analyst flagged in Q3 concall.</span></div></li>
+      </ul>
+    </div>
+  </div>
+  <div>
+    <div class="stitle">Target Price Framework</div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="tw">
+        <table>
+          <thead><tr><th style="text-align:left">Scenario</th><th>Prob</th><th>FY27E EPS</th><th>P/E</th><th>Target</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge b-green">Bull</span> Margins sustain 5%+, NCLT approved</td><td>25%</td><td>&#8377;22</td><td>20x</td><td style="color:var(--color-green);font-weight:700">&#8377;440</td></tr>
+            <tr><td><span class="badge b-blue">Base</span> Margins 4.5%, demerger delayed</td><td>50%</td><td>&#8377;19</td><td>17x</td><td style="font-weight:700">&#8377;323</td></tr>
+            <tr><td><span class="badge b-red">Bear</span> Margin reversion, contingent hit</td><td>25%</td><td>&#8377;10</td><td>12x</td><td style="color:var(--color-red);font-weight:700">&#8377;120</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--bg-card-border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <span style="font-size:14px;color:var(--text-secondary)">Probability-weighted 12M target</span>
+        <span style="font-size:24px;font-weight:800;font-family:ui-monospace,monospace">&#8377;301</span>
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:6px">vs CMP &#8377;305 &#8594; Base case is priced in. New investors need bull delivery for positive returns.</div>
+    </div>
+    <div class="stitle">FY26 Milestones</div>
+    <div class="card">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div><div class="kl">Revenue</div><div class="kv" style="font-size:20px">&#8377;2,378 Cr</div><div class="kd up">+46% YoY</div></div>
+        <div><div class="kl">Op. EBITDA</div><div class="kv" style="font-size:20px">&#8377;106 Cr</div><div class="kd up">+186% YoY</div></div>
+        <div><div class="kl">PAT</div><div class="kv" style="font-size:20px">&#8377;50.2 Cr</div><div class="kd up">+258% YoY</div></div>
+        <div><div class="kl">EPS</div><div class="kv" style="font-size:20px">&#8377;15.68</div><div class="kd up">vs &#8377;4.38 FY25</div></div>
+        <div><div class="kl">ROCE</div><div class="kv" style="font-size:20px">20.7%</div><div class="kd up">vs 8% FY25</div></div>
+        <div><div class="kl">Volume</div><div class="kv" style="font-size:20px">24,000 MT</div><div class="kd up">+33% YoY</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<div id="tab-1" class="tab-pane">
+<div class="stitle">Key Performance Indicators — FY26 (Consolidated)</div>
+<div class="g4">
+  <div class="card">
+    <div class="kl">Revenue</div>
+    <div class="kv">&#8377;2,378 Cr</div>
+    <div class="kd up">+46.3% YoY</div>
+    <svg class="spark" viewBox="0 0 80 28"><polyline points="0,28 13,24.5 27,12.4 40,8.2 53,14.6 67,11.6 80,0" fill="none" stroke="#16A34A" stroke-width="2" stroke-linejoin="round"/></svg>
+    <div class="ks">FY20&#8594;FY26 trend</div>
+  </div>
+  <div class="card">
+    <div class="kl">EBITDA Margin</div>
+    <div class="kv">4.46%</div>
+    <div class="kd up">vs 2.28% FY25</div>
+    <svg class="spark" viewBox="0 0 80 28"><polyline points="0,19.4 13,22.6 27,28 40,28 53,25.8 67,23.7 80,0" fill="none" stroke="#16A34A" stroke-width="2" stroke-linejoin="round"/></svg>
+    <div class="ks">FY20&#8594;FY26 trend</div>
+  </div>
+  <div class="card">
+    <div class="kl">PAT</div>
+    <div class="kv">&#8377;50.2 Cr</div>
+    <div class="kd up">+258% YoY</div>
+    <svg class="spark" viewBox="0 0 80 28"><polyline points="0,28 13,26.9 27,22.3 40,22.9 53,2.3 67,20.6 80,0" fill="none" stroke="#16A34A" stroke-width="2" stroke-linejoin="round"/></svg>
+    <div class="ks">FY24 spike = one-time land sale</div>
+  </div>
+  <div class="card">
+    <div class="kl">EPS</div>
+    <div class="kv">&#8377;15.68</div>
+    <div class="kd up">vs &#8377;4.38 FY25</div>
+    <svg class="spark" viewBox="0 0 80 28"><polyline points="0,28 13,26.6 27,22.3 40,22.8 53,2.5 67,20.6 80,0" fill="none" stroke="#16A34A" stroke-width="2" stroke-linejoin="round"/></svg>
+    <div class="ks">FY20&#8594;FY26</div>
+  </div>
+  <div class="card">
+    <div class="kl">ROCE</div>
+    <div class="kv">20.7%</div>
+    <div class="kd up">vs 8% FY25</div>
+    <svg class="spark" viewBox="0 0 80 28"><polyline points="0,28 13,26.3 27,22.8 40,21 53,22.8 67,22.8 80,0" fill="none" stroke="#E8701A" stroke-width="2" stroke-linejoin="round"/></svg>
+    <div class="ks">FY20&#8594;FY26</div>
+  </div>
+  <div class="card">
+    <div class="kl">ROE</div>
+    <div class="kv">21.6%</div>
+    <div class="kd up">vs 6.8% FY25</div>
+    <div class="ks" style="margin-top:8px">ROIC: 25.3%</div>
+    <div class="ks">Return on Assets: 8.68%</div>
+  </div>
+  <div class="card">
+    <div class="kl">Debt / Equity</div>
+    <div class="kv">1.01x</div>
+    <div class="kd flat">vs 1.33x FY25</div>
+    <svg class="spark" viewBox="0 0 80 28"><polyline points="0,27.4 13,7.7 27,5.4 40,0 53,28 67,4.9 80,14" fill="none" stroke="#D97706" stroke-width="2" stroke-linejoin="round"/></svg>
+    <div class="ks">Declining from FY25 peak</div>
+  </div>
+  <div class="card">
+    <div class="kl">Market Cap</div>
+    <div class="kv">&#8377;970 Cr</div>
+    <div class="kd flat">P/E 19.3x | P/B 3.79x</div>
+    <div class="ks" style="margin-top:8px">EV/EBITDA: 11.1x</div>
+    <div class="ks">Face value: &#8377;2 | Shares: 3.20 Cr</div>
+  </div>
+</div>
+
+<div class="g2">
+  <div>
+    <div class="stitle">Annual Revenue &amp; EBITDA Trend (&#8377; Cr)</div>
+    <div class="card"><div class="chartbox"><canvas id="chartRevenue"></canvas></div></div>
+  </div>
+  <div>
+    <div class="stitle">Price &amp; Valuation Snapshot</div>
+    <div class="card">
+      <div class="tw">
+        <table>
+          <thead><tr><th style="text-align:left">Metric</th><th>Value</th><th>Context</th></tr></thead>
+          <tbody>
+            <tr><td>CMP</td><td>&#8377;305</td><td>08 May 2026</td></tr>
+            <tr><td>52W High</td><td>&#8377;306</td><td>Near all-time high</td></tr>
+            <tr><td>52W Low</td><td>&#8377;65.1</td><td>367% from low to high</td></tr>
+            <tr><td>1-Year Return</td><td class="up">+285%</td><td>vs ~15% Nifty</td></tr>
+            <tr><td>P/E (Trailing)</td><td>19.3x</td><td>on EPS &#8377;15.68</td></tr>
+            <tr><td>EV/EBITDA</td><td>11.1x</td><td>vs peer median 58x</td></tr>
+            <tr><td>P/B</td><td>3.79x</td><td>Book value &#8377;80.5</td></tr>
+            <tr><td>Dividend Yield</td><td>0.00%</td><td>No dividend since FY15</td></tr>
+            <tr><td>200-DMA</td><td>&#8377;150</td><td>CMP 103% above DMA</td></tr>
+            <tr><td>Promoter Holding</td><td>64.84%</td><td class="down">vs 74.71% Jun 2023</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="stitle">Historical Milestones</div>
+<div class="card">
+  <div style="display:flex;gap:0;overflow-x:auto;padding-bottom:8px">
+    <div style="min-width:120px;text-align:center;padding:12px 8px;border-right:1px solid var(--bg-card-border)"><div style="font-size:11px;color:var(--text-muted);text-transform:uppercase">FY15</div><div style="font-weight:700;font-size:14px">&#8377;279 Cr</div><div style="font-size:11px;color:var(--text-secondary)">Revenue</div></div>
+    <div style="min-width:120px;text-align:center;padding:12px 8px;border-right:1px solid var(--bg-card-border)"><div style="font-size:11px;color:var(--text-muted);text-transform:uppercase">FY22</div><div style="font-weight:700;font-size:14px">&#8377;1,574 Cr</div><div style="font-size:11px;color:var(--text-secondary)">2x jump on LME</div></div>
+    <div style="min-width:120px;text-align:center;padding:12px 8px;border-right:1px solid var(--bg-card-border)"><div style="font-size:11px;color:var(--text-muted);text-transform:uppercase">FY23</div><div style="font-weight:700;font-size:14px">&#8377;1,847 Cr</div><div style="font-size:11px;color:var(--text-secondary)">Peak pre-restructure</div></div>
+    <div style="min-width:120px;text-align:center;padding:12px 8px;border-right:1px solid var(--bg-card-border)"><div style="font-size:11px;color:var(--text-muted);text-transform:uppercase">Jan 2024</div><div style="font-weight:700;font-size:14px">Slump Sale</div><div style="font-size:11px;color:var(--text-secondary)">Copper &#8594; BCPL WOS</div></div>
+    <div style="min-width:120px;text-align:center;padding:12px 8px;border-right:1px solid var(--bg-card-border)"><div style="font-size:11px;color:var(--text-muted);text-transform:uppercase">FY25</div><div style="font-weight:700;font-size:14px">&#8377;1,626 Cr</div><div style="font-size:11px;color:var(--text-secondary)">2.28% EBITDA</div></div>
+    <div style="min-width:140px;text-align:center;padding:12px 8px;background:var(--highlight-latest);border-radius:8px"><div style="font-size:11px;color:var(--color-orange);text-transform:uppercase;font-weight:700">FY26 &#9733;</div><div style="font-weight:800;font-size:16px">&#8377;2,378 Cr</div><div style="font-size:11px;color:var(--text-secondary)">4.46% EBITDA &#8377;50 Cr PAT</div></div>
+  </div>
+</div>
+</div>
+<div id="tab-2" class="tab-pane">
+<div class="stitle">Business Overview</div>
+<div class="card" style="margin-bottom:20px">
+  <p style="color:var(--text-secondary);font-size:15px;line-height:1.8">Bhagyanagar India Limited is a 40-year-old Hyderabad-based copper products manufacturer serving 500+ clients across auto, power, solar, and industrial sectors. The standalone entity holds wind power assets (6 MW) and owns 100% of Bhagyanagar Copper Pvt Ltd (BCPL) — the copper manufacturing WOS where all copper operations reside since Jan 2024 slump sale. A composite scheme of arrangement (Composite Scheme) is pending NCLT approval to split BCPL+BIL into Tieramet Limited (copper) and a real-estate-focused BIL.</p>
+</div>
+
+<div class="stitle">Product Portfolio</div>
+<div class="tw" style="margin-bottom:20px">
+  <table>
+    <thead><tr><th style="text-align:left">Product</th><th>Application</th><th>VAP?</th><th>Key Differentiator</th><th>Margin Profile</th></tr></thead>
+    <tbody>
+      <tr><td>Silver-Plated Bus Bars</td><td>AI Data Centers, EV Charging</td><td><span class="badge b-high">High VAP</span></td><td>Only Indian maker up to 300mm width; UL/CE certified</td><td>&#8377;62+/kg EBITDA</td></tr>
+      <tr><td>Standard Bus Bars</td><td>Switchgear, Panel Builders</td><td><span class="badge b-med">VAP</span></td><td>Quality consistency; long-standing OEM relationships</td><td>Premium vs rod</td></tr>
+      <tr><td>Solar PV Interconnect Ribbons</td><td>Solar Module Stringing</td><td><span class="badge b-high">High VAP</span></td><td>Tinned copper strips; domestic vs import substitute</td><td>High margin</td></tr>
+      <tr><td>Transformer Windings / Strips</td><td>Power &amp; Dist. Transformers</td><td><span class="badge b-med">VAP</span></td><td>Precision dimensional control; Lucas TVS, Toshiba</td><td>Moderate premium</td></tr>
+      <tr><td>Enameled Copper Wire</td><td>Motors, Transformers, Electronics</td><td><span class="badge b-low">Standard</span></td><td>Established base; V-Guard, HBL clients</td><td>Thin</td></tr>
+      <tr><td>Copper Rods / Billets</td><td>Semi-finished; internal + external</td><td><span class="badge b-grey">Commodity</span></td><td>Backward-integrated from scrap; cost advantage</td><td>Commodity</td></tr>
+      <tr><td>Copper Scrap Recycling</td><td>Raw material input</td><td><span class="badge b-blue">New (FY27)</span></td><td>Closed-loop: plastics+aluminum byproducts &#8594; granules</td><td>&#8377;10 Cr capex</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="g2">
+  <div>
+    <div class="stitle">Competitive Moat Scorecard</div>
+    <div class="card">
+      <div style="font-size:14px">
+        <div class="frow"><span>Scale &amp; Capacity</span><span class="badge b-med">MODERATE</span></div>
+        <div class="frow"><span>Certifications (UL, CE, ISO)</span><span class="badge b-green">STRONG</span></div>
+        <div class="frow"><span>Silver Bus Bar Capability (300mm)</span><span class="badge b-green">STRONG — only in India</span></div>
+        <div class="frow"><span>Customer Relationships (30+ yr)</span><span class="badge b-green">STRONG</span></div>
+        <div class="frow"><span>Backward Integration (scrap)</span><span class="badge b-med">MODERATE</span></div>
+        <div class="frow"><span>Brand / Pricing Power</span><span class="badge b-med">MODERATE</span></div>
+        <div class="frow"><span>Switching Costs</span><span class="badge b-med">MODERATE</span></div>
+        <div class="frow"><span>Network Effects</span><span class="badge b-grey">WEAK — none applicable</span></div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="stitle">Key Customers &amp; Geography</div>
+    <div class="card">
+      <div class="frow"><span style="font-weight:600">L&amp;T</span><span class="badge b-blue">Power / Infra</span></div>
+      <div class="frow"><span style="font-weight:600">Lucas TVS</span><span class="badge b-blue">Auto (35+ yr relationship)</span></div>
+      <div class="frow"><span style="font-weight:600">Medha Servo</span><span class="badge b-blue">Railways</span></div>
+      <div class="frow"><span style="font-weight:600">HBL Power</span><span class="badge b-blue">Industrial</span></div>
+      <div class="frow"><span style="font-weight:600">Toshiba / Sterling &amp; Wilson</span><span class="badge b-blue">Solar / Power</span></div>
+      <div class="frow"><span style="font-weight:600">V-Guard</span><span class="badge b-blue">Consumer Electricals</span></div>
+      <div style="margin-top:12px;font-size:13px;color:var(--text-secondary)"><strong>Geography:</strong> South India dominant (&#8377;97,376L); China largest export (&#8377;17,723L). Exports 17–25% of revenue. Top 5 customers ~23% of revenue (well diversified).</div>
+    </div>
+
+    <div class="stitle" style="margin-top:16px">Structure Post Slump-Sale</div>
+    <div class="card">
+      <div style="font-size:14px;line-height:1.9;color:var(--text-secondary)">
+        <strong>BIL (Listed Parent)</strong> — Wind power (6 MW); holds 100% BCPL; owns Hyderabad land parcels<br>
+        <strong>BCPL (WOS)</strong> — Entire copper manufacturing since 1 Jan 2024; rated BBB+ (new agency)<br>
+        <strong>Pending:</strong> Composite Scheme &#8594; <strong>Tieramet Ltd</strong> (copper, new listing) + <strong>BIL</strong> (real estate)<br>
+        <strong>NCLT Hearing: 9 June 2026</strong>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<div id="tab-3" class="tab-pane">
+<div class="stitle">Industry Overview — Indian Copper Products</div>
+<div class="g3" style="margin-bottom:20px">
+  <div class="card"><div class="kl">India Copper Demand (FY26E)</div><div class="kv">1.6M MT/yr</div><div class="ks">Growing 7–9% CAGR; India &#8594; 2nd largest consumer globally</div></div>
+  <div class="card"><div class="kl">World Consumption 2023</div><div class="kv">26M MT</div><div class="ks">Forecast 50M MT by 2050 — near doubling</div></div>
+  <div class="card"><div class="kl">Industry Lifecycle Stage</div><div class="kv"><span class="badge b-green" style="font-size:14px">GROWTH</span></div><div class="ks">Demand doubling, India underinvested vs China</div></div>
+  <div class="card"><div class="kl">Market Structure</div><div class="kv">Fragmented</div><div class="ks">Hindalco dominates primary; secondary/VAP fragmented</div></div>
+  <div class="card"><div class="kl">Organised vs Unorganised</div><div class="kv">~40/60</div><div class="ks">BIL in organised tier; unorganised on price pressure</div></div>
+  <div class="card"><div class="kl">BIL's Addressable Market</div><div class="kv">&#8377;25,000+ Cr</div><div class="ks">VAP copper products segment (bus bars, ribbons, windings)</div></div>
+</div>
+
+<div class="stitle">Structural Demand Drivers</div>
+<div class="g3" style="margin-bottom:20px">
+  <div class="card" style="border-top:3px solid var(--color-green)">
+    <div style="font-weight:700;margin-bottom:8px">&#9889; AI / Data Centers</div>
+    <div style="font-size:13px;color:var(--text-secondary)">Silver-plated bus bars for power distribution in hyperscaler data centers. BIL secured 106 MT at USD 1.33M (USD 12,500/MT — 3–4x standard pricing). India's data center capex: USD 5B+ through 2028.</div>
+  </div>
+  <div class="card" style="border-top:3px solid var(--color-green)">
+    <div style="font-weight:700;margin-bottom:8px">&#9728; Solar Energy</div>
+    <div style="font-size:13px;color:var(--text-secondary)">India targets 50+ GW solar addition per year. Each GW requires significant copper ribbon volume. BIL positioned as domestic supplier vs imports. PV ribbon added to portfolio in 2023.</div>
+  </div>
+  <div class="card" style="border-top:3px solid var(--color-green)">
+    <div style="font-weight:700;margin-bottom:8px">&#9889; EV &amp; Auto</div>
+    <div style="font-size:13px;color:var(--text-secondary)">EVs use 3–4x more copper than ICE vehicles. BIL supplies auto OEMs (Lucas TVS 35+ yrs) and EV charging infra bus bars. India EV penetration to accelerate through 2030.</div>
+  </div>
+  <div class="card" style="border-top:3px solid var(--color-blue)">
+    <div style="font-weight:700;margin-bottom:8px">&#9889; Power Grid</div>
+    <div style="font-size:13px;color:var(--text-secondary)">India's power transmission capex: &#8377;3L+ Cr through FY30. Transformer windings, bus bars for switchgear. L&amp;T, Toshiba, Medha Servo are direct customers.</div>
+  </div>
+  <div class="card" style="border-top:3px solid var(--color-blue)">
+    <div style="font-weight:700;margin-bottom:8px">&#128338; Railways Electrification</div>
+    <div style="font-size:13px;color:var(--text-secondary)">Medha Servo is a key BIL client for railway traction motors. Indian Railways 100% electrification target drives copper demand for overhead wiring and traction equipment.</div>
+  </div>
+  <div class="card" style="border-top:3px solid var(--color-amber)">
+    <div style="font-weight:700;margin-bottom:8px">&#9888; LME Copper Price Risk</div>
+    <div style="font-size:13px;color:var(--text-secondary)">Raw material is ~90% of cost. Price pass-through model protects revenue but compresses margins if LME spikes. 50–60% inventory hedged on MCX. Net forex exposure partially hedged.</div>
+  </div>
+</div>
+
+<div class="stitle">Competitive Landscape</div>
+<div class="tw" style="margin-bottom:20px">
+  <table>
+    <thead><tr><th style="text-align:left">Company</th><th>Mkt Cap (Cr)</th><th>Revenue Type</th><th>OPM%</th><th>ROCE%</th><th>P/E</th><th>EV/EBITDA</th></tr></thead>
+    <tbody>
+      <tr><td>Hindustan Copper</td><td>&#8377;54,999</td><td>Primary copper (mining)</td><td>37.9%</td><td>23.8%</td><td>82.4x</td><td>50.3x</td></tr>
+      <tr style="background:var(--highlight-latest)"><td><strong>Bhagyanagar India (BIL)</strong></td><td><strong>&#8377;970</strong></td><td><strong>VAP copper products</strong></td><td><strong>4.46%</strong></td><td><strong>20.7%</strong></td><td><strong>19.3x</strong></td><td><strong>11.1x</strong></td></tr>
+      <tr><td>Mardia Samyoung</td><td>&#8377;499</td><td>Copper alloys</td><td>12.8%</td><td>22.6%</td><td>484x</td><td>306x</td></tr>
+      <tr><td>N D Metal Industries</td><td>&#8377;19</td><td>Non-ferrous metals</td><td>neg</td><td>6.6%</td><td>89.8x</td><td>52.2x</td></tr>
+      <tr><td>Onix Solar</td><td>&#8377;2,721</td><td>Solar products + copper</td><td>25.3%</td><td>10.2%</td><td>67.7x</td><td>67.5x</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="stitle" style="margin-top:0">Structural Tailwinds (3–5Y)</div>
+    <ul style="list-style:none;font-size:14px;color:var(--text-secondary)">
+      <li style="padding:6px 0;border-bottom:1px solid var(--bg-card-border)">&#10003; Global copper demand doubling to 50M MT by 2050</li>
+      <li style="padding:6px 0;border-bottom:1px solid var(--bg-card-border)">&#10003; India &#8594; 2nd largest copper consuming economy</li>
+      <li style="padding:6px 0;border-bottom:1px solid var(--bg-card-border)">&#10003; AI data center buildout: silver bus bar premium product</li>
+      <li style="padding:6px 0;border-bottom:1px solid var(--bg-card-border)">&#10003; 50 GW/year solar targets: PV ribbon demand</li>
+      <li style="padding:6px 0">&#10003; Make-in-India: domestic copper FAR ahead of imports</li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="stitle" style="margin-top:0">Structural Headwinds</div>
+    <ul style="list-style:none;font-size:14px;color:var(--text-secondary)">
+      <li style="padding:6px 0;border-bottom:1px solid var(--bg-card-border)">&#9888; LME copper price volatility — pass-through imperfect</li>
+      <li style="padding:6px 0;border-bottom:1px solid var(--bg-card-border)">&#9888; China dominates VAP copper globally; import competition possible</li>
+      <li style="padding:6px 0;border-bottom:1px solid var(--bg-card-border)">&#9888; Commodity product segments (rods, wires) face price pressure</li>
+      <li style="padding:6px 0">&#9888; Working capital intensive — copper inventory ties up capital</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div id="tab-4" class="tab-pane">
+<div class="stitle">Quarterly P&amp;L — Metrics as Rows, Periods as Columns (&#8377; Cr)</div>
+<div class="tw" style="margin-bottom:24px">
+  <table>
+    <thead>
+      <tr>
+        <th style="text-align:left;min-width:150px">Metric</th>
+        <th>Mar 23</th><th>Jun 23</th><th>Sep 23</th><th>Dec 23</th><th>Mar 24</th>
+        <th>Jun 24</th><th>Sep 24</th><th>Dec 24</th><th>Mar 25</th>
+        <th>Jun 25</th><th>Sep 25</th><th>Dec 25</th><th class="hl">Mar 26</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Revenue</td><td>663</td><td>346</td><td>340</td><td>335</td><td>409</td><td>369</td><td>408</td><td>394</td><td>454</td><td>486</td><td>580</td><td>577</td><td class="hl">735</td></tr>
+      <tr><td>EBITDA</td><td>15</td><td>6</td><td>8</td><td>8</td><td>8</td><td>7</td><td>8</td><td>11</td><td>11</td><td>16</td><td>25</td><td>29</td><td class="hl">36</td></tr>
+      <tr><td>EBITDA Margin</td><td>2.3%</td><td>1.7%</td><td>2.4%</td><td>2.4%</td><td>2.0%</td><td>1.9%</td><td>2.0%</td><td>2.8%</td><td>2.4%</td><td>3.3%</td><td>4.3%</td><td>5.0%</td><td class="hl">4.9%</td></tr>
+      <tr><td>PAT &#9432;</td><td>6</td><td>38*</td><td>3</td><td>3</td><td>2</td><td>2</td><td>4</td><td>4</td><td>5</td><td>8</td><td>11</td><td>13</td><td class="hl">18</td></tr>
+      <tr><td>PAT Margin</td><td>0.9%</td><td>11.0%*</td><td>0.9%</td><td>0.9%</td><td>0.5%</td><td>0.5%</td><td>1.0%</td><td>1.0%</td><td>1.1%</td><td>1.6%</td><td>1.9%</td><td>2.3%</td><td class="hl">2.5%</td></tr>
+      <tr><td>EPS (&#8377;)</td><td>1.81</td><td>11.88*</td><td>0.78</td><td>0.86</td><td>0.76</td><td>0.54</td><td>1.17</td><td>1.25</td><td>1.43</td><td>2.37</td><td>3.52</td><td>4.01</td><td class="hl">5.78</td></tr>
+    </tbody>
+  </table>
+</div>
+<div style="font-size:12px;color:var(--text-muted);margin-bottom:20px">* Jun 2023 PAT &#8377;38 Cr includes ~&#8377;43 Cr one-time gain on land/asset sale — not operating income.</div>
+
+<div class="stitle">Annual P&amp;L Summary (&#8377; Cr)</div>
+<div class="tw" style="margin-bottom:24px">
+  <table>
+    <thead><tr><th style="text-align:left">Metric</th><th>FY21</th><th>FY22</th><th>FY23</th><th>FY24 &#9432;</th><th>FY25</th><th class="hl">FY26</th></tr></thead>
+    <tbody>
+      <tr><td>Revenue</td><td>787</td><td>1,574</td><td>1,847</td><td>1,429</td><td>1,626</td><td class="hl">2,378</td></tr>
+      <tr><td>YoY Growth</td><td>40%</td><td>100%</td><td>17%</td><td>-23%</td><td>14%</td><td class="hl">+46%</td></tr>
+      <tr><td>EBITDA</td><td>19</td><td>30</td><td>35</td><td>30</td><td>37</td><td class="hl">106</td></tr>
+      <tr><td>EBITDA Margin</td><td>2.4%</td><td>1.9%</td><td>1.9%</td><td>2.1%</td><td>2.3%</td><td class="hl">4.5%</td></tr>
+      <tr><td>Finance Cost</td><td>8</td><td>12</td><td>15</td><td>13</td><td>17</td><td class="hl">36</td></tr>
+      <tr><td>D&amp;A</td><td>6</td><td>6</td><td>6</td><td>7</td><td>7</td><td class="hl">7</td></tr>
+      <tr><td>PBT</td><td>5</td><td>13</td><td>14</td><td>56</td><td>19</td><td class="hl">68</td></tr>
+      <tr><td>PAT</td><td>3</td><td>11</td><td>10</td><td>46 &#9432;</td><td>14</td><td class="hl">50</td></tr>
+      <tr><td>PAT Margin</td><td>0.4%</td><td>0.7%</td><td>0.5%</td><td>3.2%&#9432;</td><td>0.9%</td><td class="hl">2.1%</td></tr>
+      <tr><td>EPS (&#8377;)</td><td>1.09</td><td>3.46</td><td>3.17</td><td>14.29&#9432;</td><td>4.38</td><td class="hl">15.68</td></tr>
+    </tbody>
+  </table>
+</div>
+<div style="font-size:12px;color:var(--text-muted);margin-bottom:24px">&#9432; FY24 PAT &#8377;46 Cr includes ~&#8377;43 Cr one-time gain on sale of land/assets. Normalized FY24 PAT ~&#8377;3–4 Cr.</div>
+
+<div class="g2" style="margin-bottom:24px">
+  <div>
+    <div class="stitle">Cash Flow Quality (&#8377; Cr)</div>
+    <div class="tw">
+      <table>
+        <thead><tr><th style="text-align:left">Year</th><th>OCF</th><th>CFI</th><th>CFF</th><th>FCF</th><th>OCF/PAT</th></tr></thead>
+        <tbody>
+          <tr><td>FY22</td><td>-4</td><td>-1</td><td>14</td><td>-5</td><td class="down">neg</td></tr>
+          <tr><td>FY23</td><td>-40</td><td>3</td><td>27</td><td>-49</td><td class="down">neg</td></tr>
+          <tr><td>FY24 &#9432;</td><td>96</td><td>39</td><td>-133</td><td>135</td><td class="up">2.1x</td></tr>
+          <tr><td>FY25</td><td>-144</td><td>-10</td><td>155</td><td>-150</td><td class="down">neg</td></tr>
+          <tr style="background:var(--highlight-latest)"><td><strong>FY26</strong></td><td class="up">+59</td><td>-5</td><td>-59</td><td class="up">+50</td><td class="up">1.2x</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="font-size:12px;color:var(--text-muted);margin-top:8px">FY24 OCF elevated by copper slump-sale proceeds. FY25 OCF deeply negative due to working capital build-up. FY26: sharp turnaround to +&#8377;59 Cr OCF.</div>
+  </div>
+  <div>
+    <div class="stitle">Balance Sheet Snapshot (&#8377; Cr)</div>
+    <div class="tw">
+      <table>
+        <thead><tr><th style="text-align:left">Item</th><th>FY24</th><th>FY25</th><th class="hl">FY26</th></tr></thead>
+        <tbody>
+          <tr><td>Total Assets</td><td>334</td><td>521</td><td class="hl">635</td></tr>
+          <tr><td>Fixed Assets</td><td>77</td><td>80</td><td class="hl">84</td></tr>
+          <tr><td>Inventories</td><td>~100</td><td>157</td><td class="hl">230</td></tr>
+          <tr><td>Receivables</td><td>~88</td><td>~120</td><td class="hl">201</td></tr>
+          <tr><td>Total Borrowings</td><td>101</td><td>275</td><td class="hl">259</td></tr>
+          <tr><td>Total Equity</td><td>193</td><td>207</td><td class="hl">257</td></tr>
+          <tr><td>D/E Ratio</td><td>0.52x</td><td>1.33x</td><td class="hl">1.01x</td></tr>
+          <tr><td>Net Working Capital</td><td>~120</td><td>157</td><td class="hl">230</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="g2" style="margin-bottom:24px">
+  <div>
+    <div class="stitle">Efficiency Ratios</div>
+    <div class="tw">
+      <table>
+        <thead><tr><th style="text-align:left">Ratio</th><th>FY23</th><th>FY24</th><th>FY25</th><th class="hl">FY26</th></tr></thead>
+        <tbody>
+          <tr><td>ROCE %</td><td>9%</td><td>8%</td><td>8%</td><td class="hl">21%</td></tr>
+          <tr><td>ROE %</td><td>7%</td><td>25%</td><td>7%</td><td class="hl">22%</td></tr>
+          <tr><td>Debtor Days</td><td>25</td><td>25</td><td>33</td><td class="hl">31</td></tr>
+          <tr><td>Inventory Days</td><td>---</td><td>---</td><td>---</td><td class="hl">39</td></tr>
+          <tr><td>Payable Days</td><td>---</td><td>---</td><td>---</td><td class="hl">5</td></tr>
+          <tr><td>Cash Conv. Cycle</td><td>25</td><td>33</td><td>33</td><td class="hl">65</td></tr>
+          <tr><td>Interest Coverage</td><td>1.9x</td><td>4.3x</td><td>2.1x</td><td class="hl">2.9x</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div>
+    <div class="stitle">Financial Health Scores</div>
+    <div class="card">
+      <div class="frow"><span style="font-weight:600">Piotroski F-Score</span><span><span class="badge b-green" style="font-size:14px">9 / 9</span> &nbsp; <span style="font-size:12px;color:var(--text-muted)">All 9 tests pass</span></span></div>
+      <div style="font-size:12px;color:var(--text-secondary);margin:8px 0 12px;padding-left:4px">Positive ROA &#10003; &nbsp; Positive OCF &#10003; &nbsp; ROA improving &#10003; &nbsp; OCF &gt; ROA &#10003; &nbsp; Leverage down &#10003; &nbsp; Liquidity up &#10003; &nbsp; No dilution &#10003; &nbsp; OPM up &#10003; &nbsp; Asset turn up &#10003;</div>
+      <div class="frow"><span style="font-weight:600">Altman Z-Score</span><span><span class="badge b-green" style="font-size:14px">6.85</span> &nbsp; <span style="font-size:12px;color:var(--text-muted)">Safe Zone (&gt;2.99)</span></span></div>
+      <div style="font-size:12px;color:var(--text-secondary);margin-top:8px;padding-left:4px">Strong asset turnover (3.7x) and market cap vs liabilities (2.6x) drive the score. No distress risk.</div>
+    </div>
+  </div>
+</div>
+
+<div class="stitle">Quarterly Revenue Trend Chart</div>
+<div class="card"><div class="chartbox"><canvas id="chartQtrRev"></canvas></div></div>
+</div>
+<div id="tab-5" class="tab-pane">
+<div class="stitle">Revenue CAGR Cards</div>
+<div class="g4" style="margin-bottom:20px">
+  <div class="card" style="text-align:center">
+    <div class="kl">1-Year (FY25&#8594;FY26)</div>
+    <div class="kv up">+46.3%</div>
+    <div class="ks">&#8377;1,626 Cr &#8594; &#8377;2,378 Cr</div>
+  </div>
+  <div class="card" style="text-align:center">
+    <div class="kl">3-Year CAGR (FY23&#8594;FY26)</div>
+    <div class="kv">+8.8%</div>
+    <div class="ks">&#8377;1,847 Cr &#8594; &#8377;2,378 Cr</div>
+  </div>
+  <div class="card" style="text-align:center">
+    <div class="kl">5-Year CAGR (FY21&#8594;FY26)</div>
+    <div class="kv up">+24.7%</div>
+    <div class="ks">&#8377;787 Cr &#8594; &#8377;2,378 Cr</div>
+  </div>
+  <div class="card" style="text-align:center">
+    <div class="kl">PAT 1-Year Growth</div>
+    <div class="kv up">+258%</div>
+    <div class="ks">&#8377;14 Cr &#8594; &#8377;50 Cr</div>
+  </div>
+  <div class="card" style="text-align:center">
+    <div class="kl">EBITDA/kg FY25&#8594;FY26</div>
+    <div class="kv up">&#8377;43/kg</div>
+    <div class="ks">Q4 FY26 peak: &#8377;62/kg</div>
+  </div>
+  <div class="card" style="text-align:center">
+    <div class="kl">Volume Growth FY25&#8594;FY26</div>
+    <div class="kv up">+33%</div>
+    <div class="ks">18,000 MT &#8594; 24,000 MT</div>
+  </div>
+</div>
+
+<div class="stitle">Growth Trigger Cards</div>
+<div class="g2" style="margin-bottom:20px">
+  <div class="card" style="border-top:4px solid var(--color-green)">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+      <strong style="font-size:15px">#1 — Silver-Plated Bus Bars (AI Data Centers)</strong>
+      <span class="badge b-high">HIGH</span>
+    </div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px"><strong>Opportunity:</strong> AI/hyperscaler boom in India. BIL is the only Indian maker of bus bars up to 300mm. Initial order 106 MT at USD 1.33M (USD 12,500/MT = 3–4x standard pricing). Ongoing conversations for repeat/larger orders.</div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px"><strong>Timeline:</strong> Now — repeat orders FY27+. USD 5B+ data center investments in India by 2028.</div>
+    <div style="font-size:13px;color:var(--color-red)"><strong>Bear pushback:</strong> Data center capex can delay or shift overseas. First order is only 106 MT; scale-up unproven. USD pricing volatile.</div>
+  </div>
+  <div class="card" style="border-top:4px solid var(--color-green)">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+      <strong style="font-size:15px">#2 — Solar PV Interconnect Ribbons</strong>
+      <span class="badge b-high">HIGH</span>
+    </div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px"><strong>Opportunity:</strong> India 50+ GW/year solar target. Each GW needs significant copper ribbon volume. BIL entered in 2023 as domestic supplier vs imports (China). Growing rapidly.</div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px"><strong>Timeline:</strong> FY26–FY29. Growing with India's solar build-out cycle.</div>
+    <div style="font-size:13px;color:var(--color-red)"><strong>Bear pushback:</strong> Chinese imports. Module manufacturers under margin pressure. Policy risk if solar PLI changes.</div>
+  </div>
+  <div class="card" style="border-top:4px solid var(--color-amber)">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+      <strong style="font-size:15px">#3 — Capacity Expansion 35K &#8594; 50K MT</strong>
+      <span class="badge b-med">MEDIUM</span>
+    </div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px"><strong>Opportunity:</strong> Current 35K MT (fully utilized at ~24K MT sold = 69% util). 50K MT target for FY27-28 would enable &#8377;3,500–4,000 Cr revenue at current realizations.</div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px"><strong>Timeline:</strong> FY27-28. Capex to be announced. Management guided &#8377;5,000 Cr by FY28-29.</div>
+    <div style="font-size:13px;color:var(--color-red)"><strong>Bear pushback:</strong> Capex requires debt. Working capital grows proportionally. No formal announcement yet.</div>
+  </div>
+  <div class="card" style="border-top:4px solid var(--color-amber)">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+      <strong style="font-size:15px">#4 — Demerger Real Estate Value Unlock</strong>
+      <span class="badge b-med">MEDIUM</span>
+    </div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px"><strong>Opportunity:</strong> 3 Hyderabad industrial land parcels. Upal: 16L sq ft FSI development potential. Book value &#8377;200–300 Cr at circle rates; management says market value "significantly higher." Post-demerger BIL = pure real estate play.</div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px"><strong>Timeline:</strong> NCLT hearing 9 June 2026. Actual monetization likely FY27-28.</div>
+    <div style="font-size:13px;color:var(--color-red)"><strong>Bear pushback:</strong> NCLT can delay further. Real estate development timelines unpredictable. No developer announced yet.</div>
+  </div>
+  <div class="card" style="border-top:4px solid var(--color-blue)">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+      <strong style="font-size:15px">#5 — Credit Rating Upgrade: BBB+ &#8594; A-</strong>
+      <span class="badge b-opt">OPTIONALITY</span>
+    </div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px"><strong>Opportunity:</strong> Current BCPL rating BBB+. Target A- by end FY27. A- unlocks borrowing cost below 8% (vs 8.5–9% now). At &#8377;259 Cr debt, 100bps rate reduction = ~&#8377;2.6 Cr interest saving = direct PAT upside.</div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px"><strong>Timeline:</strong> FY27 end if margins sustain at 5%+.</div>
+    <div style="font-size:13px;color:var(--color-red)"><strong>Bear pushback:</strong> Contingent liabilities (&#8377;169 Cr) may delay rating agencies. Management churn is negative for rating agencies.</div>
+  </div>
+  <div class="card" style="border-top:4px solid var(--color-blue)">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+      <strong style="font-size:15px">#6 — VAP Mix Expansion: 59% &#8594; 70%+</strong>
+      <span class="badge b-opt">OPTIONALITY</span>
+    </div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px"><strong>Opportunity:</strong> VAP volume grew +46.7% YoY in FY26. Each 1% shift from commodity to VAP adds ~&#8377;1.5–2 Cr to EBITDA. Target mix 70%+ would push margins toward 5.5–6%.</div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px"><strong>Timeline:</strong> Gradual — FY27-FY29. Depends on product qualification cycles at OEMs/utilities.</div>
+    <div style="font-size:13px;color:var(--color-red)"><strong>Bear pushback:</strong> Q1 FY27 mix could regress if commodity orders surge. VAP capacity is ceiling-constrained without 50K MT expansion.</div>
+  </div>
+</div>
+
+<div class="stitle">EBITDA per kg Trajectory &amp; Capacity Utilisation</div>
+<div class="g2">
+  <div class="card">
+    <div class="chartbox-sm"><canvas id="chartEBITDAkg"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="frow"><span>Installed Capacity (FY26)</span><span style="font-weight:700">35,000 MT</span></div>
+    <div class="frow"><span>Volume Sold (FY26)</span><span style="font-weight:700">24,000 MT</span></div>
+    <div class="frow"><span>Utilisation Rate</span><span style="font-weight:700">69%</span></div>
+    <div class="frow"><span>Q4 FY26 Run-rate Revenue</span><span style="font-weight:700 class="up">&#8377;2,940 Cr annualized</span></div>
+    <div class="frow"><span>Next Capacity Target</span><span style="font-weight:700">50,000 MT (FY27-28)</span></div>
+    <div class="frow"><span>FY28-29 Revenue Target (mgmt)</span><span style="font-weight:700">&#8377;5,000 Cr</span></div>
+    <div style="margin-top:12px;font-size:13px;color:var(--text-secondary)">Management implies ~&#8377;100/kg realisation at 50K MT and 5%+ margin = ~&#8377;250 Cr EBITDA at scale.</div>
+  </div>
+</div>
+</div>
+<div id="tab-6" class="tab-pane">
+<div class="stitle">Forensic Overview</div>
+<div class="card" style="margin-bottom:20px;border-left:4px solid var(--color-amber)">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+    <div><strong style="font-size:16px">Overall Forensic Verdict: <span class="badge b-amber" style="font-size:14px">AMBER FLAGS</span></strong></div>
+    <div style="font-size:13px;color:var(--text-secondary)">Clean auditor + IFC opinion, but high contingent liabilities and management churn are material concerns.</div>
+  </div>
+</div>
+
+<div class="g2">
+  <div>
+    <div class="stitle">Auditor &amp; IFC</div>
+    <div class="card">
+      <div class="frow"><span>Auditor</span><span><strong>S.R. Batliboi &amp; Associates LLP</strong><br><span style="font-size:12px;color:var(--text-muted)">(EY network affiliate — mid-tier Big 4)</span></span></div>
+      <div class="frow"><span>IFC Opinion</span><span class="badge b-green">CLEAN</span></div>
+      <div class="frow"><span>Audit Opinion</span><span class="badge b-green">UNQUALIFIED</span></div>
+      <div class="frow"><span>Emphasis of Matter</span><span style="font-size:13px">Composite Scheme pending NCLT — disclosed</span></div>
+    </div>
+
+    <div class="stitle" style="margin-top:20px">Key Audit Matters (KAMs)</div>
+    <div class="card">
+      <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--bg-card-border)">
+        <div style="font-weight:600;font-size:14px">1. Revenue Recognition</div>
+        <div style="font-size:13px;color:var(--text-secondary);margin-top:4px">Copper price pass-through model. Revenue timing and LME adjustments create complexity. Auditor focused on cut-off testing and LME reconciliation.</div>
+        <div style="margin-top:6px"><span class="badge b-med">UNCHANGED vs prior year</span></div>
+      </div>
+      <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--bg-card-border)">
+        <div style="font-weight:600;font-size:14px">2. Inventory Valuation</div>
+        <div style="font-size:13px;color:var(--text-secondary);margin-top:4px">Copper scrap inventory valued at lower of cost or NRV. Hedge accounting treatment for MCX hedges (50–60% hedged). Working capital &#8377;230 Cr = material balance.</div>
+        <div style="margin-top:6px"><span class="badge b-med">UNCHANGED vs prior year</span></div>
+      </div>
+      <div>
+        <div style="font-weight:600;font-size:14px">3. Contingent Liabilities</div>
+        <div style="font-size:13px;color:var(--text-secondary);margin-top:4px">GST and income tax demands totaling &#8377;169 Cr under appeal. Management asserts likelihood of adverse outcome is low. Auditor reviewed management assessment — no provision made.</div>
+        <div style="margin-top:6px"><span class="badge b-high">HIGH RISK — watch item</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="stitle">Contingent Liabilities (CRITICAL)</div>
+    <div class="card" style="border-left:4px solid var(--color-red);margin-bottom:16px">
+      <div class="tw">
+        <table>
+          <thead><tr><th style="text-align:left">Item</th><th>Amount (Cr)</th><th>% FY26 Equity</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>GST Demand</td><td class="down">&#8377;103 Cr</td><td class="down">40%</td><td><span class="badge b-high">Under Appeal</span></td></tr>
+            <tr><td>Income Tax Demand</td><td class="down">&#8377;66 Cr</td><td class="down">26%</td><td><span class="badge b-high">Under Appeal</span></td></tr>
+            <tr style="background:var(--highlight-latest)"><td><strong>TOTAL</strong></td><td class="down"><strong>&#8377;169 Cr</strong></td><td class="down"><strong>66%</strong></td><td><span class="badge b-high">NO PROVISION</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="font-size:12px;color:var(--color-red);margin-top:10px;font-weight:600">&#9888; Any adverse ruling on either demand would materially erode equity. No provision = binary risk. FY25 equity &#8377;207 Cr; FY26 equity &#8377;257 Cr. Full hit would reduce equity by 66%.</div>
+    </div>
+
+    <div class="stitle">Related Party Transactions</div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="tw">
+        <table>
+          <thead><tr><th style="text-align:left">Counterparty</th><th>Nature</th><th>FY26 (Cr)</th><th>Risk</th></tr></thead>
+          <tbody>
+            <tr><td>Bhagyanagar Copper Pvt Ltd (BCPL)</td><td>Loans extended (BIL&#8594;BCPL)</td><td>&#8377;124.9 Cr</td><td><span class="badge b-med">MEDIUM</span></td></tr>
+            <tr><td>BCPL</td><td>Copper operations (WOS)</td><td>Consolidated</td><td><span class="badge b-low">CLEAN</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="font-size:12px;color:var(--text-secondary);margin-top:8px">BIL loans to BCPL (WOS) growing as BIL funds copper business scale-up. Appropriate given ownership; will be eliminated post-demerger. No external RPT concerns identified.</div>
+    </div>
+
+    <div class="stitle">Management Change Log</div>
+    <div class="card" style="border-left:4px solid var(--color-amber)">
+      <div class="frow"><span style="font-size:13px"><strong>Narender Surana</strong> — resigned as MD</span><span class="badge b-amber">15 Jan 2025</span></div>
+      <div class="frow"><span style="font-size:13px"><strong>Multiple Company Secretary changes</strong> (2+ in 18 months)</span><span class="badge b-amber">FY25-FY26</span></div>
+      <div class="frow"><span style="font-size:13px"><strong>CFO change:</strong> Kiran &#8594; Surendra Bhutoria</span><span class="badge b-amber">Between Q3-Q4 FY26</span></div>
+      <div class="frow"><span style="font-size:13px"><strong>Advait Surana</strong> — BD Manager (3rd gen) now on calls</span><span class="badge b-grey">Q4 FY26</span></div>
+      <div style="margin-top:10px;font-size:12px;color:var(--color-red)">&#9888; Multiple key executive exits in 18 months flagged by analyst on Q3 FY26 concall. Management attributed to personal/career reasons. No further explanation given.</div>
+    </div>
+  </div>
+</div>
+
+<div class="stitle">Forensic Scorecard</div>
+<div class="card">
+  <div class="frow"><span>Auditor Quality</span><span class="badge b-green">GREEN — EY affiliate</span></div>
+  <div class="frow"><span>IFC / Audit Opinion</span><span class="badge b-green">GREEN — Clean</span></div>
+  <div class="frow"><span>Revenue Recognition</span><span class="badge b-green">GREEN — Standard pass-through</span></div>
+  <div class="frow"><span>Inventory Valuation</span><span class="badge b-med">AMBER — LME-linked, hedge accounting</span></div>
+  <div class="frow"><span>Contingent Liabilities</span><span class="badge b-high">RED — &#8377;169 Cr, 66% of equity, no provision</span></div>
+  <div class="frow"><span>Related Party Transactions</span><span class="badge b-med">AMBER — BIL-BCPL loans growing</span></div>
+  <div class="frow"><span>Management Stability</span><span class="badge b-high">RED — MD, CFO, CS all changed in 18 months</span></div>
+  <div class="frow"><span>Promoter Pledge</span><span class="badge b-green">GREEN — 0% pledge disclosed</span></div>
+  <div class="frow"><span>CWIP Concern</span><span class="badge b-green">GREEN — Minimal CWIP</span></div>
+  <div class="frow"><span>Accounting Policy Changes</span><span class="badge b-green">GREEN — None found</span></div>
+</div>
+</div>
+<div id="tab-7" class="tab-pane">
+<div class="stitle">Current Valuation Metrics</div>
+<div class="g4" style="margin-bottom:20px">
+  <div class="card" style="text-align:center"><div class="kl">P/E (Trailing)</div><div class="kv">19.3x</div><div class="ks">on FY26 EPS &#8377;15.68</div></div>
+  <div class="card" style="text-align:center"><div class="kl">EV/EBITDA</div><div class="kv">11.1x</div><div class="ks">vs peer median 58x — significant discount</div></div>
+  <div class="card" style="text-align:center"><div class="kl">P/B</div><div class="kv">3.79x</div><div class="ks">Book value &#8377;80.5</div></div>
+  <div class="card" style="text-align:center"><div class="kl">Mkt Cap / Sales</div><div class="kv">0.41x</div><div class="ks">&#8377;970 Cr / &#8377;2,378 Cr</div></div>
+  <div class="card" style="text-align:center"><div class="kl">Mkt Cap / FCF</div><div class="kv">86x</div><div class="ks">FCF &#8377;50 Cr — first positive FCF</div></div>
+  <div class="card" style="text-align:center"><div class="kl">ROIC</div><div class="kv">25.3%</div><div class="ks">vs WACC est. ~11% — value creator</div></div>
+</div>
+
+<div class="stitle">Target Price Derivation</div>
+<div class="g2" style="margin-bottom:20px">
+  <div class="card">
+    <strong>FY27E Assumptions (Base Case)</strong>
+    <div class="tw" style="margin-top:12px">
+      <table>
+        <thead><tr><th style="text-align:left">Item</th><th>FY27E</th><th>Basis</th></tr></thead>
+        <tbody>
+          <tr><td>Revenue</td><td>&#8377;2,800 Cr</td><td>+18% on 35K MT full utilisation + mix</td></tr>
+          <tr><td>EBITDA Margin</td><td>4.8%</td><td>Modest improvement on FY26 4.5%</td></tr>
+          <tr><td>EBITDA</td><td>&#8377;134 Cr</td><td>2,800 × 4.8%</td></tr>
+          <tr><td>Finance Cost</td><td>&#8377;30 Cr</td><td>Debt declining; rate reduction with BBB+</td></tr>
+          <tr><td>D&amp;A</td><td>&#8377;8 Cr</td><td>Stable capex cycle</td></tr>
+          <tr><td>PBT</td><td>&#8377;96 Cr</td><td>EBITDA - Finance - D&amp;A</td></tr>
+          <tr><td>Tax @ 26%</td><td>&#8377;25 Cr</td><td>-</td></tr>
+          <tr><td>PAT</td><td>&#8377;71 Cr</td><td>-</td></tr>
+          <tr><td>EPS</td><td>&#8377;22.2</td><td>71 Cr / 3.20 Cr shares</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <strong>Target Price by Method</strong>
+    <div class="tw" style="margin-top:12px">
+      <table>
+        <thead><tr><th style="text-align:left">Method</th><th>Multiple</th><th>Target</th><th>Upside</th></tr></thead>
+        <tbody>
+          <tr><td>P/E — Bull (20x FY27E &#8377;22)</td><td>20x</td><td style="color:var(--color-green);font-weight:700">&#8377;440</td><td class="up">+44%</td></tr>
+          <tr style="background:var(--highlight-latest)"><td><strong>P/E — Base (17x FY27E &#8377;19)</strong></td><td>17x</td><td style="font-weight:700">&#8377;323</td><td>+6%</td></tr>
+          <tr><td>P/E — Bear (12x FY27E &#8377;10)</td><td>12x</td><td style="color:var(--color-red);font-weight:700">&#8377;120</td><td class="down">-61%</td></tr>
+          <tr><td>EV/EBITDA — Base (12x FY27E &#8377;134)</td><td>12x</td><td>&#8377;380</td><td class="up">+25%</td></tr>
+          <tr><td>P/B — Base (3.5x FY27E BV ~&#8377;95)</td><td>3.5x</td><td>&#8377;333</td><td>+9%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:14px;padding:12px;background:var(--highlight-latest);border-radius:8px">
+      <div style="font-size:13px;color:var(--text-secondary)">Probability-weighted (25% Bull / 50% Base / 25% Bear)</div>
+      <div style="font-size:22px;font-weight:800;font-family:ui-monospace,monospace;margin-top:4px">&#8377;301 <span style="font-size:14px;color:var(--text-muted)">12M target</span></div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:4px">vs CMP &#8377;305 — minimal upside in base case</div>
+    </div>
+  </div>
+</div>
+
+<div class="stitle">Peer Valuation Comparison</div>
+<div class="tw" style="margin-bottom:20px">
+  <table>
+    <thead><tr><th style="text-align:left">Company</th><th>Mkt Cap (Cr)</th><th>P/E</th><th>EV/EBITDA</th><th>P/B</th><th>ROCE%</th><th>OPM%</th><th>Sales Gr%</th></tr></thead>
+    <tbody>
+      <tr><td>Hindustan Copper</td><td>&#8377;54,999</td><td>82.4x</td><td>50.3x</td><td>18.4x</td><td>23.8%</td><td>37.9%</td><td>39.3%</td></tr>
+      <tr style="background:var(--highlight-latest)"><td><strong>Bhagyanagar (BIL)</strong></td><td><strong>&#8377;970</strong></td><td><strong>19.3x</strong></td><td><strong>11.1x</strong></td><td><strong>3.79x</strong></td><td><strong>20.7%</strong></td><td><strong>4.46%</strong></td><td><strong>46.3%</strong></td></tr>
+      <tr><td>Mardia Samyoung</td><td>&#8377;499</td><td>484x</td><td>306x</td><td>8.1x</td><td>22.6%</td><td>12.8%</td><td>---</td></tr>
+      <tr><td>Onix Solar</td><td>&#8377;2,721</td><td>67.7x</td><td>67.5x</td><td>3.5x</td><td>10.2%</td><td>25.3%</td><td>434.6%</td></tr>
+      <tr><td>N D Metal Industries</td><td>&#8377;19</td><td>89.8x</td><td>52.2x</td><td>6.1x</td><td>6.6%</td><td>neg</td><td>-75%</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="stitle">Peer P/E Comparison Chart</div>
+<div class="card"><div class="chartbox-sm"><canvas id="chartPeer"></canvas></div></div>
+
+<div class="stitle" style="margin-top:20px">Valuation Verdict</div>
+<div class="card" style="border-top:4px solid var(--color-amber)">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+    <strong style="font-size:16px">Valuation: <span class="badge b-watch" style="font-size:14px">FAIRLY VALUED</span></strong>
+  </div>
+  <p style="font-size:14px;color:var(--text-secondary);line-height:1.8">BIL trades at 19.3x trailing P/E — cheap vs Hindustan Copper (82x) and Mardia (484x), but those peers have structurally higher margins (37.9% vs BIL's 4.5%). BIL's EV/EBITDA of 11.1x is the cheapest in the peer group and arguably the right metric for a capital-light rerating story. The bull case requires margins sustaining 5%+ and the demerger unlocking &#8377;100–200 Cr in land value. At current P/E of 19x, the market is pricing in one more year of growth at FY26's pace. Any margin disappointment (e.g., LME spike, product mix reversal) would compress P/E and create downside to &#8377;180–220.</p>
+</div>
+</div>
+<div id="tab-8" class="tab-pane">
+<div class="stitle">Probability-Weighted Investment Scenarios</div>
+<div class="g3" style="margin-bottom:24px">
+  <div class="thesis-col bull">
+    <div style="font-size:13px;font-weight:700;color:var(--color-green);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">BULL CASE — 25% Probability</div>
+    <div style="font-size:20px;font-weight:800;font-family:ui-monospace,monospace;color:var(--color-green);margin-bottom:12px">Target: &#8377;440 (+44%)</div>
+    <div style="font-size:13px;color:var(--text-secondary);line-height:1.8;margin-bottom:12px">Margins sustain above 5% driven by continued VAP shift and data center demand. NCLT approves demerger in June 2026; Tieramet listed by Q3 FY27. Real estate value (Upal: &#8377;500+ Cr market value) partially crystallized. A- rating secured; borrowing costs drop to &lt;8%. FY27E EPS &#8377;22 at 20x P/E = &#8377;440.</div>
+    <ul style="list-style:none;font-size:13px;color:var(--text-secondary)">
+      <li style="padding:4px 0">&#10003; EBITDA margin: 5.2–5.5% in FY27</li>
+      <li style="padding:4px 0">&#10003; Revenue: &#8377;3,000 Cr+ (50K MT capacity ordered)</li>
+      <li style="padding:4px 0">&#10003; NCLT &#8594; Tieramet listed with copper at 12x EV/EBITDA</li>
+      <li style="padding:4px 0">&#10003; Contingent liabilities resolved favorably</li>
+      <li style="padding:4px 0">&#10003; No new governance incidents</li>
+    </ul>
+  </div>
+  <div class="thesis-col base">
+    <div style="font-size:13px;font-weight:700;color:var(--color-blue);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">BASE CASE — 50% Probability</div>
+    <div style="font-size:20px;font-weight:800;font-family:ui-monospace,monospace;color:var(--color-blue);margin-bottom:12px">Target: &#8377;323 (+6%)</div>
+    <div style="font-size:13px;color:var(--text-secondary);line-height:1.8;margin-bottom:12px">Margins hold at 4.5–4.8% as VAP mix stabilizes around 60–65%. NCLT process takes until Q3-Q4 FY27. Real estate monetization begins in FY28. Rating stays BBB+ for FY27. FY27E EPS &#8377;19 at 17x P/E = &#8377;323. Stock roughly in line with CMP — range-bound at &#8377;280–350.</div>
+    <ul style="list-style:none;font-size:13px;color:var(--text-secondary)">
+      <li style="padding:4px 0">&#8594; EBITDA margin: 4.5–4.8% in FY27</li>
+      <li style="padding:4px 0">&#8594; Revenue: &#8377;2,700–2,900 Cr</li>
+      <li style="padding:4px 0">&#8594; NCLT delayed to H2 FY27</li>
+      <li style="padding:4px 0">&#8594; Contingent liabilities remain under appeal</li>
+      <li style="padding:4px 0">&#8594; Management stable; no more exits</li>
+    </ul>
+  </div>
+  <div class="thesis-col bear">
+    <div style="font-size:13px;font-weight:700;color:var(--color-red);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">BEAR CASE — 25% Probability</div>
+    <div style="font-size:20px;font-weight:800;font-family:ui-monospace,monospace;color:var(--color-red);margin-bottom:12px">Target: &#8377;120 (-61%)</div>
+    <div style="font-size:13px;color:var(--text-secondary);line-height:1.8;margin-bottom:12px">LME copper price spikes disrupt working capital and compresses margins back to 2–3% (FY22-FY23 levels). Adverse ruling on GST/IT contingent demand hits equity. Management exits continue; promoter stake falls below 60%. NCLT challenged by creditor. FY27E EPS &#8377;10 at 12x P/E = &#8377;120.</div>
+    <ul style="list-style:none;font-size:13px;color:var(--text-secondary)">
+      <li style="padding:4px 0">&#10005; EBITDA margin: 2.0–3.0% (margin reversion)</li>
+      <li style="padding:4px 0">&#10005; GST/IT adverse ruling: &#8377;169 Cr equity hit</li>
+      <li style="padding:4px 0">&#10005; NCLT challenged; demerger delayed to FY28</li>
+      <li style="padding:4px 0">&#10005; Debt rises as WC deteriorates</li>
+      <li style="padding:4px 0">&#10005; Further governance incidents</li>
+    </ul>
+  </div>
+</div>
+
+<div class="stitle">Key Monitorables</div>
+<div class="tw" style="margin-bottom:20px">
+  <table>
+    <thead><tr><th style="text-align:left">Metric</th><th>Current (FY26)</th><th style="color:var(--color-green)">Bull Threshold</th><th style="color:var(--color-red)">Bear Trigger</th><th>Next Check</th></tr></thead>
+    <tbody>
+      <tr><td>EBITDA Margin (quarterly)</td><td>4.9% (Q4)</td><td style="color:var(--color-green)">&gt;5.0% for 2Q</td><td style="color:var(--color-red)">&lt;3.5% for 1Q</td><td>Q1 FY27 results</td></tr>
+      <tr><td>EBITDA per kg</td><td>&#8377;62 (Q4 FY26)</td><td style="color:var(--color-green)">&gt;&#8377;65/kg</td><td style="color:var(--color-red)">&lt;&#8377;35/kg</td><td>Q1 FY27 results</td></tr>
+      <tr><td>Demerger NCLT Status</td><td>Hearing 9 Jun 2026</td><td style="color:var(--color-green)">Approved Jun/Jul 2026</td><td style="color:var(--color-red)">Challenged / delayed &gt;6M</td><td>9 June 2026</td></tr>
+      <tr><td>Contingent Liabilities</td><td>&#8377;169 Cr (no provision)</td><td style="color:var(--color-green)">Favorable order / stay</td><td style="color:var(--color-red)">Adverse ruling / demand paid</td><td>Court orders</td></tr>
+      <tr><td>Promoter Holding</td><td>64.84%</td><td style="color:var(--color-green)">Stable or increasing</td><td style="color:var(--color-red)">&lt;60% (further selling)</td><td>Sep 2026 SHP</td></tr>
+      <tr><td>VAP Mix (quarterly)</td><td>~62% (Q4 FY26)</td><td style="color:var(--color-green)">&gt;65% in Q1 FY27</td><td style="color:var(--color-red)">&lt;55% (mix reversal)</td><td>Q1 FY27 results</td></tr>
+      <tr><td>Working Capital Days</td><td>65 days (CCC)</td><td style="color:var(--color-green)">&lt;55 days</td><td style="color:var(--color-red)">&gt;90 days (CARE trigger)</td><td>Q1 FY27</td></tr>
+      <tr><td>Total Debt</td><td>&#8377;259 Cr</td><td style="color:var(--color-green)">&lt;&#8377;200 Cr</td><td style="color:var(--color-red)">&gt;&#8377;350 Cr</td><td>Q1 FY27 BS</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="stitle">Upcoming Catalysts (Next 4 Quarters)</div>
+<div class="g2">
+  <div class="card">
+    <div class="frow"><span style="font-size:13px"><strong>9 Jun 2026</strong> — NCLT Hearing (Demerger)</span><span class="badge b-high">BINARY</span></div>
+    <div class="frow"><span style="font-size:13px"><strong>Q1 FY27 Results</strong> (~Aug 2026) — First test of margin sustainability</span><span class="badge b-med">KEY</span></div>
+    <div class="frow"><span style="font-size:13px"><strong>Data Center Order Update</strong> — Follow-on to 106 MT initial order</span><span class="badge b-med">KEY</span></div>
+    <div class="frow"><span style="font-size:13px"><strong>50K MT Capex Announcement</strong> — Next expansion plan</span><span class="badge b-opt">WATCH</span></div>
+  </div>
+  <div class="card">
+    <div class="frow"><span style="font-size:13px"><strong>A- Rating Decision</strong> (FY27 end target)</span><span class="badge b-opt">WATCH</span></div>
+    <div class="frow"><span style="font-size:13px"><strong>GST/IT Demand Resolution</strong> — Court/tribunal orders</span><span class="badge b-high">BINARY</span></div>
+    <div class="frow"><span style="font-size:13px"><strong>Tieramet Listing</strong> (post-NCLT) — Copper entity separate listing</span><span class="badge b-opt">OPTIONALITY</span></div>
+    <div class="frow"><span style="font-size:13px"><strong>Real Estate Developer</strong> — Announcement for Upal site</span><span class="badge b-opt">OPTIONALITY</span></div>
+  </div>
+</div>
+</div>
+<div id="tab-9" class="tab-pane">
+<div class="stitle">Risk Matrix</div>
+<div class="g2" style="margin-bottom:20px">
+  <div class="card"><div class="chartbox"><canvas id="chartRisk"></canvas></div><div style="font-size:12px;color:var(--text-muted);text-align:center;margin-top:4px">X = Probability (Low&#8594;High), Y = Impact (Low&#8594;High)</div></div>
+  <div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="frow"><span style="font-size:13px"><strong>R1</strong> Contingent Liabilities</span><span class="badge b-high">HIGH IMPACT</span></div>
+      <div class="frow"><span style="font-size:13px"><strong>R2</strong> Margin Reversion</span><span class="badge b-high">HIGH IMPACT</span></div>
+      <div class="frow"><span style="font-size:13px"><strong>R3</strong> LME Copper Spike</span><span class="badge b-med">MEDIUM IMPACT</span></div>
+      <div class="frow"><span style="font-size:13px"><strong>R4</strong> Governance/Management</span><span class="badge b-med">MEDIUM IMPACT</span></div>
+      <div class="frow"><span style="font-size:13px"><strong>R5</strong> NCLT Delay/Challenge</span><span class="badge b-med">MEDIUM IMPACT</span></div>
+      <div class="frow"><span style="font-size:13px"><strong>R6</strong> Working Capital Stretch</span><span class="badge b-med">MEDIUM IMPACT</span></div>
+      <div class="frow"><span style="font-size:13px"><strong>R7</strong> Promoter Stake Decline</span><span class="badge b-low">LOW IMPACT</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="stitle">Detailed Risk Cards</div>
+<div class="risk-card">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+    <strong>R1 — Contingent Liabilities: GST &#8377;103 Cr + IT &#8377;66 Cr</strong>
+    <div><span class="badge b-high">HIGH IMPACT</span> <span class="badge b-med">MEDIUM PROB</span></div>
+  </div>
+  <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px"><strong>Quantified Impact:</strong> Total &#8377;169 Cr = 66% of FY26 equity. Adverse ruling on both demands could wipe out 2+ years of PAT. No provision made, so any payment would directly reduce equity and trigger rating downgrade.</div>
+  <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px"><strong>Mitigant:</strong> Management asserts likelihood of adverse outcome is low. Both appeals pending with appropriate authorities. Tax disputes in India often take 5–10 years to resolve.</div>
+  <div style="font-size:12px"><span class="badge b-high">ACTIVE — Monitor Court Orders</span></div>
+</div>
+
+<div class="risk-card">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+    <strong>R2 — Margin Reversion to 2–3% Historical Norm</strong>
+    <div><span class="badge b-high">HIGH IMPACT</span> <span class="badge b-med">MEDIUM PROB</span></div>
+  </div>
+  <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px"><strong>Quantified Impact:</strong> If EBITDA margin reverts to 2.5% on &#8377;2,800 Cr FY27 revenue, EBITDA = &#8377;70 Cr; PAT ~&#8377;25 Cr; EPS ~&#8377;7.8. At 15x = &#8377;117. Vs current CMP &#8377;305 = 62% downside.</div>
+  <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px"><strong>Mitigant:</strong> VAP mix is structural (certified products, OEM relationships). EBITDA/kg &#8377;62 in Q4 FY26 — not a one-quarter blip. Management focus on value-added products. But historically margins were 1.9–2.4% for 8+ years before FY26.</div>
+  <div style="font-size:12px"><span class="badge b-high">ACTIVE — Q1 FY27 margin will be key validation</span></div>
+</div>
+
+<div class="risk-card med">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+    <strong>R3 — LME Copper Price Spike / Crash</strong>
+    <div><span class="badge b-med">MEDIUM IMPACT</span> <span class="badge b-med">MEDIUM PROB</span></div>
+  </div>
+  <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px"><strong>Quantified Impact:</strong> Raw material = 90% of cost. 10% LME spike = &#8377;200+ Cr additional working capital requirement at FY26 scale. Pass-through pricing protects revenue but CCC can elongate to 90+ days (CARE downgrade trigger).</div>
+  <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px"><strong>Mitigant:</strong> 50–60% inventory hedged on MCX. Natural hedge: import RM + export finished goods. Deliberate inventory strategy buying at "perceived lowest LME."</div>
+  <div style="font-size:12px"><span class="badge b-med">MONITORING — Watch LME + CCC</span></div>
+</div>
+
+<div class="risk-card med">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+    <strong>R4 — Management / Governance Instability</strong>
+    <div><span class="badge b-med">MEDIUM IMPACT</span> <span class="badge b-high">HIGH PROB</span></div>
+  </div>
+  <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px"><strong>Quantified Impact:</strong> In 18 months: founder MD resigned, CFO replaced, multiple CS changes. If key operational leaders exit during the demerger process, execution risk rises. Analyst flagged in Q3 FY26 concall; management attribution: "personal/career reasons."</div>
+  <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px"><strong>Mitigant:</strong> Surana family cohesion (Narendra + Devendra + Advait all on Q4 call). 40-year institutional knowledge. No client or supplier exits noted.</div>
+  <div style="font-size:12px"><span class="badge b-high">ACTIVE — Monitor further exits</span></div>
+</div>
+
+<div class="risk-card med">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+    <strong>R5 — NCLT Demerger Delay or Challenge</strong>
+    <div><span class="badge b-med">MEDIUM IMPACT</span> <span class="badge b-med">MEDIUM PROB</span></div>
+  </div>
+  <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px"><strong>Quantified Impact:</strong> Demerger is a key bull-case driver. Delays push real estate value unlock to FY28–FY29. If Tieramet listing delayed 1 year, market cap uplift of &#8377;150–300 Cr deferred. NCLT hearings in India routinely get deferred.</div>
+  <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px"><strong>Mitigant:</strong> All preliminary approvals cleared (shareholders + creditors + regulatory). Hearing scheduled 9 June 2026. No major creditor objections noted.</div>
+  <div style="font-size:12px"><span class="badge b-med">ACTIVE — 9 June 2026 hearing</span></div>
+</div>
+
+<div class="risk-card low-r">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+    <strong>R7 — Promoter Stake Decline (74.7% &#8594; 64.8%)</strong>
+    <div><span class="badge b-low">LOW IMPACT</span> <span class="badge b-low">ONGOING</span></div>
+  </div>
+  <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px"><strong>Context:</strong> Promoter holding declined 10 percentage points from Jun 2023 to Mar 2026. Public holding rose from 24.5% to 34.7%. Shareholder count grew from 10,750 to 31,754 — consistent with retail participation in a re-rated stock. No pledge.</div>
+  <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px"><strong>Mitigant:</strong> 64.84% is still comfortable majority. No pledge. May be demerger-related restructuring. Watch if falls below 60%.</div>
+  <div style="font-size:12px"><span class="badge b-low">MONITORING — Alert if &lt;60%</span></div>
+</div>
+</div>
+<div id="tab-10" class="tab-pane">
+<div class="stitle">Q4 FY26 Earnings Call — 02 May 2026</div>
+<div class="cq">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+    <div><strong>Q4 &amp; FY26 Annual Results Concall</strong> &nbsp; <span style="font-size:13px;color:var(--text-secondary)">02 May 2026, 11:00 AM IST | Moderated by Finportal</span></div>
+    <span class="badge b-green">BULLISH</span>
+  </div>
+  <div style="font-size:14px;color:var(--text-secondary)"><strong>Management on call:</strong> Devendra Surana (MD), Narendra Surana (Founder), Advait Surana (BD Manager), Surendra Bhutoria (CFO — NEW), Rahul Surana (Finance Manager)</div>
+  <div class="tw" style="margin:12px 0">
+    <table>
+      <thead><tr><th style="text-align:left">Metric</th><th>Q4 FY26</th><th>Q4 FY25</th><th>YoY</th><th>FY26 Full Year</th><th>FY25</th></tr></thead>
+      <tbody>
+        <tr><td>Revenue</td><td>&#8377;735 Cr</td><td>&#8377;454 Cr</td><td class="up">+61.8%</td><td>&#8377;2,378 Cr</td><td>&#8377;1,626 Cr</td></tr>
+        <tr><td>EBITDA</td><td>&#8377;36 Cr</td><td>&#8377;11 Cr</td><td class="up">+227%</td><td>&#8377;106 Cr</td><td>&#8377;37 Cr</td></tr>
+        <tr><td>EBITDA Margin</td><td>4.9%</td><td>2.4%</td><td class="up">+250 bps</td><td>4.5%</td><td>2.3%</td></tr>
+        <tr><td>EBITDA/kg</td><td>&#8377;62</td><td>~&#8377;22</td><td class="up">+182%</td><td>&#8377;43 avg</td><td>~&#8377;20</td></tr>
+        <tr><td>PAT</td><td>~&#8377;18.5 Cr</td><td>&#8377;5 Cr</td><td class="up">+270%</td><td>&#8377;50.2 Cr</td><td>&#8377;14 Cr</td></tr>
+        <tr><td>VAP Mix</td><td>~62%</td><td>~40%</td><td class="up">+22 pp</td><td>59% avg</td><td>~40%</td></tr>
+        <tr><td>Volume</td><td>~6,500 MT</td><td>~5,000 MT</td><td class="up">+30%</td><td>24,000 MT</td><td>18,000 MT</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="stitle" style="margin-top:16px">Key Management Statements</div>
+  <ul style="list-style:none;font-size:13px;color:var(--text-secondary);line-height:1.8">
+    <li style="padding:5px 0;border-bottom:1px solid var(--bg-card-border)">"For the first time in our history, we have crossed 2,000 crores of revenue." — Advait Surana</li>
+    <li style="padding:5px 0;border-bottom:1px solid var(--bg-card-border)">"For the first time, operational EBITDA crossed 100 crores and PAT crossed 50 crores." — Advait Surana</li>
+    <li style="padding:5px 0;border-bottom:1px solid var(--bg-card-border)">"Q4 was our best quarter — revenue &#8377;735 Cr, EBITDA &#8377;36 Cr, EBITDA/kg &#8377;62." — Management</li>
+    <li style="padding:5px 0;border-bottom:1px solid var(--bg-card-border)">"The demerger has cleared all preliminary approvals; NCLT hearing is scheduled for 9 June 2026." — Devendra Surana</li>
+    <li style="padding:5px 0;border-bottom:1px solid var(--bg-card-border)">"From Q1 to Q4, we jumped almost 10% in value-added products." — Advait Surana</li>
+    <li style="padding:5px 0;border-bottom:1px solid var(--bg-card-border)">"Bus bars up to 300mm — only one in India [to make this]. Silver-plated for AI data centers." — Devendra Surana</li>
+    <li style="padding:5px 0">"Our equity has grown from &#8377;193 Cr to &#8377;207 Cr to &#8377;257 Cr — all through retained earnings, zero dilution." — Advait Surana</li>
+  </ul>
+</div>
+
+<div class="stitle">Q3 FY26 Earnings Call — 31 January 2026</div>
+<div class="cq">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+    <div><strong>Q3 FY26 Results Call</strong> &nbsp; <span style="font-size:13px;color:var(--text-secondary)">31 Jan 2026 | Moderated by Dolat Capital</span></div>
+    <span class="badge b-green">BULLISH</span>
+  </div>
+  <div class="tw" style="margin:12px 0">
+    <table>
+      <thead><tr><th style="text-align:left">Metric</th><th>Q3 FY26</th><th>Q3 FY25</th><th>YoY</th><th>9M FY26</th></tr></thead>
+      <tbody>
+        <tr><td>Revenue</td><td>&#8377;577 Cr</td><td>&#8377;394 Cr</td><td class="up">+46%</td><td>&#8377;1,643 Cr</td></tr>
+        <tr><td>EBITDA</td><td>&#8377;29 Cr</td><td>&#8377;11 Cr</td><td class="up">+164%</td><td>&#8377;70 Cr</td></tr>
+        <tr><td>EBITDA Margin</td><td>5.0%</td><td>2.8%</td><td class="up">+220 bps</td><td>4.3%</td></tr>
+        <tr><td>PAT</td><td>&#8377;13 Cr</td><td>&#8377;4 Cr</td><td class="up">+225%</td><td>&#8377;31.7 Cr</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <ul style="list-style:none;font-size:13px;color:var(--text-secondary);line-height:1.8">
+    <li style="padding:5px 0;border-bottom:1px solid var(--bg-card-border)">"EBITDA margin is now 4.9% and we expect to cross 5% soon." — Devendra Surana</li>
+    <li style="padding:5px 0;border-bottom:1px solid var(--bg-card-border)">"AI data center bus bar order 106 MT at USD 1.33M — validation of product quality." — Management</li>
+    <li style="padding:5px 0;border-bottom:1px solid var(--bg-card-border)">"Credit rating upgraded from BBB to BBB+ [for BCPL]. Target A- by end FY27." — CFO</li>
+    <li style="padding:5px 0;border-bottom:1px solid var(--bg-card-border)">"35,000 MT capacity now operational [Feb 2026 completion confirmed]." — Devendra Surana</li>
+    <li style="padding:5px 0;border-bottom:1px solid var(--bg-card-border)"><span style="color:var(--color-amber)">&#9888; Analyst flagged: Multiple company secretary resignations in short span. Management: personal/career reasons.</span></li>
+  </ul>
+</div>
+
+<div class="stitle">Q2 FY26 Earnings Call — 13 November 2025</div>
+<div class="cq">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+    <div><strong>Q2 FY26 Results Call</strong> &nbsp; <span style="font-size:13px;color:var(--text-secondary)">13 Nov 2025 | Moderated by Dolat Capital</span></div>
+    <span class="badge b-acc">NEUTRAL-POSITIVE</span>
+  </div>
+  <div class="tw" style="margin:12px 0">
+    <table>
+      <thead><tr><th style="text-align:left">Metric</th><th>H1 FY26</th><th>Commentary</th></tr></thead>
+      <tbody>
+        <tr><td>Revenue</td><td>&#8377;1,066 Cr</td><td>+40%+ YoY</td></tr>
+        <tr><td>EBITDA Margin</td><td>~3.6%</td><td>Building up from 2.5% FY25</td></tr>
+        <tr><td>PAT</td><td>&#8377;19 Cr</td><td>Accelerating into H2</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <ul style="list-style:none;font-size:13px;color:var(--text-secondary)">
+    <li style="padding:5px 0;border-bottom:1px solid var(--bg-card-border)">"Competitive moat in bus bars: certifications (UL, CE), silver-plating, quality consistency." — Management</li>
+    <li style="padding:5px 0">"FY26 revenue target &#8377;2,000–2,200 Cr. Margin target 4–5% EBITDA." — Management</li>
+  </ul>
+</div>
+
+<div class="stitle">Guidance Tracker</div>
+<div class="tw">
+  <table>
+    <thead><tr><th style="text-align:left">Guidance Item</th><th>Guided</th><th>Actual</th><th>Hit/Miss</th><th>Call</th></tr></thead>
+    <tbody>
+      <tr><td>FY26 Revenue</td><td>&#8377;2,200 Cr+</td><td class="up">&#8377;2,378 Cr</td><td><span class="badge b-green">BEAT</span></td><td>Q3 FY26</td></tr>
+      <tr><td>FY26 EBITDA Margin</td><td>4–5%</td><td class="up">4.5%</td><td><span class="badge b-green">DELIVERED</span></td><td>Q2 FY26</td></tr>
+      <tr><td>35K MT Capacity</td><td>Feb 2026</td><td class="up">Feb 2026 &#10003;</td><td><span class="badge b-green">ON TIME</span></td><td>Q2 FY26</td></tr>
+      <tr><td>Q3 FY26 EBITDA Margin</td><td>&gt;5% soon</td><td class="up">5.0% Q3, 4.9% Q4</td><td><span class="badge b-green">DELIVERED</span></td><td>Q3 FY26</td></tr>
+      <tr><td>BBB+ Rating (BCPL)</td><td>Target</td><td class="up">Achieved FY26</td><td><span class="badge b-green">DELIVERED</span></td><td>Q3 FY26</td></tr>
+      <tr><td>FY28-29 Revenue &#8377;5,000 Cr</td><td>&#8377;5,000 Cr</td><td style="color:var(--text-muted)">In progress (FY27 start)</td><td><span class="badge b-med">TRACKING</span></td><td>Q3 FY26</td></tr>
+    </tbody>
+  </table>
+</div>
+</div>
+<div id="tab-11" class="tab-pane">
+<div class="stitle">Capital Allocation Quality</div>
+<div class="card" style="margin-bottom:20px;border-left:4px solid var(--color-amber)">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+    <strong style="font-size:16px">Capital Allocation Verdict: <span class="badge b-amber" style="font-size:14px">MIXED — Improving</span></strong>
+    <span style="font-size:13px;color:var(--text-secondary)">5 consecutive years of negative FCF (FY22–FY25); FY26 is the first positive FCF year (&#8377;+50 Cr).</span>
+  </div>
+</div>
+
+<div class="g2" style="margin-bottom:20px">
+  <div>
+    <div class="stitle">Operating Cash Flow vs FCF (&#8377; Cr)</div>
+    <div class="card"><div class="chartbox"><canvas id="chartCF"></canvas></div></div>
+  </div>
+  <div>
+    <div class="stitle">Debt Trajectory (&#8377; Cr)</div>
+    <div class="card"><div class="chartbox"><canvas id="chartDebt"></canvas></div></div>
+  </div>
+</div>
+
+<div class="g2" style="margin-bottom:20px">
+  <div>
+    <div class="stitle">ROCE Trend (%)</div>
+    <div class="card"><div class="chartbox-sm"><canvas id="chartROCE"></canvas></div></div>
+  </div>
+  <div>
+    <div class="stitle">Annual Cash Flow Summary (&#8377; Cr)</div>
+    <div class="card">
+      <div class="tw">
+        <table>
+          <thead><tr><th style="text-align:left">Year</th><th>OCF</th><th>Capex</th><th>FCF</th><th>Debt Change</th><th>OCF/PAT</th></tr></thead>
+          <tbody>
+            <tr><td>FY21</td><td class="down">-76</td><td>~5</td><td class="down">-81</td><td>+89</td><td>neg</td></tr>
+            <tr><td>FY22</td><td class="down">-4</td><td>~1</td><td class="down">-5</td><td>+24</td><td>neg</td></tr>
+            <tr><td>FY23</td><td class="down">-40</td><td>~9</td><td class="down">-49</td><td>+41</td><td>neg</td></tr>
+            <tr><td>FY24&#9432;</td><td class="up">+96</td><td>~10</td><td class="up">+135</td><td>-119</td><td>2.1x</td></tr>
+            <tr><td>FY25</td><td class="down">-144</td><td>~6</td><td class="down">-150</td><td>+174</td><td>neg</td></tr>
+            <tr style="background:var(--highlight-latest)"><td><strong>FY26</strong></td><td class="up"><strong>+59</strong></td><td>~9</td><td class="up"><strong>+50</strong></td><td>-16</td><td class="up"><strong>1.2x</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:8px">&#9432; FY24 OCF/FCF elevated by copper slump-sale proceeds. FY26 is the FIRST genuine positive FCF year from operations.</div>
+    </div>
+  </div>
+</div>
+
+<div class="g2" style="margin-bottom:20px">
+  <div>
+    <div class="stitle">Capex vs Revenue Scale</div>
+    <div class="card">
+      <div class="tw">
+        <table>
+          <thead><tr><th style="text-align:left">Year</th><th>Revenue</th><th>Gross Block</th><th>Capex (est)</th><th>Asset Turn</th></tr></thead>
+          <tbody>
+            <tr><td>FY22</td><td>1,574</td><td>~160</td><td>~1</td><td>9.8x</td></tr>
+            <tr><td>FY23</td><td>1,847</td><td>~165</td><td>~9</td><td>11.2x</td></tr>
+            <tr><td>FY24</td><td>1,429</td><td>~155</td><td>~10</td><td>9.2x</td></tr>
+            <tr><td>FY25</td><td>1,626</td><td>~165</td><td>~6</td><td>9.9x</td></tr>
+            <tr style="background:var(--highlight-latest)"><td><strong>FY26</strong></td><td><strong>2,378</strong></td><td>~175</td><td>~9</td><td><strong>13.6x</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="font-size:13px;color:var(--text-secondary);margin-top:8px">Extremely capital-light for a manufacturing business. Working capital is the primary capital sink, not fixed assets. 35K MT capacity achieved with modest capex — 60-acre facility acquired in 2017.</div>
+    </div>
+  </div>
+  <div>
+    <div class="stitle">Dividend History</div>
+    <div class="card">
+      <div class="frow"><span>FY26 Dividend</span><span style="font-weight:700">&#8377;0 (nil)</span></div>
+      <div class="frow"><span>FY25 Dividend</span><span>&#8377;0 (nil)</span></div>
+      <div class="frow"><span>FY24 Dividend</span><span>&#8377;0 (nil)</span></div>
+      <div class="frow"><span>FY23 Dividend</span><span>&#8377;0 (nil)</span></div>
+      <div class="frow"><span>FY22 Dividend</span><span>&#8377;0 (nil)</span></div>
+      <div class="frow"><span>FY15 (last dividend)</span><span>Payout 56%</span></div>
+      <div style="margin-top:12px;font-size:13px;color:var(--text-secondary)">No dividend since FY16. Capital retained for working capital and growth. PAT at &#8377;50 Cr — manageable to initiate a token dividend in FY27. Not a yield play.</div>
+
+      <div style="margin-top:16px;border-top:1px solid var(--bg-card-border);padding-top:12px">
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px">Buyback History</div>
+        <div style="font-size:13px;color:var(--text-secondary)">No buyback history on record. Share count stable at 3.20 Cr since FY17 (after capital reduction). Zero dilution since FY17 — all equity growth through retained earnings.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="stitle">ROCE vs Cost of Capital</div>
+<div class="card">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px">
+    <div><div class="kl">FY26 ROCE</div><div class="kv up">20.7%</div><div class="ks">1st time above 10% since FY17</div></div>
+    <div><div class="kl">Estimated WACC</div><div class="kv">~11%</div><div class="ks">Debt 8.5-9%; Equity cost ~14%</div></div>
+    <div><div class="kl">ROCE - WACC Spread</div><div class="kv up">+9.7%</div><div class="ks">Value creating for first time</div></div>
+    <div><div class="kl">Target Cost of Debt</div><div class="kv">&lt;8%</div><div class="ks">After A- rating upgrade (FY27)</div></div>
+  </div>
+</div>
+</div>
+<div id="tab-12" class="tab-pane">
+<div class="stitle">Shareholding Pattern — 12 Quarters (Jun 23 to Mar 26)</div>
+<div class="card" style="margin-bottom:20px"><div class="chartbox-lg"><canvas id="chartShare"></canvas></div></div>
+
+<div class="stitle">Key Shareholding Observations</div>
+<div class="g2" style="margin-bottom:20px">
+  <div class="card" style="border-left:4px solid var(--color-amber)">
+    <strong style="font-size:15px;display:block;margin-bottom:10px">&#9888; Promoter Stake Declining</strong>
+    <div class="tw">
+      <table>
+        <thead><tr><th style="text-align:left">Period</th><th>Promoter %</th><th>Change</th></tr></thead>
+        <tbody>
+          <tr><td>Jun 2023</td><td>74.71%</td><td>—</td></tr>
+          <tr><td>Mar 2024</td><td>72.33%</td><td class="down">-2.38 pp</td></tr>
+          <tr><td>Sep 2024</td><td>70.62%</td><td class="down">-1.71 pp</td></tr>
+          <tr><td>Mar 2025</td><td>70.54%</td><td class="flat">Stable</td></tr>
+          <tr><td>Sep 2025</td><td>65.12%</td><td class="down">-5.42 pp (large drop!)</td></tr>
+          <tr style="background:var(--highlight-latest)"><td><strong>Mar 2026</strong></td><td><strong>64.84%</strong></td><td class="down">-0.28 pp</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="font-size:12px;color:var(--color-amber);margin-top:10px;font-weight:600">Total decline: -9.87 pp over 12 quarters. Large 5.42 pp drop in Sep 2025 quarter unexplained. No pledge; no public explanation. Watch if falls below 60%.</div>
+  </div>
+  <div class="card">
+    <strong style="font-size:15px;display:block;margin-bottom:10px">Public &amp; Institutional Ownership</strong>
+    <div class="tw">
+      <table>
+        <thead><tr><th style="text-align:left">Category</th><th>Jun 23</th><th>Mar 26</th><th>Change</th></tr></thead>
+        <tbody>
+          <tr><td>Promoter</td><td>74.71%</td><td>64.84%</td><td class="down">-9.87 pp</td></tr>
+          <tr><td>FII</td><td>0.00%</td><td>0.41%</td><td class="up">+0.41 pp</td></tr>
+          <tr><td>DII</td><td>0.49%</td><td>0.00%</td><td class="down">-0.49 pp</td></tr>
+          <tr><td>Public</td><td>24.52%</td><td>34.74%</td><td class="up">+10.22 pp</td></tr>
+          <tr><td>Shareholders</td><td>10,750</td><td>31,754</td><td class="up">+195%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-top:12px">FII entry (0.41%) is nascent — stock still too small for serious foreign institutional interest. DII exited completely. Public retail participation tripled (10,750 &#8594; 31,754 shareholders) consistent with a stock rallying 285% and retail FOMO.</div>
+  </div>
+</div>
+
+<div class="stitle">Quarterly Shareholding Data</div>
+<div class="tw" style="margin-bottom:20px">
+  <table>
+    <thead>
+      <tr>
+        <th style="text-align:left">Category</th>
+        <th>Jun 23</th><th>Sep 23</th><th>Dec 23</th><th>Mar 24</th><th>Jun 24</th><th>Sep 24</th>
+        <th>Dec 24</th><th>Mar 25</th><th>Jun 25</th><th>Sep 25</th><th>Dec 25</th><th class="hl">Mar 26</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Promoter</td><td>74.71</td><td>74.41</td><td>73.76</td><td>72.33</td><td>71.65</td><td>70.62</td><td>70.53</td><td>70.54</td><td>70.44</td><td>70.57</td><td>65.12</td><td class="hl down">64.84</td></tr>
+      <tr><td>FII</td><td>0.00</td><td>0.00</td><td>0.00</td><td>0.21</td><td>0.15</td><td>0.00</td><td>0.15</td><td>0.00</td><td>0.00</td><td>0.00</td><td>0.44</td><td class="hl up">0.41</td></tr>
+      <tr><td>DII</td><td>0.49</td><td>0.33</td><td>0.00</td><td>0.00</td><td>0.00</td><td>0.00</td><td>0.00</td><td>0.00</td><td>0.00</td><td>0.00</td><td>0.00</td><td class="hl">0.00</td></tr>
+      <tr><td>Public</td><td>24.52</td><td>24.97</td><td>25.95</td><td>27.17</td><td>27.92</td><td>29.10</td><td>29.05</td><td>29.19</td><td>29.26</td><td>29.17</td><td>34.44</td><td class="hl up">34.74</td></tr>
+      <tr><td>Shareholders (K)</td><td>10.8</td><td>13.2</td><td>13.5</td><td>15.0</td><td>18.2</td><td>22.4</td><td>23.7</td><td>23.7</td><td>24.0</td><td>23.7</td><td>28.3</td><td class="hl up">31.8</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="stitle">Ownership Quality Verdict</div>
+<div class="card" style="border-top:4px solid var(--color-amber)">
+  <div class="frow"><span>Promoter Pledge</span><span class="badge b-green">0% — CLEAN</span></div>
+  <div class="frow"><span>Promoter Stake Trend</span><span class="badge b-amber">DECLINING — -10 pp in 3 years</span></div>
+  <div class="frow"><span>Institutional Ownership</span><span class="badge b-amber">VERY LOW — FII 0.41%, DII 0%</span></div>
+  <div class="frow"><span>Retail Participation</span><span class="badge b-med">HIGH — 3x shareholder growth (FOMO)</span></div>
+  <div class="frow"><span>Liquidity</span><span class="badge b-med">MODERATE — Mkt Cap &#8377;970 Cr; free float ~35%</span></div>
+  <div style="margin-top:12px;font-size:13px;color:var(--text-secondary)">Low institutional ownership is both a risk (no institutional floor) and an opportunity (re-rating catalyst as FIIs/DIIs discover the stock post-demerger). The 5.42 pp promoter drop in Sep 2025 quarter needs explanation — watch for regulatory filings or block deals.</div>
+</div>
+</div>
+<div id="tab-13" class="tab-pane">
+<div class="stitle">Event Timeline (Newest First)</div>
+<div style="margin-bottom:24px">
+
+  <div class="tli">
+    <div class="tl-dot blue"></div>
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">09 June 2026 (Upcoming)</div>
+    <div style="font-weight:700;font-size:15px">NCLT Hearing — Composite Scheme Final Sanction <span class="badge b-high">BINARY CATALYST</span></div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-top:4px">NCLT to hear final petition for Composite Scheme of Arrangement: BCPL merger + BIL demerger &#8594; Tieramet Limited (copper) + BIL (real estate). All preliminary approvals cleared. If approved, Tieramet gets separately listed — unlocking real estate value in BIL.</div>
+  </div>
+
+  <div class="tli">
+    <div class="tl-dot green"></div>
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">06 May 2026</div>
+    <div style="font-weight:700;font-size:15px">Q4 FY26 Earnings Call Transcript Filed <span class="badge b-green">RESULTS</span></div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-top:4px">BSE filing: Full transcript of 02 May 2026 earnings call. Q4 Revenue &#8377;735 Cr, EBITDA &#8377;36 Cr, PAT ~&#8377;18.5 Cr. New CFO (Surendra Bhutoria) and Advait Surana (BD) on call for first time.</div>
+  </div>
+
+  <div class="tli">
+    <div class="tl-dot green"></div>
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">02 May 2026</div>
+    <div style="font-weight:700;font-size:15px">Q4 &amp; FY26 Annual Earnings Call <span class="badge b-green">RESULTS</span></div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-top:4px">Three "first-evers": Revenue &gt;&#8377;2,000 Cr, EBITDA &gt;&#8377;100 Cr, PAT &gt;&#8377;50 Cr. ROE 19.5%, ROCE 16.3%. VAP 59%. NCLT hearing confirmed for 9 June 2026. Plastic recycling project (&#8377;10 Cr) announced.</div>
+  </div>
+
+  <div class="tli">
+    <div class="tl-dot"></div>
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">30 April 2026</div>
+    <div style="font-weight:700;font-size:15px">FY26 Audited Results Approved by Board <span class="badge b-green">FILING</span></div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-top:4px">Consolidated: Revenue &#8377;2,377.8 Cr, PAT &#8377;50.17 Cr, EPS &#8377;15.68. OCF turned positive: +&#8377;59 Cr (vs -&#8377;144 Cr FY25). NCL debt reduced &#8377;79 Cr &#8594; &#8377;43 Cr. Published in Business Standard and Nava Telangana on 01 May 2026.</div>
+  </div>
+
+  <div class="tli">
+    <div class="tl-dot blue"></div>
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">14 March 2026</div>
+    <div style="font-weight:700;font-size:15px">NCLT-Convened Meeting: Composite Scheme Approved <span class="badge b-blue">CORPORATE ACTION</span></div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-top:4px">Shareholders AND creditors voted to approve the Composite Scheme of Arrangement. BCPL (copper WOS) + BIL &#8594; Tieramet Limited (copper entity, new listing) + BIL (real estate). Joint petition filed before NCLT for final sanction.</div>
+  </div>
+
+  <div class="tli">
+    <div class="tl-dot green"></div>
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">31 January 2026</div>
+    <div style="font-weight:700;font-size:15px">Q3 FY26 Earnings Call <span class="badge b-green">RESULTS</span></div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-top:4px">Q3 Revenue &#8377;577 Cr (+46% YoY), EBITDA margin 5.0%, PAT &#8377;13 Cr. 9M FY26 EBITDA &#8377;70 Cr (+172% YoY). 35K MT capacity confirmed operational. AI data center 106 MT bus bar order disclosed. Governance concern (CS churn) flagged by analyst.</div>
+  </div>
+
+  <div class="tli">
+    <div class="tl-dot"></div>
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">February 2026</div>
+    <div style="font-weight:700;font-size:15px">35,000 MT Capacity Expansion Completed <span class="badge b-blue">OPERATIONAL</span></div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-top:4px">New 60-acre integrated facility expansion operational. Capacity: 30,000 MT &#8594; 35,000 MT. Two ISO-certified plants. Next target: 50,000 MT (FY27-28). Enables &#8377;3,500+ Cr revenue at current realizations.</div>
+  </div>
+
+  <div class="tli">
+    <div class="tl-dot grey"></div>
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">During FY26</div>
+    <div style="font-weight:700;font-size:15px">Credit Rating Upgrade: BBB &#8594; BBB+ (BCPL) <span class="badge b-blue">RATING</span></div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-top:4px">Bhagyanagar Copper Pvt Ltd (BCPL — WOS) upgraded from BBB to BBB+ by a new rating agency (CARE BBB withdrawn Mar 2024 for BIL). Target: A- by end FY27. Borrowing cost: 9% &#8594; 8.5%, targeting &lt;8% with A-.</div>
+  </div>
+
+  <div class="tli">
+    <div class="tl-dot red"></div>
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">15 January 2025</div>
+    <div style="font-weight:700;font-size:15px">Narender Surana Resigned as Managing Director <span class="badge b-high">GOVERNANCE</span></div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-top:4px">Founder figure and original MD resigned. Devendra Surana continues as MD. Narendra Surana (founder) reappeared as "Founder" on Q4 FY26 earnings call — suggesting he remains involved but without executive responsibility. First in a series of management changes.</div>
+  </div>
+
+  <div class="tli">
+    <div class="tl-dot grey"></div>
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">March 2024</div>
+    <div style="font-weight:700;font-size:15px">CARE BBB Rating Withdrawn <span class="badge b-grey">RATING</span></div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-top:4px">CARE withdrawn at BIL's request following copper business slump-sale to BCPL. BIL standalone entity now only has wind power revenue (&#8377;5.88 Cr FY26) — the old BBB rating was for the consolidated copper entity. BCPL separately rated by different agency.</div>
+  </div>
+
+  <div class="tli">
+    <div class="tl-dot grey"></div>
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">01 January 2024</div>
+    <div style="font-weight:700;font-size:15px">Copper Business Slump-Sale to BCPL — Effective Date <span class="badge b-blue">CORPORATE ACTION</span></div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-top:4px">All copper manufacturing assets/liabilities transferred to Bhagyanagar Copper Pvt Ltd (100% WOS). Board approved Aug 2023; shareholders approved Sep 2023. BIL standalone post-Jan 2024 shows only wind power revenue. Consolidated BIL+BCPL remains the investible entity. Pre-cursor to formal demerger.</div>
+  </div>
+
+</div>
+
+<div class="stitle">Event Category Filter</div>
+<div class="g5">
+  <div class="card" style="text-align:center;cursor:pointer"><div style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted)">Results Events</div><div style="font-weight:700;font-size:18px;margin-top:4px">4</div></div>
+  <div class="card" style="text-align:center;cursor:pointer"><div style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted)">Corporate Actions</div><div style="font-weight:700;font-size:18px;margin-top:4px">3</div></div>
+  <div class="card" style="text-align:center;cursor:pointer"><div style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted)">Rating Actions</div><div style="font-weight:700;font-size:18px;margin-top:4px">2</div></div>
+  <div class="card" style="text-align:center;cursor:pointer"><div style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted)">Governance</div><div style="font-weight:700;font-size:18px;margin-top:4px">1</div></div>
+  <div class="card" style="text-align:center;cursor:pointer"><div style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted)">Operational</div><div style="font-weight:700;font-size:18px;margin-top:4px">1</div></div>
+</div>
+</div>
+</main>
+<script>
+// ── Tab navigation ──────────────────────────────────────────────
+function showTab(n) {
+  for (var i = 0; i <= 13; i++) {
+    var pane = document.getElementById('tab-' + i);
+    var btn  = document.getElementById('btn-' + i);
+    if (pane) pane.style.display = 'none';
+    if (btn)  btn.classList.remove('active');
+  }
+  var t = document.getElementById('tab-' + n);
+  var b = document.getElementById('btn-' + n);
+  if (t) t.style.display = 'block';
+  if (b) b.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Dark / Light toggle ─────────────────────────────────────────
+function toggleTheme() {
+  var html = document.documentElement;
+  var isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  var btn = document.getElementById('themeBtn');
+  if (btn) btn.textContent = isDark ? 'Dark' : 'Light';
+  rebuildCharts();
+}
+
+function textColor() {
+  return document.documentElement.getAttribute('data-theme') === 'dark' ? '#94A3B8' : '#475569';
+}
+function gridColor() {
+  return document.documentElement.getAttribute('data-theme') === 'dark' ? '#334155' : '#E2E8F0';
+}
+
+// ── Chart instances (for rebuild on theme change) ───────────────
+var charts = {};
+
+function buildCharts() {
+  Chart.defaults.font.size = 13;
+  Chart.defaults.color = textColor();
+
+  // 1. Annual Revenue + EBITDA (Tab 1)
+  var c1 = document.getElementById('chartRevenue');
+  if (c1) {
+    charts.revenue = new Chart(c1, {
+      type: 'bar',
+      data: {
+        labels: ['FY15','FY16','FY17','FY18','FY19','FY20','FY21','FY22','FY23','FY24','FY25','FY26'],
+        datasets: [
+          { label: 'Revenue (Cr)', data: [279,299,310,513,569,562,787,1574,1847,1429,1626,2378], backgroundColor: 'rgba(14,165,233,0.7)', yAxisID: 'y' },
+          { label: 'EBITDA (Cr)', data: [10,9,14,13,19,15,19,30,35,30,37,106], backgroundColor: 'rgba(232,112,26,0.85)', yAxisID: 'y' },
+          { label: 'EBITDA Margin %', data: [3.6,3.0,4.5,2.5,3.3,2.7,2.4,1.9,1.9,2.1,2.3,4.5], type: 'line', borderColor: '#16A34A', backgroundColor: 'transparent', yAxisID: 'y2', tension: 0.4, pointRadius: 3, borderWidth: 2 }
+        ]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: textColor() } } },
+        scales: {
+          y: { grid: { color: gridColor() }, ticks: { color: textColor() }, title: { display: true, text: 'Rs Cr', color: textColor() } },
+          y2: { position: 'right', grid: { drawOnChartArea: false }, ticks: { color: '#16A34A' }, title: { display: true, text: 'Margin %', color: '#16A34A' } },
+          x: { grid: { color: gridColor() }, ticks: { color: textColor() } }
+        }
+      }
+    });
+  }
+
+  // 2. Quarterly Revenue (Tab 4)
+  var c2 = document.getElementById('chartQtrRev');
+  if (c2) {
+    charts.qtrRev = new Chart(c2, {
+      type: 'bar',
+      data: {
+        labels: ['Mar23','Jun23','Sep23','Dec23','Mar24','Jun24','Sep24','Dec24','Mar25','Jun25','Sep25','Dec25','Mar26'],
+        datasets: [
+          { label: 'Revenue (Cr)', data: [663,346,340,335,409,369,408,394,454,486,580,577,735], backgroundColor: ['rgba(14,165,233,0.65)','rgba(14,165,233,0.65)','rgba(14,165,233,0.65)','rgba(14,165,233,0.65)','rgba(14,165,233,0.65)','rgba(14,165,233,0.65)','rgba(14,165,233,0.65)','rgba(14,165,233,0.65)','rgba(14,165,233,0.65)','rgba(14,165,233,0.65)','rgba(14,165,233,0.65)','rgba(14,165,233,0.65)','rgba(232,112,26,0.9)'] },
+          { label: 'EBITDA Margin %', data: [2.3,1.7,2.4,2.4,2.0,1.9,2.0,2.8,2.4,3.3,4.3,5.0,4.9], type: 'line', borderColor: '#16A34A', backgroundColor: 'transparent', yAxisID: 'y2', tension: 0.4, pointRadius: 3, borderWidth: 2 }
+        ]
+      },
+      options: { responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: textColor() } } },
+        scales: {
+          y: { grid: { color: gridColor() }, ticks: { color: textColor() } },
+          y2: { position: 'right', grid: { drawOnChartArea: false }, ticks: { color: '#16A34A' }, max: 8 },
+          x: { grid: { color: gridColor() }, ticks: { color: textColor() } }
+        }
+      }
+    });
+  }
+
+  // 3. EBITDA per kg (Tab 5)
+  var c3 = document.getElementById('chartEBITDAkg');
+  if (c3) {
+    charts.ebitdakg = new Chart(c3, {
+      type: 'bar',
+      data: {
+        labels: ['Q1 FY26','Q2 FY26','Q3 FY26','Q4 FY26'],
+        datasets: [{ label: 'EBITDA per kg (Rs)', data: [25,30,45,62], backgroundColor: ['rgba(22,163,74,0.6)','rgba(22,163,74,0.7)','rgba(22,163,74,0.8)','rgba(232,112,26,0.9)'] }]
+      },
+      options: { responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: textColor() } } },
+        scales: { y: { grid: { color: gridColor() }, ticks: { color: textColor() } }, x: { grid: { color: gridColor() }, ticks: { color: textColor() } } }
+      }
+    });
+  }
+
+  // 4. Peer P/E (Tab 7)
+  var c4 = document.getElementById('chartPeer');
+  if (c4) {
+    charts.peer = new Chart(c4, {
+      type: 'bar',
+      data: {
+        labels: ['Hind. Copper','Onix Solar','Bhagyanagar','Mardia Samyoung'],
+        datasets: [{ label: 'P/E Ratio (x)', data: [82.4,67.7,19.3,484.2], backgroundColor: ['rgba(14,165,233,0.7)','rgba(14,165,233,0.7)','rgba(232,112,26,0.9)','rgba(14,165,233,0.7)'] }]
+      },
+      options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: textColor() } } },
+        scales: { x: { grid: { color: gridColor() }, ticks: { color: textColor() } }, y: { grid: { color: gridColor() }, ticks: { color: textColor() } } }
+      }
+    });
+  }
+
+  // 5. Risk Scatter (Tab 9)
+  var c5 = document.getElementById('chartRisk');
+  if (c5) {
+    charts.risk = new Chart(c5, {
+      type: 'scatter',
+      data: {
+        datasets: [{
+          label: 'Risk Items',
+          data: [
+            { x: 5, y: 9, label: 'R1: Contingent Liabilities' },
+            { x: 5, y: 8, label: 'R2: Margin Reversion' },
+            { x: 6, y: 6, label: 'R3: LME Spike' },
+            { x: 7, y: 5, label: 'R4: Governance' },
+            { x: 4, y: 5, label: 'R5: NCLT Delay' },
+            { x: 4, y: 4, label: 'R6: WC Stretch' },
+            { x: 5, y: 3, label: 'R7: Promoter Dilution' }
+          ],
+          backgroundColor: ['#DC2626','#DC2626','#D97706','#D97706','#D97706','#D97706','#16A34A'],
+          pointRadius: 12, pointHoverRadius: 14
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: function(ctx) { return ctx.raw.label + ' (P:' + ctx.raw.x + ' I:' + ctx.raw.y + ')'; } } }
+        },
+        scales: {
+          x: { min: 0, max: 10, title: { display: true, text: 'Probability (Low 0 → High 10)', color: textColor() }, grid: { color: gridColor() }, ticks: { color: textColor() } },
+          y: { min: 0, max: 10, title: { display: true, text: 'Impact (Low 0 → High 10)', color: textColor() }, grid: { color: gridColor() }, ticks: { color: textColor() } }
+        }
+      }
+    });
+  }
+
+  // 6. OCF / FCF (Tab 11)
+  var c6 = document.getElementById('chartCF');
+  if (c6) {
+    charts.cf = new Chart(c6, {
+      type: 'bar',
+      data: {
+        labels: ['FY21','FY22','FY23','FY24','FY25','FY26'],
+        datasets: [
+          { label: 'OCF', data: [-76,-4,-40,96,-144,59], backgroundColor: [-76,-4,-40,96,-144,59].map(v => v >= 0 ? 'rgba(22,163,74,0.7)' : 'rgba(220,38,38,0.7)') },
+          { label: 'FCF', data: [-81,-5,-49,135,-150,50], backgroundColor: [-81,-5,-49,135,-150,50].map(v => v >= 0 ? 'rgba(22,163,74,0.4)' : 'rgba(220,38,38,0.4)'), borderColor: [-81,-5,-49,135,-150,50].map(v => v >= 0 ? '#16A34A' : '#DC2626'), borderWidth: 1 }
+        ]
+      },
+      options: { responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: textColor() } } },
+        scales: { y: { grid: { color: gridColor() }, ticks: { color: textColor() } }, x: { grid: { color: gridColor() }, ticks: { color: textColor() } } }
+      }
+    });
+  }
+
+  // 7. Debt Trajectory (Tab 11)
+  var c7 = document.getElementById('chartDebt');
+  if (c7) {
+    charts.debt = new Chart(c7, {
+      type: 'line',
+      data: {
+        labels: ['FY15','FY16','FY17','FY18','FY19','FY20','FY21','FY22','FY23','FY24','FY25','FY26'],
+        datasets: [
+          { label: 'Total Borrowings (Cr)', data: [123,102,76,46,114,66,155,179,220,101,275,259], borderColor: '#DC2626', backgroundColor: 'rgba(220,38,38,0.1)', fill: true, tension: 0.3, pointRadius: 3, borderWidth: 2 },
+          { label: 'Equity (Cr)', data: [220,221,103,115,122,123,126,137,147,193,207,257], borderColor: '#16A34A', backgroundColor: 'transparent', tension: 0.3, pointRadius: 3, borderWidth: 2 }
+        ]
+      },
+      options: { responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: textColor() } } },
+        scales: { y: { grid: { color: gridColor() }, ticks: { color: textColor() } }, x: { grid: { color: gridColor() }, ticks: { color: textColor() } } }
+      }
+    });
+  }
+
+  // 8. ROCE Trend (Tab 11)
+  var c8 = document.getElementById('chartROCE');
+  if (c8) {
+    charts.roce = new Chart(c8, {
+      type: 'line',
+      data: {
+        labels: ['FY15','FY16','FY17','FY18','FY19','FY20','FY21','FY22','FY23','FY24','FY25','FY26'],
+        datasets: [{ label: 'ROCE %', data: [3,3,6,7,8,5,6,8,9,8,8,21], borderColor: '#E8701A', backgroundColor: 'rgba(232,112,26,0.1)', fill: true, tension: 0.3, pointRadius: 4, borderWidth: 2, pointBackgroundColor: '#E8701A' }]
+      },
+      options: { responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: textColor() } } },
+        scales: { y: { grid: { color: gridColor() }, ticks: { color: textColor(), callback: function(v) { return v + '%'; } } }, x: { grid: { color: gridColor() }, ticks: { color: textColor() } } }
+      }
+    });
+  }
+
+  // 9. Shareholding Stacked Bar (Tab 12)
+  var c9 = document.getElementById('chartShare');
+  if (c9) {
+    charts.share = new Chart(c9, {
+      type: 'bar',
+      data: {
+        labels: ['Jun 23','Sep 23','Dec 23','Mar 24','Jun 24','Sep 24','Dec 24','Mar 25','Jun 25','Sep 25','Dec 25','Mar 26'],
+        datasets: [
+          { label: 'Promoter', data: [74.71,74.41,73.76,72.33,71.65,70.62,70.53,70.54,70.44,70.57,65.12,64.84], backgroundColor: 'rgba(14,165,233,0.8)', stack: 's' },
+          { label: 'FII', data: [0.00,0.00,0.00,0.21,0.15,0.00,0.15,0.00,0.00,0.00,0.44,0.41], backgroundColor: 'rgba(22,163,74,0.8)', stack: 's' },
+          { label: 'DII', data: [0.49,0.33,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00], backgroundColor: 'rgba(29,78,216,0.8)', stack: 's' },
+          { label: 'Public', data: [24.52,24.97,25.95,27.17,27.92,29.10,29.05,29.19,29.26,29.17,34.44,34.74], backgroundColor: 'rgba(217,119,6,0.7)', stack: 's' }
+        ]
+      },
+      options: { responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: textColor() } } },
+        scales: {
+          y: { stacked: true, max: 100, grid: { color: gridColor() }, ticks: { color: textColor(), callback: function(v) { return v + '%'; } } },
+          x: { stacked: true, grid: { color: gridColor() }, ticks: { color: textColor() } }
+        }
+      }
+    });
+  }
+}
+
+function destroyCharts() {
+  for (var key in charts) {
+    if (charts[key]) { charts[key].destroy(); charts[key] = null; }
+  }
+}
+
+function rebuildCharts() {
+  destroyCharts();
+  buildCharts();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  buildCharts();
+});
+</script>
+</body>
+</html>

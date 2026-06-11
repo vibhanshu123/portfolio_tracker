@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AZAD Engineering — Investment Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bg-body:#F8F9FC;--bg-card:#FFFFFF;--bg-card-border:#E2E8F0;--text-primary:#0F172A;--text-secondary:#475569;--text-muted:#94A3B8;--color-navy:#0F1F3D;--color-orange:#E8701A;--color-green:#16A34A;--color-red:#DC2626;--color-amber:#D97706;--color-blue:#1D4ED8;--nav-bg:#0F1F3D;--nav-text:#FFFFFF;--table-header-bg:#F1F5F9;--table-row-alt:#F8FAFC;--highlight-latest:#FFF7ED;}
+[data-theme="dark"]{--bg-body:#0F172A;--bg-card:#1E293B;--bg-card-border:#334155;--text-primary:#F1F5F9;--text-secondary:#94A3B8;--text-muted:#64748B;--color-navy:#1E40AF;--color-orange:#F97316;--color-green:#22C55E;--color-red:#EF4444;--color-amber:#F59E0B;--color-blue:#3B82F6;--nav-bg:#1E293B;--nav-text:#F1F5F9;--table-header-bg:#1E293B;--table-row-alt:#0F172A;--highlight-latest:#431407;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:16px;line-height:1.6;background:var(--bg-body);color:var(--text-primary);transition:background .2s,color .2s;}
+nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);display:flex;align-items:center;flex-wrap:wrap;gap:2px;padding:6px 12px;box-shadow:0 2px 8px rgba(0,0,0,.3);}
+.nav-brand{color:#fff;font-weight:700;font-size:14px;margin-right:12px;white-space:nowrap;letter-spacing:.02em;}
+.nav-brand span{color:var(--color-orange);}
+.tab-btn{background:transparent;border:none;color:rgba(255,255,255,.7);font-size:12px;padding:5px 10px;cursor:pointer;border-radius:4px;white-space:nowrap;transition:all .15s;}
+.tab-btn:hover{background:rgba(255,255,255,.1);color:#fff;}
+.tab-btn.active{background:var(--color-orange);color:#fff;font-weight:600;}
+.dark-toggle{margin-left:auto;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:12px;padding:4px 10px;border-radius:4px;cursor:pointer;}
+main{max-width:1400px;margin:0 auto;padding:20px 16px;}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+.section-header{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--color-orange);border-left:4px solid var(--color-orange);border-bottom:1px solid var(--bg-card-border);padding:6px 10px;margin:24px 0 14px;background:var(--bg-card);}
+.card{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:8px;padding:16px;margin-bottom:16px;}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
+.kpi-card{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:8px;padding:14px;text-align:center;}
+.kpi-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
+.kpi-value{font-size:22px;font-weight:700;font-family:"Courier New",monospace;color:var(--text-primary);}
+.kpi-sub{font-size:11px;color:var(--text-secondary);margin-top:2px;}
+.sparkline{display:block;width:100%;height:28px;margin-top:6px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+@media(max-width:768px){.two-col,.three-col{grid-template-columns:1fr;}}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+table{width:100%;border-collapse:collapse;font-size:15px;}
+th{background:var(--table-header-bg);color:var(--text-secondary);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:9px 13px;text-align:right;border-bottom:2px solid var(--bg-card-border);white-space:nowrap;}
+th:first-child{text-align:left;}
+td{padding:9px 13px;border-bottom:1px solid var(--bg-card-border);font-family:"Courier New",monospace;font-size:14px;text-align:right;color:var(--text-primary);}
+td:first-child{text-align:left;font-family:system-ui,sans-serif;font-size:14px;font-weight:500;color:var(--text-secondary);}
+tr:nth-child(even) td{background:var(--table-row-alt);}
+.latest-col{background:var(--highlight-latest)!important;}
+.pos{color:var(--color-green)!important;}
+.neg{color:var(--color-red)!important;}
+.badge{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:20px;white-space:nowrap;}
+.badge-buy{background:#DCFCE7;color:var(--color-green);}
+.badge-acc{background:#FEF3C7;color:var(--color-amber);}
+.badge-watch{background:#FEF9C3;color:#92400E;}
+.badge-red{background:#FEE2E2;color:var(--color-red);}
+.badge-navy{background:#EFF6FF;color:var(--color-navy);}
+.badge-blue{background:#DBEAFE;color:var(--color-blue);}
+.badge-high{background:#FEE2E2;color:var(--color-red);}
+.badge-med{background:#FEF3C7;color:var(--color-amber);}
+.badge-low{background:#DCFCE7;color:var(--color-green);}
+.badge-opt{background:#DBEAFE;color:var(--color-blue);}
+.badge-clean{background:#DCFCE7;color:var(--color-green);}
+.badge-amber{background:#FEF3C7;color:var(--color-amber);}
+.verdict-box{border-left:6px solid var(--color-orange);padding:16px 20px;background:var(--bg-card);border-radius:0 8px 8px 0;margin-bottom:20px;}
+.verdict-ticker{font-size:12px;color:var(--text-muted);margin-bottom:4px;}
+.verdict-name{font-size:20px;font-weight:800;color:var(--text-primary);margin-bottom:6px;}
+.conviction-bar-wrap{background:var(--bg-card-border);border-radius:4px;height:8px;width:200px;display:inline-block;vertical-align:middle;margin-left:8px;}
+.conviction-bar{height:8px;border-radius:4px;background:var(--color-orange);}
+.thesis-para{font-size:15px;line-height:1.7;color:var(--text-primary);margin-bottom:14px;}
+.reason-list{list-style:none;margin:0;padding:0;}
+.reason-list li{padding:8px 0;border-bottom:1px solid var(--bg-card-border);font-size:14px;display:flex;gap:8px;}
+.reason-list li:last-child{border-bottom:none;}
+.reason-icon{font-size:16px;flex-shrink:0;}
+.trigger-card{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:8px;padding:14px;margin-bottom:10px;}
+.trigger-title{font-size:14px;font-weight:700;margin-bottom:4px;color:var(--text-primary);}
+.trigger-detail{font-size:13px;color:var(--text-secondary);line-height:1.5;}
+.risk-card{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:8px;padding:14px;margin-bottom:10px;border-left:4px solid;}
+.risk-high{border-left-color:var(--color-red);}
+.risk-med{border-left-color:var(--color-amber);}
+.risk-low{border-left-color:var(--color-green);}
+.metric-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bg-card-border);font-size:14px;}
+.metric-row:last-child{border-bottom:none;}
+.metric-label{color:var(--text-secondary);}
+.metric-value{font-weight:700;font-family:"Courier New",monospace;}
+.chart-container{position:relative;height:280px;margin-top:8px;}
+.chart-container-sm{position:relative;height:200px;margin-top:8px;}
+.moat-item{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--bg-card-border);font-size:14px;}
+.timeline{position:relative;padding-left:24px;}
+.timeline::before{content:"";position:absolute;left:8px;top:0;bottom:0;width:2px;background:var(--bg-card-border);}
+.timeline-item{position:relative;margin-bottom:14px;}
+.timeline-item::before{content:"";position:absolute;left:-20px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--color-orange);border:2px solid var(--bg-card);}
+.timeline-date{font-size:11px;color:var(--text-muted);margin-bottom:2px;}
+.timeline-text{font-size:14px;color:var(--text-primary);}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px;}
+.event-card{display:flex;gap:12px;padding:10px;border-bottom:1px solid var(--bg-card-border);}
+.event-date{font-size:11px;color:var(--text-muted);min-width:80px;padding-top:2px;}
+.event-body .event-title{font-size:14px;font-weight:600;color:var(--text-primary);}
+.event-body .event-detail{font-size:12px;color:var(--text-secondary);margin-top:2px;}
+.pf-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;}
+.pf-item{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:6px;padding:10px;text-align:center;}
+.pf-score{font-size:20px;font-weight:800;}
+.pf-label{font-size:11px;color:var(--text-muted);margin-top:2px;}
+.peer-row-highlight td{background:var(--highlight-latest)!important;font-weight:700;}
+@media print{nav,.dark-toggle,.tab-btn{display:none!important;}.tab-pane{display:block!important;}body{background:#fff!important;color:#000!important;}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-brand">AZAD <span>Engineering</span></div>
+  <button class="tab-btn active" onclick="showTab(0)">Exec Summary</button>
+  <button class="tab-btn" onclick="showTab(1)">Overview</button>
+  <button class="tab-btn" onclick="showTab(2)">Business</button>
+  <button class="tab-btn" onclick="showTab(3)">Industry</button>
+  <button class="tab-btn" onclick="showTab(4)">Financials</button>
+  <button class="tab-btn" onclick="showTab(5)">Growth</button>
+  <button class="tab-btn" onclick="showTab(6)">Forensics</button>
+  <button class="tab-btn" onclick="showTab(7)">Valuation</button>
+  <button class="tab-btn" onclick="showTab(8)">Thesis</button>
+  <button class="tab-btn" onclick="showTab(9)">Risks</button>
+  <button class="tab-btn" onclick="showTab(10)">Concall</button>
+  <button class="tab-btn" onclick="showTab(11)">Cap. Alloc.</button>
+  <button class="tab-btn" onclick="showTab(12)">Ownership</button>
+  <button class="tab-btn" onclick="showTab(13)">Events</button>
+  <button class="dark-toggle" onclick="toggleTheme()">☀ / ☾</button>
+</nav>
+<main>
+<!-- TAB 0: EXECUTIVE SUMMARY -->
+<div id="tab-0" class="tab-pane active">
+<div class="verdict-box">
+  <div class="verdict-ticker">NSE: AZAD | BSE: 544061 | CMP ₹2,046 | MCap ₹13,216 Cr</div>
+  <div class="verdict-name">Azad Engineering Limited</div>
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:8px;">
+    <span class="badge badge-acc" style="font-size:16px;padding:6px 16px;">ACCUMULATE</span>
+    <span style="font-size:14px;color:var(--text-secondary);">Conviction <strong>7 / 10</strong>
+      <span class="conviction-bar-wrap"><span class="conviction-bar" style="width:70%;"></span></span>
+    </span>
+    <span class="badge badge-amber">Forensics: AMBER FLAGS</span>
+    <span style="font-size:14px;color:var(--text-secondary);">Target <strong style="color:var(--color-orange);">₹2,400</strong> (+17% | 12–18 months)</span>
+  </div>
+</div>
+<div class="section-header">Investment Thesis</div>
+<div class="card">
+  <p class="thesis-para">Azad Engineering is one of four companies globally that can manufacture critical rotating components for gas, steam, and nuclear turbines — a qualification moat that took 15–17 years to build and cannot be replicated in less than a decade. With ₹6,500 crore order book (11x FY26 revenue), 4 dedicated OEM facilities commissioned in FY25–26, and wallet share below 1.5% of customers' relevant spend, the platform for a multi-year compounding story is firmly in place.</p>
+  <p class="thesis-para">The investment case at current prices rests on two time-boxed catalysts: (1) operating leverage unlock in FY27 as newly-commissioned Phase 1 capacity reaches committed throughput — EBITDA margin could surprise above 38–39% as fixed cost absorption improves; and (2) the Rolls-Royce/P&W/Safran qualification pipeline converting to serial revenue in FY27–28, shifting aerospace mix from 17% toward 25–30% and re-rating the earnings quality.</p>
+  <p class="thesis-para">At ₹2,046 (100x FY26 EPS), the stock is not cheap — it prices in 25%+ growth through FY28. The margin of safety is thin, but the business quality is exceptional and the TAM is genuinely USD 28–100 billion with Azad at sub-1% wallet share. ACCUMULATE on dips, full position below ₹1,850.</p>
+</div>
+<div class="section-header">5 Reasons to Own</div>
+<div class="card">
+  <ul class="reason-list">
+    <li><span class="reason-icon">🔒</span><div><strong>Qualification moat is not for sale.</strong> 1,700+ qualified parts. 45+ NADCAP special processes. 30–48 month onboarding per product. No OEM will re-qualify a supplier when Azad delivers zero PPM — the switching cost is the asset, not the machinery.</div></li>
+    <li><span class="reason-icon">📈</span><div><strong>36.9% EBITDA margin with room to expand.</strong> Operating costs grew 15.9% against 30.3% revenue in FY26. As the 4 new plants reach full throughput in FY27, fixed cost dilution drives margin toward 38–40% — a PAT growth rate materially above revenue growth.</div></li>
+    <li><span class="reason-icon">🌍</span><div><strong>TAM is USD 28 billion, wallet share below 1%.</strong> GE Vernova alone has 55 GW under construction; gas turbine order books are at decade highs. Azad holds USD 165 Mn+ in GE contracts — barely scratching the surface of what a single-source, qualified supplier can win.</div></li>
+    <li><span class="reason-icon">🛡️</span><div><strong>Contracted revenue with 5–8 year LTAs.</strong> INR 6,500 crore order book = 11x annual revenue. MHI 8-year single-source nozzle vane contract; GE Vernova USD 165 Mn across two LTAs; Siemens USD 90 Mn; Baker Hughes strategic SA to CY2030. Revenue is not speculative.</div></li>
+    <li><span class="reason-icon">✈️</span><div><strong>Aerospace optionality not priced in.</strong> Rolls-Royce (first batch H2 FY27), P&W Canada (master terms signed), Safran (MOU signed) — 3 new Tier-1 engine OEMs in qualification pipeline. Each, at maturity, adds ₹50–80 Cr annual revenue at premium margin. At full scale, aerospace could be 35%+ of revenue by FY29.</div></li>
+  </ul>
+</div>
+<div class="two-col">
+  <div>
+    <div class="section-header">Top 3 Risks</div>
+    <div class="card">
+      <ul class="reason-list">
+        <li><span class="reason-icon">⚠️</span><div><strong>Valuation leaves no room for error.</strong> At 100x FY26 earnings, any miss on execution timeline (Phase 1 throughput, qualification delays) triggers a de-rating. Downside to ₹1,400–1,600 on a bad scenario.</div></li>
+        <li><span class="reason-icon">⚠️</span><div><strong>Working capital is structurally heavy and rising.</strong> WC days at 310 (Screener) vs target 130–140. Negative OCF in FY26 (-₹123 Cr). Cash conversion remains poor until throughput ramp normalizes inventory and receivables.</div></li>
+        <li><span class="reason-icon">⚠️</span><div><strong>Customer concentration at 75%+.</strong> Top 3 customers > 75% revenue. GE Vernova capital allocation decisions, MHI energy order book, or Siemens Energy program changes are direct revenue risks with no short-term alternative.</div></li>
+      </ul>
+    </div>
+  </div>
+  <div>
+    <div class="section-header">Snapshot</div>
+    <div class="card">
+      <div class="metric-row"><span class="metric-label">Revenue (FY26)</span><span class="metric-value">₹590 Cr (+30%)</span></div>
+      <div class="metric-row"><span class="metric-label">EBITDA Margin</span><span class="metric-value">36.9%</span></div>
+      <div class="metric-row"><span class="metric-label">PAT (FY26)</span><span class="metric-value">₹132 Cr (+49%)</span></div>
+      <div class="metric-row"><span class="metric-label">EPS (FY26)</span><span class="metric-value">₹20.46</span></div>
+      <div class="metric-row"><span class="metric-label">Order Book</span><span class="metric-value">₹6,500 Cr (11x)</span></div>
+      <div class="metric-row"><span class="metric-label">D/E Ratio</span><span class="metric-value">0.30x</span></div>
+      <div class="metric-row"><span class="metric-label">P/E (FY26 trailing)</span><span class="metric-value">100x</span></div>
+      <div class="metric-row"><span class="metric-label">EV/EBITDA</span><span class="metric-value">50.9x</span></div>
+      <div class="metric-row"><span class="metric-label">Promoter Holding</span><span class="metric-value">55.84%</span></div>
+      <div class="metric-row"><span class="metric-label">CARE Rating</span><span class="metric-value">A / Stable (Aug 2025)</span></div>
+    </div>
+  </div>
+</div>
+</div>
+<!-- TAB 1: OVERVIEW -->
+<div id="tab-1" class="tab-pane">
+<div class="section-header">Key Performance Indicators — FY26</div>
+<div class="card-grid">
+  <div class="kpi-card"><div class="kpi-label">Revenue</div><div class="kpi-value">₹590 Cr</div><div class="kpi-sub">+30.3% YoY</div><svg class="sparkline" viewBox="0 0 100 28"><polyline fill="none" stroke="var(--color-orange)" stroke-width="2" points="0,22 17,21 33,18 50,15 67,13 83,10 100,7"/></svg></div>
+  <div class="kpi-card"><div class="kpi-label">EBITDA Margin</div><div class="kpi-value">36.9%</div><div class="kpi-sub">vs 36.3% FY25</div><svg class="sparkline" viewBox="0 0 100 28"><polyline fill="none" stroke="var(--color-green)" stroke-width="2" points="0,20 17,22 33,19 50,14 67,12 83,11 100,10"/></svg></div>
+  <div class="kpi-card"><div class="kpi-label">PAT</div><div class="kpi-value">₹132 Cr</div><div class="kpi-sub">+49.3% YoY</div><svg class="sparkline" viewBox="0 0 100 28"><polyline fill="none" stroke="var(--color-orange)" stroke-width="2" points="0,24 17,20 33,26 50,10 67,12 83,8 100,4"/></svg></div>
+  <div class="kpi-card"><div class="kpi-label">PAT Margin</div><div class="kpi-value">22.4%</div><div class="kpi-sub">vs 19.5% FY25</div><svg class="sparkline" viewBox="0 0 100 28"><polyline fill="none" stroke="var(--color-green)" stroke-width="2" points="0,20 17,18 33,25 50,12 67,14 83,10 100,7"/></svg></div>
+  <div class="kpi-card"><div class="kpi-label">EPS</div><div class="kpi-value">₹20.46</div><div class="kpi-sub">vs ₹13.71 FY25</div><svg class="sparkline" viewBox="0 0 100 28"><polyline fill="none" stroke="var(--color-orange)" stroke-width="2" points="0,24 17,22 33,26 50,20 67,10 83,6 100,2"/></svg></div>
+  <div class="kpi-card"><div class="kpi-label">ROCE (Adj)</div><div class="kpi-value">15.3%</div><div class="kpi-sub">Excl. CWIP &amp; cash</div><svg class="sparkline" viewBox="0 0 100 28"><polyline fill="none" stroke="var(--color-blue)" stroke-width="2" points="0,18 17,14 33,16 50,18 67,14 83,13 100,12"/></svg></div>
+  <div class="kpi-card"><div class="kpi-label">D/E Ratio</div><div class="kpi-value">0.30x</div><div class="kpi-sub">vs 0.06x pre-QIP</div><svg class="sparkline" viewBox="0 0 100 28"><polyline fill="none" stroke="var(--color-blue)" stroke-width="2" points="0,10 17,16 33,22 50,4 67,4 83,6 100,8"/></svg></div>
+  <div class="kpi-card"><div class="kpi-label">Order Book</div><div class="kpi-value">₹6,500 Cr</div><div class="kpi-sub">~11x FY26 revenue</div><svg class="sparkline" viewBox="0 0 100 28"><polyline fill="none" stroke="var(--color-orange)" stroke-width="2" points="0,26 17,24 33,20 50,16 67,12 83,8 100,4"/></svg></div>
+</div>
+
+<div class="two-col">
+  <div>
+    <div class="section-header">Shareholding — Mar 2026</div>
+    <div class="card"><div class="chart-container"><canvas id="chartShareholding"></canvas></div></div>
+  </div>
+  <div>
+    <div class="section-header">Price &amp; Market Data</div>
+    <div class="card">
+      <div class="metric-row"><span class="metric-label">CMP (screener)</span><span class="metric-value">₹2,046</span></div>
+      <div class="metric-row"><span class="metric-label">52W High / Low</span><span class="metric-value">₹2,350 / ₹1,359</span></div>
+      <div class="metric-row"><span class="metric-label">200 DMA</span><span class="metric-value">₹1,702</span></div>
+      <div class="metric-row"><span class="metric-label">P/E (trailing)</span><span class="metric-value">100x</span></div>
+      <div class="metric-row"><span class="metric-label">EV/EBITDA</span><span class="metric-value">50.9x</span></div>
+      <div class="metric-row"><span class="metric-label">Price / Book</span><span class="metric-value">8.52x</span></div>
+      <div class="metric-row"><span class="metric-label">Market Cap</span><span class="metric-value">₹13,216 Cr</span></div>
+      <div class="metric-row"><span class="metric-label">Face Value</span><span class="metric-value">₹2</span></div>
+      <div class="metric-row"><span class="metric-label">Shares O/S</span><span class="metric-value">6.46 Cr</span></div>
+      <div class="metric-row"><span class="metric-label">Dividend Yield</span><span class="metric-value">0.0% (nil)</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="section-header">Company Milestones</div>
+<div class="card">
+  <div class="timeline">
+    <div class="timeline-item"><div class="timeline-date">1983</div><div class="timeline-text">Incorporated; operational precision manufacturing begins 2008 with 1 CNC machine</div></div>
+    <div class="timeline-item"><div class="timeline-date">2012–17</div><div class="timeline-text">Forge shop, heat treatment, MHI exclusive bay inaugurated. First Tier-1 OEM qualifications.</div></div>
+    <div class="timeline-item"><div class="timeline-date">2019–22</div><div class="timeline-text">Long-term contracts with GE Aviation, Honeywell International. Series funding rounds (₹60 Cr + ₹217 Cr). National Award for indigenous turbine blade forging/machining.</div></div>
+    <div class="timeline-item"><div class="timeline-date">Dec 2023</div><div class="timeline-text">IPO: ₹740 Cr (Fresh ₹240 Cr + OFS ₹500 Cr) at ₹524/share. All pre-IPO debt repaid. 1,700+ qualifications. 20,000 sqm operational.</div></div>
+    <div class="timeline-item"><div class="timeline-date">2024</div><div class="timeline-text">GE Vernova USD 35 Mn contract; Baker Hughes 2 contracts; Siemens Energy contract; Rolls-Royce 7-year defence LTA. Phase 1 construction started (94,899 sqm, Tunikibollaram, Hyderabad).</div></div>
+    <div class="timeline-item"><div class="timeline-date">Feb 2025</div><div class="timeline-text">QIP: ₹700 Cr at ₹1,280/share. Used for Phase 1 machinery &amp; equipment. Net ₹681 Cr.</div></div>
+    <div class="timeline-item"><div class="timeline-date">Mar–Apr 2025</div><div class="timeline-text">MHI dedicated facility (7,200 sqm) + GE Vernova dedicated facility (7,600 sqm) commissioned — Phase 1 first two OEM plants operational.</div></div>
+    <div class="timeline-item"><div class="timeline-date">Jul–Aug 2025</div><div class="timeline-text">CARE upgraded to A / Stable (from A-). GE Vernova USD 112 Mn + USD 53.5 Mn LTAs. MHI 8-year single-source nozzle vane LTCPA announced.</div></div>
+    <div class="timeline-item"><div class="timeline-date">Sep 2025</div><div class="timeline-text">Siemens Energy dedicated facility (7,200 sqm) commissioned. Safran MOU signed. ATGG engine ~75% complete.</div></div>
+    <div class="timeline-item"><div class="timeline-date">Apr 2026</div><div class="timeline-text">Baker Hughes dedicated facility (7,600 sqm) commissioned. All 4 dedicated OEM plants operational. FY26: ₹590 Cr revenue (+30%), ₹132 Cr PAT (+49%).</div></div>
+  </div>
+</div>
+</div>
+<!-- TAB 2: BUSINESS -->
+<div id="tab-2" class="tab-pane">
+<div class="section-header">Business Description</div>
+<div class="card">
+  <p class="thesis-para">Azad Engineering manufactures precision-critical rotating components for the world's largest OEMs in Energy, Aerospace &amp; Defence, and Oil &amp; Gas. Its products — 3D airfoils, turbine blades, nozzle vanes, compressor blades, impellers, and engine rotating assemblies — are life-critical and project-critical, meaning a single failure in service can result in catastrophic outcomes. This creates an extreme quality and qualification barrier that takes 3–5 years per product to certify, and 15–17 years to build a meaningful qualification library.</p>
+  <p class="thesis-para">The company operates a "factory-within-factory" model — 4 dedicated lean manufacturing facilities, each built exclusively for one OEM (MHI, GE Vernova, Siemens Energy, Baker Hughes). Each facility mirrors the OEM's own production standards, allowing seamless integration into their global supply chain. This model deepens stickiness, reduces qualification risk on new products, and sets the baseline for 8-year single-source agreements.</p>
+</div>
+
+<div class="two-col">
+  <div>
+    <div class="section-header">Revenue Mix — FY26 (Standalone)</div>
+    <div class="card"><div class="chart-container"><canvas id="chartRevMix"></canvas></div></div>
+  </div>
+  <div>
+    <div class="section-header">Geographic Split — FY26</div>
+    <div class="card">
+      <div class="metric-row"><span class="metric-label">Exports</span><span class="metric-value pos">93.0% — ₹549 Cr</span></div>
+      <div class="metric-row"><span class="metric-label">Domestic</span><span class="metric-value">7.0% — ₹41 Cr</span></div>
+      <div class="metric-row"><span class="metric-label">Countries served</span><span class="metric-value">12</span></div>
+      <div class="metric-row"><span class="metric-label">Key geographies</span><span class="metric-value">USA, UK, Germany, Japan, Saudi Arabia, Singapore</span></div>
+      <hr style="margin:12px 0;border:none;border-top:1px solid var(--bg-card-border);">
+      <div style="font-size:13px;color:var(--text-secondary);">
+        <strong>FY26 Segment Detail:</strong><br>
+        Energy &amp; O&amp;G: ₹481 Cr (81.5%, +34% YoY)<br>
+        Aerospace &amp; Defence: ₹101 Cr (17.2%, +25% YoY) — crossed ₹100 Cr first time<br>
+        Oil &amp; Gas: nascent; Baker Hughes SA commenced Apr 2026
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-header">Competitive Moat Scorecard</div>
+<div class="card">
+  <div class="moat-item"><div><strong>Switching Costs</strong> <span class="badge badge-buy">STRONG</span></div><div style="font-size:13px;color:var(--text-secondary);max-width:500px;">30–48 month OEM qualification per product. Zero-PPM requirement means OEM never voluntarily re-opens a qualified supplier slot. Average customer relationship 10+ years. Multi-program engagements deepen lock-in.</div></div>
+  <div class="moat-item"><div><strong>Regulatory / Approvals</strong> <span class="badge badge-buy">STRONG</span></div><div style="font-size:13px;color:var(--text-secondary);max-width:500px;">AS9100, NADCAP (special processes), EDF/Arabelle nuclear certification (only Indian company), NABL-accredited testing lab, multiple OEM-specific quality certifications. Nuclear qualification alone took years.</div></div>
+  <div class="moat-item"><div><strong>Scale &amp; Intangibles</strong> <span class="badge badge-buy">STRONG</span></div><div style="font-size:13px;color:var(--text-secondary);max-width:500px;">1,700+ product qualifications accumulated over 15+ years. 45+ special process approvals. Replicating this library from scratch takes 15–17 years (energy) or 5 years (aerospace). The IP is the qualification library.</div></div>
+  <div class="moat-item"><div><strong>Network Effects</strong> <span class="badge badge-amber">MODERATE</span></div><div style="font-size:13px;color:var(--text-secondary);max-width:500px;">OEM relationships are sticky — once Azad is in the bill of materials for one component, new component wins at the same OEM are faster (shared quality records, process documentation). Cross-OEM qualification network accelerating.</div></div>
+  <div class="moat-item"><div><strong>Cost Advantage</strong> <span class="badge badge-amber">MODERATE</span></div><div style="font-size:13px;color:var(--text-secondary);max-width:500px;">India wage advantage vs Western peers. Domestic raw material qualification (Sunflag, Star Wire for Nimonic/Inconel) reducing import dependency. Backward integration (coatings, heat treatment in-house) saves 2–3% EBITDA.</div></div>
+  <div class="moat-item"><div><strong>Brand</strong> <span class="badge badge-buy">STRONG (B2B)</span></div><div style="font-size:13px;color:var(--text-secondary);max-width:500px;">MHI Global Partner of the Year 2024. GE Vernova Awards for Operational Excellence. Honeywell, Godrej Aerospace recognitions. "Azad" is a known quality brand at every major gas turbine OEM globally.</div></div>
+</div>
+
+<div class="section-header">Key Customers</div>
+<div class="card">
+  <div class="tbl-wrap">
+    <table>
+      <tr><th>Segment</th><th style="text-align:left">Customer</th><th style="text-align:left">Contract / Relationship</th><th>Value / Tenure</th></tr>
+      <tr><td>Energy</td><td style="text-align:left">GE Vernova</td><td style="text-align:left">Advanced gas turbine airfoils + Nuclear/steam/industrial LTAs. Dedicated 7,600 sqm facility.</td><td>USD 165.5 Mn total</td></tr>
+      <tr><td>Energy</td><td style="text-align:left">MHI</td><td style="text-align:left">Gas &amp; thermal turbine airfoils (5yr) + Nozzle vane single-source LTCPA (8yr). Only non-Japan MHI supplier globally for nozzle vanes.</td><td>USD 83 Mn + 8yr SA</td></tr>
+      <tr><td>Energy</td><td style="text-align:left">Siemens Energy</td><td style="text-align:left">Critical rotating components, multi-year. Dedicated 7,200 sqm facility (Sep 2025).</td><td>USD 90 Mn</td></tr>
+      <tr><td>Energy</td><td style="text-align:left">Arabelle (EDF)</td><td style="text-align:left">Nuclear turbine components — only Indian company certified by EDF.</td><td>USD 40 Mn</td></tr>
+      <tr><td>O&amp;G</td><td style="text-align:left">Baker Hughes</td><td style="text-align:left">Strategic Supply Agreement to CY2030. Dedicated 7,600 sqm facility (Apr 2026).</td><td>Strategic SA</td></tr>
+      <tr><td>Aerospace</td><td style="text-align:left">Rolls-Royce</td><td style="text-align:left">Civil aircraft engine components, program life. First qualification batch H2 FY27.</td><td>Program life</td></tr>
+      <tr><td>Aerospace</td><td style="text-align:left">Pratt &amp; Whitney Canada</td><td style="text-align:left">Master Terms Agreement — framework for aircraft engine components.</td><td>Long-term</td></tr>
+      <tr><td>Aerospace</td><td style="text-align:left">Honeywell</td><td style="text-align:left">Aviation high-complexity components, Phase 1.</td><td>USD 16 Mn</td></tr>
+      <tr><td>Defence</td><td style="text-align:left">GTRE / DRDO</td><td style="text-align:left">Complete ATGG turbojet engine — India's first indigenous jet engine. ~75% complete Q3 FY26.</td><td>Strategic</td></tr>
+      <tr><td>Domestic</td><td style="text-align:left">BHEL</td><td style="text-align:left">Supercritical rotating airfoils for domestic thermal power plants.</td><td>Multi-year</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="section-header">4 Dedicated OEM Facilities (Factory-Within-Factory)</div>
+<div class="card">
+  <div class="tbl-wrap">
+    <table>
+      <tr><th>OEM</th><th>Area (sqm)</th><th>Location</th><th>Status / Date</th><th>Products</th></tr>
+      <tr><td>MHI</td><td>7,200</td><td>Tunikibollaram, Hyderabad</td><td class="pos">Commissioned Mar 2025</td><td>Gas &amp; thermal turbine nozzle vanes, airfoils</td></tr>
+      <tr><td>GE Vernova</td><td>7,600</td><td>Tunikibollaram, Hyderabad</td><td class="pos">Commissioned Apr 2025</td><td>Advanced gas turbine airfoils, nuclear components</td></tr>
+      <tr><td>Siemens Energy</td><td>7,200</td><td>Tunikibollaram, Hyderabad</td><td class="pos">Commissioned Sep 2025</td><td>Critical rotating components, cold blades</td></tr>
+      <tr><td>Baker Hughes</td><td>7,600</td><td>Tunikibollaram, Hyderabad</td><td class="pos">Commissioned Apr 2026</td><td>O&amp;G precision assemblies, oilfield equipment</td></tr>
+    </table>
+  </div>
+  <p style="font-size:13px;color:var(--text-secondary);margin-top:10px;">Total new footprint: ~29,600 sqm across 4 OEM-dedicated plants, within 94,899 sqm Phase 1 greenfield. Existing operational area: ~20,000 sqm. Total land: 170,000 sqm for future Phase 2.</p>
+</div>
+</div>
+<!-- TAB 3: INDUSTRY -->
+<div id="tab-3" class="tab-pane">
+<div class="section-header">Total Addressable Market</div>
+<div class="card">
+  <div class="summary-grid">
+    <div class="kpi-card"><div class="kpi-label">Aerospace &amp; Defence TAM (CY29E)</div><div class="kpi-value" style="font-size:18px;">INR 2,190 bn</div><div class="kpi-sub">~USD 26 bn</div></div>
+    <div class="kpi-card"><div class="kpi-label">Energy Turbine TAM (CY29E)</div><div class="kpi-value" style="font-size:18px;">INR 310 bn</div><div class="kpi-sub">~USD 3.7 bn</div></div>
+    <div class="kpi-card"><div class="kpi-label">Oil &amp; Gas TAM (CY29E)</div><div class="kpi-value" style="font-size:18px;">INR 930 bn</div><div class="kpi-sub">~USD 11 bn</div></div>
+    <div class="kpi-card"><div class="kpi-label">Total TAM (CY29E)</div><div class="kpi-value" style="font-size:18px;">INR 3,430 bn</div><div class="kpi-sub">~USD 41 bn</div></div>
+    <div class="kpi-card"><div class="kpi-label">Azad Wallet Share</div><div class="kpi-value" style="font-size:18px;color:var(--color-orange);">&lt; 1%</div><div class="kpi-sub">Massive headroom</div></div>
+    <div class="kpi-card"><div class="kpi-label">Potential TAM (New Capabilities)</div><div class="kpi-value" style="font-size:18px;">USD 100 bn</div><div class="kpi-sub">Long-term potential</div></div>
+  </div>
+</div>
+
+<div class="section-header">Market Structure</div>
+<div class="two-col">
+  <div class="card">
+    <div class="kpi-label" style="margin-bottom:8px;">Supply Side — Oligopoly</div>
+    <p style="font-size:14px;color:var(--text-secondary);margin-bottom:10px;">Only 4 global players can manufacture high-precision critical rotating components for top-tier OEMs:</p>
+    <div class="metric-row"><span class="metric-label">AECC Aero Science &amp; Tech</span><span class="metric-value">China</span></div>
+    <div class="metric-row"><span class="metric-label">Pietro Rosa</span><span class="metric-value">Italy</span></div>
+    <div class="metric-row"><span class="metric-label">Wuxi</span><span class="metric-value">China</span></div>
+    <div class="metric-row"><span class="metric-label" style="color:var(--color-orange);font-weight:700;">Azad Engineering</span><span class="metric-value pos">India ✓</span></div>
+    <p style="font-size:12px;color:var(--text-muted);margin-top:10px;">Replication timeline: 15–17 years (energy), 5 years (aerospace)</p>
+  </div>
+  <div class="card">
+    <div class="kpi-label" style="margin-bottom:8px;">Demand Side — Concentrated OEM Base</div>
+    <div class="metric-row"><span class="metric-label">Gas Turbine OEMs (top 3)</span><span class="metric-value">GE+MHI+Siemens ~70% share</span></div>
+    <div class="metric-row"><span class="metric-label">Commercial Aircraft (top 2)</span><span class="metric-value">Boeing+Airbus ~91% share</span></div>
+    <div class="metric-row"><span class="metric-label">Engine OEMs (top 4)</span><span class="metric-value">GE, P&amp;W, RR, Safran</span></div>
+    <div class="metric-row"><span class="metric-label">GE Vernova gas turbines under construction</span><span class="metric-value">55 GW</span></div>
+    <div class="metric-row"><span class="metric-label">Industry lifecycle</span><span class="metric-value"><span class="badge badge-buy">GROWTH</span></span></div>
+    <p style="font-size:12px;color:var(--text-muted);margin-top:10px;">"Customer concentration risk is actually oligopoly advantage — consolidated by design" — Management</p>
+  </div>
+</div>
+
+<div class="section-header">Structural Tailwinds</div>
+<div class="card">
+  <ul class="reason-list">
+    <li><span class="reason-icon">⚡</span><div><strong>Global energy transition driving gas turbine supercycle.</strong> 47% of turbines under construction (82 GW) are hydrogen-ready — Azad's customers (GE, MHI, Siemens) are at the centre. GE Vernova alone has 55 GW under construction. Gas turbines are the bridge fuel and peaker solution for the AI data centre buildout — demand for compute is growing 3x/year, gas is the only scalable near-term power source.</div></li>
+    <li><span class="reason-icon">✈️</span><div><strong>Commercial aviation supercycle.</strong> 21,000+ aircraft due for replacement 2024–44. Global commercial fleet to grow 32% to 38,300 aircraft by 2035. Boeing + Airbus backlog 15,000+ narrow-bodies. P&amp;W GTF engine issues creating demand for precision parts. India's fleet alone: 890 aircraft with 2,325 on order.</div></li>
+    <li><span class="reason-icon">🛡️</span><div><strong>India defence indigenisation programme.</strong> Defence production to triple from ₹94,845 Cr (FY22) to ₹3 lakh Cr (FY29E). First indigenous jet engine (ATGG/GTRE) being built by Azad — landmark programme. Exports targeted at ₹50,000 Cr by FY29. HAL, DRDO procurement shifting to domestic suppliers.</div></li>
+    <li><span class="reason-icon">☢️</span><div><strong>Nuclear power renaissance.</strong> India targets 22,000 MW nuclear capacity by 2050 (from current ~7,000 MW). Global nuclear generation growing 2%/year. Azad is only Indian company EDF/Arabelle-certified for nuclear turbine components — first mover in a market that just opened.</div></li>
+    <li><span class="reason-icon">🏭</span><div><strong>Steam turbine services market expanding.</strong> Global steam turbine service market: USD 19.5 bn (2024) → USD 31.8 bn (2034, CAGR 5%). Installed base maintenance drives steady replacement demand for turbine blades — Azad's core competency.</div></li>
+  </ul>
+</div>
+
+<div class="section-header">Key Risks to Industry Thesis</div>
+<div class="card">
+  <ul class="reason-list">
+    <li><span class="reason-icon">⚠️</span><div><strong>Energy transition to renewables could reduce gas turbine orders.</strong> If solar + storage costs fall faster than expected, gas turbine order books could disappoint from FY28+. However, Azad's nuclear and steam turbine exposure partially offsets this.</div></li>
+    <li><span class="reason-icon">⚠️</span><div><strong>Geopolitical risk on exports (93% revenue).</strong> Trade restrictions, sanctions, or OEM supply chain regionalization (US, Europe sourcing more locally) could slow Azad's global growth. Chinese competitors (AECC, Wuxi) may benefit from domestic preference in China-linked supply chains.</div></li>
+    <li><span class="reason-icon">⚠️</span><div><strong>OEM consolidation or programme cancellation.</strong> GE Vernova, Siemens Energy, or MHI pivoting away from existing turbine platforms (e.g., hydrogen turbines may require new part qualifications from scratch) could partially obsolete current qualification library.</div></li>
+  </ul>
+</div>
+</div>
+<!-- TAB 4: FINANCIALS -->
+<div id="tab-4" class="tab-pane">
+<div class="section-header">Quarterly P&amp;L — Last 8 Quarters (Metrics as Rows / Periods as Columns)</div>
+<div class="card">
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr>
+        <th>Metric (₹ Cr)</th>
+        <th>Q1FY25<br>Jun'24</th><th>Q2FY25<br>Sep'24</th><th>Q3FY25<br>Dec'24</th><th>Q4FY25<br>Mar'25</th>
+        <th>Q1FY26<br>Jun'25</th><th>Q2FY26<br>Sep'25</th><th>Q3FY26<br>Dec'25</th>
+        <th class="latest-col">Q4FY26<br>Mar'26 ★</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>Revenue</td><td>98</td><td>111</td><td>119</td><td>125</td><td>135</td><td>143</td><td>156</td><td class="latest-col">157</td></tr>
+        <tr><td>Op. Profit (EBITDA)</td><td>33</td><td>40</td><td>43</td><td>45</td><td>49</td><td>51</td><td>60</td><td class="latest-col">58</td></tr>
+        <tr><td>OPM %</td><td>34%</td><td>36%</td><td>36%</td><td>36%</td><td>36%</td><td>36%</td><td>39%</td><td class="latest-col">37%</td></tr>
+        <tr><td>Other Income</td><td>1</td><td>2</td><td>5</td><td>4</td><td>9</td><td>13</td><td>9</td><td class="latest-col">17</td></tr>
+        <tr><td>Interest</td><td>3</td><td>5</td><td>6</td><td>4</td><td>6</td><td>6</td><td>8</td><td class="latest-col">10</td></tr>
+        <tr><td>Depreciation</td><td>6</td><td>7</td><td>7</td><td>9</td><td>10</td><td>11</td><td>14</td><td class="latest-col">16</td></tr>
+        <tr><td>PBT</td><td>24</td><td>30</td><td>35</td><td>37</td><td>42</td><td>47</td><td>47</td><td class="latest-col">49</td></tr>
+        <tr><td>Tax %</td><td>30%</td><td>30%</td><td>30%</td><td>29%</td><td>29%</td><td>30%</td><td>28%</td><td class="latest-col">29%</td></tr>
+        <tr><td>PAT</td><td>17</td><td>21</td><td>24</td><td>26</td><td>30</td><td>33</td><td>34</td><td class="latest-col">35</td></tr>
+        <tr><td>PAT %</td><td>17.3%</td><td>18.9%</td><td>20.2%</td><td>20.8%</td><td>22.2%</td><td>23.1%</td><td>21.8%</td><td class="latest-col">22.3%</td></tr>
+        <tr><td>EPS (₹)</td><td>2.90</td><td>3.56</td><td>4.11</td><td>4.03</td><td>4.64</td><td>5.11</td><td>5.27</td><td class="latest-col">5.44</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section-header">Quarterly Revenue &amp; Margin Trend</div>
+<div class="card"><div class="chart-container"><canvas id="chartQtrRevenue"></canvas></div></div>
+
+<div class="section-header">Annual P&amp;L Summary (FY20–FY26, ₹ Cr)</div>
+<div class="card">
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Metric</th><th>FY20</th><th>FY21</th><th>FY22</th><th>FY23</th><th>FY24</th><th>FY25</th><th class="latest-col">FY26 ★</th></tr></thead>
+      <tbody>
+        <tr><td>Revenue</td><td>122</td><td>121</td><td>194</td><td>252</td><td>341</td><td>453</td><td class="latest-col">590</td></tr>
+        <tr><td>EBITDA (Op. Profit)</td><td>41</td><td>29</td><td>62</td><td>72</td><td>117</td><td>161</td><td class="latest-col">218</td></tr>
+        <tr><td>OPM %</td><td>34%</td><td>24%</td><td>32%</td><td>29%</td><td>34%</td><td>36%</td><td class="latest-col">37%</td></tr>
+        <tr><td>Interest</td><td>6</td><td>5</td><td>14</td><td>52</td><td>47</td><td>18</td><td class="latest-col">30</td></tr>
+        <tr><td>Depreciation</td><td>7</td><td>9</td><td>13</td><td>17</td><td>21</td><td>29</td><td class="latest-col">50</td></tr>
+        <tr><td>PBT</td><td>30</td><td>19</td><td>39</td><td>13</td><td>81</td><td>126</td><td class="latest-col">185</td></tr>
+        <tr><td>Tax %</td><td>29%</td><td>29%</td><td>28%</td><td>36%</td><td>27%</td><td>30%</td><td class="latest-col">29%</td></tr>
+        <tr><td>PAT</td><td>21</td><td>14</td><td>28</td><td>9</td><td>59</td><td>89</td><td class="latest-col">132</td></tr>
+        <tr><td>PAT %</td><td>17%</td><td>12%</td><td>14%</td><td>4%</td><td>17%</td><td>20%</td><td class="latest-col">22%</td></tr>
+        <tr><td>EPS (₹)</td><td>—</td><td>—</td><td>—</td><td>—</td><td>9.91</td><td>13.71</td><td class="latest-col">20.46</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:12px;color:var(--text-muted);margin-top:8px;">Note: FY23 PAT depressed by fire incident, Piramal CCD finance costs (~24–25%), litigation charges. FY24 finance cost includes one-time items. EPS pre-FY24 not comparable (pre-IPO share count).</p>
+</div>
+
+<div class="section-header">Annual P&amp;L Chart</div>
+<div class="card"><div class="chart-container"><canvas id="chartAnnualPL"></canvas></div></div>
+
+<div class="section-header">Balance Sheet Summary (₹ Cr)</div>
+<div class="card">
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Item</th><th>FY21</th><th>FY22</th><th>FY23</th><th>FY24</th><th>FY25</th><th class="latest-col">FY26 ★</th></tr></thead>
+      <tbody>
+        <tr><td>Equity Capital + Reserves</td><td>93</td><td>120</td><td>204</td><td>645</td><td>1,418</td><td class="latest-col">1,552</td></tr>
+        <tr><td>Borrowings (Total)</td><td>87</td><td>197</td><td>300</td><td>39</td><td>252</td><td class="latest-col">464</td></tr>
+        <tr><td>Total Liabilities</td><td>257</td><td>404</td><td>589</td><td>797</td><td>1,855</td><td class="latest-col">2,195</td></tr>
+        <tr><td>Fixed Assets (net block)</td><td>114</td><td>137</td><td>210</td><td>257</td><td>414</td><td class="latest-col">756</td></tr>
+        <tr><td>CWIP</td><td>0</td><td>24</td><td>38</td><td>45</td><td>80</td><td class="latest-col">257</td></tr>
+        <tr><td>Inventories</td><td>—</td><td>—</td><td>—</td><td>132</td><td>188</td><td class="latest-col">327</td></tr>
+        <tr><td>Trade Receivables</td><td>—</td><td>—</td><td>—</td><td>170</td><td>222</td><td class="latest-col">309</td></tr>
+        <tr><td>Cash + FDs</td><td>—</td><td>—</td><td>—</td><td>~29</td><td>695</td><td class="latest-col">429</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section-header">Cash Flow Summary (₹ Cr)</div>
+<div class="card">
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Item</th><th>FY20</th><th>FY21</th><th>FY22</th><th>FY23</th><th>FY24</th><th>FY25</th><th class="latest-col">FY26 ★</th></tr></thead>
+      <tbody>
+        <tr><td>CFO (Operations)</td><td>37</td><td>34</td><td>21</td><td class="neg">-10</td><td class="neg">-7</td><td>63</td><td class="neg latest-col">-123</td></tr>
+        <tr><td>CFI (Investing, net)</td><td class="neg">-28</td><td class="neg">-29</td><td class="neg">-114</td><td class="neg">-101</td><td class="neg">-55</td><td class="neg">-923</td><td class="neg latest-col">-70</td></tr>
+        <tr><td>CFF (Financing)</td><td class="neg">-7</td><td>7</td><td>96</td><td>126</td><td>71</td><td>873</td><td class="latest-col">177</td></tr>
+        <tr><td>Free Cash Flow</td><td>8</td><td>12</td><td class="neg">-96</td><td class="neg">-94</td><td class="neg">-78</td><td class="neg">-212</td><td class="neg latest-col">-694</td></tr>
+        <tr><td>CFO/PAT %</td><td>176%</td><td>243%</td><td>75%</td><td>-111%</td><td>-12%</td><td>71%</td><td class="latest-col neg">-93%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:12px;color:var(--text-muted);margin-top:8px;">FY25 CFI inflated by ₹622 Cr net FD placements from QIP proceeds. FY26 negative CFO due to ₹327 Cr inventory + ₹309 Cr receivables buildup during growth ramp — not operational deterioration. FY26 FCF: capex ₹571 Cr offset by FD maturities in CFI.</p>
+</div>
+
+<div class="section-header">Efficiency Ratios &amp; Quality Scores</div>
+<div class="two-col">
+  <div class="card">
+    <div class="metric-row"><span class="metric-label">Debtor Days (FY26)</span><span class="metric-value">191 days</span></div>
+    <div class="metric-row"><span class="metric-label">Working Capital Days (Screener)</span><span class="metric-value">310 days</span></div>
+    <div class="metric-row"><span class="metric-label">ROCE (reported FY26)</span><span class="metric-value">11.7%</span></div>
+    <div class="metric-row"><span class="metric-label">ROCE (adj, excl CWIP+cash)</span><span class="metric-value">15.3%</span></div>
+    <div class="metric-row"><span class="metric-label">ROE (FY26)</span><span class="metric-value">8.9% (diluted by QIP equity)</span></div>
+    <div class="metric-row"><span class="metric-label">Interest Coverage (FY26)</span><span class="metric-value">~7x (FY25: 9.23x)</span></div>
+    <div class="metric-row"><span class="metric-label">D/E Ratio</span><span class="metric-value">0.30x</span></div>
+  </div>
+  <div class="card">
+    <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:var(--text-primary);">Quality Scores</div>
+    <div class="pf-grid">
+      <div class="pf-item"><div class="pf-score" style="color:var(--color-amber);">5/9</div><div class="pf-label">Piotroski F-Score</div></div>
+      <div class="pf-item"><div class="pf-score pos">14.4</div><div class="pf-label">Altman Z-Score (Safe Zone &gt;3)</div></div>
+    </div>
+    <p style="font-size:12px;color:var(--text-muted);margin-top:10px;">Piotroski: -3 pts for neg CFO, leverage increase, share issuance (all growth-phase, not distress). +2 for ROA improvement, asset turnover rise, gross margin expansion. Altman Z high due to MCap/liabilities ratio.</p>
+  </div>
+</div>
+</div>
+<!-- TAB 5: GROWTH -->
+<div id="tab-5" class="tab-pane">
+<div class="section-header">Growth Track Record — CAGR</div>
+<div class="card-grid">
+  <div class="kpi-card"><div class="kpi-label">Revenue CAGR (3Y FY23–26)</div><div class="kpi-value pos">32.8%</div><div class="kpi-sub">(252→590 Cr)</div></div>
+  <div class="kpi-card"><div class="kpi-label">Revenue CAGR (5Y FY21–26)</div><div class="kpi-value pos">37.3%</div><div class="kpi-sub">(121→590 Cr)</div></div>
+  <div class="kpi-card"><div class="kpi-label">Revenue CAGR (6Y FY20–26)</div><div class="kpi-value pos">30.0%</div><div class="kpi-sub">(122→590 Cr)</div></div>
+  <div class="kpi-card"><div class="kpi-label">PAT CAGR (3Y FY23–26)</div><div class="kpi-value pos">143%</div><div class="kpi-sub">(9→132 Cr; low base)</div></div>
+  <div class="kpi-card"><div class="kpi-label">PAT CAGR (5Y FY21–26)</div><div class="kpi-value pos">56.8%</div><div class="kpi-sub">(14→132 Cr)</div></div>
+  <div class="kpi-card"><div class="kpi-label">EBITDA Margin Expansion</div><div class="kpi-value pos">+580 bps</div><div class="kpi-sub">FY21 31.3% → FY26 36.9%</div></div>
+  <div class="kpi-card"><div class="kpi-label">Mgmt Guidance FY27</div><div class="kpi-value" style="color:var(--color-orange);">25%+</div><div class="kpi-sub">Revenue growth</div></div>
+  <div class="kpi-card"><div class="kpi-label">Order Book / Revenue</div><div class="kpi-value" style="color:var(--color-orange);">11x</div><div class="kpi-sub">₹6,500 Cr / ₹590 Cr</div></div>
+</div>
+
+<div class="section-header">Variant Perception — 7 Growth Triggers</div>
+<div class="trigger-card" style="border-left:4px solid var(--color-red);">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+    <div class="trigger-title">#1 Operating Leverage Unlock — FY27 Inflection</div>
+    <div><span class="badge badge-high">HIGH IMPACT</span> <span class="badge badge-blue">3–4Q</span></div>
+  </div>
+  <div class="trigger-detail">Infrastructure ~70–80% complete. 4 OEM plants inaugurated. Management pivot: "From construction to conversion, throughput, and operating leverage." Fixed cost base absorbed ramp costs in FY26. As committed throughput fills FY27 capacity, EBITDA margin could expand to 38–40% — PAT growth materially above revenue growth. Market believes margins are stuck at 33–37%; this is the key variant perception. <strong>Watch: Q1 FY27 all-4-plants throughput commentary + WC days declining toward 200 days.</strong></div>
+</div>
+<div class="trigger-card" style="border-left:4px solid var(--color-orange);">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+    <div class="trigger-title">#2 Wallet Share Expansion — Conservative 25% Guidance is the Floor</div>
+    <div><span class="badge badge-high">HIGH IMPACT</span> <span class="badge badge-blue">2–4Q</span></div>
+  </div>
+  <div class="trigger-detail">Current wallet share: ~1–1.5% of each customer's relevant spend. Howmet Aerospace at USD 700M growing 25% with same OEMs; Azad at USD 70M — 10x headroom on current qualifications alone. 25% guidance is management's conservative public guidance, not a ceiling. Sequential quarterly revenue acceleration vs guidance is the trigger. <strong>Kill-switch: Customer reduces platform production or Azad loses qualification status.</strong></div>
+</div>
+<div class="trigger-card" style="border-left:4px solid var(--color-orange);">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+    <div class="trigger-title">#3 Aerospace OEM Sequential Unlock: RR → P&amp;W → Safran</div>
+    <div><span class="badge badge-med">MEDIUM IMPACT</span> <span class="badge badge-blue">5–8Q</span></div>
+  </div>
+  <div class="trigger-detail">Rolls-Royce: First qualification batch expected H2 FY27 → serial revenue from Q4 FY27/early FY28. P&amp;W Canada: Master Terms signed; first revenue FY28. Safran: MOU signed; 2.5-year qualification cycle. Each engine OEM at maturity adds ₹50–80 Cr annual revenue at premium margin. Aerospace mix: 17% FY26 → 25–30% FY28 → 35%+ FY29. Aero commands 35–40x vs energy 25x. <strong>Trigger: RR qualification batch approval communicated.</strong></div>
+</div>
+<div class="trigger-card" style="border-left:4px solid var(--color-amber);">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+    <div class="trigger-title">#4 MHI Hot Section Nozzle Vanes — Single Source Premium Margin</div>
+    <div><span class="badge badge-med">MEDIUM IMPACT</span> <span class="badge badge-blue">5–8Q</span></div>
+  </div>
+  <div class="trigger-detail">Only 3 global players can make hot section nozzle vanes. Azad secured 8-year single-source LTCPA with MHI — only non-Japan supplier globally for this product (3 years of qualification work). Hot section components = 3–4x ASP of compressor airfoils; 5–8% margin uplift at scale. Revenue from Q4 FY27 onwards. Peer comps (Howmet, PCC) trade at 30–35x. <strong>Trigger: First revenue batch from nozzle vane plant; qualification audits complete.</strong></div>
+</div>
+<div class="trigger-card" style="border-left:4px solid var(--color-green);">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+    <div class="trigger-title">#5 Oil &amp; Gas Segment Ramp — Baker Hughes Plant Operational Apr 2026</div>
+    <div><span class="badge badge-med">MEDIUM IMPACT</span> <span class="badge badge-blue">3–5Q</span></div>
+  </div>
+  <div class="trigger-detail">Baker Hughes dedicated facility (7,600 sqm) inaugurated April 2026. FY27 = first year of material O&amp;G revenue. Historical parallel: Aero took 5–7 years to reach ₹100 Cr; O&amp;G should do it in 2–3 years (faster qualification cycle). O&amp;G adds a third revenue engine beyond Energy and Aerospace. "FY27 will be the first year where you will see a ramp-up in O&amp;G...should breach ₹100 Cr over next couple of years." <strong>Kill-switch: Baker Hughes capex reduction cycle.</strong></div>
+</div>
+<div class="trigger-card" style="border-left:4px solid var(--color-blue);">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+    <div class="trigger-title">#6 India ATGG Engine — Pure Optionality, Not in Base Case</div>
+    <div><span class="badge badge-opt">OPTIONALITY</span> <span class="badge badge-blue">&gt;8Q</span></div>
+  </div>
+  <div class="trigger-detail">India's first indigenous turbojet engine (GTRE/DRDO ATGG). ~75% complete as of Q3 FY26. Delivery imminent. Currently GoI imports these engines — domestic production would be strategic. Even 100-unit order = ₹500+ Cr potential; high-margin defence programme. Not in current guidance or analyst models. <strong>Trigger: First engine delivery; GoI production order announcement.</strong></div>
+</div>
+<div class="trigger-card" style="border-left:4px solid var(--color-blue);">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+    <div class="trigger-title">#7 Supply Chain Indigenisation — Structural Gross Margin Improvement</div>
+    <div><span class="badge badge-low">LOW–MED</span> <span class="badge badge-blue">3–5Q</span></div>
+  </div>
+  <div class="trigger-detail">Sunflag and Star Wire approved for Nimonic/Inconel alloy grades. OEM tri-party agreements cap Azad's RM price fluctuation at 5%. Shifting from 100% import to domestic sourcing → structural gross margin improvement + reduced forex exposure. Each 1% RM cost reduction = ~40–50 bps EBITDA margin lift. Ongoing additional mill approvals in progress. <strong>Watch: RM cost % trend in quarterly gross margins.</strong></div>
+</div>
+</div>
+<!-- TAB 6: FORENSICS -->
+<div id="tab-6" class="tab-pane">
+<div class="section-header">Auditor Information</div>
+<div class="two-col">
+  <div class="card">
+    <div class="metric-row"><span class="metric-label">Auditor Name</span><span class="metric-value">MSKA &amp; Associates</span></div>
+    <div class="metric-row"><span class="metric-label">Firm Type</span><span class="metric-value">Mid-tier (not Big 4)</span></div>
+    <div class="metric-row"><span class="metric-label">FY25 Opinion</span><span class="metric-value pos">Unmodified (Clean)</span></div>
+    <div class="metric-row"><span class="metric-label">FY25 Signed</span><span class="metric-value">May 23, 2025</span></div>
+    <div class="metric-row"><span class="metric-label">FY26 Opinion</span><span class="metric-value pos">Unmodified (Clean)</span></div>
+    <div class="metric-row"><span class="metric-label">FY26 Signed</span><span class="metric-value">May 15, 2026</span></div>
+    <div class="metric-row"><span class="metric-label">IFC Opinion</span><span class="metric-value pos">Clean (implied)</span></div>
+    <div class="metric-row"><span class="metric-label">Emphasis of Matter</span><span class="metric-value">None disclosed</span></div>
+  </div>
+  <div class="card">
+    <div style="font-size:13px;font-weight:700;margin-bottom:8px;">Forensic Overall Scorecard</div>
+    <div class="metric-row"><span class="metric-label">Auditor</span><span><span class="badge badge-amber">MID-TIER — MONITOR</span></span></div>
+    <div class="metric-row"><span class="metric-label">Audit Opinion</span><span><span class="badge badge-clean">CLEAN</span></span></div>
+    <div class="metric-row"><span class="metric-label">KAMs</span><span><span class="badge badge-amber">NOT EXTRACTED</span></span></div>
+    <div class="metric-row"><span class="metric-label">RPT Risk</span><span><span class="badge badge-low">LOW-MEDIUM</span></span></div>
+    <div class="metric-row"><span class="metric-label">Contingent Liabs</span><span><span class="badge badge-amber">NOT EXTRACTED</span></span></div>
+    <div class="metric-row"><span class="metric-label">CWIP</span><span><span class="badge badge-amber">LARGE — EXPLICABLE</span></span></div>
+    <div class="metric-row"><span class="metric-label">Policy Changes</span><span><span class="badge badge-clean">NONE FOUND</span></span></div>
+    <div class="metric-row"><span class="metric-label">Overall Verdict</span><span><span class="badge badge-amber">AMBER FLAGS</span></span></div>
+  </div>
+</div>
+
+<div class="section-header">Key Audit Matters (KAMs)</div>
+<div class="card">
+  <p style="font-size:14px;color:var(--text-secondary);">KAM headings not captured in the AR extract file. KAMs are typically found in pages 50–100 of a full annual report. For MSKA &amp; Associates on a high-growth capital-intensive manufacturer, typical KAMs would include: (1) Revenue recognition timing for long-term supply contracts, (2) Inventory valuation and NRV assessment, (3) Impairment assessment of fixed assets/CWIP, (4) EPC/NADCAP qualification asset classification. <strong>Recommend reading full auditor report for KAM confirmation.</strong></p>
+</div>
+
+<div class="section-header">Related Party Transactions</div>
+<div class="card">
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Counterparty</th><th>Relationship</th><th style="text-align:left">Nature</th><th>Risk Level</th></tr></thead>
+      <tbody>
+        <tr><td>Leo Primecomp Pvt Ltd</td><td>Subsidiary (51% stake)</td><td style="text-align:left">Large-size critical part machining, Vizag. Acquired FY25 for heavy-machining capability.</td><td><span class="badge badge-low">LOW</span></td></tr>
+        <tr><td>Azad VTC Surface Technologies Pvt Ltd</td><td>Subsidiary (100% stake)</td><td style="text-align:left">Special processes &amp; coatings, Chennai. In-house NADCAP processes; reduces outsourcing cost 2–3% EBITDA.</td><td><span class="badge badge-low">LOW</span></td></tr>
+        <tr><td>Promoter / Rakesh Chopdar family</td><td>Promoter group</td><td style="text-align:left">No loans or guarantees to promoters disclosed. Arm's length transactions only per board disclosures.</td><td><span class="badge badge-low">LOW</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:12px;color:var(--text-muted);margin-top:8px;">Detailed RPT value (₹ Cr) and % of revenue not captured in extract. Audit report notes no material RPT concerns. Both subsidiaries are operational, value-accretive, and independently assessed.</p>
+</div>
+
+<div class="section-header">CWIP Analysis</div>
+<div class="card">
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Period</th><th>CWIP (₹ Cr)</th><th>Fixed Assets (₹ Cr)</th><th>CWIP as % of Gross Block</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>FY22</td><td>24</td><td>137</td><td>14.9%</td><td>Forge shop + heat treatment expansion</td></tr>
+        <tr><td>FY23</td><td>38</td><td>210</td><td>15.3%</td><td>Phase 1 land acquired; infrastructure commenced</td></tr>
+        <tr><td>FY24</td><td>45</td><td>257</td><td>14.9%</td><td>Phase 1 civil work beginning</td></tr>
+        <tr><td>FY25</td><td>80</td><td>414</td><td>16.2%</td><td>Phase 1 active construction; first 2 OEM facilities commissioned Mar–Apr 2025</td></tr>
+        <tr class="peer-row-highlight"><td>FY26 ★</td><td>257</td><td>756</td><td>25.4%</td><td>Phase 1 70–80% complete; 4 OEM plants operational; remaining civil + machinery being deployed</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:12px;color:var(--text-muted);margin-top:8px;">CWIP jump from ₹80 Cr (FY25) to ₹257 Cr (FY26) is significant but directly explained by Phase 1 greenfield construction (94,899 sqm). QIP ₹681 Cr net proceeds + ₹139 Cr capex debt funding the build-out. No impairment, ageing, or stalled construction flags visible in filings. Phase 1 expected substantially complete by end FY27.</p>
+</div>
+
+<div class="section-header">Accounting Policy Notes</div>
+<div class="card">
+  <div class="metric-row"><span class="metric-label">Revenue Recognition</span><span class="metric-value">Ind AS 115 — transfer of control; long-term contracts per delivery milestones</span></div>
+  <div class="metric-row"><span class="metric-label">Inventory Valuation</span><span class="metric-value">At cost or NRV, whichever lower; FIFO/weighted average</span></div>
+  <div class="metric-row"><span class="metric-label">Depreciation Method</span><span class="metric-value">Written-down value / Straight-line per Schedule II; accelerated for certain precision equipment</span></div>
+  <div class="metric-row"><span class="metric-label">Foreign Currency</span><span class="metric-value">Monetary items at closing rate; exchange differences to P&amp;L (Ind AS 21)</span></div>
+  <div class="metric-row"><span class="metric-label">Leases</span><span class="metric-value">Ind AS 116 — ROU assets ₹227 Mn FY26; lease liability on B/S</span></div>
+  <div class="metric-row"><span class="metric-label">Material Policy Changes</span><span class="metric-value pos">None found in extracted data</span></div>
+  <p style="font-size:12px;color:var(--text-muted);margin-top:8px;">Inventory days (Screener basis) appears very high (2,090 days FY26) due to Screener's calculation methodology using cost of goods sold denominator vs operating expenses. Actual inventory days using revenue basis = ~202 days. CARE uses 209 days for FY25 (per CARE rating report).</p>
+</div>
+</div>
+<!-- TAB 7: VALUATION -->
+<div id="tab-7" class="tab-pane">
+<div class="section-header">Current Valuation Metrics</div>
+<div class="card-grid">
+  <div class="kpi-card"><div class="kpi-label">P/E (FY26 trailing)</div><div class="kpi-value">100x</div><div class="kpi-sub">EPS ₹20.46</div></div>
+  <div class="kpi-card"><div class="kpi-label">EV/EBITDA</div><div class="kpi-value">50.9x</div><div class="kpi-sub">FY26 EBITDA ₹218 Cr</div></div>
+  <div class="kpi-card"><div class="kpi-label">Price / Book</div><div class="kpi-value">8.52x</div><div class="kpi-sub">Book ₹240/share</div></div>
+  <div class="kpi-card"><div class="kpi-label">MCap / Sales</div><div class="kpi-value">22.4x</div><div class="kpi-sub">FY26 Sales ₹590 Cr</div></div>
+  <div class="kpi-card"><div class="kpi-label">P/E (FY27E forward)</div><div class="kpi-value">~75x</div><div class="kpi-sub">FY27E EPS ~₹27</div></div>
+  <div class="kpi-card"><div class="kpi-label">Valuation Verdict</div><div class="kpi-value" style="font-size:16px;color:var(--color-amber);">EXPENSIVE</div><div class="kpi-sub">Priced for flawless execution</div></div>
+</div>
+
+<div class="section-header">Peer Comparison</div>
+<div class="card">
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Company</th><th>MCap (₹ Cr)</th><th>P/E</th><th>EV/EBITDA</th><th>OPM %</th><th>ROCE %</th><th>Sales Gr %</th><th>P/BV</th></tr></thead>
+      <tbody>
+        <tr><td>Hitachi Energy India</td><td>1,56,382</td><td>177</td><td>117</td><td>14.3%</td><td>19.4%</td><td>17.4%</td><td>34.1x</td></tr>
+        <tr><td>ABB India</td><td>1,43,759</td><td>94</td><td>62</td><td>14.1%</td><td>29.9%</td><td>8.1%</td><td>18.3x</td></tr>
+        <tr><td>BHEL</td><td>1,43,513</td><td>90</td><td>44</td><td>6.9%</td><td>8.5%</td><td>19.2%</td><td>5.5x</td></tr>
+        <tr><td>CG Power &amp; Industrial</td><td>1,38,517</td><td>113</td><td>74</td><td>13.1%</td><td>27.0%</td><td>25.3%</td><td>17.4x</td></tr>
+        <tr><td>Siemens India</td><td>1,37,249</td><td>84</td><td>52</td><td>11.7%</td><td>15.8%</td><td>10.2%</td><td>10.4x</td></tr>
+        <tr><td>GE Vernova T&amp;D India</td><td>1,24,776</td><td>98</td><td>69</td><td>27.1%</td><td>76.4%</td><td>44.6%</td><td>46.4x</td></tr>
+        <tr class="peer-row-highlight"><td>Azad Engineering ★</td><td>13,216</td><td>100</td><td>51</td><td>36.9%</td><td>11.7%</td><td>30.4%</td><td>8.5x</td></tr>
+        <tr style="background:var(--table-row-alt);font-style:italic;"><td>Sector Median (42 cos)</td><td>6,060</td><td>34</td><td>21</td><td>14.3%</td><td>23.5%</td><td>27.8%</td><td>6.1x</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:12px;color:var(--text-muted);margin-top:8px;">Azad's 36.9% OPM is best-in-class — 2.5x the sector median and 2x the premium energy peers. However, reported ROCE (11.7%) is suppressed by large CWIP and QIP cash balance. Adjusted ROCE (15.3%) is more representative of underlying business economics. P/E premium vs peers is justified by growth rate differential and qualification moat.</p>
+</div>
+
+<div class="section-header">Peer P/E Comparison Chart</div>
+<div class="card"><div class="chart-container"><canvas id="chartPeerPE"></canvas></div></div>
+
+<div class="section-header">DCF Valuation (Base Case)</div>
+<div class="card">
+  <div class="two-col">
+    <div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:8px;">DCF Assumptions</div>
+      <div class="metric-row"><span class="metric-label">Base Revenue (FY26)</span><span class="metric-value">₹590 Cr</span></div>
+      <div class="metric-row"><span class="metric-label">Growth FY27–28</span><span class="metric-value">25% p.a.</span></div>
+      <div class="metric-row"><span class="metric-label">Growth FY29–31</span><span class="metric-value">20% → 15%</span></div>
+      <div class="metric-row"><span class="metric-label">Terminal Growth</span><span class="metric-value">5.5%</span></div>
+      <div class="metric-row"><span class="metric-label">EBITDA Margin (steady state)</span><span class="metric-value">37–38%</span></div>
+      <div class="metric-row"><span class="metric-label">WACC</span><span class="metric-value">12%</span></div>
+      <div class="metric-row"><span class="metric-label">Tax Rate</span><span class="metric-value">29%</span></div>
+      <div class="metric-row"><span class="metric-label">Capex (% revenue)</span><span class="metric-value">15% FY27, 10% FY29+</span></div>
+    </div>
+    <div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:8px;">DCF Output</div>
+      <div class="metric-row"><span class="metric-label">Intrinsic Value (base)</span><span class="metric-value pos">₹2,100–2,300/share</span></div>
+      <div class="metric-row"><span class="metric-label">Bull Case (38% EBITDA, 28% gr)</span><span class="metric-value pos">₹2,600–2,900/share</span></div>
+      <div class="metric-row"><span class="metric-label">Bear Case (20% gr, margin pressure)</span><span class="metric-value neg">₹1,400–1,600/share</span></div>
+      <div class="metric-row"><span class="metric-label">vs CMP (₹2,046)</span><span class="metric-value" style="color:var(--color-amber);">~FAIR on base case</span></div>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:10px;">DCF is highly sensitive to terminal growth rate and WACC. At 12% WACC and 5.5% terminal growth, base is ~fair. The bull case (operating leverage + aerospace mix shift) offers 27–42% upside. Downside in bear case is ~30%+.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section-header">Target Price Derivation</div>
+<div class="card">
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Method</th><th>FY27E Estimate</th><th>Multiple</th><th style="text-align:right">Implied Price</th><th>Weight</th></tr></thead>
+      <tbody>
+        <tr><td>P/E on FY27E EPS</td><td>EPS ~₹27</td><td>75x</td><td>₹2,025</td><td>35%</td></tr>
+        <tr><td>P/E on FY28E EPS</td><td>EPS ~₹36</td><td>62x</td><td>₹2,232</td><td>30%</td></tr>
+        <tr><td>EV/EBITDA on FY27E</td><td>EBITDA ~₹273 Cr</td><td>45x</td><td>₹2,350 (est.)</td><td>25%</td></tr>
+        <tr><td>DCF Base</td><td>—</td><td>—</td><td>₹2,200</td><td>10%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="verdict-box" style="margin-top:14px;">
+    <div style="font-size:18px;font-weight:800;">12–18 Month Target: <span style="color:var(--color-orange);">₹2,400</span> (+17% from ₹2,046)</div>
+    <div style="font-size:14px;color:var(--text-secondary);margin-top:4px;">Weighted average of 4 methods. Upside to ₹2,800+ in bull case (operating leverage + aero unlock). Support at ₹1,800 (200 DMA region). Full position entry recommended below ₹1,850.</div>
+  </div>
+</div>
+</div>
+<!-- TAB 8: THESIS -->
+<div id="tab-8" class="tab-pane">
+<div class="section-header">Investment Cases</div>
+<div class="three-col">
+  <div class="card" style="border-top:4px solid var(--color-green);">
+    <div style="font-size:14px;font-weight:800;color:var(--color-green);margin-bottom:8px;">🐂 BULL CASE (30% probability) → ₹2,800–3,200</div>
+    <ul style="font-size:13px;color:var(--text-secondary);padding-left:16px;line-height:1.8;">
+      <li>Phase 1 all 4 plants reach committed throughput by Q2 FY27; EBITDA margin expands to 39–41%</li>
+      <li>Rolls-Royce qualification batch approved H2 FY27; serial revenue starts Q4 FY27; P&amp;W Canada follows FY28</li>
+      <li>O&amp;G (Baker Hughes) revenue ramps to ₹80+ Cr by FY28; three-segment diversification achieved</li>
+      <li>MHI nozzle vane production commences Q4 FY27 at 3–4x ASP premium; margin mix improves</li>
+      <li>FY27E Revenue: ₹780+ Cr; FY27E PAT: ₹200+ Cr; EPS ₹31+; at 80–90x = ₹2,500–2,800</li>
+    </ul>
+  </div>
+  <div class="card" style="border-top:4px solid var(--color-amber);">
+    <div style="font-size:14px;font-weight:800;color:var(--color-amber);margin-bottom:8px;">📊 BASE CASE (55% probability) → ₹2,200–2,600</div>
+    <ul style="font-size:13px;color:var(--text-secondary);padding-left:16px;line-height:1.8;">
+      <li>Revenue grows 25% FY27 to ~₹740 Cr; EBITDA margin holds at 37–38%</li>
+      <li>PAT ₹170–180 Cr FY27; EPS ~₹26–28; at 75–80x = ₹1,950–2,240</li>
+      <li>Rolls-Royce revenue starts H2 FY28; O&amp;G achieves ₹40–60 Cr by FY28</li>
+      <li>FY28E Revenue ₹925 Cr, PAT ₹240 Cr, EPS ₹37; at 65x = ₹2,405</li>
+      <li>Working capital normalises toward 230–250 days in FY27; OCF turns positive ₹100+ Cr</li>
+    </ul>
+  </div>
+  <div class="card" style="border-top:4px solid var(--color-red);">
+    <div style="font-size:14px;font-weight:800;color:var(--color-red);margin-bottom:8px;">🐻 BEAR CASE (15% probability) → ₹1,200–1,600</div>
+    <ul style="font-size:13px;color:var(--text-secondary);padding-left:16px;line-height:1.8;">
+      <li>Phase 1 ramp delayed; throughput reaches only 60% of committed capacity by FY27</li>
+      <li>GE Vernova / MHI programme slowdown reduces order execution</li>
+      <li>Working capital stays above 280 days; negative OCF continues into FY28; requires more debt</li>
+      <li>Rolls-Royce qualification fails or is delayed 2+ years; aerospace stays at 17%</li>
+      <li>FY27E Revenue ₹620 Cr; PAT ₹130 Cr; EPS ₹20; de-rates to 65x = ₹1,300</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section-header">Conviction Score</div>
+<div class="card" style="text-align:center;padding:24px;">
+  <div style="font-size:48px;font-weight:900;color:var(--color-orange);">7 / 10</div>
+  <div style="font-size:14px;color:var(--text-secondary);max-width:500px;margin:10px auto;">
+    Strong conviction on business quality and moat. Reduced by rich valuation (100x trailing), negative near-term FCF, and execution risk on simultaneous ramp of 4 new facilities. Not a "Buy and forget" at current prices — requires active monitoring of Q1–Q2 FY27 throughput data.
+  </div>
+  <div style="margin-top:14px;"><span class="badge badge-acc" style="font-size:14px;padding:6px 16px;">ACCUMULATE — Full position below ₹1,850</span></div>
+</div>
+
+<div class="section-header">Key Monitorables — Quarter by Quarter</div>
+<div class="card">
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Metric</th><th>Current (FY26)</th><th>Bull Threshold (Upgrade)</th><th>Bear Threshold (Downgrade)</th><th>Next Data Point</th></tr></thead>
+      <tbody>
+        <tr><td>Revenue growth YoY</td><td>30.3%</td><td class="pos">&gt;30% for 2 consecutive Qs</td><td class="neg">&lt;20% for any Q</td><td>Q1 FY27 (Aug 2026)</td></tr>
+        <tr><td>EBITDA Margin</td><td>36.9%</td><td class="pos">&gt;38.5% sustained</td><td class="neg">&lt;35% for 2 consecutive Qs</td><td>Q1 FY27</td></tr>
+        <tr><td>Working Capital Days</td><td>~310 (Screener) / ~257 (CARE basis)</td><td class="pos">Declining trend toward 220</td><td class="neg">Continuing above 300</td><td>Q1 FY27 balance sheet</td></tr>
+        <tr><td>CFO (quarterly)</td><td>FY26 full year: -₹123 Cr</td><td class="pos">Positive CFO in Q2 FY27+</td><td class="neg">Negative CFO beyond Q1 FY28</td><td>FY27 annual</td></tr>
+        <tr><td>Rolls-Royce first batch</td><td>Qualification in progress</td><td class="pos">Batch approval confirmed H2 FY27</td><td class="neg">Further delay beyond FY28</td><td>Q2–Q3 FY27 concall</td></tr>
+        <tr><td>O&amp;G Revenue (Baker Hughes)</td><td>&lt;₹10 Cr (nascent)</td><td class="pos">₹25+ Cr in FY27</td><td class="neg">No ramp by Q3 FY27</td><td>Q1–Q2 FY27</td></tr>
+        <tr><td>Order Book</td><td>₹6,500 Cr</td><td class="pos">&gt;₹7,500 Cr by FY27 end</td><td class="neg">&lt;₹5,000 Cr (no new wins)</td><td>Each quarterly call</td></tr>
+        <tr><td>ATGG Engine delivery</td><td>~75% complete (Q3 FY26)</td><td class="pos">Delivery + GoI production order</td><td class="neg">Indefinite delay / cancellation</td><td>Q1 FY27 concall</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section-header">FY27 Catalyst Timeline</div>
+<div class="card">
+  <div class="timeline">
+    <div class="timeline-item"><div class="timeline-date">Q1 FY27 (Apr–Jun 2026)</div><div class="timeline-text">Baker Hughes facility ramp-up begins. ATGG engine delivery confirmation expected. First O&amp;G revenue quarter. All 4 plants running — first full quarter of Phase 1 at capacity.</div></div>
+    <div class="timeline-item"><div class="timeline-date">Q2 FY27 (Jul–Sep 2026)</div><div class="timeline-text">Expected OCF inflection if working capital normalises. Rolls-Royce qualification programme milestone. MHI nozzle vane production qualification completion check. CARE rating reaffirmation cycle (Aug 2026).</div></div>
+    <div class="timeline-item"><div class="timeline-date">Q3 FY27 (Oct–Dec 2026)</div><div class="timeline-text">Rolls-Royce first qualification batch decision. P&amp;W Canada qualification progress update. O&amp;G quarterly run-rate visibility. Phase 1 infrastructure completion (if any remaining civil work).</div></div>
+    <div class="timeline-item"><div class="timeline-date">Q4 FY27 (Jan–Mar 2027)</div><div class="timeline-text">Full year FY27 results — operating leverage thesis confirmed or invalidated. First MHI nozzle vane revenue deliveries. RR serial revenue commencement if qualification successful.</div></div>
+  </div>
+</div>
+</div>
+<!-- TAB 9: RISKS -->
+<div id="tab-9" class="tab-pane">
+<div class="section-header">Risk Matrix</div>
+<div class="card">
+  <table style="width:280px;border:none;margin-bottom:12px;">
+    <tr><td style="background:#FEE2E2;font-size:12px;padding:8px;border:1px solid var(--bg-card-border);text-align:center;font-weight:700;" colspan="2">HIGH IMPACT</td></tr>
+    <tr>
+      <td style="background:#FEF3C7;font-size:12px;padding:6px;border:1px solid var(--bg-card-border);">Valuation de-rating risk</td>
+      <td style="background:#FEE2E2;font-size:12px;padding:6px;border:1px solid var(--bg-card-border);">Phase 1 ramp failure</td>
+    </tr>
+    <tr>
+      <td style="background:#DCFCE7;font-size:12px;padding:6px;border:1px solid var(--bg-card-border);">Forex (93% exports)</td>
+      <td style="background:#FEF3C7;font-size:12px;padding:6px;border:1px solid var(--bg-card-border);">Customer concentration</td>
+    </tr>
+    <tr><td style="background:#F1F5F9;font-size:11px;padding:4px;text-align:center;" colspan="2">LOW PROBABILITY ← → HIGH PROBABILITY</td></tr>
+  </table>
+  <p style="font-size:12px;color:var(--text-muted);">Rows = Impact (top = High). Columns = Probability (right = High).</p>
+</div>
+
+<div class="section-header">Risk Register</div>
+<div class="risk-card risk-high">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+    <div class="trigger-title">1. Phase 1 Capacity Ramp Delays</div>
+    <span class="badge badge-high">HIGH</span>
+  </div>
+  <div class="trigger-detail"><strong>Description:</strong> 4 new OEM facilities simultaneously ramping up. New employees, new qualification requirements, OEM audit visits, production yield ramp-up — any one facility delay ripples through revenue. <br><strong>Impact:</strong> Each quarter of delay = ₹35–40 Cr revenue shortfall. EBITDA margin under pressure if fixed costs absorbed before revenue materialises.<br><strong>Mitigant:</strong> Staggered commissioning (Mar 2025 → Apr 2025 → Sep 2025 → Apr 2026) reduces simultaneous risk. All 4 now operational. Phase 1 "conversion phase" language from management signals this is the current focus.<br><strong>Status:</strong> <span class="badge badge-acc">ACTIVE — MONITORING</span></div>
+</div>
+<div class="risk-card risk-high">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+    <div class="trigger-title">2. Valuation De-Rating Risk</div>
+    <span class="badge badge-high">HIGH</span>
+  </div>
+  <div class="trigger-detail"><strong>Description:</strong> At 100x FY26 trailing P/E, any earnings miss, margin disappointment, or macro re-rating of Indian equities triggers a de-rating. The stock has no earnings cushion. <br><strong>Impact:</strong> A de-rating to 70x FY26 EPS = ₹1,430. Full bear case: ₹1,200–1,400.<br><strong>Mitigant:</strong> Strong order book provides revenue visibility. 200 DMA at ₹1,702 is a technical support level. Business quality is undeniable — de-rating would be a buying opportunity.<br><strong>Status:</strong> <span class="badge badge-acc">ACTIVE — STRUCTURAL</span></div>
+</div>
+<div class="risk-card risk-med">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+    <div class="trigger-title">3. Customer Concentration (Top 3 = 75%+)</div>
+    <span class="badge badge-med">MEDIUM</span>
+  </div>
+  <div class="trigger-detail"><strong>Description:</strong> GE Vernova + MHI + Siemens likely 70%+ of energy revenue. A single OEM programme reduction, budget cut, or geopolitical disruption hits Azad disproportionately. <br><strong>Impact:</strong> If GE Vernova reduces production 20%, Azad revenue could fall ~₹60–80 Cr (10–14% of FY26 revenue).<br><strong>Mitigant:</strong> LTAs with 5–8 year terms reduce single-year risk. Multi-OEM diversification ongoing (Arabelle, BH, RR, P&amp;W, Safran). Concentration is structural to the industry (4 energy OEMs globally).<br><strong>Status:</strong> <span class="badge badge-acc">ACTIVE — MONITORING</span></div>
+</div>
+<div class="risk-card risk-med">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+    <div class="trigger-title">4. Working Capital Trap &amp; Cash Conversion</div>
+    <span class="badge badge-med">MEDIUM</span>
+  </div>
+  <div class="trigger-detail"><strong>Description:</strong> WC days at 257–310 (CARE/Screener basis). Negative OCF in FY26 (-₹123 Cr). Receivables 191 days, inventory 202 days. If growth accelerates further without WC normalisation, debt increases or equity dilution may be needed. <br><strong>Impact:</strong> Another round of equity dilution or rising debt would pressure ROCE and EPS.<br><strong>Mitigant:</strong> Management targets 130–140 day cash-to-cash at maturity. Working capital is structurally high due to qualification inventory (up-front cost of new parts). As production normalises, WC days should compress.<br><strong>Status:</strong> <span class="badge badge-acc">ACTIVE — WATCH</span></div>
+</div>
+<div class="risk-card risk-med">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+    <div class="trigger-title">5. Foreign Exchange Risk (93% Export Revenue)</div>
+    <span class="badge badge-med">MEDIUM</span>
+  </div>
+  <div class="trigger-detail"><strong>Description:</strong> 93% revenue in USD/EUR. A significant INR appreciation reduces reported INR revenue and EBITDA. Pre-IPO CARE noted no full natural hedge.<br><strong>Impact:</strong> 5% INR appreciation = ~₹27 Cr revenue hit on FY26 base.<br><strong>Mitigant:</strong> Costs are largely INR-denominated (labour, raw materials increasingly domestic) — natural partial hedge. Management hedges using forward contracts. Tri-party RM agreements reduce INR-cost volatility.<br><strong>Status:</strong> <span class="badge badge-acc">STRUCTURAL</span></div>
+</div>
+<div class="risk-card risk-low">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+    <div class="trigger-title">6. Qualification Failure / Loss of Approved Supplier Status</div>
+    <span class="badge badge-low">LOW (but catastrophic if it occurs)</span>
+  </div>
+  <div class="trigger-detail"><strong>Description:</strong> A quality failure, PPM deviation, or NADCAP lapse could result in OEM pulling approved supplier status. This has never happened to Azad in 15+ years but represents a tail risk. <br><strong>Impact:</strong> Loss of a single major program could reduce revenue 15–20%; re-qualification timeline 2–3 years.<br><strong>Mitigant:</strong> NABL-accredited testing lab. Multiple NADCAP-certified processes. Zero PPM track record across multiple OEMs. New MD appointment (Murali Krishna Bhupatiraju) adds operational depth.<br><strong>Status:</strong> <span class="badge badge-clean">LOW — MONITORING</span></div>
+</div>
+<div class="risk-card risk-low">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+    <div class="trigger-title">7. Energy Transition Risk — Gas Turbine Demand Peak</div>
+    <span class="badge badge-low">LOW (3–5 year horizon)</span>
+  </div>
+  <div class="trigger-detail"><strong>Description:</strong> If renewables + storage displace gas turbines faster than expected, gas turbine OEM order books could peak by FY28–30. Azad's energy segment (81.5% of revenue) would be directly affected. <br><strong>Impact:</strong> Revenue growth could slow to 10–15% from FY30 as the "gas bridge" shortens.<br><strong>Mitigant:</strong> Gas is the only near-term dispatchable solution for AI data centres. 47% of turbines under construction are hydrogen-ready — extending the asset life cycle. Nuclear (Arabelle) and steam service markets provide secular, non-gas alternatives.<br><strong>Status:</strong> <span class="badge badge-clean">LONG-TERM — NOT IMMINENT</span></div>
+</div>
+</div>
+<!-- TAB 10: CONCALL -->
+<div id="tab-10" class="tab-pane">
+<div class="section-header">Management Guidance Tracker</div>
+<div class="card">
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Quarter Guided</th><th>Metric</th><th>Guidance</th><th>Actual</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>Q4 FY24 call</td><td>FY25 Revenue</td><td>25–30% growth</td><td>+32.9% (₹453 Cr)</td><td class="pos">✓ Beat</td></tr>
+        <tr><td>Q4 FY24 call</td><td>EBITDA Margin</td><td>33–36% band</td><td>36.3%</td><td class="pos">✓ Top of band</td></tr>
+        <tr><td>Q4 FY25 call</td><td>FY26 Revenue</td><td>~30% growth</td><td>+30.3% (₹590 Cr)</td><td class="pos">✓ In line</td></tr>
+        <tr><td>Q4 FY25 call</td><td>EBITDA Margin</td><td>36–37% sustained</td><td>36.9%</td><td class="pos">✓ Beat</td></tr>
+        <tr><td>Q2 FY25 call</td><td>Net Debt/EBITDA</td><td>1.2–1.3x target</td><td>Net cash (QIP Feb 2025)</td><td class="pos">✓ Better</td></tr>
+        <tr><td>Q3 FY24 call</td><td>Finance cost recurring</td><td>~₹3 Cr/quarter</td><td>~₹4–6 Cr/quarter FY25–26</td><td class="neg">⚠ Slightly above (capex debt)</td></tr>
+        <tr><td>Q1 FY25 call</td><td>GTRE delivery</td><td>H1 FY26</td><td>~75% complete Q3 FY26</td><td class="neg">⚠ Delayed</td></tr>
+        <tr><td>Q4 FY26 call</td><td>FY27 Revenue</td><td>25%+ growth</td><td>TBD (Aug 2026)</td><td style="color:var(--text-muted);">— TBD</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:12px;color:var(--text-muted);margin-top:8px;">Management credibility score: 8/10. Revenue and margin guidance consistently delivered or beaten. Timeline guidance (GTRE, facility commissioning) occasionally slips by 1–2 quarters. No material guidance misses on financial metrics.</p>
+</div>
+
+<div class="section-header">Quarter-by-Quarter Highlights</div>
+
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+    <div style="font-weight:700;">Q4 FY26 / Full Year — May 16, 2026</div>
+    <span class="badge badge-buy">BULLISH</span>
+  </div>
+  <div style="font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text-secondary);">Key Numbers: Revenue ₹590 Cr (+30%), PAT ₹132 Cr (+49%), EPS ₹20.46, Order Book ₹6,500 Cr</div>
+  <ul style="font-size:13px;color:var(--text-secondary);padding-left:16px;line-height:1.8;">
+    <li>All 4 dedicated OEM facilities commissioned: MHI (Mar 25), GE Vernova (Apr 25), Siemens (Sep 25), Baker Hughes (Apr 26)</li>
+    <li>Baker Hughes SA to CY2030; P&amp;W Canada Master Terms Agreement signed in FY26</li>
+    <li>A&amp;D crossed ₹100 Cr threshold for first time (₹101 Cr, +25% YoY)</li>
+    <li>FY27 guidance: 25%+ revenue growth, margins maintained at 36–37% EBITDA</li>
+    <li>"FY26 was year of consolidation — embedding capacities, converting qualifications, building human capital"</li>
+  </ul>
+  <div style="font-size:12px;color:var(--text-muted);margin-top:8px;border-top:1px solid var(--bg-card-border);padding-top:8px;">Notable quote: "Azad is a global supplier. We compete head on with established suppliers from USA, Europe, China and Japan on the same global OEM platforms. The qualification cycle takes years, sometimes a decade. Once earned, the business is sticky, multi-year and high value."</div>
+</div>
+
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+    <div style="font-weight:700;">Q3 FY26 — February 14, 2026</div>
+    <span class="badge badge-buy">BULLISH</span>
+  </div>
+  <div style="font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text-secondary);">Revenue ₹156 Cr (+31%), EBITDA ~38.6%, PAT ₹34 Cr | 9M FY26 PAT exceeded full FY25 PAT</div>
+  <ul style="font-size:13px;color:var(--text-secondary);padding-left:16px;line-height:1.8;">
+    <li>ATGG engine ~75% complete — delivery imminent ("India's first jet engine — 100% indigenous")</li>
+    <li>Data centre compute demand driving gas turbine supercycle: "3x every year for 4–5 years; only way to power is gas turbines"</li>
+    <li>Economies of scale becoming visible: "INR 500 Cr machinery → 1.7–2x asset turn → ₹800–1,000 Cr incremental revenue potential"</li>
+    <li>Highest quarterly EBITDA margin of FY26 (38.6%) in Q3 — confirms operating leverage direction</li>
+  </ul>
+</div>
+
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+    <div style="font-weight:700;">Q2 FY26 — November 3, 2025</div>
+    <span class="badge badge-buy">BULLISH</span>
+  </div>
+  <div style="font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text-secondary);">H1 FY26 Revenue ₹277 Cr (+32%), Q2 Revenue ₹143 Cr (+28%)</div>
+  <ul style="font-size:13px;color:var(--text-secondary);padding-left:16px;line-height:1.8;">
+    <li>MHI combined contracts announced: 5-year LTCPA + 8-year single-source nozzle vane LTCPA = ₹1,387 Cr combined</li>
+    <li>Safran MOU signed — new Tier-1 aerospace OEM in qualification pipeline</li>
+    <li>Siemens Energy dedicated facility (7,200 sqm) opened September 2025</li>
+    <li>Wallet share commentary: "At ~1–1.5%...headroom for growth is definitely massive" — justifies multi-year 25–30% growth</li>
+    <li>Domestic RM approval: Sunflag and Star Wire — "reduction in raw material cost is sustainable"</li>
+  </ul>
+</div>
+
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+    <div style="font-weight:700;">Q4 FY25 — May 2025</div>
+    <span class="badge badge-buy">BULLISH</span>
+  </div>
+  <div style="font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text-secondary);">FY25 Revenue ₹453 Cr (+33%), PAT ₹89 Cr (+51%), Order Book ₹6,000+ Cr</div>
+  <ul style="font-size:13px;color:var(--text-secondary);padding-left:16px;line-height:1.8;">
+    <li>QIP: ₹700 Cr at ₹1,280/share; ₹525 Cr for capex, ₹156 Cr for general corporate purposes</li>
+    <li>MHI Global Partner of the Year 2024 award. GE Vernova Operational Excellence award</li>
+    <li>Murali Krishna Bhupatiraju appointed as Managing Director (Rakesh Chopdar remains Chairman &amp; CEO)</li>
+    <li>New order wins: Arabelle USD 40 Mn, MHI 8yr, Rolls-Royce program life, P&amp;W Canada master terms, BHEL airfoils</li>
+    <li>"We surpassed our given revenue and margin guidance. Targeting ~30% revenue growth [FY26]" — Rakesh Chopdar</li>
+  </ul>
+</div>
+
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+    <div style="font-weight:700;">Q2 FY25 — November 12, 2024</div>
+    <span class="badge badge-buy">BULLISH</span>
+  </div>
+  <div style="font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text-secondary);">Q2 Revenue ₹111 Cr (+35%), H1 ₹209 Cr (+32%), Order Book ~₹4,500 Cr</div>
+  <ul style="font-size:13px;color:var(--text-secondary);padding-left:16px;line-height:1.8;">
+    <li>MHI nozzle vane contract: ₹700 Cr / 5 years — "only company outside Japan MHI has ever qualified for this product; 3 years of work"</li>
+    <li>Arabelle (EDF France): €40 Mn nuclear components — first certification as Indian company</li>
+    <li>Baker Hughes Saudi Arabia MOU: manufacturing facility in Saudi Arabia (timeline later shifted)</li>
+    <li>Honeywell Aerospace: USD 16 Mn Phase 1 for aviation components</li>
+    <li>CARE first post-IPO rating: A- / Stable (INR 180 Cr facilities rated)</li>
+  </ul>
+</div>
+</div>
+<!-- TAB 11: CAPITAL ALLOCATION -->
+<div id="tab-11" class="tab-pane">
+<div class="section-header">Capex vs Operating Cash Flow (₹ Cr)</div>
+<div class="card"><div class="chart-container"><canvas id="chartCapexCFO"></canvas></div></div>
+
+<div class="section-header">Free Cash Flow &amp; Cumulative FCF (₹ Cr)</div>
+<div class="card">
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Year</th><th>CFO</th><th>Capex (PPE)</th><th>FCF</th><th>Cumulative FCF</th><th>CFO/PAT</th></tr></thead>
+      <tbody>
+        <tr><td>FY20</td><td>37</td><td class="neg">-29</td><td>8</td><td>8</td><td>176%</td></tr>
+        <tr><td>FY21</td><td>34</td><td class="neg">-22</td><td>12</td><td>20</td><td>243%</td></tr>
+        <tr><td>FY22</td><td>21</td><td class="neg">-117</td><td class="neg">-96</td><td class="neg">-76</td><td>75%</td></tr>
+        <tr><td>FY23</td><td class="neg">-10</td><td class="neg">-84</td><td class="neg">-94</td><td class="neg">-170</td><td>-111%</td></tr>
+        <tr><td>FY24</td><td class="neg">-7</td><td class="neg">-71</td><td class="neg">-78</td><td class="neg">-248</td><td>-12%</td></tr>
+        <tr><td>FY25</td><td>63</td><td class="neg">-275</td><td class="neg">-212</td><td class="neg">-460</td><td>71%</td></tr>
+        <tr class="peer-row-highlight"><td>FY26 ★</td><td class="neg">-123</td><td class="neg">-571</td><td class="neg">-694</td><td class="neg">-1,154</td><td>-93%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:12px;color:var(--text-muted);margin-top:8px;">Cumulative FCF -₹1,154 Cr over FY22–FY26 = heavy investment phase. This is the cost of building the qualification library and the 4 OEM facilities. The same investment creates the moat that enables 30%+ CAGR. FCF should turn positive in FY28+ as capex moderates and WC normalises. FY26 capex: ₹571 Cr (PPE purchases) + ongoing civil construction. Funded by QIP (₹681 Cr) + term loans (₹252 Cr LT + ₹173 Cr ST as of FY26).</p>
+</div>
+
+<div class="section-header">Dividend History</div>
+<div class="card">
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Year</th><th>DPS (₹)</th><th>Payout Ratio</th><th>Policy</th></tr></thead>
+      <tbody>
+        <tr><td>FY20–FY23</td><td>Nil</td><td>0%</td><td>No dividend — growth investment phase</td></tr>
+        <tr><td>FY24</td><td>Nil</td><td>0%</td><td>First post-IPO year; reinvesting all earnings</td></tr>
+        <tr><td>FY25</td><td>Nil</td><td>0%</td><td>QIP proceeds deployed for Phase 1 capex</td></tr>
+        <tr class="peer-row-highlight"><td>FY26 ★</td><td>Nil</td><td>0%</td><td>No dividend — Phase 1 ramp &amp; WC investment</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:12px;color:var(--text-muted);margin-top:8px;">Zero dividend history is appropriate — all earnings are better deployed in qualification-led growth (30% CAGR) than distributed. Investors accept this given the 5x revenue growth in 6 years. Dividend initiation possible when Phase 2 capex cycle concludes (FY30+).</p>
+</div>
+
+<div class="section-header">ROCE Trend &amp; Capital Allocation Verdict</div>
+<div class="two-col">
+  <div class="card">
+    <div class="metric-row"><span class="metric-label">ROCE FY21</span><span class="metric-value">15%</span></div>
+    <div class="metric-row"><span class="metric-label">ROCE FY22</span><span class="metric-value">21%</span></div>
+    <div class="metric-row"><span class="metric-label">ROCE FY23</span><span class="metric-value">16%</span></div>
+    <div class="metric-row"><span class="metric-label">ROCE FY24</span><span class="metric-value">20%</span></div>
+    <div class="metric-row"><span class="metric-label">ROCE FY25</span><span class="metric-value">12% (reported) / 21% (adj)</span></div>
+    <div class="metric-row"><span class="metric-label">ROCE FY26</span><span class="metric-value">12% (reported) / 15.3% (adj)</span></div>
+    <p style="font-size:12px;color:var(--text-muted);margin-top:10px;">Reported ROCE declining due to QIP cash on balance sheet and CWIP buildup (unproductive capital). Adjusted ROCE (ex-CWIP, ex-surplus cash) stable at 15–21% — reflects true business economics. As Phase 1 assets capitalise and CWIP converts to productive PP&amp;E, reported ROCE should recover to 15–18% by FY28.</p>
+  </div>
+  <div class="card">
+    <div style="font-size:14px;font-weight:800;margin-bottom:12px;">Capital Allocation Verdict</div>
+    <div style="font-size:36px;font-weight:900;color:var(--color-amber);margin-bottom:8px;">GOOD</div>
+    <p style="font-size:13px;color:var(--text-secondary);line-height:1.7;">Management has consistently reinvested all earnings into high-return qualification-led growth (adjusted ROCE 15–21% on deployed capital). Capital raises (IPO + QIP) have been at premium valuations and deployed into productive assets. No dividend wastage during growth phase. No buybacks needed (stock not undervalued). No promoter loans or related-party cash leakages visible. Zero debt pre-IPO repayment was swift. The only concern is pace of capex vs cash generation — but this is the intentional cost of building the moat.</p>
+  </div>
+</div>
+</div>
+<!-- TAB 12: OWNERSHIP -->
+<div id="tab-12" class="tab-pane">
+<div class="section-header">Shareholding Pattern Trend (Dec 2023 – Mar 2026)</div>
+<div class="card"><div class="chart-container"><canvas id="chartSHTrend"></canvas></div></div>
+
+<div class="section-header">Shareholding Detail Table</div>
+<div class="card">
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr>
+        <th>Category</th>
+        <th>Dec'23</th><th>Mar'24</th><th>Jun'24</th><th>Sep'24</th><th>Dec'24</th>
+        <th>Mar'25</th><th>Jun'25</th><th>Sep'25</th><th>Dec'25</th><th class="latest-col">Mar'26 ★</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>Promoters</td><td>65.9%</td><td>65.9%</td><td>65.9%</td><td>65.9%</td><td>65.9%</td><td>60.3%</td><td>55.4%</td><td>55.4%</td><td>55.8%</td><td class="latest-col">55.84%</td></tr>
+        <tr><td>FIIs</td><td>4.7%</td><td>7.0%</td><td>9.7%</td><td>9.7%</td><td>10.0%</td><td>14.2%</td><td>16.2%</td><td>15.8%</td><td>15.3%</td><td class="latest-col">14.75%</td></tr>
+        <tr><td>DIIs</td><td>5.7%</td><td>5.0%</td><td>3.4%</td><td>5.7%</td><td>6.6%</td><td>8.2%</td><td>8.9%</td><td>9.8%</td><td>10.7%</td><td class="latest-col">11.71%</td></tr>
+        <tr><td>Public</td><td>23.7%</td><td>22.1%</td><td>21.0%</td><td>18.6%</td><td>17.6%</td><td>17.2%</td><td>19.5%</td><td>19.0%</td><td>18.1%</td><td class="latest-col">17.69%</td></tr>
+        <tr><td>No. of Shareholders</td><td>1,35,090</td><td>1,06,231</td><td>1,02,445</td><td>1,28,846</td><td>1,17,613</td><td>1,24,539</td><td>1,27,692</td><td>1,27,716</td><td>1,25,118</td><td class="latest-col">1,26,786</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section-header">Shareholding Analysis</div>
+<div class="two-col">
+  <div class="card">
+    <div style="font-size:13px;font-weight:700;margin-bottom:10px;">Key Observations</div>
+    <ul style="font-size:13px;color:var(--text-secondary);padding-left:16px;line-height:1.8;">
+      <li><strong>Promoter dilution:</strong> 65.9% → 55.84% over 2 years. Entire dilution due to QIP (Feb 2025) — not open market sales. Promoters participated in IPO OFS but have not sold in secondary market.</li>
+      <li><strong>FII surge:</strong> 4.68% (Dec 2023) → 16.16% peak (Jun 2025) → 14.75% (Mar 2026). Strong global institutional discovery. Slight FII reduction last 3 quarters — likely profit booking at peak, not thesis change.</li>
+      <li><strong>DII steadily building:</strong> 5.71% → 11.71% — consistent buying by domestic mutual funds and insurance. DII ownership rising every single quarter since Jun 2024 — strong conviction signal.</li>
+      <li><strong>Promoter pledge:</strong> NIL (zero pledge) — clean governance signal. No encumbrance on promoter holdings.</li>
+      <li><strong>Public float:</strong> Declining from 23.7% to 17.7% — being absorbed by institutions (FII+DII) as awareness grows.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <div style="font-size:13px;font-weight:700;margin-bottom:10px;">Institutional Holding Summary</div>
+    <div class="metric-row"><span class="metric-label">Total Institutional (FII+DII)</span><span class="metric-value pos">26.46%</span></div>
+    <div class="metric-row"><span class="metric-label">FII Trend (12 months)</span><span class="metric-value neg">-1.41% (profit booking)</span></div>
+    <div class="metric-row"><span class="metric-label">DII Trend (12 months)</span><span class="metric-value pos">+3.48% (steady buying)</span></div>
+    <div class="metric-row"><span class="metric-label">Promoter Pledge</span><span class="metric-value pos">NIL</span></div>
+    <div class="metric-row"><span class="metric-label">No. of shareholders</span><span class="metric-value">1,26,786</span></div>
+    <div class="metric-row"><span class="metric-label">Min. promoter under SEBI rules</span><span class="metric-value">Not applicable (above 25% threshold)</span></div>
+    <div class="metric-row"><span class="metric-label">Ownership Quality Verdict</span><span class="metric-value pos">STRONG — Institutional Interest Rising</span></div>
+    <p style="font-size:12px;color:var(--text-muted);margin-top:10px;">The steady DII accumulation despite FII profit-booking is a positive signal — domestic funds are building long positions as the Phase 1 story unfolds. High-quality institutional ownership typically supports valuation multiples during earnings delivery.</p>
+  </div>
+</div>
+
+<div class="section-header">Insider Activity</div>
+<div class="card">
+  <div class="metric-row"><span class="metric-label">Promoter open market sales</span><span class="metric-value pos">None disclosed (post-IPO)</span></div>
+  <div class="metric-row"><span class="metric-label">IPO OFS by promoters</span><span class="metric-value">₹500 Cr (as disclosed in IPO prospectus)</span></div>
+  <div class="metric-row"><span class="metric-label">QIP dilution</span><span class="metric-value">₹700 Cr at ₹1,280/share (Feb 2025) — company-level raise, not promoter sale</span></div>
+  <div class="metric-row"><span class="metric-label">ESOP / sweat equity</span><span class="metric-value">Standard management compensation structure; no material ESOP overhang disclosed</span></div>
+</div>
+</div>
+<!-- TAB 13: EVENTS -->
+<div id="tab-13" class="tab-pane">
+<div class="section-header">Recent Regulatory Filings — May 2026</div>
+<div class="card">
+  <div class="event-card"><div class="event-date">22 May 2026</div><div class="event-body"><div class="event-title"><span class="badge badge-navy">FILING</span> Q4 FY26 Concall Transcript submitted to BSE/NSE</div><div class="event-detail">Transcript of May 16, 2026 earnings call. Available at azad.in/quarterly-financial-results/#earning-transcripts. Regulation 30(2) disclosure.</div></div></div>
+  <div class="event-card"><div class="event-date">16 May 2026</div><div class="event-body"><div class="event-title"><span class="badge badge-navy">FILING</span> Audio Recording of Q4 FY26 Concall filed</div><div class="event-detail">Call held 11:00 AM IST. Audio at azad.in. Regulation 30(2) disclosure.</div></div></div>
+  <div class="event-card"><div class="event-date">16 May 2026</div><div class="event-body"><div class="event-title"><span class="badge badge-navy">FILING</span> Newspaper Advertisement — Q4/FY26 Results</div><div class="event-detail">Financial Express (All India English) + Surya (Telugu). FY26 PAT ₹132 Cr; Q4 PAT ₹35 Cr. Regulation 47.</div></div></div>
+  <div class="event-card"><div class="event-date">15 May 2026</div><div class="event-body"><div class="event-title"><span class="badge badge-navy">RESULTS</span> Board approves Q4 &amp; FY26 Audited Results</div><div class="event-detail">Standalone: Revenue ₹590 Cr, EBITDA 36.9%, PAT ₹132 Cr. Consolidated: Revenue ₹603 Cr, EBITDA 37.4%, PAT ₹134 Cr. Auditor: MSKA &amp; Associates — unmodified opinion.</div></div></div>
+  <div class="event-card"><div class="event-date">15 May 2026</div><div class="event-body"><div class="event-title"><span class="badge badge-navy">FILING</span> Q4 FY26 Investor Presentation filed</div><div class="event-detail">4 dedicated OEM facilities; FY26 financials; order book ₹6,500 Cr; company snapshot; TAM INR 3,430 bn.</div></div></div>
+</div>
+
+<div class="section-header">Orders &amp; Contract Wins Timeline</div>
+<div class="card">
+  <div class="event-card"><div class="event-date">Apr 2026</div><div class="event-body"><div class="event-title"><span class="badge badge-buy">ORDER</span> Baker Hughes Dedicated Facility (7,600 sqm) Commissioned</div><div class="event-detail">Strategic Supply Agreement to CY2030 begins producing. O&amp;G segment ramp starts FY27.</div></div></div>
+  <div class="event-card"><div class="event-date">FY26</div><div class="event-body"><div class="event-title"><span class="badge badge-buy">ORDER</span> Pratt &amp; Whitney Canada — Master Terms Agreement</div><div class="event-detail">Framework for aircraft engine components supply. Qualification cycle to begin; serial revenue FY28 target.</div></div></div>
+  <div class="event-card"><div class="event-date">H2 FY26</div><div class="event-body"><div class="event-title"><span class="badge badge-buy">ORDER</span> MHI — 8-year Single-Source Nozzle Vane LTCPA</div><div class="event-detail">Combined MHI contracts: ₹1,387 Cr. Only non-Japan supplier globally for MHI nozzle vanes. 8-year single-source.</div></div></div>
+  <div class="event-card"><div class="event-date">Q2 FY26</div><div class="event-body"><div class="event-title"><span class="badge badge-buy">ORDER</span> Safran MOU Signed</div><div class="event-detail">New Tier-1 aerospace OEM added. 3rd major European aerospace engine OEM after RR and P&amp;W. 2.5-year qualification cycle.</div></div></div>
+  <div class="event-card"><div class="event-date">Sep 2025</div><div class="event-body"><div class="event-title"><span class="badge badge-buy">ORDER</span> Siemens Energy Dedicated Facility (7,200 sqm) Commissioned</div><div class="event-detail">USD 90 Mn multi-year LTA being executed. Third OEM dedicated plant operational.</div></div></div>
+  <div class="event-card"><div class="event-date">Aug 2025</div><div class="event-body"><div class="event-title"><span class="badge badge-buy">ORDER</span> GE Vernova USD 112 Mn + USD 53.5 Mn LTAs Announced</div><div class="event-detail">Advanced gas turbine airfoils LTA (USD 112 Mn) + nuclear/industrial/steam LTA (USD 53.5 Mn). Total GE Vernova commitment: USD 165.5 Mn.</div></div></div>
+  <div class="event-card"><div class="event-date">Apr 2025</div><div class="event-body"><div class="event-title"><span class="badge badge-buy">ORDER</span> GE Vernova Dedicated Facility (7,600 sqm) Commissioned</div><div class="event-detail">Second OEM dedicated plant operational. GE Vernova Steam Power lean manufacturing begins.</div></div></div>
+  <div class="event-card"><div class="event-date">Mar 2025</div><div class="event-body"><div class="event-title"><span class="badge badge-buy">ORDER</span> MHI Dedicated Facility (7,200 sqm) Commissioned</div><div class="event-detail">First Phase 1 OEM plant operational. MHI 5-year contract execution begins at full capacity.</div></div></div>
+  <div class="event-card"><div class="event-date">Feb 2025</div><div class="event-body"><div class="event-title"><span class="badge badge-buy">ORDER</span> QIP ₹700 Cr at ₹1,280/share</div><div class="event-detail">54,68,750 shares issued. ₹525 Cr for Phase 1 machinery/equipment. Net ₹681 Cr proceeds. Balance sheet transformed.</div></div></div>
+  <div class="event-card"><div class="event-date">Q2 FY25</div><div class="event-body"><div class="event-title"><span class="badge badge-buy">ORDER</span> Arabelle Solutions (EDF) USD 40 Mn Nuclear Contract</div><div class="event-detail">Only Indian company EDF-certified for nuclear turbine components. Strategic entry into nuclear power supply chain.</div></div></div>
+  <div class="event-card"><div class="event-date">Q1 FY25</div><div class="event-body"><div class="event-title"><span class="badge badge-buy">ORDER</span> GTRE / DRDO — Complete ATGG Turbojet Engine</div><div class="event-detail">India's first complete indigenous turbojet engine. Azad is single-source industrial partner. ~75% complete as of Q3 FY26. Strategic national importance.</div></div></div>
+  <div class="event-card"><div class="event-date">Q1 FY25</div><div class="event-body"><div class="event-title"><span class="badge badge-buy">ORDER</span> Siemens Energy — 5-year Contract for Critical Rotating Parts</div><div class="event-detail">Combustion commodities, cold blades, critical rotating parts. Dedicated 7,200 sqm facility planned.</div></div></div>
+</div>
+
+<div class="section-header">Credit Rating Actions</div>
+<div class="card">
+  <div class="event-card"><div class="event-date">Aug 2025</div><div class="event-body"><div class="event-title"><span class="badge badge-buy">RATING</span> CARE A / Stable — REAFFIRMED (Enhanced Limits)</div><div class="event-detail">Facilities enhanced to ₹248.32 Cr (from ₹180 Cr). LT ₹208.32 Cr + LT/ST ₹40 Cr. All three banks (Union Bank, IndusInd, ICICI) enhanced.</div></div></div>
+  <div class="event-card"><div class="event-date">Jul 2025</div><div class="event-body"><div class="event-title"><span class="badge badge-buy">RATING</span> CARE A / Stable — UPGRADED from A-</div><div class="event-detail">Upgrade rationale: 32.9% revenue growth, EBITDA 36.2%, interest coverage 9.23x FY25, QIP balance sheet. Short-term upgraded to CARE A1 from A2+.</div></div></div>
+  <div class="event-card"><div class="event-date">Nov 2024</div><div class="event-body"><div class="event-title"><span class="badge badge-acc">RATING</span> CARE A- / Stable — New Assignment (First Post-IPO)</div><div class="event-detail">₹180 Cr facilities (LT ₹145 Cr + LT/ST ₹35 Cr). Strong post-IPO balance sheet, zero leverage, LTA revenue visibility.</div></div></div>
+  <div class="event-card"><div class="event-date">Mar 2024</div><div class="event-body"><div class="event-title"><span class="badge badge-watch">RATING</span> CARE BBB+ / Stable — WITHDRAWN</div><div class="event-detail">Pre-IPO rating withdrawn as all rated facilities surrendered post-IPO proceeds receipt. Piramal CCD ₹160 Cr converted to equity.</div></div></div>
+  <div class="event-card"><div class="event-date">Dec 2023</div><div class="event-body"><div class="event-title"><span class="badge badge-buy">IPO</span> Listed on NSE + BSE at ₹524/share</div><div class="event-detail">IPO: ₹740 Cr (Fresh ₹240 Cr + OFS ₹500 Cr). All pre-IPO debt repaid. 1,700+ qualifications. 20,000 sqm operational at listing.</div></div></div>
+</div>
+</div>
+</main>
+<script>
+Chart.defaults.font.size = 13;
+
+function textColor() {
+  return document.documentElement.getAttribute('data-theme') === 'dark' ? '#F1F5F9' : '#0F172A';
+}
+function gridColor() {
+  return document.documentElement.getAttribute('data-theme') === 'dark' ? '#334155' : '#E2E8F0';
+}
+
+var activeTab = 0;
+function showTab(n) {
+  var btns = document.querySelectorAll('.tab-btn');
+  btns.forEach(function(b, i){ b.classList.toggle('active', i === n); });
+  for (var i = 0; i < 14; i++) {
+    var el = document.getElementById('tab-' + i);
+    if (el) el.style.display = (i === n) ? 'block' : 'none';
+  }
+  activeTab = n;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleTheme() {
+  var html = document.documentElement;
+  html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  Chart.defaults.color = textColor();
+  Object.values(chartInstances).forEach(function(c){ c.destroy(); });
+  chartInstances = {};
+  buildAllCharts();
+}
+
+var chartInstances = {};
+
+function buildAllCharts() {
+  // Chart 1: Shareholding Donut (Tab 1) — all positive
+  var ctx1 = document.getElementById('chartShareholding');
+  if (ctx1) {
+    chartInstances['sh'] = new Chart(ctx1, {
+      type: 'doughnut',
+      data: {
+        labels: ['Promoters', 'FII', 'DII', 'Public'],
+        datasets: [{
+          data: [55.84, 14.75, 11.71, 17.69],
+          backgroundColor: ['#0F1F3D','#E8701A','#16A34A','#94A3B8'],
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom', labels: { font: { size: 12 }, color: textColor(), padding: 12 } },
+          tooltip: { callbacks: { label: function(c){ return c.label + ': ' + c.parsed + '%'; } } }
+        }
+      }
+    });
+  }
+
+  // Chart 2: Revenue Mix Donut (Tab 2) — all positive
+  var ctx2 = document.getElementById('chartRevMix');
+  if (ctx2) {
+    chartInstances['rm'] = new Chart(ctx2, {
+      type: 'doughnut',
+      data: {
+        labels: ['Energy & O&G (81.5%)', 'Aerospace & Defence (17.2%)', 'Other (1.3%)'],
+        datasets: [{
+          data: [81.5, 17.2, 1.3],
+          backgroundColor: ['#0F1F3D','#E8701A','#94A3B8'],
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom', labels: { font: { size: 12 }, color: textColor(), padding: 10 } }
+        }
+      }
+    });
+  }
+
+  // Chart 3: Quarterly Revenue Bar + Margin Line (Tab 4)
+  var ctx3 = document.getElementById('chartQtrRevenue');
+  if (ctx3) {
+    var qLabels = ['Q1FY25','Q2FY25','Q3FY25','Q4FY25','Q1FY26','Q2FY26','Q3FY26','Q4FY26'];
+    var qRev = [98, 111, 119, 125, 135, 143, 156, 157];
+    var qMargin = [34, 36, 36, 36, 36, 36, 39, 37];
+    chartInstances['qtr'] = new Chart(ctx3, {
+      type: 'bar',
+      data: {
+        labels: qLabels,
+        datasets: [
+          { label: 'Revenue (₹ Cr)', data: qRev, backgroundColor: '#0F1F3D', yAxisID: 'y' },
+          { label: 'EBITDA Margin %', data: qMargin, type: 'line', borderColor: '#E8701A', backgroundColor: 'rgba(232,112,26,0.1)', pointRadius: 5, tension: 0.3, yAxisID: 'y1', fill: false }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: textColor() } } },
+        scales: {
+          y: { title: { display: true, text: '₹ Cr', color: textColor() }, ticks: { color: textColor() }, grid: { color: gridColor() } },
+          y1: { position: 'right', title: { display: true, text: 'Margin %', color: textColor() }, ticks: { color: textColor(), callback: function(v){ return v+'%'; } }, grid: { drawOnChartArea: false }, min: 25, max: 45 }
+        }
+      }
+    });
+  }
+
+  // Chart 4: Annual P&L (Tab 4)
+  var ctx4 = document.getElementById('chartAnnualPL');
+  if (ctx4) {
+    var aLabels = ['FY20','FY21','FY22','FY23','FY24','FY25','FY26'];
+    var aRev = [122, 121, 194, 252, 341, 453, 590];
+    var aPAT = [21, 14, 28, 9, 59, 89, 132];
+    var aEBITDA = [41, 29, 62, 72, 117, 161, 218];
+    chartInstances['apl'] = new Chart(ctx4, {
+      type: 'bar',
+      data: {
+        labels: aLabels,
+        datasets: [
+          { label: 'Revenue', data: aRev, backgroundColor: '#0F1F3D' },
+          { label: 'EBITDA', data: aEBITDA, backgroundColor: '#1D4ED8' },
+          { label: 'PAT', data: aPAT, backgroundColor: '#E8701A' }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: textColor() } } },
+        scales: {
+          x: { ticks: { color: textColor() }, grid: { color: gridColor() } },
+          y: { title: { display: true, text: '₹ Cr', color: textColor() }, ticks: { color: textColor() }, grid: { color: gridColor() } }
+        }
+      }
+    });
+  }
+
+  // Chart 5: Peer P/E Bar (Tab 7)
+  var ctx5 = document.getElementById('chartPeerPE');
+  if (ctx5) {
+    var peerNames = ['Hitachi Energy','ABB','BHEL','CG Power','Siemens','GE Vernova T&D','Azad Engg'];
+    var peerPE = [177, 94, 90, 113, 84, 98, 100];
+    var peerColors = ['#94A3B8','#94A3B8','#94A3B8','#94A3B8','#94A3B8','#94A3B8','#E8701A'];
+    chartInstances['peer'] = new Chart(ctx5, {
+      type: 'bar',
+      data: {
+        labels: peerNames,
+        datasets: [{ label: 'P/E Ratio', data: peerPE, backgroundColor: peerColors }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { title: { display: true, text: 'P/E (trailing)', color: textColor() }, ticks: { color: textColor() }, grid: { color: gridColor() } },
+          y: { ticks: { color: textColor() }, grid: { color: gridColor() } }
+        }
+      }
+    });
+  }
+
+  // Chart 6: Capex vs CFO (Tab 11)
+  var ctx6 = document.getElementById('chartCapexCFO');
+  if (ctx6) {
+    var cfLabels = ['FY20','FY21','FY22','FY23','FY24','FY25','FY26'];
+    var capex = [29, 22, 117, 84, 71, 275, 571];
+    var cfo = [37, 34, 21, -10, -7, 63, -123];
+    chartInstances['cap'] = new Chart(ctx6, {
+      type: 'bar',
+      data: {
+        labels: cfLabels,
+        datasets: [
+          { label: 'Capex (PPE, ₹ Cr)', data: capex, backgroundColor: '#0F1F3D' },
+          { label: 'CFO (₹ Cr)', data: cfo, backgroundColor: function(c){ return c.parsed.y >= 0 ? '#16A34A' : '#DC2626'; }, type: 'line', borderColor: '#E8701A', pointRadius: 5, tension: 0.2, fill: false, yAxisID: 'y' }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: textColor() } } },
+        scales: {
+          x: { ticks: { color: textColor() }, grid: { color: gridColor() } },
+          y: { title: { display: true, text: '₹ Cr', color: textColor() }, ticks: { color: textColor() }, grid: { color: gridColor() } }
+        }
+      }
+    });
+  }
+
+  // Chart 7: Shareholding Trend Line (Tab 12)
+  var ctx7 = document.getElementById('chartSHTrend');
+  if (ctx7) {
+    var shLabels = ['Dec23','Mar24','Jun24','Sep24','Dec24','Mar25','Jun25','Sep25','Dec25','Mar26'];
+    var shProm = [65.9, 65.9, 65.9, 65.9, 65.9, 60.32, 55.42, 55.42, 55.84, 55.84];
+    var shFII = [4.68, 6.98, 9.69, 9.74, 9.98, 14.23, 16.16, 15.76, 15.33, 14.75];
+    var shDII = [5.71, 5.0, 3.44, 5.74, 6.57, 8.23, 8.91, 9.84, 10.73, 11.71];
+    chartInstances['shtrend'] = new Chart(ctx7, {
+      type: 'line',
+      data: {
+        labels: shLabels,
+        datasets: [
+          { label: 'Promoters', data: shProm, borderColor: '#0F1F3D', pointRadius: 4, tension: 0.2, fill: false },
+          { label: 'FII', data: shFII, borderColor: '#E8701A', pointRadius: 4, tension: 0.2, fill: false },
+          { label: 'DII', data: shDII, borderColor: '#16A34A', pointRadius: 4, tension: 0.2, fill: false }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: textColor() } } },
+        scales: {
+          x: { ticks: { color: textColor() }, grid: { color: gridColor() } },
+          y: { title: { display: true, text: '% Holding', color: textColor() }, ticks: { color: textColor(), callback: function(v){ return v+'%'; } }, grid: { color: gridColor() } }
+        }
+      }
+    });
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  Chart.defaults.color = textColor();
+  buildAllCharts();
+  showTab(0);
+});
+</script>
+</body>
+</html>

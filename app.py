@@ -6,6 +6,7 @@ import uuid
 import asyncio
 import threading
 import subprocess
+import time
 import pandas as pd
 from pathlib import Path
 from datetime import date, datetime
@@ -558,16 +559,33 @@ def _do_refresh_technicals():
         _refresh_progress["total"] = len(ticker_map)
         _refresh_progress["phase"] = "downloading"
 
+        # Download in batches of 8 to avoid Yahoo Finance rate limits
+        BATCH_SIZE = 8
         all_dl = list(ticker_map.keys()) + ["^NSEI"]
-        try:
-            raw = yf.download(all_dl, period="2y", interval="1wk",
-                              progress=False, auto_adjust=True, group_by="ticker")
-        except Exception as e:
-            _refresh_progress.update({"running": False, "phase": "done", "error": str(e)})
+        frames = []
+        for i in range(0, len(all_dl), BATCH_SIZE):
+            batch = all_dl[i:i + BATCH_SIZE]
+            try:
+                f = yf.download(batch, period="2y", interval="1wk",
+                                progress=False, auto_adjust=True)
+                frames.append(f)
+            except Exception:
+                pass
+            time.sleep(2)
+
+        if not frames:
+            _refresh_progress.update({"running": False, "phase": "done", "error": "All downloads failed (rate limited)"})
             return
+
+        raw = pd.concat(frames, axis=1) if len(frames) > 1 else frames[0]
+
+        # yfinance ≥0.2 returns MultiIndex columns: (field, ticker)
+        _multi = isinstance(raw.columns, pd.MultiIndex)
 
         def series(ticker, field):
             try:
+                if _multi:
+                    return raw[field][ticker].dropna()
                 return raw[ticker][field].dropna()
             except Exception:
                 return pd.Series(dtype=float)
@@ -695,12 +713,16 @@ def _compute_ticker_technicals(orig_ticker: str) -> dict:
 
     try:
         raw = yf.download([yt, benchmark], period="2y", interval="1wk",
-                          progress=False, auto_adjust=True, group_by="ticker")
+                          progress=False, auto_adjust=True)
     except Exception as e:
         return {"error": str(e)}
 
+    _multi = isinstance(raw.columns, pd.MultiIndex)
+
     def _s(ticker, field):
         try:
+            if _multi:
+                return raw[field][ticker].dropna()
             return raw[ticker][field].dropna()
         except Exception:
             return pd.Series(dtype=float)

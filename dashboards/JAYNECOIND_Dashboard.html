@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JAYNECOIND — Investment Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg-body:#F8F9FC; --bg-card:#FFFFFF; --bg-card-border:#E2E8F0;
+  --text-primary:#0F172A; --text-secondary:#475569; --text-muted:#94A3B8;
+  --color-navy:#0F1F3D; --color-orange:#E8701A; --color-green:#16A34A;
+  --color-red:#DC2626; --color-amber:#D97706; --color-blue:#1D4ED8;
+  --nav-bg:#0F1F3D; --nav-text:#FFFFFF;
+  --table-header-bg:#F1F5F9; --table-row-alt:#F8FAFC;
+  --highlight-latest:#FFF7ED;
+}
+[data-theme="dark"] {
+  --bg-body:#0F172A; --bg-card:#1E293B; --bg-card-border:#334155;
+  --text-primary:#F1F5F9; --text-secondary:#94A3B8; --text-muted:#64748B;
+  --color-navy:#1E40AF; --color-orange:#F97316; --color-green:#22C55E;
+  --color-red:#EF4444; --color-amber:#F59E0B; --color-blue:#3B82F6;
+  --nav-bg:#1E293B; --nav-text:#F1F5F9;
+  --table-header-bg:#1E293B; --table-row-alt:#0F172A;
+  --highlight-latest:#431407;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);font-size:16px;line-height:1.6}
+.num{font-family:'JetBrains Mono',ui-monospace,monospace}
+header{background:var(--nav-bg);color:var(--nav-text);position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.company-header{display:flex;align-items:center;gap:16px;padding:12px 24px;flex-wrap:wrap}
+.company-header h1{font-size:1.2rem;font-weight:700;letter-spacing:-.02em}
+.co-sub{font-size:.8rem;opacity:.7;font-weight:400}
+.verdict-pill{padding:4px 14px;border-radius:999px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.pill-accumulate{background:#E8701A;color:#fff}
+.pill-buy{background:#16A34A;color:#fff}
+.pill-watch{background:#D97706;color:#fff}
+.pill-reduce{background:#E11D48;color:#fff}
+.pill-avoid{background:#0F1F3D;color:#fff}
+.header-meta{display:flex;gap:20px;align-items:center;margin-left:auto;flex-wrap:wrap}
+.cmp-block{text-align:right}
+.cmp-val{font-size:1.4rem;font-weight:700;font-family:ui-monospace,monospace}
+.cmp-sub{font-size:.75rem;opacity:.7}
+#themeToggle{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:.8rem}
+nav.tab-nav{background:rgba(0,0,0,.2);padding:0 16px;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+nav.tab-nav::-webkit-scrollbar{display:none}
+.tab-btn{background:none;border:none;color:rgba(255,255,255,.65);padding:10px 14px;cursor:pointer;font-size:.8rem;font-weight:500;white-space:nowrap;border-bottom:3px solid transparent;transition:all .15s}
+.tab-btn:hover{color:#fff;background:rgba(255,255,255,.08)}
+.tab-btn.active{color:#fff;border-bottom-color:var(--color-orange)}
+main{max-width:1400px;margin:0 auto;padding:24px 20px}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+.section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--color-orange);padding-left:12px;border-left:4px solid var(--color-orange);margin-bottom:16px;padding-bottom:4px;border-bottom:1px solid var(--bg-card-border)}
+.card{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:12px;padding:20px;margin-bottom:20px}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:20px}
+.kpi-card{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:10px;padding:16px 18px}
+.kpi-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:4px}
+.kpi-val{font-size:1.5rem;font-weight:700;font-family:ui-monospace,monospace;line-height:1.2}
+.kpi-sub{font-size:.75rem;color:var(--text-secondary);margin-top:3px}
+.kpi-spark{margin-top:8px;height:30px}
+.chart-wrap{position:relative;height:280px}
+.chart-wrap-lg{position:relative;height:340px}
+.chart-wrap-sm{position:relative;height:220px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+@media(max-width:768px){.two-col,.three-col{grid-template-columns:1fr}}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{background:var(--table-header-bg);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;padding:10px 14px;text-align:right;font-weight:600;color:var(--text-secondary)}
+th:first-child{text-align:left}
+td{padding:10px 14px;border-bottom:1px solid var(--bg-card-border);text-align:right}
+td:first-child{text-align:left;font-weight:500}
+tr:nth-child(even) td{background:var(--table-row-alt)}
+.latest-col{background:var(--highlight-latest)!important;font-weight:700}
+.tbl-scroll{overflow-x:auto}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.7rem;font-weight:700;text-transform:uppercase}
+.badge-high{background:#FEE2E2;color:#DC2626}
+.badge-medium{background:#FEF3C7;color:#D97706}
+.badge-low{background:#DCFCE7;color:#16A34A}
+.badge-opt{background:#DBEAFE;color:#1D4ED8}
+.badge-bull{background:#DCFCE7;color:#15803D}
+.badge-neutral{background:#F1F5F9;color:#475569}
+.badge-caution{background:#FEF3C7;color:#B45309}
+.pos{color:var(--color-green)}
+.neg{color:var(--color-red)}
+.amber{color:var(--color-amber)}
+.risk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.risk-card{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:10px;padding:16px}
+.risk-title{font-weight:700;font-size:.95rem;margin-bottom:6px}
+.risk-body{font-size:.85rem;color:var(--text-secondary);margin-bottom:8px}
+.trigger-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.trigger-card{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:10px;padding:16px;border-top:3px solid var(--color-orange)}
+.forensic-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bg-card-border);font-size:.9rem}
+.fl-green{color:var(--color-green);font-weight:700}
+.fl-amber{color:var(--color-amber);font-weight:700}
+.fl-red{color:var(--color-red);font-weight:700}
+.thesis-col{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:10px;padding:20px}
+.thesis-col h3{font-size:.9rem;font-weight:700;margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em}
+.thesis-bull h3{color:var(--color-green)} .thesis-bear h3{color:var(--color-red)} .thesis-base h3{color:var(--color-amber)}
+.monitorable-table td:nth-child(3){color:var(--color-green)} .monitorable-table td:nth-child(4){color:var(--color-red)}
+.events-timeline{display:flex;flex-direction:column;gap:12px}
+.event-item{display:grid;grid-template-columns:120px auto 1fr;gap:12px;align-items:start;padding:12px;background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:8px}
+.event-date{font-size:.8rem;color:var(--text-muted);font-family:ui-monospace,monospace}
+.event-body{font-size:.88rem}
+.event-headline{font-weight:600;margin-bottom:2px}
+.event-desc{font-size:.82rem;color:var(--text-secondary)}
+.conviction-bar{height:12px;background:var(--bg-card-border);border-radius:6px;overflow:hidden;margin-top:8px}
+.conviction-fill{height:100%;background:linear-gradient(90deg,var(--color-orange),var(--color-green));border-radius:6px;transition:width .5s}
+.summary-box{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:12px;padding:24px}
+.big-verdict{font-size:2.5rem;font-weight:900;letter-spacing:-.03em;color:var(--color-orange)}
+.five-reasons li{margin-bottom:10px;font-size:.92rem;padding-left:8px;border-left:3px solid var(--color-orange)}
+.five-reasons li::marker{content:''}
+.concall-quarter{background:var(--bg-card);border:1px solid var(--bg-card-border);border-radius:10px;padding:18px;margin-bottom:14px}
+.cq-header{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.cq-title{font-weight:700;font-size:1rem}
+.cq-items{font-size:.88rem;color:var(--text-secondary)}
+.cq-items li{margin-bottom:6px;padding-left:12px;position:relative}
+.cq-items li::before{content:'›';position:absolute;left:0;color:var(--color-orange)}
+.peer-highlight td{background:#FFF7ED!important;font-weight:700}
+[data-theme="dark"] .peer-highlight td{background:#431407!important}
+.score-item{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--bg-card-border);font-size:.88rem}
+.score-pass{color:var(--color-green);font-weight:700} .score-fail{color:var(--color-red);font-weight:700}
+@media print{header,nav,#themeToggle{display:none!important}.tab-pane{display:block!important}body{background:#fff}}
+</style>
+</head>
+<body>
+<header>
+  <div class="company-header">
+    <div>
+      <h1>Jayaswal Neco Industries <span class="co-sub">NSE: JAYNECOIND</span></h1>
+      <div style="font-size:.78rem;opacity:.65;margin-top:2px">Integrated Steel + Foundry Castings | Raipur, CG | Est. 1972</div>
+    </div>
+    <span class="verdict-pill pill-accumulate">ACCUMULATE</span>
+    <div class="header-meta">
+      <div class="cmp-block">
+        <div class="cmp-val num">₹103.16</div>
+        <div class="cmp-sub">52w: ₹34.8 – ₹117 | MCap ₹10,017 Cr</div>
+      </div>
+      <button id="themeToggle" onclick="toggleTheme()">🌙 Dark</button>
+    </div>
+  </div>
+  <nav class="tab-nav">
+    <button class="tab-btn active" onclick="showTab(0)">0 · Exec Summary</button>
+    <button class="tab-btn" onclick="showTab(1)">1 · Overview</button>
+    <button class="tab-btn" onclick="showTab(2)">2 · Business</button>
+    <button class="tab-btn" onclick="showTab(3)">3 · Industry</button>
+    <button class="tab-btn" onclick="showTab(4)">4 · Financials</button>
+    <button class="tab-btn" onclick="showTab(5)">5 · Growth</button>
+    <button class="tab-btn" onclick="showTab(6)">6 · Forensics</button>
+    <button class="tab-btn" onclick="showTab(7)">7 · Valuation</button>
+    <button class="tab-btn" onclick="showTab(8)">8 · Thesis</button>
+    <button class="tab-btn" onclick="showTab(9)">9 · Risks</button>
+    <button class="tab-btn" onclick="showTab(10)">10 · Concall</button>
+    <button class="tab-btn" onclick="showTab(11)">11 · Cap Alloc</button>
+    <button class="tab-btn" onclick="showTab(12)">12 · Ownership</button>
+    <button class="tab-btn" onclick="showTab(13)">13 · Events</button>
+  </nav>
+</header>
+<main>
+<!-- TAB 0: EXECUTIVE SUMMARY -->
+<div id="tab-0" class="tab-pane active">
+  <div class="two-col" style="gap:24px;margin-bottom:20px">
+    <div class="summary-box">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+        <div class="big-verdict">ACCUMULATE</div>
+        <div>
+          <div style="font-size:.85rem;color:var(--text-secondary)">Conviction Score</div>
+          <div style="font-size:1.6rem;font-weight:800" class="num">6 <span style="font-size:1rem;font-weight:400;opacity:.5">/ 10</span></div>
+          <div class="conviction-bar"><div class="conviction-fill" style="width:60%"></div></div>
+        </div>
+      </div>
+      <p style="font-size:.92rem;line-height:1.7;color:var(--text-secondary);margin-bottom:14px">
+        Jayaswal Neco has executed a textbook post-NPA turnaround — debt collapsed from a ₹5,759 Cr peak to ₹2,109 Cr, finance costs are falling off a cliff (₹562 Cr FY25 → ~₹280 Cr annualised), and FY26 delivered all-time records across revenue, EBITDA, cash profit, and steel sales volume. Trading at EV/EBITDA of 8.85x versus sector peers at 12–14x, the discount reflects the residual trust deficit from a decade of losses. With Debt/EBITDA at 1.55x and OCF of ₹1,367 Cr, the company is now functionally investment-grade despite lacking a formal rating. The pending warrant issuance introduces dilution risk and institutional wariness, capping conviction at 6/10.
+      </p>
+      <div style="margin-bottom:8px">
+        <span style="font-size:.75rem;font-weight:700;text-transform:uppercase;color:var(--text-muted)">Target Price (12M)</span>
+        <span class="num" style="font-size:1.3rem;font-weight:800;color:var(--color-green);margin-left:10px">₹135</span>
+        <span style="font-size:.85rem;color:var(--color-green);margin-left:6px">(+31% upside)</span>
+      </div>
+      <div style="font-size:.8rem;color:var(--text-muted)">Method: 10× EV/EBITDA FY27E ₹1,450 Cr – Net Debt ₹1,800 Cr ÷ 97.1 Cr shares</div>
+      <div style="margin-top:10px;padding:8px 12px;background:var(--highlight-latest);border-radius:6px;font-size:.82rem">
+        <span style="font-weight:700">Forensic Rating:</span> <span class="amber">AMBER FLAGS</span> — auditor changed (Chaturvedi & Shah LLP replacing Pathak H.D.); RPT details not fully extracted; Dagori ED attachment ₹206 Cr ongoing since 2017.
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="section-label">5 Reasons to Own</div>
+        <ul class="five-reasons" style="list-style:none">
+          <li>💰 Finance cost in freefall: ₹562 Cr FY25 → ₹426 Cr FY26 → ~₹280 Cr annualised — incremental PAT benefit of ~₹230 Cr/yr fully baked into FY27.</li>
+          <li>📉 Debt near-normalised: ₹2,109 Cr (1.55× EBITDA, 0.74× equity) from ₹5,759 Cr peak. Balance sheet risk essentially gone.</li>
+          <li>⛏️ Captive ore advantage: Chhotedongar mine 27.2 lakh MT (+32% YoY) — annual record, covering ~60–70% of BF iron ore needs, structural cost edge vs importers.</li>
+          <li>📊 Steep discount to peers: EV/EBITDA 8.85× vs sector median 14×; P/E 21× broadly in line, but earnings will double on finance-cost saving alone.</li>
+          <li>🏭 Operational records: Steel sales 7.24 lakh MT, Pellets 13.7 lakh MT, OCF ₹1,367 Cr — all-time highs confirming the plant is firing on all cylinders.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="section-label">Top 3 Risks</div>
+        <ul class="five-reasons" style="list-style:none">
+          <li style="border-left-color:var(--color-red)">⚠️ Warrant dilution: EGM May 2026 approved preferential warrant issue; quantity/price/allottees undisclosed. 31.6% of FIs voted against — market may price in dilution before clarity emerges.</li>
+          <li style="border-left-color:var(--color-red)">📉 Steel cycle: H1FY25 EBITDA margin crashed to 12% when HRC/TMT prices fell. A repeat would cut FY27 PAT by ~₹300 Cr and push D/EBITDA back above 2×.</li>
+          <li style="border-left-color:var(--color-amber)">🏛️ NPA legacy trust deficit: FII holding only 0.90%; no dividend ever paid. Institutional re-rating will lag operational improvement by 2–4 years.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="card-grid">
+    <div class="kpi-card"><div class="kpi-label">Revenue FY26</div><div class="kpi-val num">₹7,132 Cr</div><div class="kpi-sub pos">+18.9% YoY · All-time record</div></div>
+    <div class="kpi-card"><div class="kpi-label">EBITDA FY26</div><div class="kpi-val num">₹1,341 Cr</div><div class="kpi-sub pos">18.80% margin · +40.8% YoY</div></div>
+    <div class="kpi-card"><div class="kpi-label">PAT FY26</div><div class="kpi-val num">₹463 Cr</div><div class="kpi-sub pos">+310% YoY · EPS ₹4.77</div></div>
+    <div class="kpi-card"><div class="kpi-label">Cash Profit FY26</div><div class="kpi-val num">₹907 Cr</div><div class="kpi-sub pos">vs ₹399 Cr FY25 · +127%</div></div>
+    <div class="kpi-card"><div class="kpi-label">Secured Debt</div><div class="kpi-val num">₹2,109 Cr</div><div class="kpi-sub pos">1.55× EBITDA · 0.74× equity</div></div>
+    <div class="kpi-card"><div class="kpi-label">OCF FY26</div><div class="kpi-val num">₹1,367 Cr</div><div class="kpi-sub pos">OCF/EBITDA: 102%</div></div>
+    <div class="kpi-card"><div class="kpi-label">ROCE</div><div class="kpi-val num">20.7%</div><div class="kpi-sub pos">vs 13% FY25 · 5-yr high</div></div>
+    <div class="kpi-card"><div class="kpi-label">EV / EBITDA</div><div class="kpi-val num">8.85×</div><div class="kpi-sub amber">vs peers 12–14× · 37% discount</div></div>
+  </div>
+</div>
+<!-- TAB 1: OVERVIEW -->
+<div id="tab-1" class="tab-pane">
+  <div class="card-grid">
+    <div class="kpi-card"><div class="kpi-label">Market Cap</div><div class="kpi-val num">₹10,017 Cr</div><div class="kpi-sub">97.1 Cr shares × ₹103.16</div><canvas class="kpi-spark" id="spk-mcap"></canvas></div>
+    <div class="kpi-card"><div class="kpi-label">Revenue (FY26)</div><div class="kpi-val num">₹7,132 Cr</div><div class="kpi-sub pos">3Y CAGR: +4.2% | 5Y CAGR: +14.2%</div><canvas class="kpi-spark" id="spk-rev"></canvas></div>
+    <div class="kpi-card"><div class="kpi-label">EBITDA Margin</div><div class="kpi-val num">18.80%</div><div class="kpi-sub pos">vs 15.9% FY25 | vs 22% FY22</div><canvas class="kpi-spark" id="spk-opm"></canvas></div>
+    <div class="kpi-card"><div class="kpi-label">PAT (FY26)</div><div class="kpi-val num">₹463 Cr</div><div class="kpi-sub pos">EPS ₹4.77 | P/E 21.3×</div><canvas class="kpi-spark" id="spk-pat"></canvas></div>
+    <div class="kpi-card"><div class="kpi-label">ROCE</div><div class="kpi-val num">20.7%</div><div class="kpi-sub pos">ROE: 18.0% | ROA: 8.0%</div><canvas class="kpi-spark" id="spk-roce"></canvas></div>
+    <div class="kpi-card"><div class="kpi-label">Debt / Equity</div><div class="kpi-val num">0.74×</div><div class="kpi-sub pos">Secured Debt ₹2,109 Cr (↓63% from peak)</div><canvas class="kpi-spark" id="spk-de"></canvas></div>
+    <div class="kpi-card"><div class="kpi-label">FCF (FY26)</div><div class="kpi-val num">₹1,251 Cr</div><div class="kpi-sub pos">OCF ₹1,367 Cr | Capex ₹113 Cr</div><canvas class="kpi-spark" id="spk-fcf"></canvas></div>
+    <div class="kpi-card"><div class="kpi-label">Book Value / Share</div><div class="kpi-val num">₹29.3</div><div class="kpi-sub">P/B: 3.53× | Net Worth ₹2,841 Cr</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="section-label">Price Performance</div>
+      <table>
+        <thead><tr><th>Period</th><th>JAYNECOIND</th><th>vs Nifty 50</th></tr></thead>
+        <tbody>
+          <tr><td>1 Week</td><td class="num">---------</td><td>---------</td></tr>
+          <tr><td>1 Month</td><td class="num">---------</td><td>---------</td></tr>
+          <tr><td>3 Months</td><td class="num">---------</td><td>---------</td></tr>
+          <tr><td>6 Months</td><td class="num">---------</td><td>---------</td></tr>
+          <tr><td>1 Year</td><td class="num pos">+196%</td><td class="num">52w Low ₹34.8</td></tr>
+          <tr><td>52w High/Low</td><td class="num">₹117 / ₹34.8</td><td>200 DMA: ₹77.2</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="section-label">Shareholding (Mar 2026)</div>
+      <div class="chart-wrap-sm"><canvas id="chartOwnershipDonut"></canvas></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-label">Key Milestones</div>
+    <div style="display:flex;gap:0;overflow-x:auto;padding-bottom:8px">
+      <div style="min-width:160px;padding:10px 16px;border-right:2px solid var(--color-orange);text-align:center">
+        <div style="font-size:.7rem;color:var(--text-muted)">FY2017–2021</div>
+        <div style="font-size:.82rem;font-weight:700;margin-top:4px">NPA / Loss Era</div>
+        <div style="font-size:.75rem;color:var(--text-secondary)">₹5,759 Cr peak debt; 5 consecutive loss years</div>
+      </div>
+      <div style="min-width:160px;padding:10px 16px;border-right:2px solid var(--color-orange);text-align:center">
+        <div style="font-size:.7rem;color:var(--text-muted)">FY2022</div>
+        <div style="font-size:.82rem;font-weight:700;margin-top:4px">ACRE Resolution</div>
+        <div style="font-size:.75rem;color:var(--text-secondary)">Debt written down; equity turns positive; PAT ₹2,247 Cr exceptional</div>
+      </div>
+      <div style="min-width:160px;padding:10px 16px;border-right:2px solid var(--color-orange);text-align:center">
+        <div style="font-size:.7rem;color:var(--text-muted)">Dec 2023</div>
+        <div style="font-size:.82rem;font-weight:700;margin-top:4px">NCD Refinancing I</div>
+        <div style="font-size:.75rem;color:var(--text-secondary)">₹3,200 Cr @ 14.50% replaces ACRE debt</div>
+      </div>
+      <div style="min-width:160px;padding:10px 16px;border-right:2px solid var(--color-orange);text-align:center">
+        <div style="font-size:.7rem;color:var(--text-muted)">Dec 2025</div>
+        <div style="font-size:.82rem;font-weight:700;margin-top:4px">NCD Refinancing II</div>
+        <div style="font-size:.75rem;color:var(--text-secondary)">₹1,800 Cr @ 12.50% + ₹500 Cr WC @ 11%; ₹471 Cr prepaid from accruals</div>
+      </div>
+      <div style="min-width:160px;padding:10px 16px;border-right:2px solid var(--color-orange);text-align:center">
+        <div style="font-size:.7rem;color:var(--text-muted)">FY2026</div>
+        <div style="font-size:.82rem;font-weight:700;margin-top:4px">All-Time Records</div>
+        <div style="font-size:.75rem;color:var(--text-secondary)">Revenue ₹7,132 Cr, EBITDA ₹1,341 Cr, Cash Profit ₹907 Cr</div>
+      </div>
+      <div style="min-width:160px;padding:10px 16px;text-align:center">
+        <div style="font-size:.7rem;color:var(--text-muted)">May 2026</div>
+        <div style="font-size:.82rem;font-weight:700;margin-top:4px">Warrant EGM</div>
+        <div style="font-size:.75rem;color:var(--text-secondary)">Preferential warrant issue approved; 31.6% FI dissent; dilution risk</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 2: BUSINESS -->
+<div id="tab-2" class="tab-pane">
+  <div class="two-col">
+    <div class="card">
+      <div class="section-label">Business Description</div>
+      <p style="font-size:.92rem;line-height:1.75;color:var(--text-secondary)">
+        Jayaswal Neco is a fully integrated steel producer headquartered in Raipur, Chhattisgarh, with roots dating to 1972. Its core Siltara plant is a blast-furnace-to-rolling-mill value chain: captive iron ore mines (Chhotedongar + Metabodeli) feed a pellet plant, which feeds the BF, which feeds SMS and rolling mills producing TMT bars, wire rods, structurals, and billets. The company also operates foundry castings plants in Nagpur and Anjora (automotive grey iron castings). Captive power from a 4 MW solar + 3.5 MW windmill unit reduces grid dependency.
+      </p>
+      <div style="margin-top:14px">
+        <div class="section-label">Revenue Segments (FY26 est.)</div>
+        <div class="chart-wrap-sm"><canvas id="chartSegments"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-label">Moat Scorecard</div>
+      <table>
+        <thead><tr><th>Dimension</th><th>Rating</th><th>Rationale</th></tr></thead>
+        <tbody>
+          <tr><td>Captive Iron Ore</td><td><span class="badge badge-low">Strong</span></td><td style="font-size:.82rem">27 lakh MT/yr; 60–70% self-sufficiency vs imported ore peers</td></tr>
+          <tr><td>Scale / Integration</td><td><span class="badge badge-low">Moderate</span></td><td style="font-size:.82rem">BF→SMS→Rolling integration lowers conversion cost; ~7.5 lakh MT rolling capacity</td></tr>
+          <tr><td>Location Advantage</td><td><span class="badge badge-low">Moderate</span></td><td style="font-size:.82rem">Siltara, CG — near iron ore belt; lower input logistics vs coastal players</td></tr>
+          <tr><td>Switching Costs</td><td><span class="badge badge-medium">Weak</span></td><td style="font-size:.82rem">TMT/structurals are commodity products; buyer switches on price</td></tr>
+          <tr><td>Network Effects</td><td><span class="badge badge-high">None</span></td><td style="font-size:.82rem">Not applicable to bulk steel</td></tr>
+          <tr><td>Brand</td><td><span class="badge badge-medium">Weak</span></td><td style="font-size:.82rem">Regional brand recognition; not pan-India premium</td></tr>
+          <tr><td>Regulatory Protection</td><td><span class="badge badge-medium">Moderate</span></td><td style="font-size:.82rem">BIS quality norms protect domestic TMT from Chinese imports; mine leases are long-dated</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-label">Manufacturing Footprint</div>
+    <div class="three-col">
+      <div style="padding:12px;background:var(--table-row-alt);border-radius:8px">
+        <div style="font-weight:700;font-size:.9rem;margin-bottom:8px;color:var(--color-orange)">Siltara, Raipur CG — Integrated Steel</div>
+        <div style="font-size:.82rem;color:var(--text-secondary)">BF: 9 lakh MTPA | SMS: 8 lakh MTPA<br>Rolling: 7.5 lakh MTPA | Pellets: 14 lakh MTPA<br>DRI: 4 lakh MTPA | Coke Oven: 2 lakh MTPA<br>Sinter Plant + captive power</div>
+      </div>
+      <div style="padding:12px;background:var(--table-row-alt);border-radius:8px">
+        <div style="font-weight:700;font-size:.9rem;margin-bottom:8px;color:var(--color-orange)">Nagpur + Anjora/Bhilai CG — Foundry Castings</div>
+        <div style="font-size:.82rem;color:var(--text-secondary)">Grey iron foundry castings<br>Automotive: cylinder blocks, heads<br>General engineering applications<br>OEM customer base</div>
+      </div>
+      <div style="padding:12px;background:var(--table-row-alt);border-radius:8px">
+        <div style="font-weight:700;font-size:.9rem;margin-bottom:8px;color:var(--color-orange)">Captive Mines (CG)</div>
+        <div style="font-size:.82rem;color:var(--text-secondary)">Chhotedongar: 27.2 lakh MT FY26 (+32%; record)<br>Metabodeli: 10 lakh MT FY26<br>Combined: ~37 lakh MT<br>Operated via Neco Mines Ltd. (subsidiary)</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-label">Production Records FY26</div>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>Unit</th><th>FY24</th><th>FY25</th><th class="latest-col">FY26</th><th>YoY%</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Blast Furnace (lakh MT)</td><td class="num">-</td><td class="num">5.72</td><td class="num latest-col">8.58</td><td class="num pos">+50%</td><td><span class="badge badge-low">Record</span></td></tr>
+          <tr><td>SMS Liquid Steel (lakh MT)</td><td class="num">-</td><td class="num">6.47</td><td class="num latest-col">7.42</td><td class="num pos">+15%</td><td>---------</td></tr>
+          <tr><td>Rolling Mill (lakh MT)</td><td class="num">-</td><td class="num">6.24</td><td class="num latest-col">7.07</td><td class="num pos">+13%</td><td>---------</td></tr>
+          <tr><td>Pellet Plant (lakh MT)</td><td class="num">-</td><td class="num">11.62</td><td class="num latest-col">13.70</td><td class="num pos">+18%</td><td><span class="badge badge-low">Record</span></td></tr>
+          <tr><td>Steel Sales (lakh MT)</td><td class="num">-</td><td class="num">5.93</td><td class="num latest-col">7.24</td><td class="num pos">+22%</td><td><span class="badge badge-low">Record</span></td></tr>
+          <tr><td>Chhotedongar Mine (lakh MT)</td><td class="num">-</td><td class="num">20.63</td><td class="num latest-col">27.24</td><td class="num pos">+32%</td><td><span class="badge badge-low">Record</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<!-- TAB 3: INDUSTRY -->
+<div id="tab-3" class="tab-pane">
+  <div class="two-col">
+    <div class="card">
+      <div class="section-label">Market Structure</div>
+      <table>
+        <thead><tr><th>Parameter</th><th>Assessment</th></tr></thead>
+        <tbody>
+          <tr><td>India Steel Consumption FY26E</td><td class="num">~130–135 MT</td></tr>
+          <tr><td>Per Capita Consumption</td><td class="num">~90 kg (vs global avg 235 kg)</td></tr>
+          <tr><td>Long-term TAM Growth</td><td class="num pos">7–9% CAGR (NCA target 300 MT by 2030)</td></tr>
+          <tr><td>Industry Structure</td><td>Fragmented; top 5 players ~55% share</td></tr>
+          <tr><td>Organised vs Unorganised</td><td>Organised ~75%; induction furnace (IF) route ~25%</td></tr>
+          <tr><td>Lifecycle Stage</td><td><span class="badge badge-low">Growth</span></td></tr>
+          <tr><td>Import Threat</td><td class="amber">Moderate — Chinese HRC/coil; BIS norms protect TMT</td></tr>
+          <tr><td>Export Opportunity</td><td>Low for long products; margins not competitive globally</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="section-label">Competitive Landscape</div>
+      <table>
+        <thead><tr><th>Player</th><th>Type</th><th>Key Markets</th></tr></thead>
+        <tbody>
+          <tr><td>JSW Steel</td><td>Integrated (BF)</td><td>Pan-India; flat + long</td></tr>
+          <tr><td>Tata Steel</td><td>Integrated (BF)</td><td>Pan-India; flat + long</td></tr>
+          <tr><td>SAIL</td><td>Integrated (BF/PSU)</td><td>Pan-India; long products</td></tr>
+          <tr><td>Shyam Metalics</td><td>DRI/EAF integrated</td><td>East India; TMT + structurals</td></tr>
+          <tr><td><b>Jayaswal Neco</b></td><td>BF-integrated + Captive Ore</td><td>CG/Central India; TMT + billets</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-label">Structural Tailwinds (5)</div>
+    <div class="three-col">
+      <div style="padding:14px;background:var(--table-row-alt);border-radius:8px">
+        <div style="font-weight:700;font-size:.88rem;margin-bottom:6px">🏗️ Infrastructure Push</div>
+        <div style="font-size:.82rem;color:var(--text-secondary)">Government capex ₹11.1 lakh Cr budget FY26. PMGSY, NHAI, railways, housing — all TMT-intensive. Neco's CG location near infra spending centre.</div>
+      </div>
+      <div style="padding:14px;background:var(--table-row-alt);border-radius:8px">
+        <div style="font-weight:700;font-size:.88rem;margin-bottom:6px">🏠 Affordable Housing (PMAY-U 2.0)</div>
+        <div style="font-size:.82rem;color:var(--text-secondary)">3 Cr urban housing units under PMAY-U 2.0. Each unit ~1.5 MT TMT = 4.5 Cr MT additional TMT demand over 5 years. Neco's bread-and-butter product.</div>
+      </div>
+      <div style="padding:14px;background:var(--table-row-alt);border-radius:8px">
+        <div style="font-weight:700;font-size:.88rem;margin-bottom:6px">⚡ Captive Ore Scarcity Premium</div>
+        <div style="font-size:.82rem;color:var(--text-secondary)">Auction-based iron ore increasingly expensive for non-captive players. Neco's Chhotedongar + Metabodeli leases = structural cost advantage of ~₹1,500–2,000/MT vs market.</div>
+      </div>
+      <div style="padding:14px;background:var(--table-row-alt);border-radius:8px">
+        <div style="font-weight:700;font-size:.88rem;margin-bottom:6px">📦 China +1 Engineering Exports</div>
+        <div style="font-size:.82rem;color:var(--text-secondary)">Global OEMs seeking India sourcing for castings (Neco Castings segment). Low-value but steady margin contributor with potential for growth as supply chains diversify.</div>
+      </div>
+      <div style="padding:14px;background:var(--table-row-alt);border-radius:8px">
+        <div style="font-weight:700;font-size:.88rem;margin-bottom:6px">🔋 Scrap Shortage Drives BF Value</div>
+        <div style="font-size:.82rem;color:var(--text-secondary)">India's scrap availability insufficient for induction/EAF route to dominate. BF-BOF route remains essential for quality long products. Neco's BF capacity stays relevant for 10+ years.</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-label">Structural Headwinds</div>
+    <div class="two-col">
+      <div style="padding:14px;background:#FEE2E2;border-radius:8px">
+        <div style="font-weight:700;font-size:.88rem;margin-bottom:6px;color:var(--color-red)">🇨🇳 Chinese Overcapacity / Dumping Risk</div>
+        <div style="font-size:.82rem;color:var(--text-secondary)">China's 1 Bn MT+ capacity exports excess steel when domestic demand slows. HRC/coil prices are globally set by Chinese marginal cost. While BIS norms protect TMT, indirect pressure via scrap/billets pricing remains.</div>
+      </div>
+      <div style="padding:14px;background:#FEF3C7;border-radius:8px">
+        <div style="font-weight:700;font-size:.88rem;margin-bottom:6px;color:var(--color-amber)">⛏️ Coking Coal Import Dependency</div>
+        <div style="font-size:.82rem;color:var(--text-secondary)">India imports ~85% of coking coal requirements. Neco's BF route is fully dependent on imported coking coal (Australia/Russia/USA). A 30% coal price spike = ~₹500/MT cost increase, ~₹350 Cr EBITDA drag at current volumes.</div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- TAB 4: FINANCIALS -->
+<div id="tab-4" class="tab-pane">
+  <div class="card">
+    <div class="section-label">Quarterly P&amp;L — Metrics as Rows, Periods as Columns (₹ Cr)</div>
+    <div class="tbl-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left;min-width:160px">Metric</th>
+            <th>Mar 23</th><th>Jun 23</th><th>Sep 23</th><th>Dec 23</th><th>Mar 24</th>
+            <th>Jun 24</th><th>Sep 24</th><th>Dec 24</th><th>Mar 25</th>
+            <th>Jun 25</th><th>Sep 25</th><th>Dec 25</th><th class="latest-col">Mar 26</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Revenue</td><td class="num">1,469</td><td class="num">1,465</td><td class="num">1,501</td><td class="num">1,556</td><td class="num">1,411</td><td class="num">1,438</td><td class="num">1,230</td><td class="num">1,657</td><td class="num">1,675</td><td class="num">1,649</td><td class="num">1,781</td><td class="num">1,727</td><td class="num latest-col">1,974</td></tr>
+          <tr><td>EBITDA</td><td class="num">188</td><td class="num">208</td><td class="num">296</td><td class="num">290</td><td class="num">233</td><td class="num">165</td><td class="num">170</td><td class="num">264</td><td class="num">342</td><td class="num">315</td><td class="num">327</td><td class="num">310</td><td class="num latest-col">376</td></tr>
+          <tr><td>EBITDA %</td><td class="num">12.8%</td><td class="num">14.2%</td><td class="num">19.7%</td><td class="num">18.6%</td><td class="num">16.5%</td><td class="num">11.5%</td><td class="num">13.8%</td><td class="num">15.9%</td><td class="num">20.4%</td><td class="num">19.1%</td><td class="num">18.4%</td><td class="num">18.0%</td><td class="num latest-col">19.1%</td></tr>
+          <tr><td>Finance Cost</td><td class="num">111</td><td class="num">105</td><td class="num">107</td><td class="num">115</td><td class="num">142</td><td class="num">144</td><td class="num">145</td><td class="num">140</td><td class="num">134</td><td class="num">119</td><td class="num">112</td><td class="num">126</td><td class="num latest-col">69</td></tr>
+          <tr><td>Depreciation</td><td class="num">68</td><td class="num">66</td><td class="num">67</td><td class="num">67</td><td class="num">67</td><td class="num">67</td><td class="num">71</td><td class="num">74</td><td class="num">74</td><td class="num">75</td><td class="num">76</td><td class="num">76</td><td class="num latest-col">75</td></tr>
+          <tr><td>PAT</td><td class="num">5</td><td class="num">28</td><td class="num">92</td><td class="num">89</td><td class="num">2</td><td class="num neg">-32</td><td class="num neg">-34</td><td class="num">77</td><td class="num">102</td><td class="num">93</td><td class="num">105</td><td class="num">74</td><td class="num latest-col">191</td></tr>
+          <tr><td>EPS (₹)</td><td class="num">0.05</td><td class="num">0.28</td><td class="num">0.94</td><td class="num">0.91</td><td class="num">0.02</td><td class="num neg">-0.33</td><td class="num neg">-0.35</td><td class="num">0.79</td><td class="num">1.05</td><td class="num">0.96</td><td class="num">1.08</td><td class="num">0.76</td><td class="num latest-col">1.97</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="font-size:.75rem;color:var(--text-muted);margin-top:8px">† Dec 25 finance cost ₹126 Cr elevated due to prepayment premium on early NCD redemption (one-time)</div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="section-label">Revenue &amp; EBITDA Trend (₹ Cr)</div>
+      <div class="chart-wrap"><canvas id="chartRevEBITDA"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="section-label">Finance Cost vs PAT Trend (₹ Cr)</div>
+      <div class="chart-wrap"><canvas id="chartFinPAT"></canvas></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-label">Annual P&amp;L Summary (₹ Cr, Ind AS Standalone)</div>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>Year</th><th>FY17</th><th>FY18</th><th>FY19</th><th>FY20</th><th>FY21</th><th>FY22</th><th>FY23</th><th>FY24</th><th>FY25</th><th class="latest-col">FY26</th></tr></thead>
+        <tbody>
+          <tr><td>Revenue</td><td class="num">2,509</td><td class="num">3,466</td><td class="num">4,199</td><td class="num">3,611</td><td class="num">3,676</td><td class="num">5,911</td><td class="num">6,297</td><td class="num">5,887</td><td class="num">5,954</td><td class="num latest-col">7,132</td></tr>
+          <tr><td>EBITDA</td><td class="num">281</td><td class="num">308</td><td class="num">524</td><td class="num">200</td><td class="num">610</td><td class="num">1,301</td><td class="num">782</td><td class="num">1,028</td><td class="num">941</td><td class="num latest-col">1,328</td></tr>
+          <tr><td>EBITDA %</td><td class="num">11%</td><td class="num">9%</td><td class="num">12%</td><td class="num">6%</td><td class="num">17%</td><td class="num">22%</td><td class="num">12%</td><td class="num">17%</td><td class="num">16%</td><td class="num latest-col">19%</td></tr>
+          <tr><td>Finance Cost</td><td class="num">550</td><td class="num">659</td><td class="num">712</td><td class="num">868</td><td class="num">909</td><td class="num">459</td><td class="num">453</td><td class="num">470</td><td class="num">564</td><td class="num latest-col">426</td></tr>
+          <tr><td>Depreciation</td><td class="num">255</td><td class="num">273</td><td class="num">273</td><td class="num">276</td><td class="num">267</td><td class="num">261</td><td class="num">266</td><td class="num">266</td><td class="num">287</td><td class="num latest-col">301</td></tr>
+          <tr><td>PAT</td><td class="num neg">-459</td><td class="num neg">-491</td><td class="num neg">-444</td><td class="num neg">-1,504</td><td class="num neg">-558</td><td class="num pos">2,247*</td><td class="num pos">227</td><td class="num pos">210</td><td class="num pos">113</td><td class="num latest-col pos">463</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="font-size:.75rem;color:var(--text-muted);margin-top:6px">* FY22 PAT includes ~₹2,750 Cr exceptional gain from ACRE debt write-off/resolution</div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="section-label">Cash Flow Quality (₹ Cr)</div>
+      <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>Year</th><th>OCF</th><th>Capex (ICF)</th><th>FCF</th><th>OCF/EBITDA</th></tr></thead>
+          <tbody>
+            <tr><td>FY22</td><td class="num pos">860</td><td class="num">26</td><td class="num pos">830</td><td class="num">66%</td></tr>
+            <tr><td>FY23</td><td class="num pos">739</td><td class="num">57</td><td class="num pos">675</td><td class="num">94%</td></tr>
+            <tr><td>FY24</td><td class="num pos">681</td><td class="num">177</td><td class="num pos">499</td><td class="num">66%</td></tr>
+            <tr><td>FY25</td><td class="num pos">1,388</td><td class="num">236</td><td class="num pos">1,144</td><td class="num">148%</td></tr>
+            <tr class="latest-col"><td>FY26</td><td class="num pos">1,367</td><td class="num">113</td><td class="num pos">1,251</td><td class="num">103%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="font-size:.75rem;color:var(--text-muted);margin-top:6px">5Y cumulative OCF ₹5,035 Cr vs 5Y cumulative PAT ~₹2,450 Cr — excellent cash conversion</div>
+    </div>
+    <div class="card">
+      <div class="section-label">Balance Sheet Snapshot (₹ Cr)</div>
+      <table>
+        <thead><tr><th>Item</th><th>FY24</th><th>FY25</th><th class="latest-col">FY26</th></tr></thead>
+        <tbody>
+          <tr><td>Total Assets</td><td class="num">6,100</td><td class="num">5,741</td><td class="num latest-col">5,970</td></tr>
+          <tr><td>Shareholders' Equity</td><td class="num">2,263</td><td class="num">2,376</td><td class="num latest-col">2,841</td></tr>
+          <tr><td>Total Debt (Borrowings)</td><td class="num">3,214</td><td class="num">2,735</td><td class="num latest-col">2,109</td></tr>
+          <tr><td>Net Block (Fixed Assets)</td><td class="num">3,316</td><td class="num">3,384</td><td class="num latest-col">3,228</td></tr>
+          <tr><td>CWIP</td><td class="num">219</td><td class="num">127</td><td class="num latest-col">94</td></tr>
+          <tr><td>Current Assets (approx)</td><td class="num">2,565</td><td class="num">2,230</td><td class="num latest-col">2,646</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-label">Efficiency Ratios</div>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>Ratio</th><th>FY17</th><th>FY19</th><th>FY21</th><th>FY22</th><th>FY23</th><th>FY24</th><th>FY25</th><th class="latest-col">FY26</th></tr></thead>
+        <tbody>
+          <tr><td>ROCE %</td><td class="num">1%</td><td class="num">5%</td><td class="num">12%</td><td class="num pos">26%</td><td class="num">10%</td><td class="num">14%</td><td class="num">13%</td><td class="num latest-col pos">21%</td></tr>
+          <tr><td>Debtor Days</td><td class="num">60</td><td class="num">42</td><td class="num">33</td><td class="num">28</td><td class="num">27</td><td class="num">26</td><td class="num">25</td><td class="num latest-col">24</td></tr>
+          <tr><td>Inventory Days</td><td class="num">188</td><td class="num">142</td><td class="num">182</td><td class="num">163</td><td class="num">139</td><td class="num">226</td><td class="num">170</td><td class="num latest-col">183</td></tr>
+          <tr><td>Days Payable</td><td class="num">79</td><td class="num">57</td><td class="num">36</td><td class="num">37</td><td class="num">35</td><td class="num">44</td><td class="num">33</td><td class="num latest-col">56</td></tr>
+          <tr><td>Cash Conv Cycle</td><td class="num">169</td><td class="num">128</td><td class="num">178</td><td class="num">154</td><td class="num">132</td><td class="num">208</td><td class="num">161</td><td class="num latest-col">151</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="section-label">Piotroski F-Score (FY26) — 8 / 9</div>
+      <div class="score-item"><span>ROA Positive</span><span class="score-pass">✓ PASS (8.0%)</span></div>
+      <div class="score-item"><span>OCF Positive</span><span class="score-pass">✓ PASS (₹1,367 Cr)</span></div>
+      <div class="score-item"><span>ROA Improvement YoY</span><span class="score-pass">✓ PASS (8.0% vs ~2.0% FY25)</span></div>
+      <div class="score-item"><span>Accruals (OCF/Assets &gt; ROA)</span><span class="score-pass">✓ PASS (23.8% vs 8.0%)</span></div>
+      <div class="score-item"><span>Leverage Improvement</span><span class="score-pass">✓ PASS (D/E 0.74x vs 1.15x)</span></div>
+      <div class="score-item"><span>Current Ratio Improvement</span><span class="score-pass">✓ PASS (1.39x FY26 vs lower FY25)</span></div>
+      <div class="score-item"><span>No Dilutive Equity Issuance</span><span class="score-fail">✗ FAIL (warrants approved; potential dilution)</span></div>
+      <div class="score-item"><span>Gross Margin Improvement</span><span class="score-pass">✓ PASS (19% vs 16% FY25)</span></div>
+      <div class="score-item"><span>Asset Turnover Improvement</span><span class="score-pass">✓ PASS (1.19x vs 1.04x FY25)</span></div>
+      <div style="margin-top:12px;font-size:.85rem"><span class="badge badge-low">Strong — 8/9</span> <span style="color:var(--text-secondary);margin-left:8px">High quality of earnings signal</span></div>
+    </div>
+    <div class="card">
+      <div class="section-label">Altman Z-Score (FY26) — 5.34</div>
+      <div class="score-item"><span>X1: Working Capital / Total Assets</span><span class="num">0.242</span></div>
+      <div class="score-item"><span>X2: Retained Earnings / Total Assets</span><span class="num">0.313</span></div>
+      <div class="score-item"><span>X3: EBIT / Total Assets</span><span class="num">0.172</span></div>
+      <div class="score-item"><span>X4: Mkt Cap / Total Liabilities</span><span class="num">4.75</span></div>
+      <div class="score-item"><span>X5: Revenue / Total Assets</span><span class="num">1.195</span></div>
+      <div style="margin-top:14px;font-size:1.1rem;font-weight:700">Z = 5.34 &nbsp;<span class="badge badge-low">SAFE ZONE (&gt;2.99)</span></div>
+      <div style="font-size:.8rem;color:var(--text-secondary);margin-top:6px">Was deeply distressed (Z &lt; 1.81) during FY18–FY21. X4 (market cap vs liabilities) is the dominant driver of current Z.</div>
+    </div>
+  </div>
+</div>
+<!-- TAB 5: GROWTH -->
+<div id="tab-5" class="tab-pane">
+  <div class="card-grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">
+    <div class="kpi-card"><div class="kpi-label">Revenue 3Y CAGR</div><div class="kpi-val num pos">4.2%</div><div class="kpi-sub">FY23→FY26 (low base FY23 high)</div></div>
+    <div class="kpi-card"><div class="kpi-label">Revenue 5Y CAGR</div><div class="kpi-val num pos">14.2%</div><div class="kpi-sub">FY21→FY26 strong recovery</div></div>
+    <div class="kpi-card"><div class="kpi-label">EBITDA 3Y CAGR</div><div class="kpi-val num pos">19.4%</div><div class="kpi-sub">₹782 Cr FY23 → ₹1,328 Cr FY26</div></div>
+    <div class="kpi-card"><div class="kpi-label">PAT 3Y CAGR</div><div class="kpi-val num pos">26.7%</div><div class="kpi-sub">₹227 Cr FY23 → ₹463 Cr FY26</div></div>
+    <div class="kpi-card"><div class="kpi-label">PAT FY27E (base)</div><div class="kpi-val num pos">~₹700 Cr</div><div class="kpi-sub">Finance cost saving ~₹150 Cr; EPS ~₹7.2</div></div>
+    <div class="kpi-card"><div class="kpi-label">EPS FY26</div><div class="kpi-val num">₹4.77</div><div class="kpi-sub">vs ₹1.16 FY25 (+311%)</div></div>
+  </div>
+  <div class="trigger-grid">
+    <div class="trigger-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-weight:700;font-size:.95rem">Finance Cost Cliff</div>
+        <span class="badge badge-high">HIGH</span>
+      </div>
+      <p style="font-size:.83rem;color:var(--text-secondary);margin-bottom:8px">NCD refinancing Dec 2025 takes full-year annualised finance cost from ₹562 Cr (FY25) to ~₹280 Cr — a ₹282 Cr saving that drops almost entirely to PBT. FY27 EPS growth is essentially locked in even with flat EBITDA.</p>
+      <div style="font-size:.78rem;font-weight:700;color:var(--color-green)">Opportunity: +₹210 Cr PAT incremental on tax-adjusted basis (FY26 → FY27)</div>
+      <div style="font-size:.78rem;color:var(--color-amber);margin-top:4px">Bear pushback: FY26 finance cost was ₹426 Cr (not ₹562 Cr) — partial-year benefit already captured. Incremental FY27 saving ~₹150 Cr, not ₹282 Cr.</div>
+    </div>
+    <div class="trigger-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-weight:700;font-size:.95rem">Captive Ore Scale-up</div>
+        <span class="badge badge-high">HIGH</span>
+      </div>
+      <p style="font-size:.83rem;color:var(--text-secondary);margin-bottom:8px">Chhotedongar at 27.2 lakh MT FY26 (+32% YoY). Target 30+ lakh MT FY27. Each additional lakh MT of captive ore saves ~₹1,500–2,000/MT vs market — i.e., 3 lakh MT uplift = ₹45–60 Cr direct EBITDA benefit.</p>
+      <div style="font-size:.78rem;font-weight:700;color:var(--color-green)">Opportunity: 30+ lakh MT target realistic given mining pace trajectory</div>
+      <div style="font-size:.78rem;color:var(--color-amber);margin-top:4px">Bear pushback: Mining volumes are weather/logistics/royalty-dependent; EC modifications may be needed for step-change expansions.</div>
+    </div>
+    <div class="trigger-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-weight:700;font-size:.95rem">Credit Rating Upgrade</div>
+        <span class="badge badge-medium">MEDIUM</span>
+      </div>
+      <p style="font-size:.83rem;color:var(--text-secondary);margin-bottom:8px">No active public credit rating post Jan 2024. With Debt/EBITDA now 1.55× and second NCD at 12.50%, the company qualifies for BBB+ / A- range if rated. A formal rating would enable cheaper WC facilities and broader institutional access.</p>
+      <div style="font-size:.78rem;font-weight:700;color:var(--color-green)">Opportunity: 100–150 bps further WC cost reduction possible; triggers DII interest</div>
+      <div style="font-size:.78rem;color:var(--color-amber);margin-top:4px">Bear pushback: Rating agencies require 2–3 years post-NPA track record. Timeline: FY27–FY28 at earliest.</div>
+    </div>
+    <div class="trigger-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-weight:700;font-size:.95rem">Debt Paydown → Re-rating</div>
+        <span class="badge badge-medium">MEDIUM</span>
+      </div>
+      <p style="font-size:.83rem;color:var(--text-secondary);margin-bottom:8px">₹300 Cr/yr NCD principal amortisation + OCF surplus → Debt/EBITDA below 1× by FY28E. As leverage normalises further, P/E and EV/EBITDA multiples should re-rate toward sector median (14×).</p>
+      <div style="font-size:.78rem;font-weight:700;color:var(--color-green)">Opportunity: At 14× EV/EBITDA on FY27E ₹1,450 Cr — intrinsic value ₹185–200/share</div>
+      <div style="font-size:.78rem;color:var(--color-amber);margin-top:4px">Bear pushback: Re-rating requires institutional buying. FII at 0.90% — deep re-rating may take 3–5 years.</div>
+    </div>
+    <div class="trigger-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-weight:700;font-size:.95rem">FII Discovery</div>
+        <span class="badge badge-opt">OPTIONALITY</span>
+      </div>
+      <p style="font-size:.83rem;color:var(--text-secondary);margin-bottom:8px">FII holding stands at just 0.90% (Mar 2026) — up from effectively 0% a year ago. As the post-NPA story becomes undeniable (3+ years of positive PAT, dividend initiation possible), institutional discovery could be non-linear and rapid.</p>
+      <div style="font-size:.78rem;font-weight:700;color:var(--color-blue)">Optionality: If FIIs reach 3–5% holding, incremental ₹2,000–4,000 Cr demand at current float</div>
+      <div style="font-size:.78rem;color:var(--color-amber);margin-top:4px">Bear pushback: Warrant dilution is the immediate deterrent for institutional participation. Resolution needed first.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-label">Revenue Trend Chart (₹ Cr)</div>
+    <div class="chart-wrap"><canvas id="chartGrowthRev"></canvas></div>
+  </div>
+</div>
+
+<!-- TAB 6: FORENSICS -->
+<div id="tab-6" class="tab-pane">
+  <div class="two-col">
+    <div class="card">
+      <div class="section-label">Auditor Profile</div>
+      <div class="forensic-row"><span>Statutory Auditor</span><span style="font-weight:600">M/s. Chaturvedi &amp; Shah LLP</span></div>
+      <div class="forensic-row"><span>Prior Auditor</span><span>Pathak H.D. &amp; Associates (FY17–FY21 era)</span></div>
+      <div class="forensic-row"><span>Firm Type</span><span>Mid-tier (not Big 4)</span></div>
+      <div class="forensic-row"><span>Tenure with JNIL</span><span class="amber">Recent change — tenure unknown</span></div>
+      <div class="forensic-row"><span>IFC Opinion</span><span class="amber">Not found in extract</span></div>
+      <div class="forensic-row"><span>Secretarial Auditor</span><span>M/s. R.A. Daga &amp; Co. (FCS 5522)</span></div>
+      <div class="forensic-row"><span>Debenture Trustee</span><span>M/s. Vistra ITCL (India) Limited</span></div>
+      <div style="margin-top:12px;padding:10px;background:var(--highlight-latest);border-radius:6px;font-size:.82rem">
+        <strong>Note:</strong> Auditor change from Pathak H.D. to Chaturvedi &amp; Shah LLP is unverified for timing/reason. Auditor rotation is mandatory every 5–10 years under Companies Act; this may be routine. However, new auditor KAMs may surface new disclosures in FY26 AR (not yet published as of this report).
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-label">Key Audit Matters (KAMs)</div>
+      <div style="padding:12px;background:var(--table-row-alt);border-radius:6px;font-size:.85rem;color:var(--text-secondary)">
+        KAM headings not extracted — AR PDFs were read for financial data but not at KAM-heading granularity. Status: <strong>Not found in extract.</strong>
+        <br><br>
+        Likely KAMs based on company profile:
+        <ul style="margin-top:8px;padding-left:16px">
+          <li>Going concern / debt restructuring (historical; may be removed in FY26)</li>
+          <li>CWIP / asset impairment (Dagori DRI plant)</li>
+          <li>Revenue recognition (long-term supply contracts)</li>
+          <li>Deferred tax asset recoverability</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="section-label">Related Party Transactions</div>
+      <div style="font-size:.85rem;color:var(--text-secondary);margin-bottom:10px">Exact RPT counterparty values not extracted from AR. Below is disclosed structure.</div>
+      <table>
+        <thead><tr><th>Counterparty</th><th>Nature</th><th>Risk Flag</th></tr></thead>
+        <tbody>
+          <tr><td>Neco Mines Ltd. (subsidiary)</td><td>Iron ore supply to parent</td><td><span class="badge badge-low">LOW</span></td></tr>
+          <tr><td>Neco Cast and Alloys Ltd.</td><td>Inter-company transactions</td><td><span class="badge badge-low">LOW</span></td></tr>
+          <tr><td>Promoter entities (Jayaswal family)</td><td>Possible remuneration / loans</td><td><span class="badge badge-medium">MEDIUM</span></td></tr>
+          <tr><td>Kotak Mahindra Bank</td><td>WC facility at arm's length</td><td><span class="badge badge-low">LOW</span></td></tr>
+        </tbody>
+      </table>
+      <div style="font-size:.75rem;color:var(--text-muted);margin-top:6px">RPT Rs Cr values: Not found in extract. Full RPT schedule in FY26 AR (not yet published).</div>
+    </div>
+    <div class="card">
+      <div class="section-label">Contingent Liabilities</div>
+      <table>
+        <thead><tr><th>Item</th><th>Amount (₹ Cr)</th><th>Flag</th></tr></thead>
+        <tbody>
+          <tr><td>ED/PMLA Attachment — Dagori DRI Plant</td><td class="num">206.16</td><td><span class="badge badge-medium">AMBER</span></td></tr>
+          <tr><td>Other contingent liabilities</td><td class="num">Not found in extract</td><td>---------</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:10px;padding:8px;background:var(--highlight-latest);border-radius:6px;font-size:.82rem">
+        <strong>Dagori DRI Plant:</strong> PMLA attachment ₹206.16 Cr dated June 9, 2017 — now 9 years old. Plant is non-operational, assets impaired. Contingent liability is long-standing but has not crystalised. Risk: LOW on crystallisation probability; asset value already impaired.
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-label">CWIP Analysis</div>
+    <table>
+      <thead><tr><th>Year</th><th>CWIP (₹ Cr)</th><th>% of Gross Block</th><th>Assessment</th></tr></thead>
+      <tbody>
+        <tr><td>FY15</td><td class="num">3,137</td><td class="num">69%</td><td><span class="badge badge-high">HIGH — Large expansion in progress</span></td></tr>
+        <tr><td>FY17</td><td class="num">457</td><td class="num">9%</td><td>Expansion capitalized into fixed assets</td></tr>
+        <tr><td>FY22</td><td class="num">95</td><td class="num">2.5%</td><td><span class="badge badge-low">LOW — Maintenance only</span></td></tr>
+        <tr><td>FY24</td><td class="num">219</td><td class="num">6%</td><td>Minor brownfield work</td></tr>
+        <tr><td>FY25</td><td class="num">127</td><td class="num">3.6%</td><td><span class="badge badge-low">LOW — Declining</span></td></tr>
+        <tr class="latest-col"><td>FY26</td><td class="num">94</td><td class="num">2.8%</td><td><span class="badge badge-low">NO CONCERN — Maintenance mode</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="section-label">Forensic Scorecard</div>
+    <div class="forensic-row"><span>Auditor Quality</span><span class="amber">AMBER — Mid-tier firm; recent change; Big 4 not engaged</span></div>
+    <div class="forensic-row"><span>KAMs</span><span class="amber">AMBER — Not extracted; new auditor may surface new disclosures</span></div>
+    <div class="forensic-row"><span>RPT Risk</span><span class="fl-amber">MEDIUM — Subsidiary transactions normal; promoter entity exposure unquantified</span></div>
+    <div class="forensic-row"><span>Contingent Liabilities</span><span class="fl-amber">AMBER — Dagori PMLA attachment ₹206 Cr ongoing; long-standing but unresolved</span></div>
+    <div class="forensic-row"><span>CWIP</span><span class="fl-green">GREEN — ₹94 Cr, 2.8% of gross block; no stalled assets; declining trend</span></div>
+    <div class="forensic-row"><span>Accounting Policy Changes</span><span class="amber">Not found in extract</span></div>
+    <div class="forensic-row"><span>IFC Opinion</span><span class="amber">Not found in extract</span></div>
+    <div class="forensic-row"><span>Secretarial Compliance</span><span class="fl-green">GREEN — Clean ASCR FY26; no SEBI non-compliances; CS Rachana Daga confirmed</span></div>
+    <div class="forensic-row"><span>Corporate Governance Events</span><span class="fl-amber">AMBER — Warrant issuance at EGM May 2026; 31.6% FI dissent; allottees undisclosed</span></div>
+    <div style="margin-top:14px;padding:12px;background:var(--highlight-latest);border-radius:8px;font-size:.88rem">
+      <strong>Overall Forensic Verdict: <span class="amber">AMBER FLAGS</span></strong><br>
+      No red flags. The company has clean secretarial compliance and declining CWIP. The amber signals are: auditor change (routine but worth monitoring for new KAMs in FY26 AR), Dagori PMLA attachment (long-running, likely non-crystallising), and the undisclosed warrant allottees. None of these override the fundamental investment case.
+    </div>
+  </div>
+</div>
+<!-- TAB 7: VALUATION -->
+<div id="tab-7" class="tab-pane">
+  <div class="card-grid">
+    <div class="kpi-card"><div class="kpi-label">P / E (TTM)</div><div class="kpi-val num">21.3×</div><div class="kpi-sub">EPS ₹4.77 | CMP ₹103</div></div>
+    <div class="kpi-card"><div class="kpi-label">EV / EBITDA</div><div class="kpi-val num pos">8.85×</div><div class="kpi-sub pos">vs peers 12–14× | 37% discount</div></div>
+    <div class="kpi-card"><div class="kpi-label">Price / Book</div><div class="kpi-val num">3.53×</div><div class="kpi-sub">BV ₹29.3 | Net Worth ₹2,841 Cr</div></div>
+    <div class="kpi-card"><div class="kpi-label">Mkt Cap / OCF</div><div class="kpi-val num pos">7.3×</div><div class="kpi-sub pos">OCF ₹1,367 Cr — very cheap on cash</div></div>
+    <div class="kpi-card"><div class="kpi-label">MCap / Sales</div><div class="kpi-val num">1.40×</div><div class="kpi-sub">Revenue ₹7,132 Cr</div></div>
+    <div class="kpi-card"><div class="kpi-label">ROCE</div><div class="kpi-val num pos">20.7%</div><div class="kpi-sub">Above cost of capital; value-accretive</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="section-label">Peer Comparison</div>
+      <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>Company</th><th>P/E</th><th>EV/EBITDA</th><th>P/B</th><th>ROCE%</th><th>OPM%</th><th>MCap (Cr)</th></tr></thead>
+          <tbody>
+            <tr><td>APL Apollo Tubes</td><td class="num">43.4</td><td class="num">27.1</td><td class="num">9.86</td><td class="num pos">31.6%</td><td class="num">7.8%</td><td class="num">52,214</td></tr>
+            <tr><td>Welspun Corp</td><td class="num">20.9</td><td class="num">12.2</td><td class="num">3.68</td><td class="num pos">22.9%</td><td class="num">13.3%</td><td class="num">33,699</td></tr>
+            <tr><td>Shyam Metalics</td><td class="num">24.7</td><td class="num">10.8</td><td class="num">2.30</td><td class="num">13.0%</td><td class="num">12.6%</td><td class="num">26,456</td></tr>
+            <tr><td>Godawari Power</td><td class="num">24.1</td><td class="num">14.0</td><td class="num">3.37</td><td class="num pos">20.4%</td><td class="num">23.3%</td><td class="num">19,603</td></tr>
+            <tr><td>Gallantt Ispat</td><td class="num">34.4</td><td class="num">21.5</td><td class="num">5.02</td><td class="num">18.2%</td><td class="num">16.2%</td><td class="num">16,648</td></tr>
+            <tr><td>Usha Martin</td><td class="num">28.2</td><td class="num">17.6</td><td class="num">4.30</td><td class="num pos">20.2%</td><td class="num">19.1%</td><td class="num">14,192</td></tr>
+            <tr class="peer-highlight"><td>Jayaswal Neco ★</td><td class="num">21.3</td><td class="num">8.85</td><td class="num">3.53</td><td class="num pos">20.7%</td><td class="num">18.6%</td><td class="num">10,017</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="font-size:.78rem;color:var(--text-muted);margin-top:6px">Jayaswal Neco has comparable ROCE and OPM to Usha Martin and Godawari Power yet trades at 37% discount on EV/EBITDA — the NPA legacy discount.</div>
+    </div>
+    <div class="card">
+      <div class="section-label">Peer EV/EBITDA Comparison</div>
+      <div class="chart-wrap"><canvas id="chartPeerEV"></canvas></div>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="section-label">DCF Framework</div>
+      <table>
+        <thead><tr><th>Assumption</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>FY27E EBITDA</td><td class="num">₹1,450 Cr</td></tr>
+          <tr><td>FY27E Finance Cost</td><td class="num">~₹310 Cr (full year new rates)</td></tr>
+          <tr><td>FY27E PAT (est.)</td><td class="num pos">~₹700 Cr | EPS ~₹7.2</td></tr>
+          <tr><td>WACC (est.)</td><td class="num">13.2%</td></tr>
+          <tr><td>Terminal Growth Rate</td><td class="num">5.0%</td></tr>
+          <tr><td>Exit EV/EBITDA Multiple</td><td class="num">10×</td></tr>
+          <tr><td>FY27E EV (10× ₹1,450 Cr)</td><td class="num">₹14,500 Cr</td></tr>
+          <tr><td>Less: Net Debt FY27E</td><td class="num">(₹1,800 Cr)</td></tr>
+          <tr><td>Implied MCap</td><td class="num pos">₹12,700 Cr</td></tr>
+          <tr><td>Per Share (97.1 Cr shares)</td><td class="num pos">₹131</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="section-label">Target Price Scenarios</div>
+      <table>
+        <thead><tr><th>Scenario</th><th>EV/EBITDA</th><th>FY27E EBITDA</th><th>Target</th><th>Upside</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge badge-high">Bear</span></td><td class="num">7×</td><td class="num">₹1,100 Cr</td><td class="num neg">₹72</td><td class="num neg">-30%</td></tr>
+          <tr class="latest-col"><td><span class="badge badge-medium">Base</span></td><td class="num">10×</td><td class="num">₹1,450 Cr</td><td class="num pos">₹135</td><td class="num pos">+31%</td></tr>
+          <tr><td><span class="badge badge-low">Bull</span></td><td class="num">13×</td><td class="num">₹1,600 Cr</td><td class="num pos">₹197</td><td class="num pos">+91%</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:14px;font-size:.82rem;color:var(--text-secondary)">
+        <strong>Valuation Verdict: <span class="pos">Cheap</span></strong> — At 8.85× EV/EBITDA with 20%+ ROCE, the stock is cheap relative to peers. The discount is partially justified by the warrant dilution overhang and NPA history, but even adjusting for 10–15% dilution from warrants, the stock remains inexpensive. The asymmetry is positive: downside ~30% in a steel bust scenario; upside 50–90% in a re-rating scenario.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 8: THESIS -->
+<div id="tab-8" class="tab-pane">
+  <div class="three-col" style="margin-bottom:20px">
+    <div class="thesis-col thesis-bull">
+      <h3>🟢 Bull Case (30% probability)</h3>
+      <p style="font-size:.83rem;color:var(--text-secondary);margin-bottom:10px">Target: ₹197 | Upside: +91%</p>
+      <ul style="list-style:none;padding:0">
+        <li style="font-size:.83rem;padding:6px 0;border-bottom:1px solid var(--bg-card-border)">Finance cost drops to ₹280 Cr; EBITDA expands to ₹1,600 Cr on higher steel prices; PAT ₹950+ Cr; EPS ₹9.8</li>
+        <li style="font-size:.83rem;padding:6px 0;border-bottom:1px solid var(--bg-card-border)">FII holding expands from 0.9% to 4–5%; sector P/E re-rates to 22–25×</li>
+        <li style="font-size:.83rem;padding:6px 0">Warrant dilution risk resolved — allottees are credible strategic investors; first dividend announced</li>
+      </ul>
+    </div>
+    <div class="thesis-col thesis-base">
+      <h3>🟡 Base Case (50% probability)</h3>
+      <p style="font-size:.83rem;color:var(--text-secondary);margin-bottom:10px">Target: ₹135 | Upside: +31%</p>
+      <ul style="list-style:none;padding:0">
+        <li style="font-size:.83rem;padding:6px 0;border-bottom:1px solid var(--bg-card-border)">EBITDA ₹1,400–1,450 Cr; finance cost ~₹310 Cr; PAT ~₹700 Cr; EPS ₹7.2</li>
+        <li style="font-size:.83rem;padding:6px 0;border-bottom:1px solid var(--bg-card-border)">Debt falls to ₹1,800 Cr; D/EBITDA 1.25×; no rating upgrade yet</li>
+        <li style="font-size:.83rem;padding:6px 0">Stock re-rates to 10× EV/EBITDA as NPA narrative fades; warrant details disclosed and accepted</li>
+      </ul>
+    </div>
+    <div class="thesis-col thesis-bear">
+      <h3>🔴 Bear Case (20% probability)</h3>
+      <p style="font-size:.83rem;color:var(--text-secondary);margin-bottom:10px">Target: ₹72 | Downside: -30%</p>
+      <ul style="list-style:none;padding:0">
+        <li style="font-size:.83rem;padding:6px 0;border-bottom:1px solid var(--bg-card-border)">Steel prices fall 15–20% (Chinese dumping surge); EBITDA margin collapses to 12% → ₹855 Cr</li>
+        <li style="font-size:.83rem;padding:6px 0;border-bottom:1px solid var(--bg-card-border)">Warrant issuance at 20–30% discount to market; significant dilution (20% of share capital); FII exits</li>
+        <li style="font-size:.83rem;padding:6px 0">BF shutdown (unplanned) + coking coal price spike; PAT turns negative in H1; D/EBITDA rebounds to 2.5×</li>
+      </ul>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="section-label">Conviction Score — 6 / 10</div>
+      <div style="height:20px;background:var(--bg-card-border);border-radius:10px;overflow:hidden;margin-bottom:12px">
+        <div style="width:60%;height:100%;background:linear-gradient(90deg,var(--color-amber),var(--color-orange));border-radius:10px"></div>
+      </div>
+      <div style="font-size:.85rem;color:var(--text-secondary)">
+        <strong>Why not higher:</strong> Warrant dilution (quantity/price/allottees undisclosed) + cyclical steel exposure + NPA legacy overhang limit conviction. The fundamental case is stronger (7–8/10) but governance uncertainty caps it at 6.
+        <br><br>
+        <strong>Why not lower:</strong> Debt is nearly normalised, OCF is massive (₹1,367 Cr), finance cost cliff is a locked-in FY27 PAT driver, and the stock trades at a deep discount to peers with comparable ROCE.
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-label">Key Monitorables</div>
+      <table class="monitorable-table">
+        <thead><tr><th>Metric</th><th>Current</th><th>Bull Threshold</th><th>Bear Threshold</th></tr></thead>
+        <tbody>
+          <tr><td>EBITDA Margin (quarterly)</td><td class="num">18–19%</td><td class="num">≥20%</td><td class="num">&lt;14%</td></tr>
+          <tr><td>Finance Cost (quarterly run-rate)</td><td class="num">₹69 Cr/Q</td><td class="num">≤₹65 Cr/Q</td><td class="num">≥₹100 Cr/Q</td></tr>
+          <tr><td>Debt / EBITDA</td><td class="num">1.55×</td><td class="num">≤1.0×</td><td class="num">≥2.5×</td></tr>
+          <tr><td>FII Holding</td><td class="num">0.90%</td><td class="num">≥3.0%</td><td class="num">&lt;0.5%</td></tr>
+          <tr><td>Warrant details disclosure</td><td class="num">Undisclosed</td><td class="num">Credible allottees + fair price</td><td class="num">Below-market pricing + large dilution</td></tr>
+          <tr><td>Steel sales volume (quarterly)</td><td class="num">~1.8–2.0 lakh MT</td><td class="num">≥2.0 lakh MT</td><td class="num">&lt;1.3 lakh MT</td></tr>
+          <tr><td>Chhotedongar mine production</td><td class="num">27.2 lakh MT FY26</td><td class="num">≥30 lakh MT FY27</td><td class="num">&lt;22 lakh MT FY27</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-label">Catalyst Timeline (Next 4 Quarters)</div>
+    <table>
+      <thead><tr><th>Quarter</th><th>Expected Catalyst</th><th>Bull Impact</th><th>Bear Impact</th></tr></thead>
+      <tbody>
+        <tr><td>Q1FY27 (Jun 2026)</td><td>Warrant allottee/price disclosure; Q1 results; annual report publication (FY26 AR)</td><td class="pos">Credible allottees → +10–15%</td><td class="neg">Below-market warrants → -15–20%</td></tr>
+        <tr><td>Q2FY27 (Sep 2026)</td><td>First full-quarter of new NCD rates reflected; H1FY27 EBITDA trend check</td><td class="pos">PAT ₹200+ Cr Q2 → re-rating</td><td class="neg">Steel price decline → margin compression</td></tr>
+        <tr><td>Q3FY27 (Dec 2026)</td><td>Debt below ₹1,800 Cr; potential credit rating application; FII buying acceleration</td><td class="pos">Credit rating assigned → DII interest</td><td class="neg">BF operational issue / coking coal spike</td></tr>
+        <tr><td>Q4FY27 (Mar 2027)</td><td>Full-year FY27 results; potential first dividend announcement; NCD balance ~₹1,500 Cr</td><td class="pos">Dividend → institutional re-rating</td><td class="neg">Continued zero payout → retail disappointment</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<!-- TAB 9: RISKS -->
+<div id="tab-9" class="tab-pane">
+  <div class="two-col">
+    <div class="card">
+      <div class="section-label">Risk Matrix (Impact × Probability)</div>
+      <div class="chart-wrap"><canvas id="chartRiskMatrix"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="section-label">Risk Summary</div>
+      <table>
+        <thead><tr><th>Risk</th><th>Level</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Warrant dilution (unknown pricing)</td><td><span class="badge badge-high">HIGH</span></td><td><span class="badge badge-medium">ACTIVE</span></td></tr>
+          <tr><td>Steel cycle / margin compression</td><td><span class="badge badge-high">HIGH</span></td><td><span class="badge badge-medium">MONITORING</span></td></tr>
+          <tr><td>Coking coal price spike</td><td><span class="badge badge-medium">MEDIUM</span></td><td><span class="badge badge-medium">MONITORING</span></td></tr>
+          <tr><td>BF operational failure</td><td><span class="badge badge-medium">MEDIUM</span></td><td><span class="badge badge-medium">MONITORING</span></td></tr>
+          <tr><td>NCD repayment pressure</td><td><span class="badge badge-medium">MEDIUM</span></td><td><span class="badge badge-low">MITIGATED</span></td></tr>
+          <tr><td>ED/PMLA Dagori</td><td><span class="badge badge-low">LOW</span></td><td><span class="badge badge-medium">MONITORING</span></td></tr>
+          <tr><td>Promoter governance</td><td><span class="badge badge-medium">MEDIUM</span></td><td><span class="badge badge-medium">MONITORING</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="risk-grid">
+    <div class="risk-card">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px"><div class="risk-title">Warrant Dilution — Unknown Pricing</div><span class="badge badge-high">HIGH</span></div>
+      <div class="risk-body">EGM May 2026 approved preferential warrant issuance. Quantity, exercise price, and allottees remain undisclosed (as of May 2026). At 10% dilution (~9.7 Cr new shares) below market price, EPS would reduce ~8–10%. At 20% dilution, EPS impact is ~16–18%. 31.6% of FIs voted against — suggesting institutional concern about pricing.</div>
+      <div style="font-size:.78rem;font-weight:700;color:var(--color-red)">Quantified: 10% dilution → EPS drops to ₹4.35 | 20% dilution → EPS ₹3.98</div>
+      <div style="font-size:.78rem;color:var(--text-muted);margin-top:4px">Mitigant: SEBI ICDR mandates minimum pricing at 6-month VWAP. If at CMP ₹103, dilution is value-neutral to existing shareholders IF proceeds reduce debt.</div>
+    </div>
+    <div class="risk-card">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px"><div class="risk-title">Steel Cycle / Margin Compression</div><span class="badge badge-high">HIGH</span></div>
+      <div class="risk-body">EBITDA margin went from 22% (FY22) → 12% (FY23) → 17% (FY24) → 12% (H1FY25) → 19% (FY26). The swing is 7–10 percentage points, driven by TMT/billet price and coking coal cost interaction. A 7-point margin compression on ₹7,500 Cr FY27E revenue = ₹525 Cr EBITDA drag.</div>
+      <div style="font-size:.78rem;font-weight:700;color:var(--color-red)">Quantified: 12% margin scenario → EBITDA ₹855 Cr → D/EBITDA 2.5× → PAT near zero</div>
+      <div style="font-size:.78rem;color:var(--text-muted);margin-top:4px">Mitigant: Captive ore and brownfield cost base provide floor; government infra demand is structurally supportive.</div>
+    </div>
+    <div class="risk-card">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px"><div class="risk-title">Coking Coal Price Spike</div><span class="badge badge-medium">MEDIUM</span></div>
+      <div class="risk-body">India imports ~85% of coking coal; Neco's BF route is fully dependent. FY20 coking coal spikes pushed costs sharply. A 30% price increase adds ~₹350–400 Cr to COGS annually at current BF volumes. Company has no hedging or domestic coal supply contract.</div>
+      <div style="font-size:.78rem;font-weight:700;color:var(--color-amber)">Quantified: 30% coal spike → EBITDA margin compressed 4–5 ppts → ~₹300–350 Cr EBITDA reduction</div>
+      <div style="font-size:.78rem;color:var(--text-muted);margin-top:4px">Mitigant: Russian coal availability has improved since FY23; Australia coal prices softening in current cycle.</div>
+    </div>
+    <div class="risk-card">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px"><div class="risk-title">Blast Furnace Operational Risk</div><span class="badge badge-medium">MEDIUM</span></div>
+      <div class="risk-body">Q1FY25 BF shutdown demonstrated single-event risk: BF production fell from 5.72 lakh MT to an equivalent ~1.5 lakh MT in Q1FY25, dragging H1FY25 EBITDA to ₹341 Cr (vs ₹650 Cr H1FY26). BF relining/repairs are capital-intensive and can last 60–90 days.</div>
+      <div style="font-size:.78rem;font-weight:700;color:var(--color-amber)">Quantified: A Q1FY25-style BF shutdown in FY27 → FY27 EBITDA reduced by ~₹200–300 Cr</div>
+      <div style="font-size:.78rem;color:var(--text-muted);margin-top:4px">Mitigant: BF just completed reline in FY25 — next major maintenance likely 4–5 years away at normal campaign life.</div>
+    </div>
+    <div class="risk-card">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px"><div class="risk-title">Promoter Governance / Warrant Allottees</div><span class="badge badge-medium">MEDIUM</span></div>
+      <div class="risk-body">Promoters abstained at warrant EGM (as interested party) while warrants went to unknown third parties. If allottees are related parties or at below-market pricing, it constitutes value transfer from public shareholders. Historical NPA era and promoter group structure require continued scrutiny.</div>
+      <div style="font-size:.78rem;font-weight:700;color:var(--color-amber)">Watch: FY26 AR (expected Jun 2026) — RPT schedule, warrant allottee disclosure in SEBI filing</div>
+      <div style="font-size:.78rem;color:var(--text-muted);margin-top:4px">Mitigant: Secretarial compliance report FY26 clean (CS Rachana Daga); no SEBI adverse orders.</div>
+    </div>
+    <div class="risk-card">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px"><div class="risk-title">ED/PMLA Dagori Attachment</div><span class="badge badge-low">LOW</span></div>
+      <div class="risk-body">₹206.16 Cr ED attachment under PMLA on Bilha Bilaspur (Dagori) DRI plant since June 9, 2017 — 9 years unresolved. Plant is non-operational and assets impaired. Risk of crystallisation into actual loss if courts rule against the company.</div>
+      <div style="font-size:.78rem;font-weight:700;color:var(--color-green)">Quantified: ₹206 Cr vs Net Worth ₹2,841 Cr = 7.3% — manageable even if crystallised</div>
+      <div style="font-size:.78rem;color:var(--text-muted);margin-top:4px">Mitigant: Long duration with no material update suggests low priority enforcement; assets already impaired (no additional surprise).</div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 10: CONCALL -->
+<div id="tab-10" class="tab-pane">
+  <div style="margin-bottom:16px;padding:12px;background:var(--highlight-latest);border-radius:8px;font-size:.85rem">
+    <strong>Note:</strong> Jayaswal Neco does not hold earnings voice concalls. The company publishes quarterly result PPT presentations / press releases only. All management commentary below is sourced from those PPTs. No Q&amp;A, analyst questions, or voice transcript is available.
+  </div>
+  <div class="concall-quarter">
+    <div class="cq-header">
+      <div class="cq-title">Q4FY26 / FY26 Annual — April 2026</div>
+      <span class="badge badge-bull">BULLISH</span>
+    </div>
+    <ul class="cq-items">
+      <li>Revenue ₹7,132 Cr (+18.9% YoY), EBITDA ₹1,341 Cr (+40.8% YoY), PAT ₹463 Cr (+310% YoY) — all-time records</li>
+      <li>Q4FY26 finance cost: ₹69 Cr — annualises to ₹276 Cr; full benefit of Dec 2025 NCD refinancing now visible</li>
+      <li>Debt reduced to ₹2,117.92 Cr (NCD ₹1,638.64 Cr + WC ₹479.28 Cr); Debt/EBITDA 1.55×, Debt/Equity 0.78×</li>
+      <li>Steel sales 7.24 lakh MT (annual record); Chhotedongar mine 27.2 lakh MT (+32%, annual record)</li>
+      <li>Cash profit ₹907 Cr (vs ₹399 Cr FY25); OCF ₹1,367 Cr — strong cash conversion</li>
+      <li>NCD refinancing (Dec 12, 2025): ₹1,800 Cr @ 12.50% (72 monthly instalments from Dec 23, 2025) + ₹500 Cr WC @ 11.00% (Kotak Mahindra Bank — new banking relationship)</li>
+      <li>EGM May 21, 2026: AoA amendment and warrant issuance approved (warrant details to be disclosed)</li>
+    </ul>
+    <div style="font-size:.8rem;color:var(--text-muted);margin-top:8px">Key guidance: Minimal capex; focus on debt amortisation; captive mine scale-up to 30+ lakh MT targeted</div>
+  </div>
+  <div class="concall-quarter">
+    <div class="cq-header">
+      <div class="cq-title">Q3FY26 / 9MFY26 — January 2026</div>
+      <span class="badge badge-bull">BULLISH</span>
+    </div>
+    <ul class="cq-items">
+      <li>9MFY26 Revenue ₹5,158 Cr (+19.3% YoY), EBITDA ₹960 Cr (+42.3% YoY) — 9M EBITDA already near FY24 full-year ₹1,028 Cr</li>
+      <li>Q3FY26 finance cost ₹126 Cr elevated — prepayment premium on Dec 2023 NCD early redemption (one-time); underlying rate now sharply lower</li>
+      <li>NCD refinancing completed Dec 12, 2025: ₹2,271 Cr outstanding redeemed (₹1,800 Cr fresh NCD + ₹471 Cr internal accruals); coupon 12.50% vs 14.50% prior</li>
+      <li>Chhotedongar mine: 9M FY26 production 20.52 lakh MT (+26% YoY) — on track for annual record</li>
+      <li>Steel sales 9MFY26: 5.28 lakh MT; pellet plant 10.29 lakh MT (9M record)</li>
+    </ul>
+    <div style="font-size:.8rem;color:var(--text-muted);margin-top:8px">Tone: Management confident on sustained 18%+ EBITDA margins; refinancing positioned as transformative event</div>
+  </div>
+  <div class="concall-quarter">
+    <div class="cq-header">
+      <div class="cq-title">Q2FY26 / H1FY26 — October 2025</div>
+      <span class="badge badge-bull">BULLISH</span>
+    </div>
+    <ul class="cq-items">
+      <li>H1FY26 Revenue ₹3,430 Cr (+28.6% YoY), EBITDA ₹650 Cr (+90.6% YoY) — doubling of EBITDA YoY driven by BF normalisation vs Q1FY25 shutdown base</li>
+      <li>Q2FY26 EBITDA ₹330.70 Cr at 18.6% margin — strong recovery from 11–14% H1FY25 margins</li>
+      <li>H1FY26 PAT ₹198 Cr (vs ₹(67) Cr H1FY25) — massive swing on lower finance cost + higher volumes</li>
+      <li>Early Repayment Option exercised on Dec 2023 NCDs on Aug 12, 2025 (signal of intent; actual redemption Dec 2025)</li>
+      <li>Chhotedongar mine H1FY26: 13.28 lakh MT (+39% YoY) — iron ore self-sufficiency at record levels</li>
+    </ul>
+    <div style="font-size:.8rem;color:var(--text-muted);margin-top:8px">Tone: Confident on full-year EBITDA delivery; refinancing framed as balance-sheet normalisation moment</div>
+  </div>
+  <div class="card">
+    <div class="section-label">Guidance Tracker</div>
+    <table>
+      <thead><tr><th>Metric</th><th>Guided</th><th>Actual</th><th>Hit/Miss</th></tr></thead>
+      <tbody>
+        <tr><td>EBITDA Margin (FY26)</td><td>18%+</td><td class="num">18.80%</td><td><span class="badge badge-low">✓ HIT</span></td></tr>
+        <tr><td>Finance Cost (FY26 full yr)</td><td>Lower than FY25 (₹562 Cr)</td><td class="num">₹426 Cr</td><td><span class="badge badge-low">✓ HIT</span></td></tr>
+        <tr><td>NCD Refinancing</td><td>Q3FY26 (Dec 2025)</td><td>Dec 12, 2025</td><td><span class="badge badge-low">✓ HIT</span></td></tr>
+        <tr><td>Steel Sales Volume</td><td>Volume growth</td><td class="num">7.24 lakh MT (+22%)</td><td><span class="badge badge-low">✓ HIT</span></td></tr>
+        <tr><td>Chhotedongar Mine</td><td>Record production</td><td class="num">27.2 lakh MT</td><td><span class="badge badge-low">✓ HIT (record)</span></td></tr>
+        <tr><td>Capex</td><td>Minimal / maintenance</td><td class="num">₹113 Cr</td><td><span class="badge badge-low">✓ HIT</span></td></tr>
+      </tbody>
+    </table>
+    <div style="font-size:.8rem;color:var(--text-muted);margin-top:6px">Management credibility score: HIGH — all publicly stated FY26 goals delivered. 6/6 tracked items met or exceeded.</div>
+  </div>
+</div>
+<!-- TAB 11: CAPITAL ALLOCATION -->
+<div id="tab-11" class="tab-pane">
+  <div class="two-col">
+    <div class="card">
+      <div class="section-label">OCF vs Capex (₹ Cr)</div>
+      <div class="chart-wrap"><canvas id="chartCapex"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="section-label">Debt Trajectory (₹ Cr)</div>
+      <div class="chart-wrap"><canvas id="chartDebt"></canvas></div>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="section-label">ROCE vs Cost of Debt Trend</div>
+      <div class="chart-wrap"><canvas id="chartROCE"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="section-label">Capital Allocation Verdict</div>
+      <div style="font-size:.9rem;line-height:1.7;color:var(--text-secondary)">
+        <div style="margin-bottom:10px"><span class="badge badge-low">GOOD</span> <strong style="margin-left:8px">Post-ACRE (FY22 onwards)</strong></div>
+        <p>Since the ACRE resolution, management has been disciplined: minimal capex (₹113–236 Cr/yr vs OCF ₹681–1,388 Cr), aggressive debt repayment (₹3,845 Cr → ₹2,109 Cr in 4 years), and NCD refinancing at lower cost at the first opportunity. ROCE has expanded from 10% to 21% without incremental capital. This is textbook value-per-share improvement without dilution (until the warrant EGM).</p>
+        <div style="margin-top:12px"><span class="badge badge-medium">POOR (Historical)</span></div>
+        <p style="margin-top:6px">Pre-ACRE (FY15–FY21): Massive capex cycle (CWIP ₹3,137 Cr in FY15) funded by debt, resulted in NPA. Finance cost peaked at ₹909 Cr (FY21) on ₹3,829 Cr debt while EBITDA was only ₹610 Cr. Capital destroyed over this era.</p>
+        <div style="margin-top:12px"><span class="badge badge-high">WATCH</span></div>
+        <p style="margin-top:6px">Warrant issuance: If proceeds are not used for debt reduction or high-ROCE investments, this would mark a deterioration in capital allocation discipline.</p>
+      </div>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="section-label">Dividend History</div>
+      <div style="padding:20px;text-align:center;color:var(--text-muted);font-size:.9rem">
+        <div style="font-size:2rem;margin-bottom:8px">₹0</div>
+        <div style="font-weight:600">No dividend ever paid (FY2015–FY2026)</div>
+        <div style="font-size:.82rem;margin-top:8px">Company has prioritised debt reduction over dividends — appropriate given leverage history. First dividend possible FY27–FY28 if debt continues to decline and PAT sustains ₹500+ Cr.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-label">Free Cash Flow Trend (₹ Cr)</div>
+      <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>Year</th><th>OCF</th><th>Capex</th><th>FCF</th><th>FCF Yield</th></tr></thead>
+          <tbody>
+            <tr><td>FY22</td><td class="num pos">860</td><td class="num">26</td><td class="num pos">830</td><td class="num">---------</td></tr>
+            <tr><td>FY23</td><td class="num pos">739</td><td class="num">57</td><td class="num pos">675</td><td class="num">---------</td></tr>
+            <tr><td>FY24</td><td class="num pos">681</td><td class="num">177</td><td class="num pos">499</td><td class="num">---------</td></tr>
+            <tr><td>FY25</td><td class="num pos">1,388</td><td class="num">236</td><td class="num pos">1,144</td><td class="num">---------</td></tr>
+            <tr class="latest-col"><td>FY26</td><td class="num pos">1,367</td><td class="num">113</td><td class="num pos">1,251</td><td class="num pos">12.5%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:8px;font-size:.8rem;color:var(--text-muted)">5Y cumulative FCF ₹4,399 Cr vs MCap ₹10,017 Cr — FCF/MCap ratio (5Y) = 43.9%</div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 12: OWNERSHIP -->
+<div id="tab-12" class="tab-pane">
+  <div class="two-col">
+    <div class="card">
+      <div class="section-label">Shareholding Pattern Trend (Quarterly)</div>
+      <div class="chart-wrap-lg"><canvas id="chartShareholding"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="section-label">Current Ownership (Mar 2026)</div>
+      <table style="margin-bottom:16px">
+        <thead><tr><th>Category</th><th>Mar 25</th><th>Sep 25</th><th class="latest-col">Mar 26</th><th>Trend</th></tr></thead>
+        <tbody>
+          <tr><td>Promoters</td><td class="num">55.15%</td><td class="num">55.15%</td><td class="num latest-col">55.15%</td><td>→ Stable</td></tr>
+          <tr><td>FIIs</td><td class="num">0.04%</td><td class="num">1.07%</td><td class="num latest-col pos">0.90%</td><td class="pos">↑ Rising (from ~0%)</td></tr>
+          <tr><td>DIIs</td><td class="num">0.00%</td><td class="num">0.51%</td><td class="num latest-col pos">0.30%</td><td class="pos">↑ Rising (from 0%)</td></tr>
+          <tr><td>Public / Others</td><td class="num">44.81%</td><td class="num">43.27%</td><td class="num latest-col">43.65%</td><td>→ Stable</td></tr>
+          <tr><td>No. of Shareholders</td><td class="num">51,611</td><td class="num">1,02,768</td><td class="num latest-col">96,844</td><td class="pos">↑ Growing retail base</td></tr>
+        </tbody>
+      </table>
+      <div style="padding:10px;background:var(--highlight-latest);border-radius:6px;font-size:.82rem">
+        <strong>Key observation:</strong> FII/DII holding went from effectively 0% to ~1.2% in 12 months. Still very early institutional discovery. The promoter has maintained 55.15% through FY25–FY26 (no creeping acquisition, no selling).
+      </div>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="section-label">Promoter History</div>
+      <table>
+        <thead><tr><th>Year</th><th>Promoter %</th><th>Event</th></tr></thead>
+        <tbody>
+          <tr><td>FY17–FY21</td><td class="num">68.79–70.98%</td><td>Pre-ACRE; high promoter holding</td></tr>
+          <tr><td>FY22</td><td class="num">49.48%</td><td>ACRE resolution — large equity issuance; promoter diluted from ~71% to ~49%</td></tr>
+          <tr><td>Dec 2023</td><td class="num">54.46%</td><td>Promoter creeping acquisition after ACRE settlement; crossed 54%</td></tr>
+          <tr><td>Mar 2025–Mar 2026</td><td class="num">55.15%</td><td>Stable; slow buy-up</td></tr>
+          <tr><td>Post warrant EGM</td><td class="num">TBD</td><td>Promoters abstained at warrant EGM — warrants go to third parties; promoter % will dilute further on warrant exercise</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="section-label">Ownership Quality Verdict</div>
+      <div style="font-size:.88rem;line-height:1.7;color:var(--text-secondary)">
+        <p><strong class="amber">MIXED.</strong> Promoter holding is comfortable at 55.15% and they have been buyers post-ACRE. However, the promoter was the same family that presided over the NPA era — the ACRE resolution was an enforced debt-write-down, not voluntary restructuring. The warrant issuance to undisclosed third parties warrants scrutiny.</p>
+        <br>
+        <p>FII/DII discovery is real but nascent — 1.2% combined institutional holding for a ₹10,000 Cr MCap company is exceptionally low. Most mid-cap steel peers have 8–15% institutional ownership. The discovery curve ahead is a significant optionality.</p>
+        <br>
+        <p><strong>Promoter Pledge:</strong> Not found in extract. Historical pledge status unknown — worth checking SEBI filing disclosures.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- TAB 13: EVENTS -->
+<div id="tab-13" class="tab-pane">
+  <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+    <button class="tab-btn active" style="background:var(--color-orange);color:#fff;border-radius:6px;padding:6px 12px" onclick="filterEvents('all')">All</button>
+    <button class="tab-btn" style="border:1px solid var(--bg-card-border);border-radius:6px;padding:6px 12px" onclick="filterEvents('corp')">Corporate</button>
+    <button class="tab-btn" style="border:1px solid var(--bg-card-border);border-radius:6px;padding:6px 12px" onclick="filterEvents('filing')">Filings</button>
+    <button class="tab-btn" style="border:1px solid var(--bg-card-border);border-radius:6px;padding:6px 12px" onclick="filterEvents('finance')">Finance</button>
+  </div>
+  <div class="events-timeline" id="eventsContainer">
+
+    <div class="event-item" data-type="corp">
+      <div class="event-date">May 21, 2026</div>
+      <span class="badge badge-high">CORP EVENT</span>
+      <div class="event-body">
+        <div class="event-headline">EGM: Both Resolutions Passed — AoA Amendment + Warrant Issuance</div>
+        <div class="event-desc">Meeting held via VC/OAVM at 12:30 PM. 46 shareholders attended. Total shares: 97,09,98,244. Resolution 1 (AoA): 65.70 Cr shares polled, 99.9999% in favour — PASSED. Resolution 2 (Warrants): 12.22 Cr shares polled, 98.96% in favour — PASSED (note: 31.62% of FIs voted AGAINST; promoters abstained as interested party). Scrutinizer: CS Rachana Daga.</div>
+      </div>
+    </div>
+
+    <div class="event-item" data-type="finance">
+      <div class="event-date">May 21, 2026</div>
+      <span class="badge badge-opt">INVESTOR MEET</span>
+      <div class="event-body">
+        <div class="event-headline">India Manthan 2026 — Investor Conference Participation</div>
+        <div class="event-desc">Intimation filed May 18, 2026. Management participated in "India Manthan 2026" investor conference on May 21, 2026. Timing coincides with post-FY26 results roadshow (Q4FY26 PPT published April 2026).</div>
+      </div>
+    </div>
+
+    <div class="event-item" data-type="filing">
+      <div class="event-date">May 19, 2026</div>
+      <span class="badge badge-low">FILING</span>
+      <div class="event-body">
+        <div class="event-headline">Annual Secretarial Compliance Report FY2026 — Clean</div>
+        <div class="event-desc">Secretarial Auditor: M/s. R.A. Daga &amp; Co. (CS Rachana Daga, FCS 5522, COP 5073). Report dated May 14, 2026. Filed May 19, 2026. Zero non-compliances across all SEBI regulations. No material subsidiary. All filings within timelines. UDIN: F005522H000356721.</div>
+      </div>
+    </div>
+
+    <div class="event-item" data-type="corp">
+      <div class="event-date">Apr 30, 2026</div>
+      <span class="badge badge-medium">ANNOUNCEMENT</span>
+      <div class="event-body">
+        <div class="event-headline">EGM Notice Published — Reg 30 LODR Newspaper Advertisement</div>
+        <div class="event-desc">Newspaper advertisement for EGM (May 21, 2026) published per Companies Act and SEBI LODR requirements. Two special resolutions proposed: (1) AoA amendment to enable increased authorised capital and warrant issuance, (2) Preferential allotment of warrants via private placement per SEBI ICDR Regulations. Record date: May 14, 2026.</div>
+      </div>
+    </div>
+
+    <div class="event-item" data-type="finance">
+      <div class="event-date">Apr 2026</div>
+      <span class="badge badge-low">RESULTS</span>
+      <div class="event-body">
+        <div class="event-headline">Q4FY26 / FY26 Annual Results — All-Time Records Across the Board</div>
+        <div class="event-desc">FY26: Revenue ₹7,132 Cr (+18.9%), EBITDA ₹1,341 Cr (+40.8%), PAT ₹463 Cr (+310%), Cash Profit ₹907 Cr (+127%). Q4FY26: Revenue ₹1,974 Cr, EBITDA ₹380 Cr (19.3%), Finance Cost ₹69 Cr (annualises ₹276 Cr), PAT ₹191 Cr. Debt: ₹2,117.92 Cr. Debt/EBITDA: 1.55×.</div>
+      </div>
+    </div>
+
+    <div class="event-item" data-type="finance">
+      <div class="event-date">Dec 12, 2025</div>
+      <span class="badge badge-high">DEBT EVENT</span>
+      <div class="event-body">
+        <div class="event-headline">Second NCD Refinancing — ₹1,800 Cr @ 12.50% | 200 bps Cheaper</div>
+        <div class="event-desc">Outstanding Dec 2023 NCDs (₹2,271 Cr of original ₹3,200 Cr) fully redeemed. Fresh issuance: 1,80,000 NCDs × ₹1,00,000 = ₹1,800 Cr @ 12.50% p.a. over 72 monthly instalments from Dec 23, 2025. Additional: ₹500 Cr WC @ 11.00% p.a. from Kotak Mahindra Bank. Net: ₹471 Cr principal prepaid from internal accruals; ~₹100 Cr annual interest saving.</div>
+      </div>
+    </div>
+
+    <div class="event-item" data-type="finance">
+      <div class="event-date">Jan 2026</div>
+      <span class="badge badge-neutral">RESULTS</span>
+      <div class="event-body">
+        <div class="event-headline">Q3FY26 / 9MFY26 Results — 9M EBITDA ₹960 Cr (+42.3% YoY)</div>
+        <div class="event-desc">Q3FY26: Revenue ₹1,727 Cr (+4.2% YoY), EBITDA ₹310 Cr (18.0%), PAT ₹74 Cr. Finance cost ₹126 Cr elevated due to NCD prepayment premium (one-time). 9M cumulative EBITDA ₹960 Cr already near full-year FY24 of ₹1,028 Cr.</div>
+      </div>
+    </div>
+
+    <div class="event-item" data-type="finance">
+      <div class="event-date">Aug 12, 2025</div>
+      <span class="badge badge-opt">DEBT EVENT</span>
+      <div class="event-body">
+        <div class="event-headline">Early Repayment Option Exercised on Dec 2023 NCDs</div>
+        <div class="event-desc">Company exercised the Early Repayment Option on the December 2023 NCDs (₹3,200 Cr original; ~₹2,271 Cr outstanding). Signals intent to refinance at lower rate. Actual redemption completed December 12, 2025.</div>
+      </div>
+    </div>
+
+    <div class="event-item" data-type="finance">
+      <div class="event-date">Oct 2025</div>
+      <span class="badge badge-bull">RESULTS</span>
+      <div class="event-body">
+        <div class="event-headline">Q2FY26 / H1FY26 Results — EBITDA Nearly Doubled YoY</div>
+        <div class="event-desc">H1FY26: Revenue ₹3,430 Cr (+28.6%), EBITDA ₹650 Cr (+90.6%), PAT ₹198 Cr (vs -₹67 Cr H1FY25). Q2FY26: Revenue ₹1,781 Cr, EBITDA ₹330.70 Cr (18.6%), Finance Cost ₹112 Cr. All production metrics at multi-quarter highs. Chhotedongar H1: 13.28 lakh MT (+39% YoY).</div>
+      </div>
+    </div>
+
+    <div class="event-item" data-type="finance">
+      <div class="event-date">Dec 14, 2023</div>
+      <span class="badge badge-high">DEBT EVENT</span>
+      <div class="event-body">
+        <div class="event-headline">First NCD Refinancing — ₹3,200 Cr @ 14.50% (ACRE Debt Replaced)</div>
+        <div class="event-desc">Issuance of 3,20,000 NCDs × ₹1,00,000 = ₹3,200 Cr @ 14.50% p.a. via Vistra ITCL (India) Limited as debenture trustee. Proceeds used to fully redeem ACRE-era NPA debt. This marked the transition from NPA/NCLT resolution to normal commercial debt. First rating assignment followed (CARE A4+, Dec 2022 for BG/LC facility).</div>
+      </div>
+    </div>
+
+    <div class="event-item" data-type="corp">
+      <div class="event-date">FY2022</div>
+      <span class="badge badge-low">MILESTONE</span>
+      <div class="event-body">
+        <div class="event-headline">ACRE Debt Resolution Completed — Equity Turns Positive</div>
+        <div class="event-desc">NCLT/IBC resolution via ACRE (Ares/SSG). Peak debt ~₹5,759 Cr written down to ₹3,845 Cr. 97.10 Cr shares outstanding post-allotment to ACRE. Promoter stake diluted from ~71% to ~49.5%. PAT ₹2,247 Cr in FY22 includes ~₹2,750 Cr exceptional gain from debt write-off. Company re-entered normal operations.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</main>
+<script>
+Chart.defaults.font.size = 13;
+function textColor() {
+  return getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim() || '#0F172A';
+}
+function gridColor() {
+  return getComputedStyle(document.documentElement).getPropertyValue('--bg-card-border').trim() || '#E2E8F0';
+}
+
+function showTab(n) {
+  document.querySelectorAll('.tab-pane').forEach(function(p) { p.style.display = 'none'; });
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  var pane = document.getElementById('tab-' + n);
+  if (pane) { pane.style.display = 'block'; }
+  var btns = document.querySelectorAll('.tab-btn');
+  if (btns[n]) { btns[n].classList.add('active'); }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleTheme() {
+  var html = document.documentElement;
+  var isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  var btn = document.getElementById('themeToggle');
+  if (btn) { btn.textContent = isDark ? '🌙 Dark' : '☀️ Light'; }
+  Chart.defaults.color = textColor();
+}
+
+function filterEvents(type) {
+  var items = document.querySelectorAll('.event-item');
+  items.forEach(function(item) {
+    item.style.display = (type === 'all' || item.getAttribute('data-type') === type) ? 'grid' : 'none';
+  });
+}
+
+function sparkline(canvasId, data, color) {
+  var ctx = document.getElementById(canvasId);
+  if (!ctx) return;
+  var min = Math.min.apply(null, data), max = Math.max.apply(null, data);
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: data.map(function(_,i){ return i; }),
+      datasets: [{ data: data, borderColor: color, borderWidth: 2, fill: false, pointRadius: 0, tension: 0.3 }]
+    },
+    options: {
+      animation: false, responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      scales: { x: { display: false }, y: { display: false, min: min * 0.9, max: max * 1.1 } }
+    }
+  });
+}
+
+var annualLabels = ['FY15','FY16','FY17','FY18','FY19','FY20','FY21','FY22','FY23','FY24','FY25','FY26'];
+var revData = [3020,2638,2509,3466,4199,3611,3676,5911,6297,5887,5954,7132];
+var ebitdaData = [360,231,281,308,524,200,610,1301,782,1028,941,1328];
+var patData = [2,0-87,0-459,0-491,0-444,0-1504,0-558,2247,227,210,113,463];
+var finCostData = [186,225,550,659,712,868,909,459,453,470,564,426];
+var debtData = [4031,4275,4189,4040,3942,3940,3829,3845,3414,3214,2735,2109];
+var ocfData = [333,498,272,260,374,313,448,860,739,681,1388,1367];
+var fcfData = [0-189,432,281,254,358,282,430,830,675,499,1144,1251];
+var roceData = [5,3,1,1,5,0-2,12,26,10,14,13,21];
+var capexData = [515,27,0,0,71,29,17,26,57,177,236,113];
+
+var qLabels = ['Mar 23','Jun 23','Sep 23','Dec 23','Mar 24','Jun 24','Sep 24','Dec 24','Mar 25','Jun 25','Sep 25','Dec 25','Mar 26'];
+var qSales = [1469,1465,1501,1556,1411,1438,1230,1657,1675,1649,1781,1727,1974];
+var qEBITDA = [188,208,296,290,233,165,170,264,342,315,327,310,376];
+var qOPM = [12.8,14.2,19.7,18.6,16.5,11.5,13.8,15.9,20.4,19.1,18.4,18.0,19.1];
+var qPAT = [5,28,92,89,2,0-32,0-34,77,102,93,105,74,191];
+var qInterest = [111,105,107,115,142,144,145,140,134,119,112,126,69];
+
+var shLabels = ['Jun 23','Sep 23','Dec 23','Mar 24','Jun 24','Sep 24','Dec 24','Mar 25','Jun 25','Sep 25','Dec 25','Mar 26'];
+var promoterSh = [49.48,49.48,54.46,54.46,54.46,54.46,54.46,55.15,55.15,55.15,55.15,55.15];
+var fiiSh = [0.00,0.00,0.05,0.10,0.01,0.01,0.02,0.02,0.04,1.07,1.29,0.90];
+var diiSh = [0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.51,0.21,0.30];
+var publicSh = [50.51,50.53,45.48,45.43,45.52,45.52,45.52,44.83,44.81,43.27,43.35,43.65];
+
+function buildCharts() {
+  var tc = textColor(), gc = gridColor();
+  var axisOpts = function() { return { grid: { color: gc }, ticks: { color: tc, font: { size: 12 } } }; };
+
+  sparkline('spk-rev', [3676,5911,6297,5887,5954,7132], '#16A34A');
+  sparkline('spk-opm', [17,22,12,17,16,19], '#E8701A');
+  sparkline('spk-pat', [0,2247,227,210,113,463], '#16A34A');
+  sparkline('spk-roce', [12,26,10,14,13,21], '#1D4ED8');
+  sparkline('spk-de', [3.95,1.98,1.66,1.42,1.15,0.74], '#E8701A');
+  sparkline('spk-fcf', [430,830,675,499,1144,1251], '#16A34A');
+  sparkline('spk-mcap', [0,0,0,0,0,10017], '#0F1F3D');
+
+  var ctx1 = document.getElementById('chartOwnershipDonut');
+  if (ctx1) {
+    new Chart(ctx1, {
+      type: 'doughnut',
+      data: {
+        labels: ['Promoters 55.15%','FII 0.90%','DII 0.30%','Public 43.65%'],
+        datasets: [{ data: [55.15,0.90,0.30,43.65], backgroundColor: ['#0F1F3D','#1D4ED8','#16A34A','#94A3B8'], borderWidth: 2 }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: tc, font: { size: 12 } } } } }
+    });
+  }
+
+  var ctx2 = document.getElementById('chartRevEBITDA');
+  if (ctx2) {
+    new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: annualLabels,
+        datasets: [
+          { label: 'Revenue (₹ Cr)', data: revData, backgroundColor: 'rgba(15,31,61,0.75)', yAxisID: 'y' },
+          { label: 'EBITDA (₹ Cr)', data: ebitdaData, backgroundColor: 'rgba(232,112,26,0.85)', yAxisID: 'y' }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: tc } } },
+        scales: { y: axisOpts(), x: axisOpts() }
+      }
+    });
+  }
+
+  var ctx3 = document.getElementById('chartFinPAT');
+  if (ctx3) {
+    var absPatData = [2,87,459,491,444,1504,558,2247,227,210,113,463];
+    new Chart(ctx3, {
+      type: 'line',
+      data: {
+        labels: annualLabels,
+        datasets: [
+          { label: 'Finance Cost (₹ Cr)', data: finCostData, borderColor: '#DC2626', backgroundColor: 'rgba(220,38,38,0.1)', fill: true, tension: 0.3 },
+          { label: '|PAT| (₹ Cr) — abs value', data: absPatData, borderColor: '#16A34A', backgroundColor: 'rgba(22,163,74,0.1)', fill: true, tension: 0.3 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: tc } }, tooltip: { callbacks: { afterLabel: function(c) { return c.datasetIndex===1 && [2,3,4,5,6].includes(c.dataIndex) ? '(negative — loss year)' : ''; } } } },
+        scales: { y: axisOpts(), x: axisOpts() }
+      }
+    });
+  }
+
+  var ctx4 = document.getElementById('chartGrowthRev');
+  if (ctx4) {
+    new Chart(ctx4, {
+      type: 'line',
+      data: {
+        labels: annualLabels,
+        datasets: [
+          { label: 'Revenue (₹ Cr)', data: revData, borderColor: '#0F1F3D', backgroundColor: 'rgba(15,31,61,0.1)', fill: true, tension: 0.3, yAxisID: 'y' },
+          { label: 'EBITDA Margin %', data: [12,9,11,9,12,6,17,22,12,17,16,19], borderColor: '#E8701A', borderDash: [5,3], tension: 0.3, yAxisID: 'y2', pointRadius: 3 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: tc } } },
+        scales: {
+          y: Object.assign(axisOpts(), { position: 'left', title: { display: true, text: '₹ Cr', color: tc } }),
+          y2: Object.assign(axisOpts(), { position: 'right', title: { display: true, text: 'Margin %', color: tc }, grid: { drawOnChartArea: false } }),
+          x: axisOpts()
+        }
+      }
+    });
+  }
+
+  var ctx5 = document.getElementById('chartPeerEV');
+  if (ctx5) {
+    var peerNames = ['APL Apollo','Welspun Corp','Shyam Metalics','Godawari Power','Gallantt Ispat','Usha Martin','Jayaswal Neco'];
+    var peerEV = [27.08,12.19,10.78,13.97,21.51,17.59,8.85];
+    var peerColors = ['#94A3B8','#94A3B8','#94A3B8','#94A3B8','#94A3B8','#94A3B8','#E8701A'];
+    new Chart(ctx5, {
+      type: 'bar',
+      data: { labels: peerNames, datasets: [{ label: 'EV/EBITDA', data: peerEV, backgroundColor: peerColors }] },
+      options: {
+        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { x: Object.assign(axisOpts(), { title: { display: true, text: 'EV/EBITDA (×)', color: tc } }), y: axisOpts() }
+      }
+    });
+  }
+
+  var ctx6 = document.getElementById('chartRiskMatrix');
+  if (ctx6) {
+    new Chart(ctx6, {
+      type: 'scatter',
+      data: {
+        datasets: [{
+          label: 'Risks',
+          data: [
+            { x: 8, y: 7, label: 'Warrant Dilution' },
+            { x: 8, y: 6, label: 'Steel Cycle' },
+            { x: 7, y: 5, label: 'Coal Price Spike' },
+            { x: 8, y: 3, label: 'BF Failure' },
+            { x: 6, y: 3, label: 'NCD Repayment' },
+            { x: 4, y: 2, label: 'Dagori PMLA' },
+            { x: 7, y: 3, label: 'Promoter Govnance' }
+          ],
+          backgroundColor: function(ctx) {
+            var v = ctx.raw;
+            if (!v) return '#94A3B8';
+            return (v.x * v.y > 35) ? '#DC2626' : (v.x * v.y > 18) ? '#D97706' : '#16A34A';
+          },
+          pointRadius: 14
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: function(c) { return c.raw.label + ' (I:' + c.raw.x + ', P:' + c.raw.y + ')'; } } }
+        },
+        scales: {
+          x: Object.assign(axisOpts(), { min: 0, max: 10, title: { display: true, text: 'Impact →', color: tc } }),
+          y: Object.assign(axisOpts(), { min: 0, max: 10, title: { display: true, text: 'Probability →', color: tc } })
+        }
+      }
+    });
+  }
+
+  var ctx7 = document.getElementById('chartCapex');
+  if (ctx7) {
+    new Chart(ctx7, {
+      type: 'bar',
+      data: {
+        labels: annualLabels,
+        datasets: [
+          { label: 'OCF (₹ Cr)', data: ocfData, backgroundColor: 'rgba(22,163,74,0.8)' },
+          { label: 'Capex/ICF (₹ Cr)', data: capexData, backgroundColor: 'rgba(220,38,38,0.7)' }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: tc } } },
+        scales: { y: axisOpts(), x: axisOpts() }
+      }
+    });
+  }
+
+  var ctx8 = document.getElementById('chartDebt');
+  if (ctx8) {
+    new Chart(ctx8, {
+      type: 'line',
+      data: {
+        labels: annualLabels,
+        datasets: [{ label: 'Total Debt (₹ Cr)', data: debtData, borderColor: '#DC2626', backgroundColor: 'rgba(220,38,38,0.12)', fill: true, tension: 0.3, pointRadius: 4 }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: tc } } },
+        scales: { y: axisOpts(), x: axisOpts() }
+      }
+    });
+  }
+
+  var ctx9 = document.getElementById('chartROCE');
+  if (ctx9) {
+    var costDebt = [10.5,10.5,10.5,10.5,10.5,10.5,10.5,10.5,10.5,10.5,14.5,12.5];
+    new Chart(ctx9, {
+      type: 'line',
+      data: {
+        labels: annualLabels,
+        datasets: [
+          { label: 'ROCE %', data: roceData, borderColor: '#16A34A', backgroundColor: 'rgba(22,163,74,0.1)', fill: true, tension: 0.3 },
+          { label: 'Cost of Debt %', data: costDebt, borderColor: '#DC2626', borderDash: [5,3], tension: 0.3 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: tc } } },
+        scales: { y: axisOpts(), x: axisOpts() }
+      }
+    });
+  }
+
+  var ctx10 = document.getElementById('chartShareholding');
+  if (ctx10) {
+    new Chart(ctx10, {
+      type: 'bar',
+      data: {
+        labels: shLabels,
+        datasets: [
+          { label: 'Promoters', data: promoterSh, backgroundColor: '#0F1F3D', stack: 'sh' },
+          { label: 'FII', data: fiiSh, backgroundColor: '#1D4ED8', stack: 'sh' },
+          { label: 'DII', data: diiSh, backgroundColor: '#16A34A', stack: 'sh' },
+          { label: 'Public', data: publicSh, backgroundColor: '#94A3B8', stack: 'sh' }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: tc } } },
+        scales: {
+          y: Object.assign(axisOpts(), { stacked: true, max: 100, title: { display: true, text: '%', color: tc } }),
+          x: Object.assign(axisOpts(), { stacked: true })
+        }
+      }
+    });
+  }
+
+  var ctx11 = document.getElementById('chartSegments');
+  if (ctx11) {
+    new Chart(ctx11, {
+      type: 'doughnut',
+      data: {
+        labels: ['Steel (TMT/Billets/Structurals)', 'Castings (Foundry)'],
+        datasets: [{ data: [93, 7], backgroundColor: ['#0F1F3D','#E8701A'], borderWidth: 2 }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { color: tc, font: { size: 12 } } } }
+      }
+    });
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  buildCharts();
+  showTab(0);
+});
+</script>
+</body>
+</html>
