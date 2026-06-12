@@ -1,179 +1,1718 @@
 {
-  "NSE:NEULANDLAB": { 
-    "error": "download failed (rate limited or no data \u2014 try again shortly)"
+  "NSE:NEULANDLAB": {
+    "updated": "2026-06-12",
+    "cmp": 16973.0,
+    "ema10": 16047.59,
+    "ema21": 15280.16,
+    "ema30": 15002.97,
+    "ema40": 14761.62,
+    "rsi": 61.2,
+    "adx": 29.1,
+    "crs_above_ma": true,
+    "peak_52w": 17837.0,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": false,
+      "below_21w_ema": false,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 5,
+    "benchmark": "Nifty 50"
   },
   "NSE:NH": {
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 1858.5,
+    "ema10": 1842.91,
+    "ema21": 1816.85,
+    "ema30": 1807.89,
+    "ema40": 1794.28,
+    "rsi": 53.3,
+    "adx": 19.5,
+    "crs_above_ma": true,
+    "peak_52w": 2257.88,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": false,
+      "below_21w_ema": false,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": false,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 4,
+    "benchmark": "Nifty 50"
   },
   "NSE:JMFINANCIL": {
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 113.94,
+    "ema10": 126.13,
+    "ema21": 129.55,
+    "ema30": 131.61,
+    "ema40": 132.63,
+    "rsi": 37.8,
+    "adx": 14.7,
+    "crs_above_ma": false,
+    "peak_52w": 188.25,
+    "stage": 4,
+    "ema30_rising": false,
+    "sell_signals": {
+      "below_10w_ema": true,
+      "below_21w_ema": true,
+      "below_40w_ema": true,
+      "below_30w_ema": true,
+      "rsi_weak": true,
+      "stage3_warning": true,
+      "crs_broken": true
+    },
+    "entry_signals": {
+      "above_30w_ema": false,
+      "ema30_rising": false,
+      "rsi_buy_zone": false,
+      "adx_trending": false,
+      "crs_outperforming": false,
+      "near_52w_high": false
+    },
+    "entry_score": 0,
+    "benchmark": "Nifty 50"
   },
   "NSE:SOLARA": {
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 580.7,
+    "ema10": 531.72,
+    "ema21": 522.65,
+    "ema30": 526.62,
+    "ema40": 532.75,
+    "rsi": 59.4,
+    "adx": 21.9,
+    "crs_above_ma": true,
+    "peak_52w": 697.0,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": false,
+      "below_21w_ema": false,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 5,
+    "benchmark": "Nifty 50"
   },
   "NSE:WINDLAS": {
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 811.3,
+    "ema10": 810.59,
+    "ema21": 810.95,
+    "ema30": 818.93,
+    "ema40": 828.73,
+    "rsi": 49.3,
+    "adx": 12.6,
+    "crs_above_ma": true,
+    "peak_52w": 1047.5,
+    "stage": 1,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": false,
+      "below_21w_ema": false,
+      "below_40w_ema": true,
+      "below_30w_ema": true,
+      "rsi_weak": false,
+      "stage3_warning": true,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": false,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": false,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 3,
+    "benchmark": "Nifty 50"
   },
   "NSE:TDPOWERSYS": {
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 1126.0,
+    "ema10": 1165.14,
+    "ema21": 1034.87,
+    "ema30": 956.77,
+    "ema40": 889.48,
+    "rsi": 60.2,
+    "adx": 46.8,
+    "crs_above_ma": true,
+    "peak_52w": 1318.6,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": true,
+      "below_21w_ema": false,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 5,
+    "benchmark": "Nifty 50"
   },
   "NSE:LAURUSLABS": {
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 1390.8,
+    "ema10": 1277.81,
+    "ema21": 1174.64,
+    "ema30": 1117.98,
+    "ema40": 1065.06,
+    "rsi": 72.6,
+    "adx": 37.4,
+    "crs_above_ma": true,
+    "peak_52w": 1446.8,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": false,
+      "below_21w_ema": false,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 5,
+    "benchmark": "Nifty 50"
   },
   "NSE:ENTERO": {
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 1116.3,
+    "ema10": 1185.35,
+    "ema21": 1173.49,
+    "ema30": 1167.7,
+    "ema40": 1167.36,
+    "rsi": 46.4,
+    "adx": 16.1,
+    "crs_above_ma": true,
+    "peak_52w": 1354.4,
+    "stage": 4,
+    "ema30_rising": false,
+    "sell_signals": {
+      "below_10w_ema": true,
+      "below_21w_ema": true,
+      "below_40w_ema": true,
+      "below_30w_ema": true,
+      "rsi_weak": false,
+      "stage3_warning": true,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": false,
+      "ema30_rising": false,
+      "rsi_buy_zone": true,
+      "adx_trending": false,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 2,
+    "benchmark": "Nifty 50"
   },
   "NSE:INTERARCH": {
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 1721.8,
+    "ema10": 1831.87,
+    "ema21": 1901.8,
+    "ema30": 1934.13,
+    "ema40": 1945.08,
+    "rsi": 39.9,
+    "adx": 13.5,
+    "crs_above_ma": false,
+    "peak_52w": 2584.5,
+    "stage": 4,
+    "ema30_rising": false,
+    "sell_signals": {
+      "below_10w_ema": true,
+      "below_21w_ema": true,
+      "below_40w_ema": true,
+      "below_30w_ema": true,
+      "rsi_weak": true,
+      "stage3_warning": true,
+      "crs_broken": true
+    },
+    "entry_signals": {
+      "above_30w_ema": false,
+      "ema30_rising": false,
+      "rsi_buy_zone": false,
+      "adx_trending": false,
+      "crs_outperforming": false,
+      "near_52w_high": false
+    },
+    "entry_score": 0,
+    "benchmark": "Nifty 50"
   },
   "NSE:SILVERBEES": {
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 221.38,
+    "ema10": 237.0,
+    "ema21": 228.8,
+    "ema30": 218.25,
+    "ema40": 206.3,
+    "rsi": 49.8,
+    "adx": 40.3,
+    "crs_above_ma": true,
+    "peak_52w": 292.73,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": true,
+      "below_21w_ema": true,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 5,
+    "benchmark": "Nifty 50"
   },
   "NSE:GOLDIETF": {
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 123.68,
+    "ema10": 129.62,
+    "ema21": 126.8,
+    "ema30": 123.11,
+    "ema40": 118.79,
+    "rsi": 49.0,
+    "adx": 39.5,
+    "crs_above_ma": true,
+    "peak_52w": 136.29,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": true,
+      "below_21w_ema": true,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": true,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 5,
+    "benchmark": "Nifty 50"
   },
   "NSE:CSBBANK": {
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 354.1,
+    "ema10": 366.51,
+    "ema21": 378.4,
+    "ema30": 382.75,
+    "ema40": 383.7,
+    "rsi": 42.6,
+    "adx": 11.4,
+    "crs_above_ma": false,
+    "peak_52w": 505.7,
+    "stage": 4,
+    "ema30_rising": false,
+    "sell_signals": {
+      "below_10w_ema": true,
+      "below_21w_ema": true,
+      "below_40w_ema": true,
+      "below_30w_ema": true,
+      "rsi_weak": true,
+      "stage3_warning": true,
+      "crs_broken": true
+    },
+    "entry_signals": {
+      "above_30w_ema": false,
+      "ema30_rising": false,
+      "rsi_buy_zone": false,
+      "adx_trending": false,
+      "crs_outperforming": false,
+      "near_52w_high": false
+    },
+    "entry_score": 0,
+    "benchmark": "Nifty 50"
   },
   "NSE:MCX": {
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 2778.8,
+    "ema10": 2879.88,
+    "ema21": 2687.19,
+    "ema30": 2537.29,
+    "ema40": 2392.03,
+    "rsi": 56.1,
+    "adx": 49.7,
+    "crs_above_ma": true,
+    "peak_52w": 3391.0,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": true,
+      "below_21w_ema": false,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 5,
+    "benchmark": "Nifty 50"
   },
   "NSE:ACUTAAS": {
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 3128.1,
+    "ema10": 2837.54,
+    "ema21": 2512.69,
+    "ema30": 2327.2,
+    "ema40": 2166.55,
+    "rsi": 71.1,
+    "adx": 60.5,
+    "crs_above_ma": true,
+    "peak_52w": 3328.3,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": false,
+      "below_21w_ema": false,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 5,
+    "benchmark": "Nifty 50"
   },
   "NSE:SANSERA": {
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 2861.5,
+    "ema10": 2639.13,
+    "ema21": 2384.48,
+    "ema30": 2232.0,
+    "ema40": 2103.02,
+    "rsi": 70.6,
+    "adx": 41.8,
+    "crs_above_ma": true,
+    "peak_52w": 2945.1,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": false,
+      "below_21w_ema": false,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": true
+    },
+    "entry_score": 6,
+    "benchmark": "Nifty 50"
   },
   "NSE:SONACOMS": {
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 585.1,
+    "ema10": 578.16,
+    "ema21": 551.8,
+    "ema30": 538.19,
+    "ema40": 530.1,
+    "rsi": 58.7,
+    "adx": 24.1,
+    "crs_above_ma": true,
+    "peak_52w": 607.45,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": false,
+      "below_21w_ema": false,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 5,
+    "benchmark": "Nifty 50"
   },
   "NSE:J&KBANK": {
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 153.07,
+    "ema10": 137.19,
+    "ema21": 127.25,
+    "ema30": 122.34,
+    "ema40": 118.67,
+    "rsi": 71.9,
+    "adx": 39.3,
+    "crs_above_ma": true,
+    "peak_52w": 153.07,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": false,
+      "below_21w_ema": false,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": true
+    },
+    "entry_score": 6,
+    "benchmark": "Nifty 50"
   },
   "NSE:SAMHI": {
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 159.72,
+    "ema10": 157.65,
+    "ema21": 161.31,
+    "ema30": 165.65,
+    "ema40": 169.65,
+    "rsi": 47.2,
+    "adx": 16.7,
+    "crs_above_ma": false,
+    "peak_52w": 245.82,
+    "stage": 4,
+    "ema30_rising": false,
+    "sell_signals": {
+      "below_10w_ema": false,
+      "below_21w_ema": true,
+      "below_40w_ema": true,
+      "below_30w_ema": true,
+      "rsi_weak": false,
+      "stage3_warning": true,
+      "crs_broken": true
+    },
+    "entry_signals": {
+      "above_30w_ema": false,
+      "ema30_rising": false,
+      "rsi_buy_zone": true,
+      "adx_trending": false,
+      "crs_outperforming": false,
+      "near_52w_high": false
+    },
+    "entry_score": 1,
+    "benchmark": "Nifty 50"
   },
   "NSE:FDC": {
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 378.9,
+    "ema10": 374.34,
+    "ema21": 375.16,
+    "ema30": 381.6,
+    "ema40": 389.39,
+    "rsi": 49.9,
+    "adx": 17.2,
+    "crs_above_ma": false,
+    "peak_52w": 495.04,
+    "stage": 1,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": false,
+      "below_21w_ema": false,
+      "below_40w_ema": true,
+      "below_30w_ema": true,
+      "rsi_weak": false,
+      "stage3_warning": true,
+      "crs_broken": true
+    },
+    "entry_signals": {
+      "above_30w_ema": false,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": false,
+      "crs_outperforming": false,
+      "near_52w_high": false
+    },
+    "entry_score": 2,
+    "benchmark": "Nifty 50"
   },
   "NSE:GOLDBEES": {
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 119.28,
+    "ema10": 125.17,
+    "ema21": 122.44,
+    "ema30": 118.89,
+    "ema40": 114.74,
+    "rsi": 48.9,
+    "adx": 26.0,
+    "crs_above_ma": true,
+    "peak_52w": 131.6,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": true,
+      "below_21w_ema": true,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": true,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 5,
+    "benchmark": "Nifty 50"
   },
   "NSE:SAILIFE": {
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 1181.2,
+    "ema10": 1104.36,
+    "ema21": 1038.15,
+    "ema30": 1001.64,
+    "ema40": 969.96,
+    "rsi": 69.3,
+    "adx": 28.7,
+    "crs_above_ma": true,
+    "peak_52w": 1186.4,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": false,
+      "below_21w_ema": false,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": true
+    },
+    "entry_score": 6,
+    "benchmark": "Nifty 50"
   },
   "NSE:QPOWER": {
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 1163.0,
+    "ema10": 1107.29,
+    "ema21": 1025.85,
+    "ema30": 972.76,
+    "ema40": 922.61,
+    "rsi": 59.2,
+    "adx": 25.3,
+    "crs_above_ma": true,
+    "peak_52w": 1396.4,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": false,
+      "below_21w_ema": false,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 5,
+    "benchmark": "Nifty 50"
   },
   "NSE:SHILPAMED": {
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 538.85,
+    "ema10": 469.25,
+    "ema21": 422.9,
+    "ema30": 406.49,
+    "ema40": 396.91,
+    "rsi": 78.9,
+    "adx": 38.5,
+    "crs_above_ma": true,
+    "peak_52w": 538.85,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": false,
+      "below_21w_ema": false,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": true
+    },
+    "entry_score": 6,
+    "benchmark": "Nifty 50"
   },
   "NSE:DEEDEV": {
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 625.45,
+    "ema10": 511.51,
+    "ema21": 417.99,
+    "ema30": 379.08,
+    "ema40": 353.76,
+    "rsi": 78.5,
+    "adx": 46.6,
+    "crs_above_ma": true,
+    "peak_52w": 671.15,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": false,
+      "below_21w_ema": false,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 5,
+    "benchmark": "Nifty 50"
   },
   "NSE:JAYNECOIND": {
-    "error": "download failed or insufficient history",
-    "error": "insufficient history"
-  },
-  "NSE:NH": {
-    "error": "insufficient history"
-  },
-  "NSE:JMFINANCIL": {
-    "error": "insufficient history"
-  },
-  "NSE:SOLARA": {
-    "error": "insufficient history"
-  },
-  "NSE:WINDLAS": {
-    "error": "insufficient history"
-  },
-  "NSE:TDPOWERSYS": {
-    "error": "insufficient history"
-  },
-  "NSE:LAURUSLABS": {
-    "error": "insufficient history"
-  },
-  "NSE:ENTERO": {
-    "error": "insufficient history"
-  },
-  "NSE:INTERARCH": {
-    "error": "insufficient history"
-  },
-  "NSE:SILVERBEES": {
-    "error": "insufficient history"
-  },
-  "NSE:GOLDIETF": {
-    "error": "insufficient history"
-  },
-  "NSE:CSBBANK": {
-    "error": "insufficient history"
-  },
-  "NSE:MCX": {
-    "error": "insufficient history"
-  },
-  "NSE:ACUTAAS": {
-    "error": "insufficient history"
-  },
-  "NSE:SANSERA": {
-    "error": "insufficient history"
-  },
-  "NSE:SONACOMS": {
-    "error": "insufficient history"
-  },
-  "NSE:J&KBANK": {
-    "error": "insufficient history"
-  },
-  "NSE:SAMHI": {
-    "error": "insufficient history"
-  },
-  "NSE:FDC": {
-    "error": "insufficient history"
-  },
-  "NSE:GOLDBEES": {
-    "error": "insufficient history"
-  },
-  "NSE:SAILIFE": {
-    "error": "insufficient history"
-  },
-  "NSE:QPOWER": {
-    "error": "insufficient history"
-  },
-  "NSE:SHILPAMED": {
-    "error": "insufficient history"
-  },
-  "NSE:DEEDEV": {
-    "error": "insufficient history"
-  },
-  "NSE:JAYNECOIND": {
-    "error": "insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 87.31,
+    "ema10": 95.52,
+    "ema21": 89.53,
+    "ema30": 85.0,
+    "ema40": 80.59,
+    "rsi": 50.6,
+    "adx": 27.5,
+    "crs_above_ma": true,
+    "peak_52w": 114.69,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": true,
+      "below_21w_ema": true,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 5,
+    "benchmark": "Nifty 50"
   },
   "GEV": {
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 906.79,
+    "ema10": 964.82,
+    "ema21": 904.49,
+    "ema30": 852.41,
+    "ema40": 800.97,
+    "rsi": 53.6,
+    "adx": 48.6,
+    "crs_above_ma": true,
+    "peak_52w": 1149.19,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": true,
+      "below_21w_ema": false,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 5,
+    "benchmark": "S&P 500"
   },
   "NSE:SBCL": {
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 668.35,
+    "ema10": 626.2,
+    "ema21": 564.31,
+    "ema30": 541.54,
+    "ema40": 528.74,
+    "rsi": 63.5,
+    "adx": 30.4,
+    "crs_above_ma": true,
+    "peak_52w": 740.0,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": false,
+      "below_21w_ema": false,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 5,
+    "benchmark": "Nifty 50"
   },
   "NSE:BHAGYANGR": {
-
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 304.8,
+    "ema10": 268.62,
+    "ema21": 227.1,
+    "ema30": 205.26,
+    "ema40": 187.88,
+    "rsi": 74.1,
+    "adx": 56.0,
+    "crs_above_ma": true,
+    "peak_52w": 317.25,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": false,
+      "below_21w_ema": false,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 5,
+    "benchmark": "Nifty 50"
   },
   "BSE:KLBRENG-B": {
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 468.7,
+    "ema10": 490.31,
+    "ema21": 502.03,
+    "ema30": 506.26,
+    "ema40": 506.38,
+    "rsi": 40.4,
+    "adx": 22.7,
+    "crs_above_ma": false,
+    "peak_52w": 590.75,
+    "stage": 4,
+    "ema30_rising": false,
+    "sell_signals": {
+      "below_10w_ema": true,
+      "below_21w_ema": true,
+      "below_40w_ema": true,
+      "below_30w_ema": true,
+      "rsi_weak": true,
+      "stage3_warning": true,
+      "crs_broken": true
+    },
+    "entry_signals": {
+      "above_30w_ema": false,
+      "ema30_rising": false,
+      "rsi_buy_zone": false,
+      "adx_trending": true,
+      "crs_outperforming": false,
+      "near_52w_high": false
+    },
+    "entry_score": 1,
+    "benchmark": "Nifty 50"
   },
   "NSE:AZAD": {
-    "error": "download failed or insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 2105.7,
+    "ema10": 2025.12,
+    "ema21": 1885.71,
+    "ema30": 1821.14,
+    "ema40": 1775.91,
+    "rsi": 60.6,
+    "adx": 21.2,
+    "crs_above_ma": true,
+    "peak_52w": 2315.6,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": false,
+      "below_21w_ema": false,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 5,
+    "benchmark": "Nifty 50"
   },
   "NSE:GOLDIAM": {
-    "error": "download failed or insufficient history",
-    "error": "insufficient history"
+    "updated": "2026-06-12",
+    "cmp": 423.8,
+    "ema10": 393.87,
+    "ema21": 375.68,
+    "ema30": 370.01,
+    "ema40": 366.21,
+    "rsi": 58.9,
+    "adx": 23.0,
+    "crs_above_ma": true,
+    "peak_52w": 435.95,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": false,
+      "below_21w_ema": false,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": true
+    },
+    "entry_score": 6,
+    "benchmark": "Nifty 50"
   },
-  "BSE:KLBRENG-B": {
-    "error": "insufficient history"
+  "RKLB": {
+    "updated": "2026-06-12",
+    "cmp": 114.78,
+    "ema10": 107.63,
+    "ema21": 92.95,
+    "ema30": 84.98,
+    "ema40": 77.93,
+    "rsi": 61.4,
+    "adx": 35.0,
+    "crs_above_ma": true,
+    "peak_52w": 143.48,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": false,
+      "below_21w_ema": false,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 5,
+    "benchmark": "S&P 500"
   },
-  "NSE:AZAD": {
-    "error": "insufficient history"
+  "STM": {
+    "updated": "2026-06-12",
+    "cmp": 78.12,
+    "ema10": 61.12,
+    "ema21": 50.05,
+    "ema30": 45.02,
+    "ema40": 41.49,
+    "rsi": 91.6,
+    "adx": 51.3,
+    "crs_above_ma": true,
+    "peak_52w": 78.12,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": false,
+      "below_21w_ema": false,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": true
+    },
+    "entry_score": 6,
+    "benchmark": "S&P 500"
   },
-  "NSE:GOLDIAM": {
-    "error": "insufficient history"
+  "SIL": {
+    "updated": "2026-06-12",
+    "cmp": 79.09,
+    "ema10": 88.47,
+    "ema21": 89.15,
+    "ema30": 86.65,
+    "ema40": 82.98,
+    "rsi": 45.0,
+    "adx": 22.3,
+    "crs_above_ma": false,
+    "peak_52w": 118.03,
+    "stage": 4,
+    "ema30_rising": false,
+    "sell_signals": {
+      "below_10w_ema": true,
+      "below_21w_ema": true,
+      "below_40w_ema": true,
+      "below_30w_ema": true,
+      "rsi_weak": true,
+      "stage3_warning": true,
+      "crs_broken": true
+    },
+    "entry_signals": {
+      "above_30w_ema": false,
+      "ema30_rising": false,
+      "rsi_buy_zone": false,
+      "adx_trending": true,
+      "crs_outperforming": false,
+      "near_52w_high": false
+    },
+    "entry_score": 1,
+    "benchmark": "S&P 500"
+  },
+  "REMX": {
+    "updated": "2026-06-12",
+    "cmp": 92.96,
+    "ema10": 95.26,
+    "ema21": 91.63,
+    "ema30": 87.53,
+    "ema40": 83.12,
+    "rsi": 53.1,
+    "adx": 43.0,
+    "crs_above_ma": true,
+    "peak_52w": 106.52,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": true,
+      "below_21w_ema": false,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 5,
+    "benchmark": "S&P 500"
+  },
+  "GDX": {
+    "updated": "2026-06-12",
+    "cmp": 77.72,
+    "ema10": 86.86,
+    "ema21": 88.61,
+    "ema30": 86.89,
+    "ema40": 83.9,
+    "rsi": 43.4,
+    "adx": 21.7,
+    "crs_above_ma": false,
+    "peak_52w": 115.84,
+    "stage": 4,
+    "ema30_rising": false,
+    "sell_signals": {
+      "below_10w_ema": true,
+      "below_21w_ema": true,
+      "below_40w_ema": true,
+      "below_30w_ema": true,
+      "rsi_weak": true,
+      "stage3_warning": true,
+      "crs_broken": true
+    },
+    "entry_signals": {
+      "above_30w_ema": false,
+      "ema30_rising": false,
+      "rsi_buy_zone": false,
+      "adx_trending": true,
+      "crs_outperforming": false,
+      "near_52w_high": false
+    },
+    "entry_score": 1,
+    "benchmark": "S&P 500"
+  },
+  "BE": {
+    "updated": "2026-06-12",
+    "cmp": 248.88,
+    "ema10": 246.65,
+    "ema21": 208.43,
+    "ema30": 185.08,
+    "ema40": 164.75,
+    "rsi": 61.5,
+    "adx": 39.9,
+    "crs_above_ma": true,
+    "peak_52w": 302.49,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": false,
+      "below_21w_ema": false,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 5,
+    "benchmark": "S&P 500"
+  },
+  "GLD": {
+    "updated": "2026-06-12",
+    "cmp": 386.32,
+    "ema10": 414.71,
+    "ema21": 418.59,
+    "ema30": 412.19,
+    "ema40": 401.93,
+    "rsi": 40.5,
+    "adx": 35.9,
+    "crs_above_ma": false,
+    "peak_52w": 483.75,
+    "stage": 4,
+    "ema30_rising": false,
+    "sell_signals": {
+      "below_10w_ema": true,
+      "below_21w_ema": true,
+      "below_40w_ema": true,
+      "below_30w_ema": true,
+      "rsi_weak": true,
+      "stage3_warning": true,
+      "crs_broken": true
+    },
+    "entry_signals": {
+      "above_30w_ema": false,
+      "ema30_rising": false,
+      "rsi_buy_zone": false,
+      "adx_trending": true,
+      "crs_outperforming": false,
+      "near_52w_high": false
+    },
+    "entry_score": 1,
+    "benchmark": "S&P 500"
+  },
+  "URNM": {
+    "updated": "2026-06-12",
+    "cmp": 54.29,
+    "ema10": 60.31,
+    "ema21": 61.56,
+    "ema30": 60.79,
+    "ema40": 59.41,
+    "rsi": 41.3,
+    "adx": 20.9,
+    "crs_above_ma": false,
+    "peak_52w": 75.95,
+    "stage": 4,
+    "ema30_rising": false,
+    "sell_signals": {
+      "below_10w_ema": true,
+      "below_21w_ema": true,
+      "below_40w_ema": true,
+      "below_30w_ema": true,
+      "rsi_weak": true,
+      "stage3_warning": true,
+      "crs_broken": true
+    },
+    "entry_signals": {
+      "above_30w_ema": false,
+      "ema30_rising": false,
+      "rsi_buy_zone": false,
+      "adx_trending": true,
+      "crs_outperforming": false,
+      "near_52w_high": false
+    },
+    "entry_score": 1,
+    "benchmark": "S&P 500"
+  },
+  "SLV": {
+    "updated": "2026-06-12",
+    "cmp": 60.82,
+    "ema10": 66.7,
+    "ema21": 66.61,
+    "ema30": 64.37,
+    "ema40": 61.4,
+    "rsi": 45.7,
+    "adx": 51.1,
+    "crs_above_ma": true,
+    "peak_52w": 92.91,
+    "stage": 4,
+    "ema30_rising": false,
+    "sell_signals": {
+      "below_10w_ema": true,
+      "below_21w_ema": true,
+      "below_40w_ema": true,
+      "below_30w_ema": true,
+      "rsi_weak": false,
+      "stage3_warning": true,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": false,
+      "ema30_rising": false,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 3,
+    "benchmark": "S&P 500"
+  },
+  "COPX": {
+    "updated": "2026-06-12",
+    "cmp": 83.16,
+    "ema10": 82.76,
+    "ema21": 80.06,
+    "ema30": 76.93,
+    "ema40": 73.46,
+    "rsi": 54.9,
+    "adx": 36.6,
+    "crs_above_ma": true,
+    "peak_52w": 95.7,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": false,
+      "below_21w_ema": false,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 5,
+    "benchmark": "S&P 500"
+  },
+  "GRID": {
+    "updated": "2026-06-12",
+    "cmp": 189.36,
+    "ema10": 186.7,
+    "ema21": 178.71,
+    "ema30": 173.16,
+    "ema40": 167.87,
+    "rsi": 65.0,
+    "adx": 31.1,
+    "crs_above_ma": true,
+    "peak_52w": 197.22,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": false,
+      "below_21w_ema": false,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 5,
+    "benchmark": "S&P 500"
+  },
+  "PAVE": {
+    "updated": "2026-06-12",
+    "cmp": 57.18,
+    "ema10": 55.58,
+    "ema21": 53.91,
+    "ema30": 52.68,
+    "ema40": 51.45,
+    "rsi": 65.9,
+    "adx": 25.4,
+    "crs_above_ma": true,
+    "peak_52w": 57.18,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": false,
+      "below_21w_ema": false,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": true
+    },
+    "entry_score": 6,
+    "benchmark": "S&P 500"
+  },
+  "SII": {
+    "updated": "2026-06-12",
+    "cmp": 115.76,
+    "ema10": 128.35,
+    "ema21": 126.4,
+    "ema30": 120.84,
+    "ema40": 114.2,
+    "rsi": 46.1,
+    "adx": 47.0,
+    "crs_above_ma": true,
+    "peak_52w": 161.19,
+    "stage": 1,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": true,
+      "below_21w_ema": true,
+      "below_40w_ema": false,
+      "below_30w_ema": true,
+      "rsi_weak": false,
+      "stage3_warning": true,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": false,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 4,
+    "benchmark": "S&P 500"
+  },
+  "ON": {
+    "updated": "2026-06-12",
+    "cmp": 115.96,
+    "ema10": 104.16,
+    "ema21": 88.91,
+    "ema30": 81.54,
+    "ema40": 76.26,
+    "rsi": 78.6,
+    "adx": 40.1,
+    "crs_above_ma": true,
+    "peak_52w": 120.62,
+    "stage": 2,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": false,
+      "below_21w_ema": false,
+      "below_40w_ema": false,
+      "below_30w_ema": false,
+      "rsi_weak": false,
+      "stage3_warning": false,
+      "crs_broken": false
+    },
+    "entry_signals": {
+      "above_30w_ema": true,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": true,
+      "near_52w_high": false
+    },
+    "entry_score": 5,
+    "benchmark": "S&P 500"
+  },
+  "NU": {
+    "updated": "2026-06-12",
+    "cmp": 12.09,
+    "ema10": 13.22,
+    "ema21": 14.09,
+    "ema30": 14.36,
+    "ema40": 14.44,
+    "rsi": 36.5,
+    "adx": 24.4,
+    "crs_above_ma": false,
+    "peak_52w": 18.04,
+    "stage": 4,
+    "ema30_rising": false,
+    "sell_signals": {
+      "below_10w_ema": true,
+      "below_21w_ema": true,
+      "below_40w_ema": true,
+      "below_30w_ema": true,
+      "rsi_weak": true,
+      "stage3_warning": true,
+      "crs_broken": true
+    },
+    "entry_signals": {
+      "above_30w_ema": false,
+      "ema30_rising": false,
+      "rsi_buy_zone": false,
+      "adx_trending": true,
+      "crs_outperforming": false,
+      "near_52w_high": false
+    },
+    "entry_score": 1,
+    "benchmark": "S&P 500"
+  },
+  "NOW": {
+    "updated": "2026-06-12",
+    "cmp": 103.08,
+    "ema10": 104.83,
+    "ema21": 111.97,
+    "ema30": 120.21,
+    "ema40": 128.28,
+    "rsi": 43.5,
+    "adx": 31.1,
+    "crs_above_ma": false,
+    "peak_52w": 208.94,
+    "stage": 4,
+    "ema30_rising": false,
+    "sell_signals": {
+      "below_10w_ema": true,
+      "below_21w_ema": true,
+      "below_40w_ema": true,
+      "below_30w_ema": true,
+      "rsi_weak": true,
+      "stage3_warning": true,
+      "crs_broken": true
+    },
+    "entry_signals": {
+      "above_30w_ema": false,
+      "ema30_rising": false,
+      "rsi_buy_zone": false,
+      "adx_trending": true,
+      "crs_outperforming": false,
+      "near_52w_high": false
+    },
+    "entry_score": 1,
+    "benchmark": "S&P 500"
+  },
+  "APP": {
+    "updated": "2026-06-12",
+    "cmp": 478.57,
+    "ema10": 498.93,
+    "ema21": 494.06,
+    "ema30": 493.62,
+    "ema40": 487.04,
+    "rsi": 48.7,
+    "adx": 18.0,
+    "crs_above_ma": false,
+    "peak_52w": 721.37,
+    "stage": 1,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": true,
+      "below_21w_ema": true,
+      "below_40w_ema": true,
+      "below_30w_ema": true,
+      "rsi_weak": false,
+      "stage3_warning": true,
+      "crs_broken": true
+    },
+    "entry_signals": {
+      "above_30w_ema": false,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": false,
+      "crs_outperforming": false,
+      "near_52w_high": false
+    },
+    "entry_score": 2,
+    "benchmark": "S&P 500"
+  },
+  "U": {
+    "updated": "2026-06-12",
+    "cmp": 26.71,
+    "ema10": 26.92,
+    "ema21": 27.6,
+    "ema30": 28.5,
+    "ema40": 29.0,
+    "rsi": 47.2,
+    "adx": 22.3,
+    "crs_above_ma": false,
+    "peak_52w": 46.42,
+    "stage": 1,
+    "ema30_rising": true,
+    "sell_signals": {
+      "below_10w_ema": true,
+      "below_21w_ema": true,
+      "below_40w_ema": true,
+      "below_30w_ema": true,
+      "rsi_weak": false,
+      "stage3_warning": true,
+      "crs_broken": true
+    },
+    "entry_signals": {
+      "above_30w_ema": false,
+      "ema30_rising": true,
+      "rsi_buy_zone": true,
+      "adx_trending": true,
+      "crs_outperforming": false,
+      "near_52w_high": false
+    },
+    "entry_score": 3,
+    "benchmark": "S&P 500"
+  },
+  "DASH": {
+    "updated": "2026-06-12",
+    "cmp": 154.59,
+    "ema10": 162.38,
+    "ema21": 172.92,
+    "ema30": 180.46,
+    "ema40": 185.73,
+    "rsi": 38.0,
+    "adx": 26.2,
+    "crs_above_ma": false,
+    "peak_52w": 271.22,
+    "stage": 4,
+    "ema30_rising": false,
+    "sell_signals": {
+      "below_10w_ema": true,
+      "below_21w_ema": true,
+      "below_40w_ema": true,
+      "below_30w_ema": true,
+      "rsi_weak": true,
+      "stage3_warning": true,
+      "crs_broken": true
+    },
+    "entry_signals": {
+      "above_30w_ema": false,
+      "ema30_rising": false,
+      "rsi_buy_zone": false,
+      "adx_trending": true,
+      "crs_outperforming": false,
+      "near_52w_high": false
+    },
+    "entry_score": 1,
+    "benchmark": "S&P 500"
+  },
+  "SE": {
+    "updated": "2026-06-12",
+    "cmp": 85.69,
+    "ema10": 88.42,
+    "ema21": 96.9,
+    "ema30": 104.08,
+    "ema40": 109.77,
+    "rsi": 36.0,
+    "adx": 24.6,
+    "crs_above_ma": false,
+    "peak_52w": 196.05,
+    "stage": 4,
+    "ema30_rising": false,
+    "sell_signals": {
+      "below_10w_ema": true,
+      "below_21w_ema": true,
+      "below_40w_ema": true,
+      "below_30w_ema": true,
+      "rsi_weak": true,
+      "stage3_warning": true,
+      "crs_broken": true
+    },
+    "entry_signals": {
+      "above_30w_ema": false,
+      "ema30_rising": false,
+      "rsi_buy_zone": false,
+      "adx_trending": true,
+      "crs_outperforming": false,
+      "near_52w_high": false
+    },
+    "entry_score": 1,
+    "benchmark": "S&P 500"
+  },
+  "MELI": {
+    "updated": "2026-06-12",
+    "cmp": 1610.0,
+    "ema10": 1683.42,
+    "ema21": 1776.53,
+    "ema30": 1841.06,
+    "ema40": 1892.45,
+    "rsi": 39.3,
+    "adx": 18.1,
+    "crs_above_ma": false,
+    "peak_52w": 2560.05,
+    "stage": 4,
+    "ema30_rising": false,
+    "sell_signals": {
+      "below_10w_ema": true,
+      "below_21w_ema": true,
+      "below_40w_ema": true,
+      "below_30w_ema": true,
+      "rsi_weak": true,
+      "stage3_warning": true,
+      "crs_broken": true
+    },
+    "entry_signals": {
+      "above_30w_ema": false,
+      "ema30_rising": false,
+      "rsi_buy_zone": false,
+      "adx_trending": false,
+      "crs_outperforming": false,
+      "near_52w_high": false
+    },
+    "entry_score": 0,
+    "benchmark": "S&P 500"
   }
 }

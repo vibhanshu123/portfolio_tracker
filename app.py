@@ -51,8 +51,9 @@ DATA_FILE = _data_dir / "data.json"
 TECH_FILE      = _data_dir / "technicals.json"
 SCANS_CACHE_FILE = _data_dir / "stockscans_cache.json"
 
-SOIC_DIR   = Path("/Users/arya/workspace/agents/soic-er-shashank-dashboard-generator")
-CLAUDE_CLI = "/Users/arya/.npm-global/bin/claude"
+SOIC_DIR       = Path("/Users/arya/workspace/agents/soic-er-shashank-dashboard-generator")
+CLAUDE_CLI     = "/Users/arya/.npm-global/bin/claude"
+DASHBOARDS_DIR = BASE / "dashboards"
 
 app.mount("/static", StaticFiles(directory=BASE / "static"), name="static")
 
@@ -69,7 +70,16 @@ def _get_symbol(ticker: str) -> str:
     return t.upper()
 
 
-def _get_dashboard_path(symbol: str) -> Path:
+def _get_dashboard_path(symbol: str, stock_name: str = "") -> Path:
+    """Return the dashboard HTML path, preferring the local dashboards/ folder."""
+    local = DASHBOARDS_DIR / f"{symbol}_Dashboard.html"
+    if local.exists():
+        return local
+    if stock_name:
+        name_key = stock_name.upper().replace(" ", "")
+        local_by_name = DASHBOARDS_DIR / f"{name_key}_Dashboard.html"
+        if local_by_name.exists():
+            return local_by_name
     return SOIC_DIR / "data" / "companies" / symbol / f"{symbol}_Dashboard.html"
 
 
@@ -87,11 +97,11 @@ def _blank_job(symbol: str) -> dict:
     }
 
 
-def _detect_disk_state(symbol: str) -> dict:
+def _detect_disk_state(symbol: str, stock_name: str = "") -> dict:
     """Build a job dict reflecting what files already exist on disk."""
     job = _blank_job(symbol)
     ep  = _get_extract_path(symbol)
-    dp  = _get_dashboard_path(symbol)
+    dp  = _get_dashboard_path(symbol, stock_name)
     if ep.exists():
         job["extract"]["status"] = "done"
     if dp.exists():
@@ -580,39 +590,7 @@ def _do_refresh_technicals():
         all_yt = list(ticker_map.keys())
         _refresh_progress["total"] = len(all_yt)
         _refresh_progress["phase"] = "downloading"
-        # Download in batches of 12 to avoid rate limits
-        BATCH = 12
-        nifty_close = pd.Series(dtype=float)
-        raw_data: dict[str, dict] = {}   # yt → {close, high, low}
 
-        for batch_start in range(0, len(all_yt), BATCH):
-            batch = all_yt[batch_start : batch_start + BATCH] + ["^NSEI"]
-            raw = _download_batch(batch)
-            if raw.empty:
-                continue
-
-            def _s(raw, ticker, field):
-                try:
-                    return raw[ticker][field].dropna()
-                except Exception:
-                    return pd.Series(dtype=float)
-
-            if len(nifty_close) == 0:
-                nc = _s(raw, "^NSEI", "Close")
-                if len(nc) > 0:
-                    nifty_close = nc
-
-            for yt in all_yt[batch_start : batch_start + BATCH]:
-                close = _s(raw, yt, "Close")
-                if len(close) >= 42:
-                    raw_data[yt] = {
-                        "close": close,
-                        "high":  _s(raw, yt, "High"),
-                        "low":   _s(raw, yt, "Low"),
-                    }
-
-            if batch_start + BATCH < len(all_yt):
-                time.sleep(3)   # polite pause between batches
         # Download in batches of 8 to avoid Yahoo Finance rate limits
         BATCH_SIZE = 8
         all_dl = list(ticker_map.keys()) + ["^NSEI"]
@@ -643,7 +621,10 @@ def _do_refresh_technicals():
                 return raw[ticker][field].dropna()
             except Exception:
                 return pd.Series(dtype=float)
+
+        nifty_close = series("^NSEI", "Close")
         results: dict = {}
+
         _refresh_progress["phase"] = "computing"
 
         for i, (yt, orig) in enumerate(ticker_map.items()):
@@ -775,6 +756,7 @@ def _compute_ticker_technicals(orig_ticker: str) -> dict:
                           progress=False, auto_adjust=True)
     except Exception as e:
         return {"error": str(e)}
+
     _multi = isinstance(raw.columns, pd.MultiIndex)
 
     def _s(ticker, field):
@@ -1325,12 +1307,12 @@ def delete_trade(pos_id: str, trade_id: str):
 
 # ─── Watchlist CRUD ────────────────────────────────────────────────────────────
 
-def _resolve_job(wid: str, ticker: str) -> dict:
+def _resolve_job(wid: str, ticker: str, stock_name: str = "") -> dict:
     """Return the job for wid, eagerly resolving running steps whose file already appeared."""
     symbol = _get_symbol(ticker)
     job    = _analysis_jobs.get(wid)
     if job is None:
-        job = _detect_disk_state(symbol)
+        job = _detect_disk_state(symbol, stock_name)
         _analysis_jobs[wid] = job
 
     # Eagerly promote running → done if file appeared
@@ -1348,7 +1330,7 @@ def _resolve_job(wid: str, ticker: str) -> dict:
         job["extract"]["status"] = "done"
 
     if job["deepdive"]["status"] == "running":
-        dp = _get_dashboard_path(symbol)
+        dp = _get_dashboard_path(symbol, stock_name)
         try:
             start_ts = datetime.fromisoformat(job["deepdive"]["started_at"]).timestamp()
         except Exception:
@@ -1359,7 +1341,7 @@ def _resolve_job(wid: str, ticker: str) -> dict:
 
     # Also promote not_started → done if dashboard file exists (generated externally)
     if job["deepdive"]["status"] == "not_started":
-        dp = _get_dashboard_path(symbol)
+        dp = _get_dashboard_path(symbol, stock_name)
         if dp.exists():
             job["deepdive"]["status"]         = "done"
             job["deepdive"]["dashboard_path"] = str(dp)
@@ -1372,7 +1354,7 @@ def get_all_status():
     data   = load()
     result = {}
     for w in data["watchlist"]:
-        result[w["id"]] = _resolve_job(w["id"], w.get("ticker", ""))
+        result[w["id"]] = _resolve_job(w["id"], w.get("ticker", ""), w.get("stock_name", ""))
     return result
 
 
@@ -1382,7 +1364,7 @@ def get_status(wid: str):
     item = next((w for w in data["watchlist"] if w["id"] == wid), None)
     if not item:
         raise HTTPException(404, "Not found")
-    return _resolve_job(wid, item.get("ticker", ""))
+    return _resolve_job(wid, item.get("ticker", ""), item.get("stock_name", ""))
 
 
 @app.post("/api/watchlist/{wid}/download")
@@ -1392,7 +1374,7 @@ def wl_download(wid: str):
     if not item:
         raise HTTPException(404, "Not found")
     symbol = _get_symbol(item.get("ticker", ""))
-    job    = _resolve_job(wid, item.get("ticker", ""))
+    job    = _resolve_job(wid, item.get("ticker", ""), item.get("stock_name", ""))
     job["download"]["status"] = "visited"
     return {"screener_url": f"https://www.screener.in/company/{symbol}/",
             "symbol": symbol, "job": job}
@@ -1436,7 +1418,7 @@ def serve_dashboard(wid: str):
     item = next((w for w in data["watchlist"] if w["id"] == wid), None)
     if not item:
         raise HTTPException(404, "Not found")
-    dp = _get_dashboard_path(_get_symbol(item.get("ticker", "")))
+    dp = _get_dashboard_path(_get_symbol(item.get("ticker", "")), item.get("stock_name", ""))
     if not dp.exists():
         raise HTTPException(404, "Dashboard not generated yet")
     return dp.read_text()
