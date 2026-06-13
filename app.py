@@ -53,7 +53,9 @@ SCANS_CACHE_FILE = _data_dir / "stockscans_cache.json"
 
 SOIC_DIR       = Path("/Users/arya/workspace/agents/soic-er-shashank-dashboard-generator")
 CLAUDE_CLI     = "/Users/arya/.npm-global/bin/claude"
-DASHBOARDS_DIR = BASE / "dashboards"
+DASHBOARDS_DIR        = BASE / "dashboards"
+MARKET_DASHBOARDS_DIR = BASE / "market_dashboards"
+MARKET_DASHBOARDS_DIR.mkdir(exist_ok=True)
 
 app.mount("/static", StaticFiles(directory=BASE / "static"), name="static")
 
@@ -198,6 +200,7 @@ def load():
             "us_manjari":   [],
         })
         data.setdefault("sold_positions", [])
+        data.setdefault("market_dashboards", [])
         # Normalize tickers: strip the space that appears after "NSE: " or "BSE: "
         # e.g. "NSE: DEEDEV" → "NSE:DEEDEV".  Positions store "NSE:DEEDEV" but
         # watchlist items entered via the form land as "NSE: DEEDEV", causing a
@@ -352,6 +355,14 @@ class WatchlistIn(BaseModel):
     added_price:      Optional[float] = None
     sector:           Optional[str]   = None
     notes:            Optional[str]   = ""
+
+class MarketDashboardIn(BaseModel):
+    title:        str
+    created_date: str
+    prompt:       str
+    filename:     Optional[str] = None  # local file in market_dashboards/
+    url:          Optional[str] = None  # external URL
+    notes:        Optional[str] = ""
 
 class SettingsIn(BaseModel):
     usd_inr_rate:       Optional[float] = None
@@ -1887,6 +1898,61 @@ def delete_nps(nid: str):
     data["nps"] = [n for n in data.get("nps", []) if n["id"] != nid]
     save(data)
     return {"ok": True}
+
+
+# ─── Market Dashboards ─────────────────────────────────────────────────────────
+
+@app.get("/api/market_dashboards")
+def get_market_dashboards():
+    return load().get("market_dashboards", [])
+
+@app.post("/api/market_dashboards")
+def add_market_dashboard(item: MarketDashboardIn):
+    data  = load()
+    entry = item.model_dump()
+    entry["id"] = str(uuid.uuid4())
+    data["market_dashboards"].append(entry)
+    save(data)
+    return entry
+
+@app.put("/api/market_dashboards/{mid}")
+def update_market_dashboard(mid: str, updates: dict[str, Any]):
+    data = load()
+    for i, m in enumerate(data["market_dashboards"]):
+        if m["id"] == mid:
+            data["market_dashboards"][i].update(updates)
+            save(data)
+            return data["market_dashboards"][i]
+    raise HTTPException(404, "Not found")
+
+@app.delete("/api/market_dashboards/{mid}")
+def delete_market_dashboard(mid: str):
+    data = load()
+    data["market_dashboards"] = [m for m in data["market_dashboards"] if m["id"] != mid]
+    save(data)
+    return {"ok": True}
+
+@app.get("/market_dashboard/{mid}", response_class=HTMLResponse)
+def serve_market_dashboard(mid: str):
+    data  = load()
+    entry = next((m for m in data["market_dashboards"] if m["id"] == mid), None)
+    def _err(msg: str) -> HTMLResponse:
+        return HTMLResponse(f"""<!doctype html><html><head><meta charset=utf-8>
+<title>Not Found</title>
+<style>body{{font-family:system-ui,sans-serif;background:#111;color:#ccc;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}}
+.box{{text-align:center;padding:40px}}.title{{font-size:22px;font-weight:700;color:#f5f5f5;margin-bottom:12px}}
+.msg{{font-size:14px;color:#888;line-height:1.6}}</style></head>
+<body><div class="box"><div class="title">File not available</div>
+<div class="msg">{msg}</div></div></body></html>""", status_code=404)
+    if not entry:
+        return _err("Dashboard entry not found.")
+    filename = entry.get("filename", "")
+    if filename:
+        fp = MARKET_DASHBOARDS_DIR / filename
+        if fp.exists():
+            return fp.read_text()
+        return _err(f"HTML file <b>{filename}</b> not found in the <code>market_dashboards/</code> folder.<br><br>Drop the file there and reload.")
+    return _err("No local file set for this dashboard. Edit the entry and add a filename or URL.")
 
 
 if __name__ == "__main__":

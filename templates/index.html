@@ -372,6 +372,7 @@ label { color: var(--text-faint); font-size: 11px; }
       <button class="tab-btn" data-tab="other_assets">💼 Other Assets</button>
       <button class="tab-btn" data-tab="cash">💸 Cash & HUF</button>
       <button class="tab-btn" data-tab="journal" id="journal-tab-btn">📓 Journal</button>
+      <button class="tab-btn" data-tab="market_dashboards">🗂 Resources</button>
     </div>
   </div>
 </header>
@@ -1015,6 +1016,7 @@ async function fetchData() {
   state.capital_transferred = state.capital_transferred || {};
   state.nps                 = state.nps                 || [];
   state.sold_positions      = state.sold_positions      || [];
+  state.market_dashboards   = state.market_dashboards   || [];
   // update journal tab badge
   const jbtn = document.getElementById('journal-tab-btn');
   if (jbtn) {
@@ -1120,7 +1122,8 @@ function renderTab() {
   if (currentTab === 'aif')         { el.innerHTML = renderAIF();         return; }
   if (currentTab === 'other_assets'){ el.innerHTML = renderOtherAssets(); return; }
   if (currentTab === 'cash')        { el.innerHTML = renderCash();        return; }
-  if (currentTab === 'journal')     { el.innerHTML = renderJournal();     return; }
+  if (currentTab === 'journal')          { el.innerHTML = renderJournal();          return; }
+  if (currentTab === 'market_dashboards'){ el.innerHTML = renderMarketDashboards(); return; }
 
   let positions;
   if (currentTab === 'consolidated') positions = state.positions.filter(p => INR_ACCTS.includes(p.account));
@@ -4200,6 +4203,206 @@ async function refreshStockScans() {
     if (btn) { btn.disabled = false; btn.textContent = '⟳ Scans'; }
     showToast('❌ Scan refresh failed');
   }
+}
+
+// ─── Market Dashboards ────────────────────────────────────────────────────────
+
+function renderMarketDashboards() {
+  const items = (state.market_dashboards || []).slice().sort((a, b) =>
+    (b.created_date || '').localeCompare(a.created_date || '')
+  );
+
+  const rows = items.map(m => {
+    const viewBtn = m.filename
+      ? `<a href="/market_dashboard/${m.id}" target="_blank" class="btn btn-ghost text-xs py-1 px-2">View</a>`
+      : m.url
+        ? `<a href="${esc(m.url)}" target="_blank" class="btn btn-ghost text-xs py-1 px-2">View</a>`
+        : `<span style="color:var(--text-faint);font-size:11px">—</span>`;
+
+    const promptId = `md-prompt-${m.id}`;
+    const short    = (m.prompt || '').length > 120
+      ? esc(m.prompt.slice(0, 120)) + '…'
+      : esc(m.prompt || '');
+
+    return `<tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:10px 12px;font-weight:600;color:var(--text-strong);min-width:160px">${esc(m.title)}</td>
+      <td style="padding:10px 12px;color:var(--text-muted);white-space:nowrap">${m.created_date || '—'}</td>
+      <td style="padding:10px 12px;max-width:420px">
+        <div id="${promptId}-short" style="font-size:11px;color:var(--text-muted);line-height:1.5">${short}
+          ${(m.prompt||'').length > 120 ? `<span onclick="document.getElementById('${promptId}-short').style.display='none';document.getElementById('${promptId}-full').style.display='block'"
+            style="color:var(--accent);cursor:pointer;margin-left:4px;font-size:10px">show more</span>` : ''}
+        </div>
+        <div id="${promptId}-full" style="display:none;font-size:11px;color:var(--text-muted);line-height:1.6;white-space:pre-wrap">${esc(m.prompt||'')}
+          <span onclick="document.getElementById('${promptId}-full').style.display='none';document.getElementById('${promptId}-short').style.display='block'"
+            style="color:var(--accent);cursor:pointer;font-size:10px;display:block;margin-top:4px">show less</span>
+        </div>
+      </td>
+      <td style="padding:10px 12px">${viewBtn}</td>
+      <td style="padding:10px 12px;white-space:nowrap">
+        <button onclick="openEditMarketDashboard('${m.id}')" class="btn btn-ghost text-xs py-1 px-2" style="margin-right:4px">Edit</button>
+        <button onclick="deleteMarketDashboard('${m.id}')" class="btn btn-ghost text-xs py-1 px-2" style="color:var(--neg)">✕</button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  return `
+  <div style="padding:20px;max-width:1100px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div>
+        <div style="font-size:16px;font-weight:700;color:var(--text-strong)">Resources</div>
+        <div style="font-size:11px;color:var(--text-faint);margin-top:2px">
+          Run these prompts monthly or yearly to snapshot market conditions over time.
+        </div>
+      </div>
+      <button onclick="openAddMarketDashboard()" class="btn btn-ghost text-xs" style="border:1px solid var(--accent);color:var(--accent);padding:6px 14px">
+        + Add Dashboard
+      </button>
+    </div>
+
+    ${items.length === 0 ? `
+      <div style="text-align:center;padding:60px 0;color:var(--text-faint);font-size:13px">
+        No dashboards yet. Add one to start tracking market snapshots.
+      </div>
+    ` : `
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr style="border-bottom:2px solid var(--border)">
+              <th style="padding:8px 12px;text-align:left;font-size:11px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Title</th>
+              <th style="padding:8px 12px;text-align:left;font-size:11px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Date</th>
+              <th style="padding:8px 12px;text-align:left;font-size:11px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Prompt</th>
+              <th style="padding:8px 12px;text-align:left;font-size:11px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Link</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    `}
+  </div>
+
+  <!-- Add modal -->
+  <div id="md-modal" style="display:none;position:fixed;inset:0;background:#0009;z-index:200;align-items:center;justify-content:center">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px;width:560px;max-width:95vw;max-height:90vh;overflow-y:auto">
+      <div id="md-modal-title" style="font-size:15px;font-weight:700;color:var(--text-strong);margin-bottom:16px">Add Market Dashboard</div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div>
+          <label style="font-size:11px;color:var(--text-faint);display:block;margin-bottom:4px">Title</label>
+          <input id="md-title" type="text" placeholder="e.g. Nifty Overview June 2026"
+            style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:13px;color:var(--text);box-sizing:border-box">
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--text-faint);display:block;margin-bottom:4px">Date Created</label>
+          <input id="md-date" type="date"
+            style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:13px;color:var(--text);box-sizing:border-box">
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--text-faint);display:block;margin-bottom:4px">Prompt Used</label>
+          <textarea id="md-prompt" rows="6" placeholder="Paste the exact prompt used to generate this dashboard…"
+            style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--text);resize:vertical;box-sizing:border-box;line-height:1.5"></textarea>
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--text-faint);display:block;margin-bottom:4px">HTML File (in market_dashboards/ folder)</label>
+          <input id="md-filename" type="text" placeholder="e.g. nifty_june_2026.html"
+            style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:13px;color:var(--text);box-sizing:border-box">
+          <div style="font-size:10px;color:var(--text-faint);margin-top:3px">Drop the .html file in the market_dashboards/ folder first, then enter its filename here.</div>
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--text-faint);display:block;margin-bottom:4px">Or External URL</label>
+          <input id="md-url" type="text" placeholder="https://…"
+            style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:13px;color:var(--text);box-sizing:border-box">
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--text-faint);display:block;margin-bottom:4px">Notes (optional)</label>
+          <textarea id="md-notes" rows="2"
+            style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--text);resize:vertical;box-sizing:border-box"></textarea>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:18px;justify-content:flex-end">
+        <button onclick="closeAddMarketDashboard()" class="btn btn-ghost text-xs" style="padding:7px 16px">Cancel</button>
+        <button onclick="saveMarketDashboard()" class="btn text-xs" style="background:var(--accent);color:#000;padding:7px 16px;font-weight:700;border-radius:6px">Save</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+let _mdEditId = null;
+
+function openAddMarketDashboard() {
+  _mdEditId = null;
+  document.getElementById('md-modal-title').textContent = 'Add Market Dashboard';
+  document.getElementById('md-date').value     = new Date().toISOString().split('T')[0];
+  document.getElementById('md-title').value    = '';
+  document.getElementById('md-prompt').value   = '';
+  document.getElementById('md-filename').value = '';
+  document.getElementById('md-url').value      = '';
+  document.getElementById('md-notes').value    = '';
+  document.getElementById('md-modal').style.display = 'flex';
+}
+
+function openEditMarketDashboard(id) {
+  const m = (state.market_dashboards || []).find(x => x.id === id);
+  if (!m) return;
+  _mdEditId = id;
+  document.getElementById('md-modal-title').textContent = 'Edit Market Dashboard';
+  document.getElementById('md-title').value    = m.title || '';
+  document.getElementById('md-date').value     = m.created_date || '';
+  document.getElementById('md-prompt').value   = m.prompt || '';
+  document.getElementById('md-filename').value = m.filename || '';
+  document.getElementById('md-url').value      = m.url || '';
+  document.getElementById('md-notes').value    = m.notes || '';
+  document.getElementById('md-modal').style.display = 'flex';
+}
+
+function closeAddMarketDashboard() {
+  document.getElementById('md-modal').style.display = 'none';
+  _mdEditId = null;
+}
+
+async function saveMarketDashboard() {
+  const title    = document.getElementById('md-title').value.trim();
+  const date     = document.getElementById('md-date').value;
+  const prompt   = document.getElementById('md-prompt').value.trim();
+  const filename = document.getElementById('md-filename').value.trim();
+  const url      = document.getElementById('md-url').value.trim();
+  const notes    = document.getElementById('md-notes').value.trim();
+
+  if (!title || !date || !prompt) {
+    showToast('Title, date and prompt are required'); return;
+  }
+
+  const payload = { title, created_date: date, prompt, filename: filename || null, url: url || null, notes };
+
+  if (_mdEditId) {
+    const res = await fetch(`/api/market_dashboards/${_mdEditId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) { showToast('Failed to update'); return; }
+    const updated = await res.json();
+    state.market_dashboards = state.market_dashboards.map(m => m.id === _mdEditId ? updated : m);
+    showToast('Dashboard updated');
+  } else {
+    const res = await fetch('/api/market_dashboards', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) { showToast('Failed to save'); return; }
+    const entry = await res.json();
+    state.market_dashboards.push(entry);
+    showToast('Dashboard saved');
+  }
+  closeAddMarketDashboard();
+  renderTab();
+}
+
+async function deleteMarketDashboard(id) {
+  if (!confirm('Remove this dashboard entry?')) return;
+  await fetch(`/api/market_dashboards/${id}`, { method: 'DELETE' });
+  state.market_dashboards = state.market_dashboards.filter(m => m.id !== id);
+  renderTab();
 }
 
 // ─── All-signals refresh via WebSocket ────────────────────────────────────────
