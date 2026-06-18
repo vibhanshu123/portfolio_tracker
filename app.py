@@ -355,6 +355,7 @@ class WatchlistIn(BaseModel):
     added_price:      Optional[float] = None
     sector:           Optional[str]   = None
     notes:            Optional[str]   = ""
+    source:           Optional[str]   = None
 
 class MarketDashboardIn(BaseModel):
     title:        str
@@ -440,7 +441,10 @@ def get_quote(ticker: str, on: Optional[str] = None):
     try:
         import yfinance as yf
         from datetime import datetime, timedelta
-        yt = _to_yahoo(ticker)
+        t = ticker.strip()
+        is_inr = (t.upper().startswith("NSE:") or t.upper().startswith("BSE:")
+                  or t.endswith(".NS") or t.endswith(".BO"))
+        yt = _to_yahoo(t, "INR") if is_inr else t.upper()
         tk = yf.Ticker(yt)
         if on:
             # Fetch a small window around the target date to handle weekends/holidays
@@ -722,7 +726,7 @@ def _compute_ticker_technicals(orig_ticker: str) -> dict:
         "stage": stage, "ema30_rising": e30_rising,
         "sell_signals": sell_signals, "entry_signals": entry_signals,
         "entry_score": sum(entry_signals.values()),
-        "benchmark": bench_label,
+        "benchmark": benchmark,
     }
 
 
@@ -1215,46 +1219,50 @@ def add_trade(pos_id: str, trade: dict[str, Any]):
             data["positions"][i].setdefault("trades", []).append(new_trade)
             all_trades = data["positions"][i]["trades"]
 
-            # Auto-archive when total sold qty covers the full position
+            # On every sell: reduce quantity and create a journal entry
             if new_trade["type"] == "sell":
-                total_sold = sum(t.get("qty", 0) for t in all_trades if t.get("type") == "sell")
-                pos_qty    = p.get("quantity", 0) or 0
-                if pos_qty > 0 and total_sold >= pos_qty:
-                    sell_trades     = [t for t in all_trades if t.get("type") == "sell"]
-                    total_proceeds  = sum(t.get("qty", 0) * t.get("price", 0) for t in sell_trades)
-                    avg_sell_price  = total_proceeds / total_sold if total_sold else 0
-                    invested        = p.get("avg_buy_price", 0) * pos_qty
-                    realized_pnl    = total_proceeds - invested
-                    realized_pnl_pct = (realized_pnl / invested * 100) if invested else 0
-                    sell_date       = max((t.get("date", "") for t in sell_trades), default=date.today().isoformat())
-                    entry = {
-                        "id":               str(uuid.uuid4()),
-                        "original_id":      pos_id,
-                        "account":          p.get("account"),
-                        "stock_name":       p.get("stock_name"),
-                        "ticker":           p.get("ticker"),
-                        "sector":           p.get("sector"),
-                        "currency":         p.get("currency", "INR"),
-                        "buy_date":         p.get("buy_date"),
-                        "sell_date":        sell_date,
-                        "avg_buy_price":    p.get("avg_buy_price"),
-                        "sell_price":       round(avg_sell_price, 2),
-                        "sell_qty":         total_sold,
-                        "invested":         round(invested, 2),
-                        "proceeds":         round(total_proceeds, 2),
-                        "realized_pnl":     round(realized_pnl, 2),
-                        "realized_pnl_pct": round(realized_pnl_pct, 2),
-                        "peak_price":       p.get("peak_price"),
-                        "trades":           all_trades,
-                        "thesis":           "",
-                        "antithesis":       "",
-                        "lessons":          "",
-                        "archived_at":      date.today().isoformat(),
-                        "auto_archived":    True,
-                    }
-                    data.setdefault("sold_positions", []).append(entry)
+                sell_qty      = new_trade["qty"]
+                sell_price    = new_trade["price"]
+                current_qty   = p.get("quantity", 0) or 0
+                avg_buy       = p.get("avg_buy_price", 0) or 0
+                remaining_qty = max(0, current_qty - sell_qty)
+                data["positions"][i]["quantity"] = remaining_qty
+
+                invested_this = avg_buy * sell_qty
+                proceeds_this = sell_price * sell_qty
+                pnl           = proceeds_this - invested_this
+                pnl_pct       = (pnl / invested_this * 100) if invested_this else 0
+                entry = {
+                    "id":               str(uuid.uuid4()),
+                    "original_id":      pos_id,
+                    "account":          p.get("account"),
+                    "stock_name":       p.get("stock_name"),
+                    "ticker":           p.get("ticker"),
+                    "sector":           p.get("sector"),
+                    "currency":         p.get("currency", "INR"),
+                    "buy_date":         p.get("buy_date"),
+                    "sell_date":        new_trade["date"],
+                    "avg_buy_price":    avg_buy,
+                    "sell_price":       sell_price,
+                    "sell_qty":         sell_qty,
+                    "invested":         round(invested_this, 2),
+                    "proceeds":         round(proceeds_this, 2),
+                    "realized_pnl":     round(pnl, 2),
+                    "realized_pnl_pct": round(pnl_pct, 2),
+                    "peak_price":       p.get("peak_price"),
+                    "trades":           all_trades,
+                    "thesis":           "",
+                    "antithesis":       "",
+                    "lessons":          new_trade.get("note", ""),
+                    "archived_at":      date.today().isoformat(),
+                    "auto_archived":    True,
+                    "partial":          remaining_qty > 0,
+                }
+                data.setdefault("sold_positions", []).append(entry)
+
+                # Fully sold — remove from active positions
+                if remaining_qty <= 0:
                     data["positions"] = [pos for pos in data["positions"] if pos["id"] != pos_id]
-                    # Also remove from watchlist
                     sold_ticker = p.get("ticker")
                     if sold_ticker:
                         data["watchlist"] = [w for w in data.get("watchlist", []) if w.get("ticker") != sold_ticker]
@@ -1953,6 +1961,24 @@ def serve_market_dashboard(mid: str):
             return fp.read_text()
         return _err(f"HTML file <b>{filename}</b> not found in the <code>market_dashboards/</code> folder.<br><br>Drop the file there and reload.")
     return _err("No local file set for this dashboard. Edit the entry and add a filename or URL.")
+
+
+_SOIC_FILES = {
+    "SOIC_FY26_Analysis.html",
+    "SOIC_FY26_Analysis_Part2.html",
+    "SOIC_FY26_Analysis_Part3.html",
+    "SOIC_FY26_Research.html",
+}
+_SOIC_DIR = Path("/Users/arya/workspace/agents")
+
+@app.get("/soic/{filename}", response_class=HTMLResponse)
+def serve_soic_research(filename: str):
+    if filename not in _SOIC_FILES:
+        raise HTTPException(status_code=404, detail="Not found")
+    fp = _SOIC_DIR / filename
+    if not fp.exists():
+        raise HTTPException(status_code=404, detail=f"{filename} not found on disk")
+    return HTMLResponse(fp.read_text())
 
 
 if __name__ == "__main__":

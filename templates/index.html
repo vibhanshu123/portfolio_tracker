@@ -312,6 +312,70 @@ label { color: var(--text-faint); font-size: 11px; }
   height: 100%; background: var(--accent); border-radius: 2px;
   transition: width .6s ease;
 }
+
+/* ── SOIC Research Notes (scoped under .soic-note) ─────────────────── */
+.soic-note { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 13px; line-height: 1.6; color: #e6edf3; }
+.soic-note .company { padding: 0; margin: 0; scroll-margin-top: 0; }
+.soic-note .company-header { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 14px; padding: 16px; background: #161b22; border: 1px solid #30363d; border-radius: 12px; }
+.soic-note .company-num { font-size: 36px; font-weight: 900; color: #30363d; line-height: 1; min-width: 44px; }
+.soic-note .company-meta { flex: 1; }
+.soic-note .company-meta .sector { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+.soic-note .company-meta h2 { font-size: 18px; font-weight: 800; color: #e6edf3; }
+.soic-note .company-meta .tagline { color: #8b949e; font-size: 12px; margin-top: 4px; font-style: italic; }
+.soic-note .company-meta .stats { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.soic-note .stat-pill { font-size: 10px; padding: 2px 8px; border-radius: 12px; background: #21262d; border: 1px solid #30363d; color: #8b949e; }
+.soic-note .stat-pill strong { color: #e6edf3; }
+.soic-note .section { background: #161b22; border: 1px solid #30363d; border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+.soic-note .section-head { padding: 8px 14px; background: #1c2333; border-bottom: 1px solid #30363d; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #8b949e; }
+.soic-note .section-body { padding: 12px 14px; }
+.soic-note .section-body p { margin-bottom: 8px; color: #8b949e; font-size: 12px; }
+.soic-note .section-body p:last-child { margin-bottom: 0; }
+.soic-note .section-body strong { color: #e6edf3; }
+.soic-note .bullets { list-style: none; padding: 0; margin: 0; }
+.soic-note .bullets li { padding: 5px 0 5px 16px; position: relative; color: #8b949e; border-bottom: 1px solid #1c2333; font-size: 12px; }
+.soic-note .bullets li:last-child { border-bottom: none; }
+.soic-note .bullets li::before { content: '▸'; position: absolute; left: 0; color: #58a6ff; font-size: 9px; top: 8px; }
+.soic-note .bullets li strong { color: #e6edf3; }
+.soic-note .fin-table-wrap { overflow-x: auto; }
+.soic-note table.fin { width: 100%; border-collapse: collapse; font-size: 11px; min-width: 460px; }
+.soic-note table.fin th { background: #1c2333; color: #8b949e; font-weight: 600; text-align: right; padding: 5px 8px; border: 1px solid #30363d; white-space: nowrap; }
+.soic-note table.fin th:first-child { text-align: left; }
+.soic-note table.fin td { padding: 4px 8px; border: 1px solid #1c2333; text-align: right; color: #8b949e; white-space: nowrap; font-size: 11px; }
+.soic-note table.fin td:first-child { text-align: left; font-weight: 500; color: #e6edf3; background: #1c2333; }
+.soic-note table.fin tr:hover td { background: #21262d; }
+.soic-note table.fin tr:hover td:first-child { background: #21262d; }
+.soic-note .fin-note { font-size: 10px; color: #6e7681; margin-top: 6px; font-style: italic; }
+.soic-note .scenario-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 4px; }
+.soic-note .scenario-box { border-radius: 8px; padding: 10px 12px; border: 1px solid; }
+.soic-note .scenario-box.bull { background: #1a3a2a; border-color: #3fb950; }
+.soic-note .scenario-box.base { background: #2a2a1a; border-color: #d29922; }
+.soic-note .scenario-box.bear { background: #3a1a1a; border-color: #f85149; }
+.soic-note .scenario-box .s-label { font-size: 9px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+.soic-note .bull .s-label { color: #7ee787; }
+.soic-note .base .s-label { color: #e3b341; }
+.soic-note .bear .s-label { color: #ff7b72; }
+.soic-note .scenario-box .s-row { display: flex; justify-content: space-between; font-size: 11px; padding: 2px 0; }
+.soic-note .scenario-box .s-key { color: #6e7681; }
+.soic-note .scenario-box .s-val { color: #e6edf3; font-weight: 600; }
+.soic-note .mcap-current { margin-top: 8px; font-size: 11px; color: #6e7681; text-align: right; }
+.soic-note .mcap-current strong { color: #8b949e; }
+.soic-note .callout { border-radius: 8px; padding: 10px 14px; margin-bottom: 10px; border-left: 3px solid; }
+.soic-note .callout.guidance { background: rgba(88,166,255,0.07); border-color: #58a6ff; }
+.soic-note .callout.view { background: rgba(163,113,247,0.07); border-color: #a371f7; }
+.soic-note .callout.risk { background: rgba(248,81,73,0.07); border-color: #f85149; }
+.soic-note .callout.trigger { background: rgba(63,185,80,0.07); border-color: #3fb950; }
+.soic-note .callout .c-head { font-size: 9px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
+.soic-note .callout.guidance .c-head { color: #58a6ff; }
+.soic-note .callout.view .c-head { color: #a371f7; }
+.soic-note .callout.risk .c-head { color: #f85149; }
+.soic-note .callout.trigger .c-head { color: #3fb950; }
+.soic-note .callout p { font-size: 12px; color: #8b949e; margin-bottom: 6px; }
+.soic-note .callout p:last-child { margin-bottom: 0; }
+.soic-note .callout p strong { color: #e6edf3; }
+.soic-note .s-media { color: #f0883e; } .soic-note .s-pharma { color: #a371f7; } .soic-note .s-diag { color: #58a6ff; }
+.soic-note .s-chem { color: #39d353; } .soic-note .s-rec { color: #ffa657; } .soic-note .s-ind { color: #79c0ff; }
+.soic-note .s-auto { color: #ff7b72; } .soic-note .s-met { color: #8b949e; } .soic-note .s-fin { color: #f78166; }
+.soic-note .s-hc { color: #56d364; } .soic-note .s-bm { color: #e3b341; } .soic-note .s-int { color: #58a6ff; }
 </style>
 </head>
 <body>
@@ -2640,9 +2704,39 @@ function wlPriceCells(w, t, cur) {
 }
 
 // ── Watchlist helper: inline collapsible notes cell content ───────────────────
+function soicResearchUrl(num) {
+  return `https://visionary-selkie-8c85fe.netlify.app/#c${num}`;
+}
+
 function inlineCollapsibleNotes(notes) {
   if (!notes) return '<span class="t-faint">—</span>';
   const escaped = esc(notes);
+  // SOIC research link — marker "soic:N" anywhere in notes, or legacy HTML with id="cN"
+  const soicMatch = notes.match(/soic:(\d+)/) || notes.match(/id="c(\d+)"/);
+  if (soicMatch) {
+    const url = soicResearchUrl(parseInt(soicMatch[1]));
+    const link = `<a href="${url}" target="_blank" rel="noopener"
+      style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#a78bfa;text-decoration:none;padding:2px 7px;border:1px solid rgba(139,92,246,0.3);border-radius:4px;background:rgba(139,92,246,0.08);white-space:nowrap"
+      onmouseover="this.style.background='rgba(139,92,246,0.18)'" onmouseout="this.style.background='rgba(139,92,246,0.08)'">
+      📄 View Research
+    </a>`;
+    const extra = notes.replace(/soic:\d+/,'').trim();
+    if (!extra) return link;
+    const escapedExtra = esc(extra);
+    const contentStyle = `display:none;margin-top:5px;background:var(--surface2);border-left:2px solid var(--accent)55;border-radius:0 4px 4px 0;padding:6px 9px;font-size:11px;color:var(--text-muted);line-height:1.55;max-width:300px;white-space:pre-wrap`;
+    return `<div style="display:flex;flex-direction:column;gap:4px">${link}
+      <div>
+        <button onclick="const nb=this.nextElementSibling;nb.style.display=nb.style.display==='none'?'block':'none';this.querySelector('.cn-icon').textContent=nb.style.display==='none'?'▶':'▼'"
+          style="background:none;border:none;padding:0;cursor:pointer;display:flex;align-items:center;gap:4px">
+          <span class="cn-icon" style="font-size:9px;color:var(--text-faint)">▶</span>
+          <span style="font-size:11px;color:var(--text-faint)">Notes</span>
+        </button>
+        <div style="${contentStyle}">${escapedExtra}</div>
+      </div>
+    </div>`;
+  }
+  // Plain text notes — collapsible as before
+  const contentStyle = `display:none;margin-top:5px;background:var(--surface2);border-left:2px solid var(--accent)55;border-radius:0 4px 4px 0;padding:6px 9px;font-size:11px;color:var(--text-muted);line-height:1.55;max-width:300px;white-space:pre-wrap`;
   return `
     <div>
       <div style="display:flex;align-items:center;gap:5px">
@@ -2655,7 +2749,7 @@ function inlineCollapsibleNotes(notes) {
           style="background:none;border:none;cursor:pointer;font-size:10px;color:var(--text-faint);padding:1px 3px;line-height:1;opacity:.5"
           onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.5'">⎘</button>
       </div>
-      <div style="display:none;margin-top:5px;background:var(--surface2);border-left:2px solid var(--accent)55;border-radius:0 4px 4px 0;padding:6px 9px;font-size:11px;color:var(--text-muted);line-height:1.55;white-space:pre-wrap;max-width:240px">${escaped}</div>
+      <div style="${contentStyle}">${escaped}</div>
     </div>`;
 }
 
@@ -3287,9 +3381,10 @@ function renderWatchlist() {
            style="font-weight:500;color:var(--text-strong);text-decoration:none;border-bottom:1px dotted var(--border)"
            onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='var(--text-strong)'"
         >${esc(w.stock_name)}</a>
+        ${w.source ? `<span style="display:inline-block;margin-left:5px;font-size:9px;font-weight:600;padding:1px 5px;border-radius:3px;background:rgba(139,92,246,0.15);color:#a78bfa;border:1px solid rgba(139,92,246,0.3);vertical-align:middle" title="${esc(w.source)}">${esc(w.source)}</span>` : ''}
         <div style="font-size:10px" class="t-faint">${esc(w.ticker)}</div>
       </td>
-      <td>${w.sector ? `<span class="badge">${esc(w.sector)}</span>` : '<span class="t-faint">—</span>'}</td>
+      <td style="max-width:130px"><div style="white-space:normal;line-height:1.4">${w.sector ? `<span class="badge" style="white-space:normal;line-height:1.4;display:inline">${esc(w.sector)}</span>` : '<span class="t-faint">—</span>'}</div></td>
       <td class="hoverable"
           onmouseenter="showEntryTooltip(event, ${tJson})"
           onmousemove="moveSigTooltip(event)"
@@ -3353,9 +3448,10 @@ function renderUSWatchlist() {
            style="font-weight:500;color:var(--text-strong);text-decoration:none;border-bottom:1px dotted var(--border)"
            onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='var(--text-strong)'"
         >${esc(w.stock_name)}</a>
+        ${w.source ? `<span style="display:inline-block;margin-left:5px;font-size:9px;font-weight:600;padding:1px 5px;border-radius:3px;background:rgba(139,92,246,0.15);color:#a78bfa;border:1px solid rgba(139,92,246,0.3);vertical-align:middle" title="${esc(w.source)}">${esc(w.source)}</span>` : ''}
         <div style="font-size:10px" class="t-faint">${esc(w.ticker)}</div>
       </td>
-      <td>${w.sector ? `<span class="badge">${esc(w.sector)}</span>` : '<span class="t-faint">—</span>'}</td>
+      <td style="max-width:130px"><div style="white-space:normal;line-height:1.4">${w.sector ? `<span class="badge" style="white-space:normal;line-height:1.4;display:inline">${esc(w.sector)}</span>` : '<span class="t-faint">—</span>'}</div></td>
       <td class="hoverable"
           onmouseenter="showUSEntryTooltip(event, ${tJson})"
           onmousemove="moveSigTooltip(event)"
@@ -3914,6 +4010,14 @@ function acctBadge(account) {
          account + '</span>';
 }
 
+function journalToggle(el) {
+  const body = el.closest('.jt-section').querySelector('.jt-body');
+  const icon = el.querySelector('.jt-icon');
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  if (icon) icon.textContent = open ? '▶' : '▼';
+}
+
 function renderJournal() {
   const sold = [...(state.sold_positions || [])].sort((a,b) => (b.sell_date||'').localeCompare(a.sell_date||''));
   if (!sold.length) return `
@@ -3924,110 +4028,188 @@ function renderJournal() {
     </div>`;
 
   const cur = p => p.currency === 'USD' ? '$' : '₹';
-
-  // Group by ticker
-  const groupMap = new Map();
-  for (const p of sold) {
-    const key = p.ticker || p.stock_name;
-    if (!groupMap.has(key)) groupMap.set(key, []);
-    groupMap.get(key).push(p);
-  }
-  const groups = [...groupMap.values()].sort((a, b) => {
-    const ad = a.reduce((m, x) => x.sell_date > m ? x.sell_date : m, '');
-    const bd = b.reduce((m, x) => x.sell_date > m ? x.sell_date : m, '');
-    return bd.localeCompare(ad);
-  });
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
   const totalPnl = sold.reduce((s, p) => s + (p.realized_pnl || 0), 0);
-  const winners  = groups.filter(g => g.reduce((s,p)=>s+(p.realized_pnl||0),0) >= 0).length;
   const pnlCol0  = totalPnl >= 0 ? '#34d399' : '#f87171';
 
-  const cards = groups.map(group => {
-    const rep        = group[0];
-    const combPnl    = group.reduce((s,p) => s+(p.realized_pnl||0), 0);
-    const combInv    = group.reduce((s,p) => s+(p.invested||0), 0);
-    const combQty    = group.reduce((s,p) => s+(p.sell_qty||0), 0);
-    const combPct    = combInv > 0 ? (combPnl / combInv * 100) : 0;
-    const latestSell = group.reduce((m,p) => p.sell_date > m ? p.sell_date : m, '');
-    const earliestBuy= group.reduce((m,p) => (!m||p.buy_date<m) ? p.buy_date : m, '');
-    const pnlCol     = combPnl >= 0 ? '#34d399' : '#f87171';
-    const pnlSign    = combPnl >= 0 ? '+' : '';
-    const holdDays   = earliestBuy && latestSell
-      ? Math.round((new Date(latestSell)-new Date(earliestBuy))/864e5) : null;
-
-    // All account badges for the header
-    const acctBadges = [...new Set(group.map(p=>p.account))].map(acctBadge).join(' ');
-
-    // Per-account rows (used for multi-account groups AND as inner row for single)
-    const entryRows = group.map(p => {
-      const pc  = (p.realized_pnl||0) >= 0 ? '#34d399' : '#f87171';
-      const ps  = (p.realized_pnl||0) >= 0 ? '+' : '';
-      const hd  = p.buy_date && p.sell_date
-        ? Math.round((new Date(p.sell_date)-new Date(p.buy_date))/864e5) : null;
-      return '<div style="border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px;background:var(--bg)">' +
-        // Row header: account badge + trade details + P&L + edit/delete
-        '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">' +
-          '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
-            acctBadge(p.account) +
-            '<span style="font-size:11px;color:var(--text-faint)">' +
-              (p.sell_qty||0) + ' shares</span>' +
-            '<span style="font-size:11px;color:var(--text-faint)">Buy ' + cur(p) + (p.avg_buy_price||0).toLocaleString('en-IN') + ' → Sell ' + cur(p) + (p.sell_price||0).toLocaleString('en-IN') + '</span>' +
-            '<span style="font-size:11px;color:var(--text-faint)">' + (p.buy_date||'?') + ' → ' + (p.sell_date||'?') + (hd ? ' ('+hd+'d)':'') + '</span>' +
-          '</div>' +
-          '<div style="display:flex;align-items:center;gap:6px">' +
-            '<span style="font-size:13px;font-weight:700;color:' + pc + '">' + ps + cur(p) + Math.abs(Math.round(p.realized_pnl||0)).toLocaleString('en-IN') + '</span>' +
-            '<span style="font-size:11px;color:' + pc + '">(' + ps + (p.realized_pnl_pct||0).toFixed(1) + '%)</span>' +
-            '<button onclick="editJournalEntry(\'' + p.id + '\')" class="btn btn-ghost text-xs py-1 px-2" title="Edit notes">✎</button>' +
-            '<button onclick="deleteJournalEntry(\'' + p.id + '\')" class="btn btn-ghost text-xs py-1 px-2" style="color:var(--neg)" title="Delete">✕</button>' +
-          '</div>' +
+  // Helper: render per-trade detail row; suppress notes already shown at ticker level
+  function renderTradeDetail(p, suppressThesis, suppressAntithesis, suppressLessons) {
+    const pc = (p.realized_pnl||0) >= 0 ? '#34d399' : '#f87171';
+    const ps = (p.realized_pnl||0) >= 0 ? '+' : '';
+    const hd = p.buy_date && p.sell_date
+      ? Math.round((new Date(p.sell_date)-new Date(p.buy_date))/864e5) : null;
+    const partialBadge = p.partial
+      ? '<span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;background:rgba(251,191,36,0.15);color:#fbbf24;border:1px solid rgba(251,191,36,0.3);margin-left:6px">PARTIAL</span>'
+      : '';
+    const filtered = Object.assign({}, p, {
+      thesis:     (p.thesis     === suppressThesis     && suppressThesis)     ? '' : p.thesis,
+      antithesis: (p.antithesis === suppressAntithesis && suppressAntithesis) ? '' : p.antithesis,
+      lessons:    (p.lessons    === suppressLessons    && suppressLessons)    ? '' : p.lessons,
+    });
+    return '<div style="border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:8px;background:var(--bg)">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">' +
+        '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
+          acctBadge(p.account) + partialBadge +
+          '<span style="font-size:11px;color:var(--text-faint)">' + (p.sell_qty||0) + ' shares</span>' +
+          '<span style="font-size:11px;color:var(--text-faint)">Buy ' + cur(p) + (p.avg_buy_price||0).toLocaleString('en-IN') + ' → Sell ' + cur(p) + (p.sell_price||0).toLocaleString('en-IN') + '</span>' +
+          '<span style="font-size:11px;color:var(--text-faint)">' + (p.buy_date||'?') + ' → ' + (p.sell_date||'?') + (hd?' ('+hd+'d)':'') + '</span>' +
         '</div>' +
-        renderJournalNotes(p) +
-        renderJournalTrades(p.trades, p.currency) +
-      '</div>';
-    }).join('');
-
-    // Card body: for single-entry skip redundant outer wrapper; for multi always expand all rows
-    const body = group.length === 1
-      ? entryRows   // single account — just the one row (which already has its own border/bg)
-      : '<div style="font-size:11px;color:var(--text-faint);margin:6px 0 10px">' +
-          combQty + ' total shares · ' + group.length + ' accounts · ' + (earliestBuy||'?') + ' → ' + (latestSell||'?') +
-        '</div>' + entryRows;
-
-    return '<div class="card" style="margin-bottom:14px;border-color:' + pnlCol + '33">' +
-      // Card header: stock name + account badges + combined P&L
-      '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap">' +
-        '<div>' +
-          '<div style="font-size:15px;font-weight:700;color:var(--text-strong)">' + esc(rep.stock_name) + '</div>' +
-          '<div style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap">' +
-            '<span style="font-size:11px;color:var(--text-faint)">' + esc(rep.ticker) + (rep.sector?' · '+esc(rep.sector):'') + '</span>' +
-            acctBadges +
+        '<div style="display:flex;align-items:center;gap:8px">' +
+          '<div style="text-align:right">' +
+            '<span style="font-size:13px;font-weight:700;color:'+pc+'">' + ps + cur(p) + Math.abs(Math.round(p.realized_pnl||0)).toLocaleString('en-IN') + '</span>' +
+            '<span style="font-size:11px;color:'+pc+';margin-left:4px">(' + ps + (p.realized_pnl_pct||0).toFixed(1) + '%)</span>' +
           '</div>' +
-        '</div>' +
-        '<div style="text-align:right">' +
-          '<div style="font-size:17px;font-weight:700;color:' + pnlCol + '">' + pnlSign + '₹' + Math.abs(Math.round(combPnl)).toLocaleString('en-IN') + '</div>' +
-          '<div style="font-size:11px;color:' + pnlCol + '">' + pnlSign + combPct.toFixed(1) + '% · ' + (holdDays?holdDays+'d':'') + ' · invested ₹' + Math.round(combInv).toLocaleString('en-IN') + '</div>' +
+          '<button onclick="editJournalEntry(\'' + p.id + '\')" class="btn btn-ghost text-xs py-1 px-2">✎</button>' +
+          '<button onclick="deleteJournalEntry(\'' + p.id + '\')" class="btn btn-ghost text-xs py-1 px-2" style="color:var(--neg)">✕</button>' +
         '</div>' +
       '</div>' +
-      '<div style="margin-top:10px">' + body + '</div>' +
+      renderJournalNotes(filtered) +
+      renderJournalTrades(p.trades, p.currency) +
     '</div>';
-  }).join('');
+  }
+
+  // Group: year → month → ticker → trades
+  const byYear = new Map();
+  for (const p of sold) {
+    const d  = p.sell_date || '';
+    const yr = d.slice(0,4) || 'Unknown';
+    const mo = d.slice(5,7) || '00';
+    const tk = p.ticker || p.stock_name;
+    if (!byYear.has(yr)) byYear.set(yr, new Map());
+    const moMap = byYear.get(yr);
+    if (!moMap.has(mo)) moMap.set(mo, new Map());
+    const tkMap = moMap.get(mo);
+    if (!tkMap.has(tk)) tkMap.set(tk, []);
+    tkMap.get(tk).push(p);
+  }
+  const years = [...byYear.keys()].sort((a,b) => b.localeCompare(a));
+
+  let yearHtml = '';
+  years.forEach((yr, yi) => {
+    const moMap    = byYear.get(yr);
+    const allYrTrades = [...moMap.values()].flatMap(m => [...m.values()].flat());
+    const yrPnl    = allYrTrades.reduce((s,p) => s+(p.realized_pnl||0), 0);
+    const yrTrades = allYrTrades.length;
+    const yrCol    = yrPnl >= 0 ? '#34d399' : '#f87171';
+    const yrSign   = yrPnl >= 0 ? '+' : '';
+    const yrOpen   = yi === 0;
+    const months   = [...moMap.keys()].sort((a,b) => b.localeCompare(a));
+
+    let monthHtml = '';
+    months.forEach((mo, mi) => {
+      const tkMap    = moMap.get(mo);
+      const allMoTrades = [...tkMap.values()].flat();
+      const moPnl    = allMoTrades.reduce((s,p) => s+(p.realized_pnl||0), 0);
+      const moCol    = moPnl >= 0 ? '#34d399' : '#f87171';
+      const moSign   = moPnl >= 0 ? '+' : '';
+      const moName   = mo !== '00' ? MONTHS[parseInt(mo,10)-1] : 'Unknown';
+      const moOpen   = mi === 0 && yrOpen;
+      const tickers  = [...tkMap.keys()];
+
+      let tickerHtml = '';
+      tickers.forEach((tk, ti) => {
+        const tTrades  = tkMap.get(tk);
+        const tPnl     = tTrades.reduce((s,p) => s+(p.realized_pnl||0), 0);
+        const tInv     = tTrades.reduce((s,p) => s+(p.invested||0), 0);
+        const tPct     = tInv > 0 ? (tPnl/tInv*100) : 0;
+        const tCol     = tPnl >= 0 ? '#34d399' : '#f87171';
+        const tSign    = tPnl >= 0 ? '+' : '';
+        const rep      = tTrades[0];
+        const accts    = [...new Set(tTrades.map(p=>p.account))].map(acctBadge).join(' ');
+        const tkOpen   = ti === 0 && moOpen;
+
+        // Hoist notes to ticker level if all trades share the same value (dedup)
+        const uniqThesis     = [...new Set(tTrades.map(p=>p.thesis||''))];
+        const uniqAntithesis = [...new Set(tTrades.map(p=>p.antithesis||''))];
+        const uniqLessons    = [...new Set(tTrades.map(p=>p.lessons||''))];
+        const commonThesis     = uniqThesis.length === 1     ? uniqThesis[0]     : null;
+        const commonAntithesis = uniqAntithesis.length === 1 ? uniqAntithesis[0] : null;
+        const commonLessons    = uniqLessons.length === 1    ? uniqLessons[0]    : null;
+        const tickerNotes = renderJournalNotes({
+          thesis: commonThesis || '', antithesis: commonAntithesis || '', lessons: commonLessons || ''
+        });
+
+        tickerHtml += `
+          <div class="jt-section" style="margin-bottom:6px">
+            <div onclick="journalToggle(this)" style="display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;user-select:none"
+              onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                <span class="jt-icon" style="font-size:9px;color:var(--text-faint)">${tkOpen?'▼':'▶'}</span>
+                <span style="font-size:13px;font-weight:700;color:var(--text-strong)">${esc(rep.stock_name)}</span>
+                <span style="font-size:10px;color:var(--text-faint)">${esc(tk)}</span>
+                ${accts}
+                ${tTrades.length > 1 ? '<span style="font-size:10px;color:var(--text-faint)">'+tTrades.length+' trades</span>' : ''}
+              </div>
+              <div style="text-align:right;flex-shrink:0">
+                <span style="font-size:13px;font-weight:700;color:${tCol}">${tSign}₹${Math.abs(Math.round(tPnl)).toLocaleString('en-IN')}</span>
+                <span style="font-size:10px;color:${tCol};margin-left:4px">(${tSign}${tPct.toFixed(1)}%)</span>
+              </div>
+            </div>
+            <div class="jt-body" style="display:${tkOpen?'block':'none'};padding:8px 0 0">
+              ${tickerNotes}
+              ${tTrades.map(p => renderTradeDetail(p, commonThesis, commonAntithesis, commonLessons)).join('')}
+            </div>
+          </div>`;
+      });
+
+      monthHtml += `
+        <div class="jt-section" style="margin-bottom:6px;padding-left:12px;border-left:2px solid var(--border)">
+          <div onclick="journalToggle(this)" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--surface2);border-radius:8px;cursor:pointer;user-select:none"
+            onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='var(--surface2)'">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span class="jt-icon" style="font-size:9px;color:var(--text-faint)">${moOpen?'▼':'▶'}</span>
+              <span style="font-size:14px;font-weight:700;color:var(--text-strong)">${moName}</span>
+              <span style="font-size:11px;color:var(--text-faint)">${tickers.length} stock${tickers.length!==1?'s':''} · ${allMoTrades.length} trade${allMoTrades.length!==1?'s':''}</span>
+            </div>
+            <span style="font-size:13px;font-weight:700;color:${moCol}">${moSign}₹${Math.abs(Math.round(moPnl)).toLocaleString('en-IN')}</span>
+          </div>
+          <div class="jt-body" style="display:${moOpen?'block':'none'};padding:8px 0 4px">
+            ${tickerHtml}
+          </div>
+        </div>`;
+    });
+
+    yearHtml += `
+      <div class="jt-section" style="margin-bottom:14px">
+        <div onclick="journalToggle(this)" style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;cursor:pointer;user-select:none"
+          onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='var(--surface2)'">
+          <div style="display:flex;align-items:center;gap:14px">
+            <span class="jt-icon" style="font-size:11px;color:var(--text-faint)">${yrOpen?'▼':'▶'}</span>
+            <span style="font-size:22px;font-weight:900;color:var(--text-strong)">${yr}</span>
+            <span style="font-size:11px;color:var(--text-faint)">${yrTrades} trade${yrTrades!==1?'s':''} · ${months.length} month${months.length!==1?'s':''}</span>
+          </div>
+          <span style="font-size:18px;font-weight:700;color:${yrCol}">${yrSign}₹${Math.abs(Math.round(yrPnl)).toLocaleString('en-IN')}</span>
+        </div>
+        <div class="jt-body" style="display:${yrOpen?'block':'none'};padding:12px 4px 0">
+          ${monthHtml}
+        </div>
+      </div>`;
+  });
+
+  const totalTrades = sold.length;
+  const winners = sold.filter(p => (p.realized_pnl||0) >= 0).length;
 
   return `
-    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px">
-      <div class="card text-center" style="min-width:120px">
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px">
+      <div class="card text-center" style="min-width:130px">
         <div style="font-size:17px;font-weight:700;color:${pnlCol0}">${totalPnl>=0?'+':''}₹${Math.round(Math.abs(totalPnl)).toLocaleString('en-IN')}</div>
         <div class="text-xs t-faint mt-0.5">Total Realised P&L</div>
       </div>
       <div class="card text-center" style="min-width:100px">
-        <div style="font-size:17px;font-weight:700;color:var(--text-strong)">${groups.length}</div>
-        <div class="text-xs t-faint mt-0.5">Stocks Exited</div>
+        <div style="font-size:17px;font-weight:700;color:var(--text-strong)">${totalTrades}</div>
+        <div class="text-xs t-faint mt-0.5">Total Trades</div>
       </div>
       <div class="card text-center" style="min-width:100px">
-        <div style="font-size:17px;font-weight:700;color:#34d399">${winners} / ${groups.length}</div>
+        <div style="font-size:17px;font-weight:700;color:#34d399">${winners} / ${totalTrades}</div>
         <div class="text-xs t-faint mt-0.5">Winners</div>
       </div>
+      <div class="card text-center" style="min-width:80px">
+        <div style="font-size:17px;font-weight:700;color:var(--text-strong)">${years.length}</div>
+        <div class="text-xs t-faint mt-0.5">Year${years.length!==1?'s':''}</div>
+      </div>
     </div>
-    ${cards}`;
+    ${yearHtml}`;
 }
 
 function editJournalEntry(id) {
@@ -4774,7 +4956,7 @@ function getEntryBadges(t) {
     const col = ok ? 'var(--pos)' : 'var(--neg)';
     return `<span class="badge" style="background:${bg};color:${col};font-size:10px">${ok ? '✓' : '✗'} ${lbl}</span>`;
   }).join('');
-  return `<div style="display:flex;gap:3px;flex-wrap:wrap;align-items:center">
+  return `<div style="display:flex;gap:3px;flex-wrap:nowrap;align-items:center;white-space:nowrap">
     <span style="font-size:12px;font-weight:700;color:${scoreColor};margin-right:3px">${score}/${total}</span>${bgs}
     <span style="font-size:10px;color:var(--text-faint);margin-left:2px">ⓘ</span></div>`;
 }
