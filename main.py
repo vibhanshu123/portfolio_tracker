@@ -19,6 +19,9 @@ from routers import (
     scorer,
     payments,
     groups,
+    top_ideas,
+    alpha,
+    tax,
 )
 
 app = FastAPI(title="Portfolio Tracker")
@@ -36,11 +39,19 @@ app.include_router(resources.router)
 app.include_router(scorer.router)
 app.include_router(payments.router)
 app.include_router(groups.router)
+app.include_router(top_ideas.router)
+app.include_router(alpha.router)
+app.include_router(tax.router)
 
 
 @app.get("/", response_class=HTMLResponse)
 def index():
-    return (BASE / "templates" / "index.html").read_text()
+    js   = BASE / "static" / "js" / "app.js"
+    v    = int(js.stat().st_mtime) if js.exists() else 0
+    html = (BASE / "templates" / "index.html").read_text()
+    html = html.replace('/static/js/app.js"',     f'/static/js/app.js?v={v}"')
+    html = html.replace('/static/js/scorer.js"',  f'/static/js/scorer.js?v={v}"')
+    return html
 
 
 @app.get("/api/data")

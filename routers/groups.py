@@ -32,6 +32,7 @@ _DEFAULT_WATCHLIST_GROUPS = [
     {"id": "watchlist",     "name": "India"},
     {"id": "us_watchlist",  "name": "US"},
     {"id": "soic_research", "name": "SOIC Research"},
+    {"id": "top_ideas",     "name": "Top Ideas"},
 ]
 
 

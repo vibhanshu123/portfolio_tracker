@@ -20,13 +20,18 @@ let currentTab = 'consolidated';
 let NUMBERS_VISIBLE = false;
 document.body.classList.add('numbers-hidden');
 let sortKey = null, sortDir = -1;
-let currentIndianTab   = 'vibhanshu';
-let currentUSTab       = 'us_consolidated';
+let currentIndianTab    = 'vibhanshu';
+let currentUSTab        = 'us_consolidated';
 let currentWatchlistTab = 'watchlist';
+let currentRegion       = 'indian'; // 'indian' | 'us'
 let allocMode = 'current'; // 'current' = by market value, 'invested' = by cost basis
 let iyerExpanded = false;
 let analysisJobs = {};
 let analysisPollers = {};
+let alphaData = null;
+let _alphaPoller = null;
+let taxData = null;
+let taxFY = null;
 
 const ACCT_LABELS = {
   vibhanshu: 'Vibhanshu', manjari: 'Manjari', huf: 'HUF',
@@ -204,8 +209,10 @@ function _wlIds() {
 }
 
 function switchTab(tab) {
-  if (_INDIAN_ACCOUNTS.includes(tab)) { currentIndianTab = tab;   tab = 'indian';    }
-  if (_usAccounts().includes(tab))    { currentUSTab = tab; tab = 'us'; }
+  if (_INDIAN_ACCOUNTS.includes(tab)) { currentIndianTab = tab; currentRegion = 'indian'; tab = 'portfolio'; }
+  if (_usAccounts().includes(tab))    { currentUSTab = tab;     currentRegion = 'us';     tab = 'portfolio'; }
+  if (tab === 'indian')               { currentRegion = 'indian'; tab = 'portfolio'; }
+  if (tab === 'us')                   { currentRegion = 'us';     tab = 'portfolio'; }
   if (_wlIds().includes(tab) && tab !== 'watchlist') { currentWatchlistTab = tab; tab = 'watchlist'; }
   if (tab === 'us_watchlist') { currentWatchlistTab = 'us_watchlist'; tab = 'watchlist'; }
   currentTab = tab;
@@ -213,7 +220,9 @@ function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(b =>
     b.classList.toggle('active', b.dataset.tab === tab)
   );
-  renderTab();
+  if (tab === 'alpha' && !alphaData) loadAlpha().then(() => renderTab());
+  else if (tab === 'tax' && !taxData) loadTax().then(() => renderTab());
+  else renderTab();
 }
 
 function toggleIyerCol() {
@@ -374,13 +383,17 @@ function renderTab() {
   el.style.animation = '';
   if (currentTab === 'watchlist')         { el.innerHTML = renderWatchlistHub();     return; }
   if (currentTab === 'sectors')           { el.innerHTML = renderSectors();          return; }
-  if (currentTab === 'us')               { el.innerHTML = renderUSTab();             _animateRows(); return; }
+  if (currentTab === 'portfolio')         { el.innerHTML = renderPortfolioTab();     _animateRows(); return; }
+  // legacy deep-links still work
+  if (currentTab === 'us')               { currentTab = 'portfolio'; currentRegion = 'us';     el.innerHTML = renderPortfolioTab(); _animateRows(); return; }
+  if (currentTab === 'indian')           { currentTab = 'portfolio'; currentRegion = 'indian'; el.innerHTML = renderPortfolioTab(); _animateRows(); return; }
   if (currentTab === 'aif')              { el.innerHTML = renderAIF();              return; }
   if (currentTab === 'other_assets')     { el.innerHTML = renderOtherAssets();      return; }
   if (currentTab === 'cash')             { el.innerHTML = renderCash();             return; }
   if (currentTab === 'journal')          { el.innerHTML = renderJournal();          return; }
+  if (currentTab === 'alpha')            { el.innerHTML = renderAlpha();           return; }
+  if (currentTab === 'tax')             { el.innerHTML = renderTax();             return; }
   if (currentTab === 'market_dashboards'){ el.innerHTML = renderMarketDashboards(); return; }
-  if (currentTab === 'indian')           { el.innerHTML = renderIndianTab();        _animateRows(); return; }
 
   let positions;
   if (currentTab === 'consolidated') positions = state.positions.filter(p => INR_ACCTS.includes(p.account));
@@ -414,7 +427,29 @@ function _subTabBar(tabs, activeId, onSwitch, onAdd, onRename, onDelete) {
   </div>`;
 }
 
-function renderIndianTab() {
+// ─── Portfolio hub: region pill + nested account tabs ────────────────────────
+function switchRegion(region) {
+  currentRegion = region;
+  renderTab();
+}
+
+function renderPortfolioTab() {
+  const regionBar = `
+    <div class="region-switcher">
+      <button class="region-pill${currentRegion === 'indian' ? ' active' : ''}"
+              onclick="switchRegion('indian')">🇮🇳 India</button>
+      <button class="region-pill${currentRegion === 'us' ? ' active' : ''}"
+              onclick="switchRegion('us')">🇺🇸 US</button>
+    </div>`;
+
+  if (currentRegion === 'us') return regionBar + _renderUSTabContent();
+  return regionBar + _renderIndianTabContent();
+}
+
+function renderIndianTab() { return _renderIndianTabContent(); }
+function renderUSTab()    { return _renderUSTabContent(); }
+
+function _renderIndianTabContent() {
   const tabs = state.settings?.portfolio_groups?.indian || _INDIAN_SUB_TABS.map(t => ({id:t.id, name:t.label}));
   const bar  = _subTabBar(tabs, currentIndianTab, 'switchIndianTab', 'openAddPortfolioModal_indian', 'openRenamePortfolioModal_indian', 'openDeletePortfolioModal_indian');
 
@@ -425,7 +460,7 @@ function renderIndianTab() {
   return bar + renderSummaryCards(positions, currentIndianTab) + renderTable(positions, currentIndianTab);
 }
 
-function renderUSTab() {
+function _renderUSTabContent() {
   const portfolios = state.settings?.portfolio_groups?.us || [
     {id:'us_vibhanshu', name:'Vibhanshu'}, {id:'us_manjari', name:'Manjari'}, {id:'us_huf', name:'HUF'}
   ];
@@ -465,6 +500,7 @@ function renderWatchlistHub() {
   const bar = _subTabBar(groups, currentWatchlistTab, 'switchWatchlistTab', 'openAddWatchlistModal', 'openRenameWatchlistModal', 'openDeleteWatchlistModal');
 
   if (currentWatchlistTab === 'us_watchlist') return bar + renderUSWatchlist();
+  if (currentWatchlistTab === 'top_ideas')   return bar + renderTopIdeas();
   // For built-in 'watchlist' or any custom watchlist stored under that key
   return bar + renderWatchlistById(currentWatchlistTab);
 }
@@ -485,6 +521,285 @@ function renderWatchlistById(id) {
   const html = renderWatchlist(id, addBtn);
   state.watchlist = saved;
   return html;
+}
+
+// ─── Top Ideas (stockscans.in proxy) ────────────────────────────────────────
+// All company data is persisted server-side (data.json). This state is only
+// in-memory; on first tab visit we load from cache, never from stockscans.in.
+let _topIdeasState = {
+  // null = not yet loaded from server cache; [] = loaded (may be empty)
+  companies:      null,
+  fetchedAt:      null,   // ISO string from server
+  loggedIn:       null,   // null = unknown
+  includePopular: true,
+  loading:        false,
+  refreshing:     false,  // true only when hitting stockscans.in
+  error:          null,
+  sort: { col: 'Scans', dir: 'desc' },
+};
+
+function renderTopIdeas() {
+  // First visit: load status + cached data from server (no external call)
+  if (_topIdeasState.loggedIn === null && !_topIdeasState.loading) {
+    _topIdeasInit();
+    return `<div class="ti-wrap"><div class="t-faint text-center py-12">Loading…</div></div>`;
+  }
+  if (_topIdeasState.loading) {
+    return `<div class="ti-wrap"><div class="t-faint text-center py-12">Loading…</div></div>`;
+  }
+
+  // Show cached data even when logged out — just hide the refresh controls
+  const hasCached = _topIdeasState.companies !== null && _topIdeasState.companies.length > 0;
+
+  // If no cache and not logged in: show login
+  if (!hasCached && !_topIdeasState.loggedIn) return _renderTopIdeasLogin();
+
+  // If logged out but have cached data: show table + re-login prompt
+  return _renderTopIdeasTable();
+}
+
+function _renderTopIdeasLogin(showAbove = false) {
+  const loginHtml = `
+  <div class="ti-login-card${showAbove ? ' ti-login-inline' : ''}">
+    <div class="ti-login-title">Sign in to stockscans.in</div>
+    <div class="ti-login-sub">Credentials sent only to stockscans.in — never stored here.</div>
+    <div class="ti-login-form">
+      <input id="ti-email" type="email" class="ti-input" placeholder="Email" autocomplete="email"/>
+      <input id="ti-pass"  type="password" class="ti-input" placeholder="Password" autocomplete="current-password"/>
+      <div id="ti-login-err" class="ti-err" style="display:none"></div>
+      <button class="btn btn-blue ti-login-btn" onclick="_topIdeasLogin()">Sign in</button>
+    </div>
+  </div>`;
+  if (showAbove) return loginHtml;
+  return `<div class="ti-wrap">${loginHtml}</div>`;
+}
+
+function _fmtFetchedAt(iso) {
+  if (!iso) return null;
+  try {
+    const d = new Date(iso);
+    return d.toLocaleString('en-IN', {
+      day: '2-digit', month: 'short', year: 'numeric',
+      hour: '2-digit', minute: '2-digit', hour12: true,
+    });
+  } catch { return iso; }
+}
+
+function _renderTopIdeasTable() {
+  const cos = _topIdeasState.companies || [];
+  const { col, dir } = _topIdeasState.sort;
+
+  const sorted = [...cos].sort((a, b) => {
+    let va = a[col], vb = b[col];
+    if (col === 'Name' || col === 'Industry') {
+      va = (va || '').toLowerCase(); vb = (vb || '').toLowerCase();
+      return dir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+    }
+    va = va ?? 0; vb = vb ?? 0;
+    return dir === 'asc' ? va - vb : vb - va;
+  });
+
+  const th = (label, key) => {
+    const active = col === key;
+    const arrow  = active ? (dir === 'asc' ? ' ↑' : ' ↓') : '';
+    return `<th class="tbl-th${active ? ' ti-th-active' : ''}" onclick="_topIdeasSort('${key}')"
+              style="cursor:pointer;white-space:nowrap">${label}${arrow}</th>`;
+  };
+
+  const fmtNum = (v, dec=0) => v == null ? '—' : Number(v).toLocaleString('en-IN', {maximumFractionDigits: dec});
+  const fmtPct = v => v == null ? '—' : `<span style="color:${v>=0?'#34d399':'#f87171'}">${v>=0?'+':''}${Number(v).toFixed(2)}%</span>`;
+
+  const rows = sorted.map(c => {
+    const [exch, sym] = (c.companyId || ':').split(':');
+    const exchBadge = `<span class="ti-exch-badge ti-exch-${(exch||'').toLowerCase()}">${esc(exch||'')}</span>`;
+    const scLink = `https://www.stockscans.in/company/${encodeURIComponent(c.companyId||'')}`;
+    return `<tr class="tbl-row">
+      <td class="tbl-td">
+        <a href="${scLink}" target="_blank" rel="noopener" class="ti-name-link">
+          <div class="ti-name">${esc(c.Name||'')}</div>
+          <div class="ti-sym">${exchBadge} ${esc(sym||c.companyId||'')}</div>
+        </a>
+      </td>
+      <td class="tbl-td t-faint text-xs">${esc(c.Industry||'—')}</td>
+      <td class="tbl-td text-right font-mono text-xs">₹${fmtNum(c['Close Price'], 2)}</td>
+      <td class="tbl-td text-right font-mono text-xs">${fmtPct(c['Returns 1D'])}</td>
+      <td class="tbl-td text-right font-mono text-xs">${fmtPct(c['Returns 1W'])}</td>
+      <td class="tbl-td text-right font-mono text-xs">${fmtNum(c['Market Capitalization'], 0)} Cr</td>
+      <td class="tbl-td text-right">
+        <span class="ti-scans-badge">${c.Scans ?? '—'}</span>
+      </td>
+    </tr>`;
+  }).join('');
+
+  const toggleLabel = _topIdeasState.includePopular ? 'Hide Popular Scans' : 'Include Popular Scans';
+  const fetchedStr  = _fmtFetchedAt(_topIdeasState.fetchedAt);
+  const tsHtml      = fetchedStr
+    ? `<span class="ti-fetched-at">Data as of ${fetchedStr}</span>`
+    : `<span class="ti-fetched-at t-faint">Never refreshed</span>`;
+  const refreshing  = _topIdeasState.refreshing;
+
+  const toolbarRight = _topIdeasState.loggedIn
+    ? `<button class="btn btn-sm" onclick="_topIdeasTogglePopular()" ${refreshing?'disabled':''}>
+         ${toggleLabel}
+       </button>
+       <button class="btn btn-sm${refreshing?' ti-refreshing':''}" onclick="_topIdeasRefresh()" ${refreshing?'disabled':''}>
+         ${refreshing ? '↺ Refreshing…' : '↺ Refresh'}
+       </button>
+       <button class="btn btn-sm ti-logout-btn" onclick="_topIdeasLogout()">Log out</button>`
+    : `<button class="btn btn-sm btn-blue" onclick="_topIdeasShowLogin()">Log in to refresh</button>`;
+
+  const loginModal = _topIdeasState._showLogin ? _renderTopIdeasLogin(true) : '';
+  const errHtml = _topIdeasState.error
+    ? `<div class="ti-error">${esc(_topIdeasState.error)}
+         <button class="btn btn-sm ml-3" onclick="_topIdeasRefresh()">Retry</button>
+       </div>`
+    : '';
+
+  const emptyHtml = !cos.length
+    ? `<div class="t-faint text-center py-8">No companies in cache. Click Refresh to load.</div>`
+    : '';
+
+  return `
+  <div class="ti-wrap">
+    ${loginModal}
+    ${errHtml}
+    <div class="ti-toolbar">
+      <div class="ti-toolbar-left">
+        ${tsHtml}
+        ${cos.length ? `<span class="ti-count">${cos.length} companies</span>` : ''}
+      </div>
+      <div class="ti-toolbar-right">${toolbarRight}</div>
+    </div>
+    ${emptyHtml}
+    ${cos.length ? `
+    <div class="tbl-scroll">
+      <table class="tbl">
+        <thead><tr>
+          ${th('Company', 'Name')}
+          ${th('Industry', 'Industry')}
+          ${th('CMP', 'Close Price')}
+          ${th('1D %', 'Returns 1D')}
+          ${th('1W %', 'Returns 1W')}
+          ${th('Mkt Cap', 'Market Capitalization')}
+          ${th('Scans', 'Scans')}
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>` : ''}
+  </div>`;
+}
+
+// Load status + cached data in one shot (no stockscans.in call)
+async function _topIdeasInit() {
+  _topIdeasState.loading = true;
+  try {
+    const [statusRes, dataRes] = await Promise.all([
+      fetch('/api/top-ideas/status'),
+      fetch('/api/top-ideas/data'),
+    ]);
+    const status = await statusRes.json();
+    const cache  = await dataRes.json();
+    _topIdeasState.loggedIn       = status.logged_in;
+    _topIdeasState.companies      = cache.companies || [];
+    _topIdeasState.fetchedAt      = cache.fetched_at || null;
+    _topIdeasState.includePopular = cache.include_popular ?? true;
+  } catch(e) {
+    _topIdeasState.loggedIn  = false;
+    _topIdeasState.companies = [];
+  }
+  _topIdeasState.loading = false;
+  renderTab();
+}
+
+async function _topIdeasLogin() {
+  const email = document.getElementById('ti-email')?.value.trim();
+  const pass  = document.getElementById('ti-pass')?.value;
+  const errEl = document.getElementById('ti-login-err');
+  if (!email || !pass) {
+    if (errEl) { errEl.textContent = 'Email and password required'; errEl.style.display = ''; }
+    return;
+  }
+  const btn = document.querySelector('.ti-login-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Signing in…'; }
+  if (errEl) errEl.style.display = 'none';
+
+  try {
+    const r = await fetch('/api/top-ideas/login', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({email, password: pass}),
+    });
+    if (r.ok) {
+      _topIdeasState.loggedIn   = true;
+      _topIdeasState._showLogin = false;
+      _topIdeasState.error      = null;
+      renderTab();
+    } else {
+      const j = await r.json().catch(() => ({}));
+      if (errEl) { errEl.textContent = j.detail || 'Login failed'; errEl.style.display = ''; }
+      if (btn) { btn.disabled = false; btn.textContent = 'Sign in'; }
+    }
+  } catch(e) {
+    if (errEl) { errEl.textContent = 'Network error'; errEl.style.display = ''; }
+    if (btn) { btn.disabled = false; btn.textContent = 'Sign in'; }
+  }
+}
+
+// Only called when user clicks Refresh — actually hits stockscans.in
+async function _topIdeasRefresh() {
+  if (_topIdeasState.refreshing) return;
+  _topIdeasState.refreshing = true;
+  _topIdeasState.error      = null;
+  renderTab();
+  try {
+    const r = await fetch('/api/top-ideas/refresh', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({includePopular: _topIdeasState.includePopular}),
+    });
+    if (r.status === 401) {
+      _topIdeasState.loggedIn = false;
+      _topIdeasState.error    = 'Session expired — please log in again';
+    } else if (r.ok) {
+      const j = await r.json();
+      _topIdeasState.companies = j.companies || [];
+      _topIdeasState.fetchedAt = j.fetched_at || null;
+    } else {
+      const j = await r.json().catch(() => ({}));
+      _topIdeasState.error = j.detail || 'Refresh failed';
+    }
+  } catch(e) {
+    _topIdeasState.error = 'Network error — please try again';
+  }
+  _topIdeasState.refreshing = false;
+  renderTab();
+}
+
+async function _topIdeasLogout() {
+  await fetch('/api/top-ideas/logout', {method:'POST'}).catch(()=>{});
+  _topIdeasState.loggedIn   = false;
+  _topIdeasState._showLogin = false;
+  // Keep companies + fetchedAt so cached data stays visible
+  renderTab();
+}
+
+function _topIdeasShowLogin() {
+  _topIdeasState._showLogin = !_topIdeasState._showLogin;
+  renderTab();
+}
+
+function _topIdeasSort(col) {
+  if (_topIdeasState.sort.col === col) {
+    _topIdeasState.sort.dir = _topIdeasState.sort.dir === 'asc' ? 'desc' : 'asc';
+  } else {
+    _topIdeasState.sort = { col, dir: col === 'Name' || col === 'Industry' ? 'asc' : 'desc' };
+  }
+  renderTab();
+}
+
+function _topIdeasTogglePopular() {
+  _topIdeasState.includePopular = !_topIdeasState.includePopular;
+  _topIdeasRefresh();
 }
 
 // ─── Capital Transferred card + timeline ─────────────────────────────────────
@@ -828,7 +1143,7 @@ function renderTable(positions, tab) {
         >${esc(p.stock_name)}</a>
         <div style="font-size:10px" class="t-faint">${esc(p.ticker)}</div>
         ${p.conviction ? `<div style="font-size:10px" class="t-yellow">⭐ ${p.conviction}</div>` : ''}
-        ${!isUS ? (function(){
+        ${!isUSCon ? (function(){
           const tc = (p.trades||[]).length;
           const ac = (p._accounts||[]).length;
           const lbl = tc + ' trade' + (tc !== 1 ? 's' : '') + (ac > 1 ? ' (' + ac + ' accts)' : '');
@@ -878,9 +1193,9 @@ function renderTable(positions, tab) {
         </div>
       </td>
     </tr>
-    ${!isUS ? `<tr id="trades-row-${p.id}" style="display:none">
+    ${!isUSCon ? `<tr id="trades-row-${p.id}" style="display:none">
       <td colspan="20" style="padding:0 0 0 24px;background:var(--bg2);border-bottom:1px solid var(--border)">
-        ${renderTradesPanel(p, isCon || isUSCon)}
+        ${renderTradesPanel(p, isCon || isUSCon, isUS)}
       </td>
     </tr>` : ''}
     ${isCon ? `<tr id="sig-row-${p.id}" style="display:none">
@@ -1073,7 +1388,7 @@ function renderUSCapitalSection(portfolioVal, accountKeys) {
   const accounts = portfolios
     .filter(p => !accountKeys || accountKeys.includes(p.id))
     .map(p => ({ key: p.id, label: p.name }))
-    .filter(a => (ct[a.key] || []).length > 0 || !accountKeys); // in individual view, show even if empty
+    .filter(a => (ct[a.key] || []).length > 0 || (accountKeys && accountKeys.length === 1)); // always show card in individual tab so user can add first entry
 
   const cards = accounts.map(({ key, label }) => {
     const entries   = ct[key] || [];
@@ -1129,6 +1444,8 @@ function renderUSCapitalSection(portfolioVal, accountKeys) {
         </div>
       </div>`;
 
+    // For accounts with no entries yet, start the timeline open so the add button is immediately visible
+    const timelineOpen = entries.length === 0;
     return `<div class="card" style="flex:1;min-width:260px;border-color:#a78bfa44">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
         <span style="font-size:12px;font-weight:600;color:var(--text-strong)">${label}</span>
@@ -1142,8 +1459,8 @@ function renderUSCapitalSection(portfolioVal, accountKeys) {
                     - entries.filter(e=>e.type==='withdrawal').reduce((a,e)=>a+(e.amount*(e.rate||usdR)),0);
         return inrEq > 0 ? `<div style="font-size:11px;color:#a78bfa;font-weight:600">≈ ₹${Math.round(inrEq).toLocaleString('en-IN')}</div>` : '';
       })()}
-      <div id="capital-timeline-${key}" style="display:none;margin-top:8px">
-        ${timelineRows || '<div style="font-size:10px;color:var(--text-faint);padding:4px 0">No entries yet</div>'}
+      <div id="capital-timeline-${key}" style="display:${timelineOpen?'block':'none'};margin-top:8px">
+        ${timelineRows || '<div style="font-size:10px;color:var(--text-faint);padding:4px 0">No remittances yet</div>'}
         <button onclick="openCapitalAdd('${key}')" style="margin-top:6px;width:100%;background:var(--accent)11;border:1px dashed var(--accent)55;color:var(--accent);border-radius:4px;padding:3px 0;font-size:11px;cursor:pointer">+ Add remittance</button>
         ${addForm}
       </div>
@@ -2991,7 +3308,7 @@ function openAdd(account) {
   const ACCT_TABS = ['vibhanshu','manjari','huf','manjbhawna','us_vibhanshu','us_manjari','us_huf'];
   const resolved = account
     || (ACCT_TABS.includes(currentTab) ? currentTab : null)
-    || (currentTab === 'us' ? 'us_vibhanshu' : 'vibhanshu');
+    || (currentRegion === 'us' ? 'us_vibhanshu' : 'vibhanshu');
   document.getElementById('f-account').value = resolved;
   document.getElementById('modal').classList.remove('hidden');
 }
@@ -3146,8 +3463,12 @@ function toggleTradesRow(posId) {
   if (row) row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
 }
 
-function renderTradesPanel(p, isCon) {
+function renderTradesPanel(p, isCon, isUS) {
   const trades = p.trades || [];
+  const cur = isUS ? '$' : '₹';
+  const fmtPrice = isUS
+    ? v => '$' + (v||0).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})
+    : v => '₹' + (v||0).toLocaleString('en-IN');
   const ACCT_COLOURS = { vibhanshu:'#6366f1', manjari:'#ec4899', huf:'#f59e0b',
                          manjbhawna:'#14b8a6', us_vibhanshu:'#3b82f6', us_manjari:'#8b5cf6', us_huf:'#10b981' };
   const rows = trades.map(function(t) {
@@ -3168,12 +3489,13 @@ function renderTradesPanel(p, isCon) {
       '<span class="t-faint" style="width:88px">' + (t.date || '—') + '</span>' +
       badge +
       '<span style="width:62px">' + t.qty + ' shares</span>' +
-      '<span style="width:82px">@ ₹' + (t.price||0).toLocaleString('en-IN') + '</span>' +
+      '<span style="width:82px">@ ' + fmtPrice(t.price) + '</span>' +
       '<span class="t-faint">' + (t.note ? esc(t.note) : '') + '</span>' +
       delBtn +
       '</div>';
   }).join('');
 
+  const pricePlaceholder = isUS ? 'Price ($)' : 'Price (₹)';
   const addForm = isCon
     ? '<div style="font-size:11px;color:var(--text-faint);padding:6px 0;margin-top:4px">Go to the individual account tab to add trades.</div>'
     : '<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">' +
@@ -3182,7 +3504,7 @@ function renderTradesPanel(p, isCon) {
           '<option value="sell">↑ Sell</option>' +
         '</select>' +
         '<input id="trade-qty-' + p.id + '" type="number" placeholder="Qty" min="0" style="width:70px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:3px 6px;font-size:11px;color:var(--text-strong)">' +
-        '<input id="trade-price-' + p.id + '" type="number" placeholder="Price" min="0" style="width:80px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:3px 6px;font-size:11px;color:var(--text-strong)">' +
+        '<input id="trade-price-' + p.id + '" type="number" placeholder="' + pricePlaceholder + '" min="0" style="width:90px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:3px 6px;font-size:11px;color:var(--text-strong)">' +
         '<input id="trade-date-' + p.id + '" type="date" style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:3px 6px;font-size:11px;color:var(--text-strong)">' +
         '<input id="trade-note-' + p.id + '" type="text" placeholder="Note (optional)" style="flex:1;min-width:100px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:3px 6px;font-size:11px;color:var(--text-strong)">' +
         '<button onclick="addTrade(\'' + p.id + '\')" style="background:var(--accent)22;border:1px solid var(--accent)55;color:var(--accent);border-radius:4px;padding:3px 10px;font-size:11px;font-weight:600;cursor:pointer">+ Log</button>' +
@@ -3695,6 +4017,452 @@ async function refreshStockScans() {
   }
 }
 
+// ─── Tax P&L ──────────────────────────────────────────────────────────────────
+
+async function loadTax(fy) {
+  try {
+    const url = '/api/tax' + (fy ? `?fy=${fy}` : '');
+    const res = await fetch(url);
+    taxData = await res.json();
+    taxFY   = taxData.fy;
+  } catch(e) {
+    taxData = null;
+  }
+}
+
+function taxNavFY(fy) { loadTax(fy).then(() => renderTab()); }
+
+function renderTax() {
+  const d = taxData;
+  const INR = v => '₹' + Math.abs(Math.round(v)).toLocaleString('en-IN');
+  const pct = v => (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
+  const clr = v => v >= 0 ? 'var(--pos)' : 'var(--neg)';
+  const etfBadge = `<span style="font-size:9px;font-weight:700;color:#8b5cf6;background:#8b5cf622;padding:1px 5px;border-radius:3px;margin-left:4px">ETF</span>`;
+
+  // FY selector — arrow navigation
+  const curFY = taxData?.fy || (new Date().getMonth() >= 3 ? new Date().getFullYear() + 1 : new Date().getFullYear());
+  const fy = taxFY || curFY;
+  const fyBtn = (y, label, active, disabled) => {
+    const base = 'padding:4px 10px;background:none;border:none;font-size:13px;';
+    if (disabled) return `<button disabled style="${base}cursor:default;color:var(--border)">${label}</button>`;
+    return `<button onclick="taxNavFY(${y})" style="${base}cursor:pointer;font-weight:${active?'800':'500'};`
+      + `color:${active?'var(--accent)':'var(--text-muted)'};`
+      + `border-bottom:${active?'2px solid var(--accent)':'2px solid transparent'}">${label}</button>`;
+  };
+  const fyOpts = fyBtn(fy - 1, '‹', false, false)
+    + [fy - 1, fy, fy + 1].filter(y => y >= 2020 && y <= curFY).map(y =>
+        fyBtn(y, `FY${String(y).slice(2)}`, y === fy, false)
+      ).join('')
+    + fyBtn(fy + 1, '›', false, fy >= curFY);
+
+  const hdr = `
+  <div style="padding:20px;max-width:1100px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div style="font-size:16px;font-weight:700;color:var(--text-strong)">Tax P&L — Capital Gains</div>
+      <div>${fyOpts}</div>
+    </div>
+    <div style="font-size:11px;color:var(--text-faint);margin-bottom:24px">
+      Post Budget 2024 · Equity STCG 20% · ETF STCG 30% (slab) · LTCG 12.5% above ₹1.25L · INR only
+    </div>`;
+
+  if (!d) return hdr + `<div style="color:var(--text-faint);padding:40px 0;text-align:center">Loading…</div></div>`;
+
+  const r   = d.realized;
+  const seq = r.stcg_equity;
+  const set = r.stcg_etf;
+  const lt  = r.ltcg;
+  const uk  = r.unknown;
+
+  // Summary cards
+  const summaryCard = (label, net, tax, sub) => {
+    const nc = clr(net);
+    return `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 20px;flex:1;min-width:160px">
+      <div style="font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">${label}</div>
+      <div style="font-size:22px;font-weight:800;color:${nc};margin-bottom:4px">${net >= 0 ? '' : '-'}${INR(net)}</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px">${sub}</div>
+      <div style="border-top:1px solid var(--border);padding-top:8px">
+        <div style="font-size:13px;font-weight:700;color:var(--neg)">Est. tax: ${INR(tax)}</div>
+      </div>
+    </div>`;
+  };
+
+  const totalCard = `
+  <div style="background:var(--accent-dim);border:2px solid var(--accent);border-radius:10px;padding:16px 20px;flex:1;min-width:160px">
+    <div style="font-size:10px;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Total Estimated Tax</div>
+    <div style="font-size:26px;font-weight:900;color:var(--accent)">${INR(d.total_tax_estimate)}</div>
+    <div style="font-size:10px;color:var(--text-faint);margin-top:6px">${d.fy_label} · ${d.fy_start} → ${d.fy_end}</div>
+  </div>`;
+
+  const cards = `<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:28px">
+    ${seq.count > 0 ? summaryCard(`Equity STCG (${seq.count})`, seq.net, seq.tax, `20% rate`) : ''}
+    ${set.count > 0 ? summaryCard(`ETF STCG (${set.count})`, set.net, set.tax, `30% slab rate`) : ''}
+    ${lt.count  > 0 ? summaryCard(`LTCG (${lt.count})`, lt.net, lt.tax, `12.5% · ₹1.25L exempt`) : ''}
+    ${uk.count  > 0 ? summaryCard(`Unknown (${uk.count})`, uk.pnl, 0, 'No buy date') : ''}
+    ${totalCard}
+  </div>`;
+
+  // STCG detail rows (equity + ETF side by side if both present)
+  const stcgRows = [];
+  if (seq.count > 0) stcgRows.push({ label: 'Equity STCG', gains: seq.gains, losses: seq.losses, net: seq.net, rate: '20%' });
+  if (set.count > 0) stcgRows.push({ label: 'ETF STCG', gains: set.gains, losses: set.losses, net: set.net, rate: '30%' });
+
+  const stcgDetail = stcgRows.length === 0 ? '' : `
+  <div style="margin-bottom:24px">
+    ${stcgRows.map(row => `
+    <div style="display:grid;grid-template-columns:140px 1fr 1fr 1fr;gap:8px;margin-bottom:8px;font-size:12px;align-items:center">
+      <div style="color:var(--text-muted);font-size:11px;font-weight:600">${row.label} <span style="color:var(--text-faint)">(${row.rate})</span></div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px">
+        <div style="color:var(--text-faint);font-size:9px;margin-bottom:3px">GAINS</div>
+        <div style="color:var(--pos);font-weight:700">${INR(row.gains)}</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px">
+        <div style="color:var(--text-faint);font-size:9px;margin-bottom:3px">LOSSES</div>
+        <div style="color:var(--neg);font-weight:700">−${INR(row.losses)}</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px">
+        <div style="color:var(--text-faint);font-size:9px;margin-bottom:3px">NET TAXABLE</div>
+        <div style="color:${clr(row.net)};font-weight:700">${INR(row.net)}</div>
+      </div>
+    </div>`).join('')}
+  </div>`;
+
+  const ltcgDetail = lt.count > 0 ? `
+  <div style="display:grid;grid-template-columns:140px 1fr 1fr 1fr 1fr;gap:8px;margin-bottom:28px;font-size:12px;align-items:center">
+    <div style="color:var(--text-muted);font-size:11px;font-weight:600">LTCG <span style="color:var(--text-faint)">(12.5%)</span></div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px">
+      <div style="color:var(--text-faint);font-size:9px;margin-bottom:3px">GAINS</div>
+      <div style="color:var(--pos);font-weight:700">${INR(lt.gains)}</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px">
+      <div style="color:var(--text-faint);font-size:9px;margin-bottom:3px">LOSSES</div>
+      <div style="color:var(--neg);font-weight:700">−${INR(lt.losses)}</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px">
+      <div style="color:var(--text-faint);font-size:9px;margin-bottom:3px">EXEMPT ₹1.25L</div>
+      <div style="color:var(--text-muted);font-weight:700">−${INR(Math.min(lt.exempt, Math.max(0, lt.net)))}</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px">
+      <div style="color:var(--text-faint);font-size:9px;margin-bottom:3px">TAXABLE</div>
+      <div style="color:${lt.taxable > 0 ? 'var(--neg)' : 'var(--pos)'};font-weight:700">${INR(lt.taxable)}</div>
+    </div>
+  </div>` : '';
+
+  // LTCG Countdown
+  const countdown = d.ltcg_countdown || [];
+  const countdownHtml = countdown.length === 0 ? '' : `
+  <div style="margin-bottom:28px">
+    <div style="font-size:13px;font-weight:700;color:var(--text-strong);margin-bottom:4px">⏳ LTCG Countdown — Hold to Save Tax</div>
+    <div style="font-size:11px;color:var(--text-faint);margin-bottom:12px">Active positions with unrealized gains not yet past the 12-month LTCG threshold</div>
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead>
+          <tr style="border-bottom:2px solid var(--border)">
+            <th style="padding:8px 12px;text-align:left;font-size:11px;color:var(--text-faint);font-weight:600;text-transform:uppercase">Stock</th>
+            <th style="padding:8px 12px;text-align:right;font-size:11px;color:var(--text-faint);font-weight:600">Days Left</th>
+            <th style="padding:8px 12px;text-align:right;font-size:11px;color:var(--text-faint);font-weight:600">LTCG Date</th>
+            <th style="padding:8px 12px;text-align:right;font-size:11px;color:var(--text-faint);font-weight:600">Unrealised Gain</th>
+            <th style="padding:8px 12px;text-align:right;font-size:11px;color:var(--text-faint);font-weight:600">STCG Rate</th>
+            <th style="padding:8px 12px;text-align:right;font-size:11px;color:var(--text-faint);font-weight:600">Tax if Sold Now</th>
+            <th style="padding:8px 12px;text-align:right;font-size:11px;color:var(--text-faint);font-weight:600">Tax if Waited</th>
+            <th style="padding:8px 12px;text-align:right;font-size:11px;color:var(--text-faint);font-weight:600">Tax Saving</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${countdown.map(c => {
+            const urgency = c.days_until_ltcg <= 30 ? 'var(--neg)' : c.days_until_ltcg <= 90 ? '#f59e0b' : 'var(--text-muted)';
+            const rateStr = c.is_etf ? '30% (ETF)' : '20%';
+            return `<tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:8px 12px">
+                <div style="font-weight:600;color:var(--text-strong)">${esc(c.stock_name)}${c.is_etf ? etfBadge : ''}</div>
+                <div style="font-size:10px;color:var(--text-faint)">${esc(c.ticker)} · ${c.account} · ${c.holding_days}d held</div>
+              </td>
+              <td style="padding:8px 12px;text-align:right;font-weight:700;color:${urgency}">${c.days_until_ltcg}d</td>
+              <td style="padding:8px 12px;text-align:right;color:var(--text-muted);font-size:11px">${c.ltcg_date}</td>
+              <td style="padding:8px 12px;text-align:right;color:var(--pos);font-weight:600">${INR(c.unrealized_pnl)} <span style="font-size:10px">(${pct(c.unrealized_pct)})</span></td>
+              <td style="padding:8px 12px;text-align:right;font-size:11px;color:var(--text-muted)">${rateStr}</td>
+              <td style="padding:8px 12px;text-align:right;color:var(--neg)">${INR(c.tax_if_sold_now)}</td>
+              <td style="padding:8px 12px;text-align:right;color:var(--text-muted)">${INR(c.tax_if_waited)}</td>
+              <td style="padding:8px 12px;text-align:right;font-weight:700;color:var(--pos)">${INR(c.tax_saving)}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+
+  // Harvesting candidates
+  const harv = d.harvesting_candidates || [];
+  const harvHtml = harv.length === 0 ? '' : `
+  <div style="margin-bottom:28px">
+    <div style="font-size:13px;font-weight:700;color:var(--text-strong);margin-bottom:4px">🌾 Tax-Loss Harvesting Candidates</div>
+    <div style="font-size:11px;color:var(--text-faint);margin-bottom:12px">Book these losses to offset gains and reduce tax liability</div>
+    <div style="display:flex;flex-wrap:wrap;gap:10px">
+      ${harv.map(h => {
+        const rateStr = h.type === 'LTCG' ? '12.5%' : (h.is_etf ? '30%' : '20%');
+        return `
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 16px;min-width:220px">
+          <div style="font-weight:600;color:var(--text-strong);margin-bottom:2px">${esc(h.stock_name)}${h.is_etf ? etfBadge : ''}</div>
+          <div style="font-size:10px;color:var(--text-faint);margin-bottom:8px">${h.account} · ${h.type} (${rateStr}) · ${h.holding_days}d</div>
+          <div style="font-size:13px;color:var(--neg);font-weight:700;margin-bottom:2px">−${INR(Math.abs(h.unrealized_pnl))} <span style="font-size:10px">(${pct(h.unrealized_pct)})</span></div>
+          <div style="font-size:11px;color:var(--text-muted)">Tax saving: <strong style="color:var(--pos)">${INR(h.tax_saving)}</strong></div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+
+  // Sold positions table
+  const posRows = (d.positions || []).map(p => {
+    const tc  = p.type === 'STCG' ? '#f59e0b' : p.type === 'LTCG' ? 'var(--pos)' : 'var(--text-faint)';
+    const pc  = clr(p.realized_pnl);
+    const hd  = p.holding_days != null ? `${p.holding_days}d` : '—';
+    const rateLabel = p.type === 'STCG' ? (p.is_etf ? '30%' : '20%')
+                    : p.type === 'LTCG' ? '12.5%' : '—';
+    return `<tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:8px 12px;white-space:nowrap">
+        <div style="font-weight:600;color:var(--text-strong);font-size:12px">${esc(p.stock_name)}${p.is_etf ? etfBadge : ''}</div>
+        <div style="font-size:10px;color:var(--text-faint)">${esc(p.ticker)} · ${p.account}</div>
+      </td>
+      <td style="padding:8px 12px;text-align:center">
+        <span style="font-size:10px;font-weight:700;color:${tc};background:${tc}22;padding:2px 8px;border-radius:4px">${p.type}</span>
+        <div style="font-size:9px;color:var(--text-faint);margin-top:2px">${rateLabel}</div>
+      </td>
+      <td style="padding:8px 12px;text-align:right;font-size:11px;color:var(--text-muted)">${p.buy_date || '—'}</td>
+      <td style="padding:8px 12px;text-align:right;font-size:11px;color:var(--text-muted)">${p.sell_date}</td>
+      <td style="padding:8px 12px;text-align:right;font-size:11px;color:var(--text-muted)">${hd}</td>
+      <td style="padding:8px 12px;text-align:right;font-size:12px;color:var(--text-muted)">${INR(p.proceeds)}</td>
+      <td style="padding:8px 12px;text-align:right;font-size:12px;font-weight:600;color:${pc}">
+        ${p.realized_pnl >= 0 ? '' : '−'}${INR(p.realized_pnl)}
+        <div style="font-size:10px;font-weight:400">${pct(p.realized_pnl_pct)}</div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  const posTable = `
+  <div style="margin-bottom:12px">
+    <div style="font-size:13px;font-weight:700;color:var(--text-strong);margin-bottom:12px">All Sales — ${d.fy_label}</div>
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead>
+          <tr style="border-bottom:2px solid var(--border)">
+            <th style="padding:8px 12px;text-align:left;font-size:11px;color:var(--text-faint);font-weight:600;text-transform:uppercase">Stock</th>
+            <th style="padding:8px 12px;text-align:center;font-size:11px;color:var(--text-faint);font-weight:600">Type / Rate</th>
+            <th style="padding:8px 12px;text-align:right;font-size:11px;color:var(--text-faint);font-weight:600">Buy Date</th>
+            <th style="padding:8px 12px;text-align:right;font-size:11px;color:var(--text-faint);font-weight:600">Sell Date</th>
+            <th style="padding:8px 12px;text-align:right;font-size:11px;color:var(--text-faint);font-weight:600">Held</th>
+            <th style="padding:8px 12px;text-align:right;font-size:11px;color:var(--text-faint);font-weight:600">Proceeds</th>
+            <th style="padding:8px 12px;text-align:right;font-size:11px;color:var(--text-faint);font-weight:600">Realised P&L</th>
+          </tr>
+        </thead>
+        <tbody>${posRows || '<tr><td colspan="7" style="padding:40px;text-align:center;color:var(--text-faint)">No sales in this FY</td></tr>'}</tbody>
+      </table>
+    </div>
+  </div>`;
+
+  return hdr + cards + stcgDetail + ltcgDetail + countdownHtml + harvHtml + posTable + '</div>';
+}
+
+// ─── Alpha Tracker ────────────────────────────────────────────────────────────
+
+async function loadAlpha() {
+  try {
+    const res = await fetch('/api/alpha');
+    alphaData = await res.json();
+    if (alphaData.status === 'loading' && !_alphaPoller) {
+      _alphaPoller = setInterval(async () => {
+        const r = await fetch('/api/alpha');
+        alphaData = await r.json();
+        if (alphaData.status !== 'loading') {
+          clearInterval(_alphaPoller); _alphaPoller = null;
+        }
+        if (currentTab === 'alpha') renderTab();
+      }, 3000);
+    }
+  } catch(e) {
+    alphaData = { status: 'error', message: e.message };
+  }
+}
+
+async function refreshAlpha() {
+  if (_alphaPoller) { clearInterval(_alphaPoller); _alphaPoller = null; }
+  await fetch('/api/alpha/refresh', { method: 'POST' });
+  alphaData = { status: 'loading' };
+  renderTab();
+  await loadAlpha();
+}
+
+function renderAlpha() {
+  const d = alphaData;
+
+  const fmtA = (v) => {
+    if (v == null) return `<span style="color:var(--text-faint)">—</span>`;
+    const s = v >= 0 ? '+' : '';
+    const c = v >= 0 ? 'var(--pos)' : 'var(--neg)';
+    return `<span style="color:${c};font-weight:600">${s}${v.toFixed(1)}%</span>`;
+  };
+  const fmtR = (v) => {
+    if (v == null) return `<span style="color:var(--text-faint)">—</span>`;
+    const s = v >= 0 ? '+' : '';
+    const c = v >= 0 ? 'var(--pos)' : 'var(--neg)';
+    return `<span style="color:${c}">${s}${v.toFixed(1)}%</span>`;
+  };
+
+  const computing = d?.status === 'loading';
+  const hdr = `
+  <div style="padding:20px;max-width:1200px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+      <div>
+        <div style="font-size:16px;font-weight:700;color:var(--text-strong)">Alpha vs Benchmarks</div>
+        <div style="font-size:11px;color:var(--text-faint);margin-top:2px">
+          Rolling returns vs Nifty 50 · sorted by 1Y alpha
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        ${d?.as_of ? `<span style="font-size:11px;color:var(--text-faint)">as of ${d.as_of}</span>` : ''}
+        <button onclick="refreshAlpha()" class="btn btn-ghost text-xs"
+          style="border:1px solid var(--accent);color:var(--accent);padding:6px 14px" ${computing ? 'disabled' : ''}>
+          ${computing ? '⟳ Computing…' : '⟳ Compute'}
+        </button>
+      </div>
+    </div>`;
+
+  if (!d || d.status === 'idle') {
+    return hdr + `
+    <div style="text-align:center;padding:80px 0;color:var(--text-faint);font-size:13px">
+      Click <strong>Compute</strong> to calculate your alpha vs Nifty 50.<br>
+      <span style="font-size:11px">Fetches 1 year of daily data — takes ~20 seconds.</span>
+    </div>
+  </div>`;
+  }
+
+  if (d.status === 'loading') {
+    return hdr + `
+    <div style="text-align:center;padding:80px 0;color:var(--text-muted);font-size:13px">
+      ⟳ Fetching price history for all positions + Nifty 50…<br>
+      <span style="font-size:11px;color:var(--text-faint)">This takes about 20–40 seconds.</span>
+    </div>
+  </div>`;
+  }
+
+  if (d.status === 'error') {
+    return hdr + `
+    <div style="text-align:center;padding:60px 0;color:var(--neg);font-size:13px">
+      Error computing alpha: ${esc(d.message || 'unknown error')}
+    </div>
+  </div>`;
+  }
+
+  // ── Portfolio summary cards ──────────────────────────────────────────────
+  const PERIODS = [
+    { key: '1m', label: '1 Month' },
+    { key: '3m', label: '3 Month' },
+    { key: '6m', label: '6 Month' },
+    { key: '1y', label: '1 Year'  },
+  ];
+  const pf = d.portfolio || {};
+  const summaryCards = PERIODS.map(({ key, label }) => {
+    const p   = pf[key] || {};
+    const ac  = p.alpha == null ? 'var(--text-faint)' : p.alpha >= 0 ? 'var(--pos)' : 'var(--neg)';
+    const asn = p.alpha != null ? (p.alpha >= 0 ? '+' : '') + p.alpha.toFixed(1) + '%' : '—';
+    const pfn = p.portfolio != null ? (p.portfolio >= 0 ? '+' : '') + p.portfolio.toFixed(1) + '%' : '—';
+    const bfn = p.benchmark  != null ? (p.benchmark  >= 0 ? '+' : '') + p.benchmark.toFixed(1)  + '%' : '—';
+    const pfc = p.portfolio  != null ? (p.portfolio  >= 0 ? 'var(--pos)' : 'var(--neg)') : 'var(--text-faint)';
+    return `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 20px;flex:1;min-width:160px">
+      <div style="font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">${label}</div>
+      <div style="font-size:22px;font-weight:800;color:${pfc};margin-bottom:2px">${pfn}</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px">Portfolio</div>
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:2px">${bfn}</div>
+      <div style="font-size:10px;color:var(--text-faint);margin-bottom:10px">Nifty 50</div>
+      <div style="border-top:1px solid var(--border);padding-top:10px">
+        <div style="font-size:16px;font-weight:700;color:${ac}">${asn}</div>
+        <div style="font-size:10px;color:var(--text-faint)">Alpha</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // ── Per-position table ───────────────────────────────────────────────────
+  const positions = (d.positions || [])
+    .filter(p => p.currency !== 'USD')   // INR positions only vs Nifty
+    .slice()
+    .sort((a, b) => (b.alpha?.['1y'] ?? -9999) - (a.alpha?.['1y'] ?? -9999));
+
+  const rows = positions.map(p => {
+    const sb = p.since_buy;
+    const sbHtml = sb
+      ? `${fmtA(sb.alpha)} <span style="font-size:10px;color:var(--text-faint)">(${sb.years}y)</span>`
+      : '<span style="color:var(--text-faint)">—</span>';
+
+    const acct = (p.account || '').replace('_', ' ');
+    return `<tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:9px 12px;white-space:nowrap">
+        <div style="font-weight:600;color:var(--text-strong);font-size:12px">${esc(p.stock_name || p.ticker)}</div>
+        <div style="font-size:10px;color:var(--text-faint);margin-top:1px">${esc(p.ticker)} · ${acct}</div>
+      </td>
+      <td style="padding:9px 12px;text-align:right;font-size:12px;color:var(--text-muted)">${p.weight_pct.toFixed(1)}%</td>
+      <td style="padding:9px 12px;text-align:right;font-size:12px">${fmtR(p.returns?.['1m'])}</td>
+      <td style="padding:9px 12px;text-align:right;font-size:12px">${fmtR(p.returns?.['1y'])}</td>
+      <td style="padding:9px 12px;text-align:right;font-size:12px">${fmtA(p.alpha?.['1m'])}</td>
+      <td style="padding:9px 12px;text-align:right;font-size:12px">${fmtA(p.alpha?.['3m'])}</td>
+      <td style="padding:9px 12px;text-align:right;font-size:12px">${fmtA(p.alpha?.['6m'])}</td>
+      <td style="padding:9px 12px;text-align:right;font-size:12px">${fmtA(p.alpha?.['1y'])}</td>
+      <td style="padding:9px 12px;text-align:right;font-size:12px">${sbHtml}</td>
+    </tr>`;
+  }).join('');
+
+  // ── Best / worst contributors ────────────────────────────────────────────
+  const withAlpha1y = positions.filter(p => p.alpha?.['1y'] != null);
+  const top3    = withAlpha1y.slice(0, 3);
+  const bottom3 = [...withAlpha1y].sort((a, b) => (a.alpha['1y'] ?? 9999) - (b.alpha['1y'] ?? 9999)).slice(0, 3);
+
+  const chipList = (arr, pos) => arr.map(p => {
+    const c = pos ? 'var(--pos)' : 'var(--neg)';
+    const sign = p.alpha['1y'] >= 0 ? '+' : '';
+    return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:16px">
+      <div>
+        <div style="font-size:12px;font-weight:600;color:var(--text-strong)">${esc(p.stock_name || p.ticker)}</div>
+        <div style="font-size:10px;color:var(--text-faint)">${p.weight_pct.toFixed(1)}% of portfolio</div>
+      </div>
+      <div style="font-size:15px;font-weight:700;color:${c}">${sign}${p.alpha['1y'].toFixed(1)}%</div>
+    </div>`;
+  }).join('');
+
+  return hdr + `
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:32px">${summaryCards}</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:32px">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--pos);margin-bottom:10px">🏆 Top Alpha Generators (1Y)</div>
+        <div style="display:flex;flex-direction:column;gap:8px">${chipList(top3, true)}</div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--neg);margin-bottom:10px">⚠ Alpha Destroyers (1Y)</div>
+        <div style="display:flex;flex-direction:column;gap:8px">${chipList(bottom3, false)}</div>
+      </div>
+    </div>
+
+    <div style="font-size:13px;font-weight:700;color:var(--text-strong);margin-bottom:12px">All Positions — Alpha vs Nifty 50</div>
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead>
+          <tr style="border-bottom:2px solid var(--border)">
+            <th style="padding:8px 12px;text-align:left;font-size:11px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Stock</th>
+            <th style="padding:8px 12px;text-align:right;font-size:11px;color:var(--text-faint);font-weight:600">Wt%</th>
+            <th style="padding:8px 12px;text-align:right;font-size:11px;color:var(--text-faint);font-weight:600">1M Ret</th>
+            <th style="padding:8px 12px;text-align:right;font-size:11px;color:var(--text-faint);font-weight:600">1Y Ret</th>
+            <th style="padding:8px 12px;text-align:right;font-size:11px;color:var(--text-faint);font-weight:600;border-left:1px solid var(--border)">1M α</th>
+            <th style="padding:8px 12px;text-align:right;font-size:11px;color:var(--text-faint);font-weight:600">3M α</th>
+            <th style="padding:8px 12px;text-align:right;font-size:11px;color:var(--text-faint);font-weight:600">6M α</th>
+            <th style="padding:8px 12px;text-align:right;font-size:11px;color:var(--text-faint);font-weight:600">1Y α</th>
+            <th style="padding:8px 12px;text-align:right;font-size:11px;color:var(--text-faint);font-weight:600">Since Buy α</th>
+          </tr>
+        </thead>
+        <tbody>${rows || '<tr><td colspan="9" style="padding:40px;text-align:center;color:var(--text-faint)">No INR positions found</td></tr>'}</tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
 // ─── Market Dashboards ────────────────────────────────────────────────────────
 
 function renderMarketDashboards() {
@@ -3806,40 +4574,40 @@ function renderMarketDashboards() {
   </div>
 
   <!-- Add modal -->
-  <div id="md-modal" style="display:none;position:fixed;inset:0;background:#0009;z-index:200;align-items:center;justify-content:center">
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px;width:560px;max-width:95vw;max-height:90vh;overflow-y:auto">
+  <div id="md-modal" style="display:none;position:fixed;inset:0;background:#0009;z-index:200;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px;width:560px;max-width:100%;flex-shrink:0">
       <div id="md-modal-title" style="font-size:15px;font-weight:700;color:var(--text-strong);margin-bottom:16px">Add Market Dashboard</div>
       <div style="display:flex;flex-direction:column;gap:12px">
         <div>
-          <label style="font-size:11px;color:var(--text-faint);display:block;margin-bottom:4px">Title</label>
+          <label style="font-size:12px;font-weight:600;color:var(--text-strong);display:block;margin-bottom:5px">Title <span style="color:var(--neg)">*</span></label>
           <input id="md-title" type="text" placeholder="e.g. Nifty Overview June 2026"
-            style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:13px;color:var(--text);box-sizing:border-box">
+            style="width:100%;background:var(--surface2);border:2px solid var(--accent);border-radius:6px;padding:8px 10px;font-size:13px;color:var(--text);box-sizing:border-box;outline:none">
         </div>
         <div>
-          <label style="font-size:11px;color:var(--text-faint);display:block;margin-bottom:4px">Date Created</label>
+          <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">Date Created <span style="color:var(--neg)">*</span></label>
           <input id="md-date" type="date"
-            style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:13px;color:var(--text);box-sizing:border-box">
+            style="width:100%;background:var(--surface2);border:1px solid var(--text-muted);border-radius:6px;padding:7px 10px;font-size:13px;color:var(--text);box-sizing:border-box">
         </div>
         <div>
-          <label style="font-size:11px;color:var(--text-faint);display:block;margin-bottom:4px">Prompt Used</label>
+          <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">Prompt Used</label>
           <textarea id="md-prompt" rows="6" placeholder="Paste the exact prompt used to generate this dashboard…"
-            style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--text);resize:vertical;box-sizing:border-box;line-height:1.5"></textarea>
+            style="width:100%;background:var(--surface2);border:1px solid var(--text-muted);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--text);resize:vertical;box-sizing:border-box;line-height:1.5"></textarea>
         </div>
         <div>
-          <label style="font-size:11px;color:var(--text-faint);display:block;margin-bottom:4px">HTML File (in market_dashboards/ folder)</label>
+          <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">HTML File (in market_dashboards/ folder)</label>
           <input id="md-filename" type="text" placeholder="e.g. nifty_june_2026.html"
-            style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:13px;color:var(--text);box-sizing:border-box">
+            style="width:100%;background:var(--surface2);border:1px solid var(--text-muted);border-radius:6px;padding:7px 10px;font-size:13px;color:var(--text);box-sizing:border-box">
           <div style="font-size:10px;color:var(--text-faint);margin-top:3px">Drop the .html file in the market_dashboards/ folder first, then enter its filename here.</div>
         </div>
         <div>
-          <label style="font-size:11px;color:var(--text-faint);display:block;margin-bottom:4px">Or External URL</label>
+          <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">Or External URL</label>
           <input id="md-url" type="text" placeholder="https://…"
-            style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:13px;color:var(--text);box-sizing:border-box">
+            style="width:100%;background:var(--surface2);border:1px solid var(--text-muted);border-radius:6px;padding:7px 10px;font-size:13px;color:var(--text);box-sizing:border-box">
         </div>
         <div>
-          <label style="font-size:11px;color:var(--text-faint);display:block;margin-bottom:4px">Notes (optional)</label>
+          <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">Notes (optional)</label>
           <textarea id="md-notes" rows="2"
-            style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--text);resize:vertical;box-sizing:border-box"></textarea>
+            style="width:100%;background:var(--surface2);border:1px solid var(--text-muted);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--text);resize:vertical;box-sizing:border-box"></textarea>
         </div>
       </div>
       <div style="display:flex;gap:8px;margin-top:18px;justify-content:flex-end">
@@ -3862,6 +4630,7 @@ function openAddMarketDashboard() {
   document.getElementById('md-url').value      = '';
   document.getElementById('md-notes').value    = '';
   document.getElementById('md-modal').style.display = 'flex';
+  setTimeout(() => document.getElementById('md-title')?.focus(), 50);
 }
 
 function openEditMarketDashboard(id) {
@@ -3891,8 +4660,8 @@ async function saveMarketDashboard() {
   const url      = document.getElementById('md-url').value.trim();
   const notes    = document.getElementById('md-notes').value.trim();
 
-  if (!title || !date || !prompt) {
-    showToast('Title, date and prompt are required'); return;
+  if (!title || !date) {
+    showToast('Title and date are required'); return;
   }
 
   const payload = { title, created_date: date, prompt, filename: filename || null, url: url || null, notes };

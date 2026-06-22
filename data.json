@@ -3094,6 +3094,66 @@
           "note": "Initial buy"
         }
       ]
+    },
+    {
+      "account": "huf",
+      "stock_name": "EPack Prefab Technologies Ltd",
+      "ticker": "NSE:EPACKPEB",
+      "avg_buy_price": 267.0,
+      "quantity": 1000.0,
+      "buy_date": "2026-06-21",
+      "currency": "INR",
+      "pe": null,
+      "market_cap": null,
+      "sector": "Building Materials",
+      "conviction": null,
+      "notes": "Tar had covered it in his webinar .Concall looks pretty awesome and risk reward looks better than interarch . Thats why switched from interacrh and invested in this business",
+      "active": true,
+      "id": "848badb2-7407-433d-9ec0-dd09506b0e39",
+      "created_at": "2026-06-21",
+      "cmp": 269.98,
+      "peak_price": 269.98,
+      "yahoo_ticker": "EPACKPEB.NS",
+      "trades": [
+        {
+          "id": "25fcbfe4-d6ad-4674-aba4-88ce42a34140",
+          "date": "2026-06-21",
+          "type": "buy",
+          "qty": 1000.0,
+          "price": 267.0,
+          "note": "Initial buy"
+        }
+      ]
+    },
+    {
+      "account": "vibhanshu",
+      "stock_name": "EPack Prefab Technologies Ltd",
+      "ticker": "NSE:EPACKPEB",
+      "avg_buy_price": 267.0,
+      "quantity": 714.0,
+      "buy_date": "2026-06-19",
+      "currency": "INR",
+      "pe": null,
+      "market_cap": null,
+      "sector": "Building Materials",
+      "conviction": null,
+      "notes": "Same reason .Tar bought it .Replaced it from interarch .Seemed better timing and better company than interach for next 1 year atleast .Think about interarch by end of this year",
+      "active": true,
+      "id": "dcee64e2-ff6d-4701-846d-f25046f7c2ec",
+      "created_at": "2026-06-21",
+      "cmp": 269.98,
+      "peak_price": 269.98,
+      "yahoo_ticker": "EPACKPEB.NS",
+      "trades": [
+        {
+          "id": "55939591-b071-48e3-8900-c5c6cb126f5f",
+          "date": "2026-06-19",
+          "type": "buy",
+          "qty": 714.0,
+          "price": 267.0,
+          "note": "Initial buy"
+        }
+      ]
     }
   ],
   "watchlist": [
@@ -3171,6 +3231,10 @@
       {
         "id": "soic_research",
         "name": "SOIC Research"
+      },
+      {
+        "id": "top_ideas",
+        "name": "Top Ideas"
       }
     ],
     "portfolio_groups": {
@@ -3200,8 +3264,5731 @@
         {
           "id": "us_manjari",
           "name": "Manjari"
+        },
+        {
+          "id": "us_vibhanshu_ibkr",
+          "name": "vibhanshu-IBKR"
         }
       ]
+    },
+    "stockscans_cookie": "authtoken=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3ODQ0ODk3OTAsInVzZXJJZCI6IjY2MzkzYzY2YzIxNmU2NGE3MmRkNTRmZiJ9.9YYMSozFjjAdDEflc2OZdbAO1d9YTlNUKXmAALyk1QY",
+    "stockscans_cache": {
+      "companies": [
+        {
+          "companyId": "NSE:JNKINDIA",
+          "Name": "JNK India Ltd",
+          "Industry": "Capital Goods - Engineering Heavy",
+          "Market Capitalization": 2724.68,
+          "Close Price": 486.95,
+          "Returns 1D": 4.27,
+          "Returns 1W": -3.39,
+          "Scans": 16,
+          "savedScans": [
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "ea731d297d5e64c806cd5b62",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "6af419612760e2fd15785ca2",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "monthly+trend+twist",
+              "scanName": "Monthly Trend Twist"
+            },
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "bulk+block+deals",
+              "scanName": "Bulk Block Deals"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:AEGISLOG",
+          "Name": "Aegis Logistics Ltd",
+          "Industry": "Logistics",
+          "Market Capitalization": 35373.78,
+          "Close Price": 1007.8,
+          "Returns 1D": 0.09,
+          "Returns 1W": 6.71,
+          "Scans": 15,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "ea731d297d5e64c806cd5b62",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "6af419612760e2fd15785ca2",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            },
+            {
+              "scanId": "96d0ef170d25ecc08f677780",
+              "scanName": "Nifty small cap 250 strongest"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "monthly+trend+twist",
+              "scanName": "Monthly Trend Twist"
+            },
+            {
+              "scanId": "breakout+horizon",
+              "scanName": "Breakout Horizon"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "margin+mavericks",
+              "scanName": "Margin Mavericks"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:RPTECH",
+          "Name": "Rashi Peripherals Ltd",
+          "Industry": "Trading",
+          "Market Capitalization": 4946.76,
+          "Close Price": 750.65,
+          "Returns 1D": 2.83,
+          "Returns 1W": 34.43,
+          "Scans": 15,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "ea731d297d5e64c806cd5b62",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "6af419612760e2fd15785ca2",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "driving+deleverage",
+              "scanName": "Driving Deleverage"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "bulk+block+deals",
+              "scanName": "Bulk Block Deals"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:MTARTECH",
+          "Name": "MTAR Technologies Ltd",
+          "Industry": "Aerospace & Defence - Equipments",
+          "Market Capitalization": 25759.62,
+          "Close Price": 8374.5,
+          "Returns 1D": 0.83,
+          "Returns 1W": 16.97,
+          "Scans": 15,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "516399ccd82ceff97bdbff8e",
+              "scanName": "Nifty Microcap 250 Strongest in bear market"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "smart+money+moves",
+              "scanName": "Smart Money Moves"
+            },
+            {
+              "scanId": "institutional+influx",
+              "scanName": "Institutional Influx"
+            },
+            {
+              "scanId": "bulk+block+deals",
+              "scanName": "Bulk Block Deals"
+            },
+            {
+              "scanId": "insider+trading+selling",
+              "scanName": "Insider Trading Selling"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:VADILALIND",
+          "Name": "Vadilal Industries Ltd",
+          "Industry": "FMCG - Dairy Products",
+          "Market Capitalization": 4390.33,
+          "Close Price": 6108.0,
+          "Returns 1D": -1.68,
+          "Returns 1W": 1.64,
+          "Scans": 14,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "monthly+trend+twist",
+              "scanName": "Monthly Trend Twist"
+            },
+            {
+              "scanId": "breakout+horizon",
+              "scanName": "Breakout Horizon"
+            },
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "driving+deleverage",
+              "scanName": "Driving Deleverage"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:UNIPARTS",
+          "Name": "Uniparts India Ltd",
+          "Industry": "Castings, Forgings & Fastners",
+          "Market Capitalization": 3045.81,
+          "Close Price": 674.7,
+          "Returns 1D": 3.34,
+          "Returns 1W": 2.27,
+          "Scans": 14,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "breakout+horizon",
+              "scanName": "Breakout Horizon"
+            },
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "margin+mavericks",
+              "scanName": "Margin Mavericks"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:RML",
+          "Name": "Rane (Madras) Ltd",
+          "Industry": "Auto Ancillaries - Gears",
+          "Market Capitalization": 3098.54,
+          "Close Price": 1121.15,
+          "Returns 1D": 13.62,
+          "Returns 1W": 21.51,
+          "Scans": 14,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "ea731d297d5e64c806cd5b62",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "6af419612760e2fd15785ca2",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "monthly+trend+twist",
+              "scanName": "Monthly Trend Twist"
+            },
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "BSE:MODINSU",
+          "Name": "Modern Insulators Ltd",
+          "Industry": "Capital Goods - Electric General",
+          "Market Capitalization": 2446.77,
+          "Close Price": 519.0,
+          "Returns 1D": 3.91,
+          "Returns 1W": 25.74,
+          "Scans": 14,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:SKMEGGPROD",
+          "Name": "SKM Egg Products Export (India) Ltd",
+          "Industry": "FMCG - Animal/Polutry",
+          "Market Capitalization": 1249.41,
+          "Close Price": 237.26,
+          "Returns 1D": -0.71,
+          "Returns 1W": -1.4,
+          "Scans": 13,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "breakout+horizon",
+              "scanName": "Breakout Horizon"
+            },
+            {
+              "scanId": "margin+mavericks",
+              "scanName": "Margin Mavericks"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "BSE:ADVAIT",
+          "Name": "Advait Energy Transitions Limited",
+          "Industry": "EPC",
+          "Market Capitalization": 2624.46,
+          "Close Price": 2398.3,
+          "Returns 1D": -1.44,
+          "Returns 1W": 3.95,
+          "Scans": 13,
+          "savedScans": [
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "monthly+trend+twist",
+              "scanName": "Monthly Trend Twist"
+            },
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:GOLDIAM",
+          "Name": "Goldiam International Ltd",
+          "Industry": "Lab Grown Diamonds",
+          "Market Capitalization": 5359.08,
+          "Close Price": 474.6,
+          "Returns 1D": -1.06,
+          "Returns 1W": -0.88,
+          "Scans": 13,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "monthly+trend+twist",
+              "scanName": "Monthly Trend Twist"
+            },
+            {
+              "scanId": "breakout+horizon",
+              "scanName": "Breakout Horizon"
+            },
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "BSE:GRANDOAK",
+          "Name": "Grand Oak Canyons Distillery Ltd",
+          "Industry": "Finance & Investments - Others",
+          "Market Capitalization": 2617.25,
+          "Close Price": 50.44,
+          "Returns 1D": 5.0,
+          "Returns 1W": 53.64,
+          "Scans": 13,
+          "savedScans": [
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "ea731d297d5e64c806cd5b62",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "6af419612760e2fd15785ca2",
+              "scanName": "Volume Rocketing"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "short+term+breakout",
+              "scanName": "Short Term Breakout"
+            },
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "weekly+trend+twist",
+              "scanName": "Weekly Trend Twist"
+            },
+            {
+              "scanId": "monthly+trend+twist",
+              "scanName": "Monthly Trend Twist"
+            },
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "the+consolidators",
+              "scanName": "The Consolidators"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            }
+          ]
+        },
+        {
+          "companyId": "BSE:KPL",
+          "Name": "Kwality Pharmaceuticals Ltd",
+          "Industry": "Pharma - Formulators",
+          "Market Capitalization": 2576.25,
+          "Close Price": 2482.85,
+          "Returns 1D": 5.81,
+          "Returns 1W": -0.57,
+          "Scans": 13,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "institutional+influx",
+              "scanName": "Institutional Influx"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:PANAMAPET",
+          "Name": "Panama Petrochem Ltd",
+          "Industry": "Speciality Chemicals",
+          "Market Capitalization": 2923.35,
+          "Close Price": 483.25,
+          "Returns 1D": 18.37,
+          "Returns 1W": 28.1,
+          "Scans": 13,
+          "savedScans": [
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "ea731d297d5e64c806cd5b62",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "6af419612760e2fd15785ca2",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "monthly+trend+twist",
+              "scanName": "Monthly Trend Twist"
+            },
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "bulk+block+deals",
+              "scanName": "Bulk Block Deals"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "BSE:KMCSHIL",
+          "Name": "KMC Speciality Hospitals (India) Ltd",
+          "Industry": "Hospitals",
+          "Market Capitalization": 1877.11,
+          "Close Price": 115.1,
+          "Returns 1D": -2.0,
+          "Returns 1W": -2.91,
+          "Scans": 13,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "margin+mavericks",
+              "scanName": "Margin Mavericks"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:THANGAMAYL",
+          "Name": "Thangamayil Jewellery Ltd",
+          "Industry": "Diamond, Gems & Jewellery",
+          "Market Capitalization": 16954.0,
+          "Close Price": 5454.6,
+          "Returns 1D": 0.35,
+          "Returns 1W": -0.44,
+          "Scans": 13,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:SPAL",
+          "Name": "S P Apparels Ltd",
+          "Industry": "Textiles - Readymade Apparel",
+          "Market Capitalization": 2585.28,
+          "Close Price": 1028.4,
+          "Returns 1D": 11.67,
+          "Returns 1W": 29.19,
+          "Scans": 12,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "ea731d297d5e64c806cd5b62",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "6af419612760e2fd15785ca2",
+              "scanName": "Volume Rocketing"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "monthly+trend+twist",
+              "scanName": "Monthly Trend Twist"
+            },
+            {
+              "scanId": "breakout+horizon",
+              "scanName": "Breakout Horizon"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "bulk+block+deals",
+              "scanName": "Bulk Block Deals"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            }
+          ]
+        },
+        {
+          "companyId": "BSE:CIANAGRO",
+          "Name": "CIAN Agro Industries & Infrastructure Ltd",
+          "Industry": "Edible Oils, Agro Processing",
+          "Market Capitalization": 5486.49,
+          "Close Price": 1960.45,
+          "Returns 1D": 5.0,
+          "Returns 1W": 27.62,
+          "Scans": 12,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "monthly+trend+twist",
+              "scanName": "Monthly Trend Twist"
+            },
+            {
+              "scanId": "the+consolidators",
+              "scanName": "The Consolidators"
+            },
+            {
+              "scanId": "margin+mavericks",
+              "scanName": "Margin Mavericks"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:SPARC",
+          "Name": "Sun Pharma Advanced Research Company Ltd",
+          "Industry": "Pharma - Others",
+          "Market Capitalization": 7726.53,
+          "Close Price": 238.09,
+          "Returns 1D": -1.81,
+          "Returns 1W": 6.4,
+          "Scans": 12,
+          "savedScans": [
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "664d682fdc8f73ce4df98b10",
+              "scanName": "Turnaround"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "bulk+block+deals",
+              "scanName": "Bulk Block Deals"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:NGLFINE",
+          "Name": "NGL Fine Chem Ltd",
+          "Industry": "Pharma - Animal",
+          "Market Capitalization": 1887.76,
+          "Close Price": 3055.6,
+          "Returns 1D": 0.33,
+          "Returns 1W": 0.22,
+          "Scans": 12,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:ACUTAAS",
+          "Name": "Acutaas Chemicals Ltd",
+          "Industry": "Pharma - API & CRAMS",
+          "Market Capitalization": 26577.0,
+          "Close Price": 3246.2,
+          "Returns 1D": 3.5,
+          "Returns 1W": 3.21,
+          "Scans": 12,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "smart+money+moves",
+              "scanName": "Smart Money Moves"
+            },
+            {
+              "scanId": "insider+trading+selling",
+              "scanName": "Insider Trading Selling"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:CUPID",
+          "Name": "Cupid Ltd",
+          "Industry": "Contraceptives/Protectives",
+          "Market Capitalization": 23789.74,
+          "Close Price": 176.92,
+          "Returns 1D": 4.57,
+          "Returns 1W": 10.6,
+          "Scans": 12,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "516399ccd82ceff97bdbff8e",
+              "scanName": "Nifty Microcap 250 Strongest in bear market"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:GVPIL",
+          "Name": "GE Power India Ltd",
+          "Industry": "Infra - General",
+          "Market Capitalization": 7076.03,
+          "Close Price": 1052.55,
+          "Returns 1D": 5.0,
+          "Returns 1W": 13.23,
+          "Scans": 12,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "664d682fdc8f73ce4df98b10",
+              "scanName": "Turnaround"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "driving+deleverage",
+              "scanName": "Driving Deleverage"
+            },
+            {
+              "scanId": "margin+mavericks",
+              "scanName": "Margin Mavericks"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:SIGMAADV",
+          "Name": "Sigma Advanced System Ltd",
+          "Industry": "Aerospace & Defence - Equipments",
+          "Market Capitalization": 9253.47,
+          "Close Price": 525.05,
+          "Returns 1D": 5.0,
+          "Returns 1W": 9.5,
+          "Scans": 12,
+          "savedScans": [
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "driving+deleverage",
+              "scanName": "Driving Deleverage"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:CAPLIPOINT",
+          "Name": "Caplin Point Laboratories Ltd",
+          "Industry": "Pharma - Formulators",
+          "Market Capitalization": 19029.53,
+          "Close Price": 2503.5,
+          "Returns 1D": 6.11,
+          "Returns 1W": 3.97,
+          "Scans": 12,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "ea731d297d5e64c806cd5b62",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "6af419612760e2fd15785ca2",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "96d0ef170d25ecc08f677780",
+              "scanName": "Nifty small cap 250 strongest"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "monthly+trend+twist",
+              "scanName": "Monthly Trend Twist"
+            },
+            {
+              "scanId": "breakout+horizon",
+              "scanName": "Breakout Horizon"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            }
+          ]
+        },
+        {
+          "companyId": "BSE:TIMEX",
+          "Name": "Timex Group India Ltd",
+          "Industry": "Watches",
+          "Market Capitalization": 5233.25,
+          "Close Price": 518.4,
+          "Returns 1D": 8.74,
+          "Returns 1W": 5.01,
+          "Scans": 11,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "margin+mavericks",
+              "scanName": "Margin Mavericks"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            }
+          ]
+        },
+        {
+          "companyId": "BSE:WELSPLSOL",
+          "Name": "Welspun Specialty Solutions Ltd",
+          "Industry": "Steel - Tubes/Pipes",
+          "Market Capitalization": 3849.77,
+          "Close Price": 58.1,
+          "Returns 1D": -3.82,
+          "Returns 1W": 12.42,
+          "Scans": 11,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "664d682fdc8f73ce4df98b10",
+              "scanName": "Turnaround"
+            },
+            {
+              "scanId": "ea731d297d5e64c806cd5b62",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "6af419612760e2fd15785ca2",
+              "scanName": "Volume Rocketing"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:INNOVACAP",
+          "Name": "Innova Captab Ltd",
+          "Industry": "Pharma - API",
+          "Market Capitalization": 5433.79,
+          "Close Price": 949.55,
+          "Returns 1D": 1.78,
+          "Returns 1W": 0.75,
+          "Scans": 11,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "monthly+trend+twist",
+              "scanName": "Monthly Trend Twist"
+            },
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:CARTRADE",
+          "Name": "Cartrade Tech Ltd",
+          "Industry": "Platform - Others",
+          "Market Capitalization": 12287.17,
+          "Close Price": 2558.6,
+          "Returns 1D": -1.02,
+          "Returns 1W": 9.09,
+          "Scans": 11,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "ea731d297d5e64c806cd5b62",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "6af419612760e2fd15785ca2",
+              "scanName": "Volume Rocketing"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "monthly+trend+twist",
+              "scanName": "Monthly Trend Twist"
+            },
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "the+consolidators",
+              "scanName": "The Consolidators"
+            },
+            {
+              "scanId": "bulk+block+deals",
+              "scanName": "Bulk Block Deals"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:JAYBARMARU",
+          "Name": "Jay Bharat Maruti Ltd",
+          "Industry": "Auto Ancillaries - Diversified",
+          "Market Capitalization": 1835.38,
+          "Close Price": 169.55,
+          "Returns 1D": -1.88,
+          "Returns 1W": 17.21,
+          "Scans": 11,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:BHAGYANGR",
+          "Name": "Bhagyanagar India Ltd",
+          "Industry": "Recycling",
+          "Market Capitalization": 1241.57,
+          "Close Price": 388.05,
+          "Returns 1D": 2.81,
+          "Returns 1W": 24.94,
+          "Scans": 11,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "margin+mavericks",
+              "scanName": "Margin Mavericks"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:CRAFTSMAN",
+          "Name": "Craftsman Automation Ltd",
+          "Industry": "Auto & Auto Ancl - CV",
+          "Market Capitalization": 23393.98,
+          "Close Price": 9806.5,
+          "Returns 1D": 3.23,
+          "Returns 1W": 9.97,
+          "Scans": 11,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "96d0ef170d25ecc08f677780",
+              "scanName": "Nifty small cap 250 strongest"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "smart+money+moves",
+              "scanName": "Smart Money Moves"
+            },
+            {
+              "scanId": "institutional+influx",
+              "scanName": "Institutional Influx"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:TBZ",
+          "Name": "Tribhovandas Bhimji Zaveri Ltd",
+          "Industry": "Diamond, Gems & Jewellery",
+          "Market Capitalization": 1260.41,
+          "Close Price": 188.88,
+          "Returns 1D": -0.42,
+          "Returns 1W": 2.78,
+          "Scans": 11,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "short+term+breakout",
+              "scanName": "Short Term Breakout"
+            },
+            {
+              "scanId": "monthly+trend+twist",
+              "scanName": "Monthly Trend Twist"
+            },
+            {
+              "scanId": "margin+mavericks",
+              "scanName": "Margin Mavericks"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:BAJAJCON",
+          "Name": "Bajaj Consumer Care Ltd",
+          "Industry": "FMCG - Personal Care",
+          "Market Capitalization": 8166.91,
+          "Close Price": 625.25,
+          "Returns 1D": 0.77,
+          "Returns 1W": 5.68,
+          "Scans": 11,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "institutional+influx",
+              "scanName": "Institutional Influx"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:SFL",
+          "Name": "Sheela Foam Ltd",
+          "Industry": "Mattress",
+          "Market Capitalization": 7651.33,
+          "Close Price": 700.65,
+          "Returns 1D": -0.26,
+          "Returns 1W": -0.41,
+          "Scans": 11,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "short+term+breakout",
+              "scanName": "Short Term Breakout"
+            },
+            {
+              "scanId": "monthly+trend+twist",
+              "scanName": "Monthly Trend Twist"
+            },
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:SENORES",
+          "Name": "Senores Pharmaceuticals Ltd",
+          "Industry": "Pharma - API",
+          "Market Capitalization": 6056.05,
+          "Close Price": 1315.0,
+          "Returns 1D": -0.03,
+          "Returns 1W": 1.94,
+          "Scans": 11,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:AEROENTER",
+          "Name": "Aeroflex Enterprises Ltd",
+          "Industry": "Miscellaneous",
+          "Market Capitalization": 1536.49,
+          "Close Price": 135.87,
+          "Returns 1D": 9.2,
+          "Returns 1W": 23.77,
+          "Scans": 11,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "monthly+trend+twist",
+              "scanName": "Monthly Trend Twist"
+            },
+            {
+              "scanId": "breakout+horizon",
+              "scanName": "Breakout Horizon"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:IBULLSLTD",
+          "Name": "Indiabulls Limited",
+          "Industry": "Diversified",
+          "Market Capitalization": 6175.62,
+          "Close Price": 26.51,
+          "Returns 1D": 4.99,
+          "Returns 1W": 12.76,
+          "Scans": 11,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "664d682fdc8f73ce4df98b10",
+              "scanName": "Turnaround"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "bulk+block+deals",
+              "scanName": "Bulk Block Deals"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:PARAS",
+          "Name": "Paras Defence and Space Technologies Ltd",
+          "Industry": "Aerospace & Defence - Equipments",
+          "Market Capitalization": 11351.93,
+          "Close Price": 1408.65,
+          "Returns 1D": 7.51,
+          "Returns 1W": 28.39,
+          "Scans": 11,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "516399ccd82ceff97bdbff8e",
+              "scanName": "Nifty Microcap 250 Strongest in bear market"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "bulk+block+deals",
+              "scanName": "Bulk Block Deals"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:NETWEB",
+          "Name": "Netweb Technologies India Ltd",
+          "Industry": "Data Centre",
+          "Market Capitalization": 28817.11,
+          "Close Price": 5060.9,
+          "Returns 1D": -0.37,
+          "Returns 1W": 10.32,
+          "Scans": 11,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "96d0ef170d25ecc08f677780",
+              "scanName": "Nifty small cap 250 strongest"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "bulk+block+deals",
+              "scanName": "Bulk Block Deals"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:MAHABANK",
+          "Name": "Bank of Maharashtra",
+          "Industry": "Banks - PSU",
+          "Market Capitalization": 69370.13,
+          "Close Price": 90.19,
+          "Returns 1D": 0.77,
+          "Returns 1W": 3.31,
+          "Scans": 11,
+          "savedScans": [
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "smart+money+moves",
+              "scanName": "Smart Money Moves"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:GAYAPROJ",
+          "Name": "Gayatri Projects Ltd",
+          "Industry": "Construction - Civil/Turnkey",
+          "Market Capitalization": 1092.03,
+          "Close Price": 23.52,
+          "Returns 1D": -4.89,
+          "Returns 1W": 7.59,
+          "Scans": 11,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "driving+deleverage",
+              "scanName": "Driving Deleverage"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            }
+          ]
+        },
+        {
+          "companyId": "BSE:SEKURITIND",
+          "Name": "Saint-Gobain Sekurit India Ltd",
+          "Industry": "Glass & Glass Products",
+          "Market Capitalization": 1218.08,
+          "Close Price": 133.7,
+          "Returns 1D": 8.88,
+          "Returns 1W": 6.28,
+          "Scans": 11,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "breakout+horizon",
+              "scanName": "Breakout Horizon"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "driving+deleverage",
+              "scanName": "Driving Deleverage"
+            },
+            {
+              "scanId": "margin+mavericks",
+              "scanName": "Margin Mavericks"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "BSE:KMEW",
+          "Name": "Knowledge Marine & Engineering Works Ltd",
+          "Industry": "Shipping",
+          "Market Capitalization": 5072.15,
+          "Close Price": 2075.0,
+          "Returns 1D": 0.93,
+          "Returns 1W": 7.82,
+          "Scans": 11,
+          "savedScans": [
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "smart+money+moves",
+              "scanName": "Smart Money Moves"
+            },
+            {
+              "scanId": "institutional+influx",
+              "scanName": "Institutional Influx"
+            },
+            {
+              "scanId": "bulk+block+deals",
+              "scanName": "Bulk Block Deals"
+            },
+            {
+              "scanId": "insider+trading+buying",
+              "scanName": "Insider Trading Buying"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:WHEELS",
+          "Name": "Wheels India Ltd",
+          "Industry": "Auto Ancillaries - Wheels",
+          "Market Capitalization": 3795.42,
+          "Close Price": 1553.4,
+          "Returns 1D": 1.72,
+          "Returns 1W": -4.97,
+          "Scans": 11,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "driving+deleverage",
+              "scanName": "Driving Deleverage"
+            },
+            {
+              "scanId": "margin+mavericks",
+              "scanName": "Margin Mavericks"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:AVALON",
+          "Name": "Avalon Technologies Ltd",
+          "Industry": "Consumer Electronics - EMS",
+          "Market Capitalization": 11651.78,
+          "Close Price": 1744.6,
+          "Returns 1D": -0.61,
+          "Returns 1W": 3.41,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "516399ccd82ceff97bdbff8e",
+              "scanName": "Nifty Microcap 250 Strongest in bear market"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "smart+money+moves",
+              "scanName": "Smart Money Moves"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:KPIL",
+          "Name": "Kalpataru Projects International Ltd",
+          "Industry": "Infra - Power - Generation/Distribution",
+          "Market Capitalization": 23885.96,
+          "Close Price": 1398.7,
+          "Returns 1D": 2.25,
+          "Returns 1W": 7.46,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "96d0ef170d25ecc08f677780",
+              "scanName": "Nifty small cap 250 strongest"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "breakout+horizon",
+              "scanName": "Breakout Horizon"
+            },
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:PRECWIRE",
+          "Name": "Precision Wires India Ltd",
+          "Industry": "Copper Wires",
+          "Market Capitalization": 7463.14,
+          "Close Price": 408.25,
+          "Returns 1D": -3.66,
+          "Returns 1W": 4.21,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:DIFFNKG",
+          "Name": "Diffusion Engineers Ltd",
+          "Industry": "Welding Equipments",
+          "Market Capitalization": 1405.54,
+          "Close Price": 375.55,
+          "Returns 1D": 0.89,
+          "Returns 1W": 3.81,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "short+term+breakout",
+              "scanName": "Short Term Breakout"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "driving+deleverage",
+              "scanName": "Driving Deleverage"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:GVT&D",
+          "Name": "GE Vernova T&D India Ltd",
+          "Industry": "Electrical Equipments/HVDC",
+          "Market Capitalization": 141683.35,
+          "Close Price": 5533.5,
+          "Returns 1D": 5.4,
+          "Returns 1W": 11.96,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "margin+mavericks",
+              "scanName": "Margin Mavericks"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "smart+money+moves",
+              "scanName": "Smart Money Moves"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:VMARCIND",
+          "Name": "V-Marc India Ltd",
+          "Industry": "Cables - Power",
+          "Market Capitalization": 3906.7,
+          "Close Price": 1599.75,
+          "Returns 1D": 0.06,
+          "Returns 1W": 14.3,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:MODISONLTD",
+          "Name": "Modison Ltd",
+          "Industry": "Capital Goods - Electric General",
+          "Market Capitalization": 1045.38,
+          "Close Price": 322.15,
+          "Returns 1D": 4.93,
+          "Returns 1W": 5.64,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:STLTECH",
+          "Name": "Sterlite Technologies Ltd",
+          "Industry": "Cables - Telecom",
+          "Market Capitalization": 31943.25,
+          "Close Price": 654.35,
+          "Returns 1D": 1.1,
+          "Returns 1W": 12.11,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "664d682fdc8f73ce4df98b10",
+              "scanName": "Turnaround"
+            },
+            {
+              "scanId": "516399ccd82ceff97bdbff8e",
+              "scanName": "Nifty Microcap 250 Strongest in bear market"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "smart+money+moves",
+              "scanName": "Smart Money Moves"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:RAMCOSYS",
+          "Name": "Ramco Systems Ltd",
+          "Industry": "IT Product Companies",
+          "Market Capitalization": 2094.18,
+          "Close Price": 557.2,
+          "Returns 1D": -0.63,
+          "Returns 1W": -0.88,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "664d682fdc8f73ce4df98b10",
+              "scanName": "Turnaround"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "short+term+breakout",
+              "scanName": "Short Term Breakout"
+            },
+            {
+              "scanId": "breakout+horizon",
+              "scanName": "Breakout Horizon"
+            },
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "bulk+block+deals",
+              "scanName": "Bulk Block Deals"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "BSE:RPEL",
+          "Name": "Raghav Productivity Enhancers Ltd",
+          "Industry": "Steel Products",
+          "Market Capitalization": 5508.57,
+          "Close Price": 1199.55,
+          "Returns 1D": 1.62,
+          "Returns 1W": 1.1,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "margin+mavericks",
+              "scanName": "Margin Mavericks"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:CEMPRO",
+          "Name": "Cemindia Projects Ltd",
+          "Industry": "Infra - Construction & Contracting",
+          "Market Capitalization": 21507.81,
+          "Close Price": 1252.0,
+          "Returns 1D": 5.0,
+          "Returns 1W": 11.55,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            },
+            {
+              "scanId": "96d0ef170d25ecc08f677780",
+              "scanName": "Nifty small cap 250 strongest"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:RISHABH",
+          "Name": "Rishabh Instruments Ltd",
+          "Industry": "Capital Goods - Electric General",
+          "Market Capitalization": 2235.23,
+          "Close Price": 578.65,
+          "Returns 1D": 0.77,
+          "Returns 1W": 3.99,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "breakout+horizon",
+              "scanName": "Breakout Horizon"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "driving+deleverage",
+              "scanName": "Driving Deleverage"
+            },
+            {
+              "scanId": "insider+trading+selling",
+              "scanName": "Insider Trading Selling"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:SETL",
+          "Name": "Standard Engineering Technology Ltd",
+          "Industry": "Engineering - Heavy - Glass - lined Equipment",
+          "Market Capitalization": 3712.74,
+          "Close Price": 186.11,
+          "Returns 1D": 3.3,
+          "Returns 1W": 17.12,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "short+term+breakout",
+              "scanName": "Short Term Breakout"
+            },
+            {
+              "scanId": "monthly+trend+twist",
+              "scanName": "Monthly Trend Twist"
+            },
+            {
+              "scanId": "breakout+horizon",
+              "scanName": "Breakout Horizon"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:SYRMA",
+          "Name": "Syrma SGS Technology Ltd",
+          "Industry": "Consumer Electronics - EMS",
+          "Market Capitalization": 25723.59,
+          "Close Price": 1334.0,
+          "Returns 1D": -0.95,
+          "Returns 1W": 5.31,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "96d0ef170d25ecc08f677780",
+              "scanName": "Nifty small cap 250 strongest"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:INOXINDIA",
+          "Name": "Inox India Ltd",
+          "Industry": "Industrial Gas",
+          "Market Capitalization": 17406.62,
+          "Close Price": 1917.8,
+          "Returns 1D": 5.82,
+          "Returns 1W": 6.06,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "ea731d297d5e64c806cd5b62",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "6af419612760e2fd15785ca2",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "516399ccd82ceff97bdbff8e",
+              "scanName": "Nifty Microcap 250 Strongest in bear market"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "insider+trading+selling",
+              "scanName": "Insider Trading Selling"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:IDEAFORGE",
+          "Name": "Ideaforge Technology Ltd",
+          "Industry": "Aerospace & Defence - Equipments",
+          "Market Capitalization": 4042.15,
+          "Close Price": 931.45,
+          "Returns 1D": 1.27,
+          "Returns 1W": 7.17,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:LLOYDSME",
+          "Name": "Lloyds Metals & Energy Ltd",
+          "Industry": "Mining/Minerals - Iron Ore",
+          "Market Capitalization": 99399.1,
+          "Close Price": 1766.2,
+          "Returns 1D": 0.57,
+          "Returns 1W": 0.24,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:KRISHNADEF",
+          "Name": "Krishna Defence & Allied Industries Ltd",
+          "Industry": "Shipping - Proxy",
+          "Market Capitalization": 2016.9,
+          "Close Price": 1350.6,
+          "Returns 1D": 2.32,
+          "Returns 1W": 11.57,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:AJMERA",
+          "Name": "Ajmera Realty & Infra India Ltd",
+          "Industry": "Realty - Construction & Contracting",
+          "Market Capitalization": 2773.64,
+          "Close Price": 140.94,
+          "Returns 1D": 4.15,
+          "Returns 1W": 16.63,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "weekly+trend+twist",
+              "scanName": "Weekly Trend Twist"
+            },
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "driving+deleverage",
+              "scanName": "Driving Deleverage"
+            },
+            {
+              "scanId": "insider+trading+buying",
+              "scanName": "Insider Trading Buying"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:REFEX",
+          "Name": "Refex Industries Ltd",
+          "Industry": "Refrigeration",
+          "Market Capitalization": 4622.92,
+          "Close Price": 336.9,
+          "Returns 1D": 5.73,
+          "Returns 1W": 8.33,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "short+term+breakout",
+              "scanName": "Short Term Breakout"
+            },
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "bulk+block+deals",
+              "scanName": "Bulk Block Deals"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "BSE:IDREAM",
+          "Name": "IDream Film Infrastructure Company Ltd",
+          "Industry": "IT - Software",
+          "Market Capitalization": 12421.1,
+          "Close Price": 459.1,
+          "Returns 1D": 5.0,
+          "Returns 1W": 27.53,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "weekly+trend+twist",
+              "scanName": "Weekly Trend Twist"
+            },
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:BLISSGVS",
+          "Name": "Bliss GVS Pharma Ltd",
+          "Industry": "Pharma - Formulators",
+          "Market Capitalization": 5157.51,
+          "Close Price": 486.3,
+          "Returns 1D": 0.69,
+          "Returns 1W": 11.07,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "bulk+block+deals",
+              "scanName": "Bulk Block Deals"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:AMAGI",
+          "Name": "Amagi Media Labs Ltd",
+          "Industry": "Entertainment & Media",
+          "Market Capitalization": 10577.89,
+          "Close Price": 488.95,
+          "Returns 1D": -2.1,
+          "Returns 1W": 14.79,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "ea731d297d5e64c806cd5b62",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "6af419612760e2fd15785ca2",
+              "scanName": "Volume Rocketing"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "institutional+influx",
+              "scanName": "Institutional Influx"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:HFCL",
+          "Name": "HFCL Ltd",
+          "Industry": "Telecom Services",
+          "Market Capitalization": 32082.96,
+          "Close Price": 209.61,
+          "Returns 1D": 5.0,
+          "Returns 1W": 21.97,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "96d0ef170d25ecc08f677780",
+              "scanName": "Nifty small cap 250 strongest"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:APOLLO",
+          "Name": "Apollo Micro Systems Ltd",
+          "Industry": "Aerospace & Defence - Equipments",
+          "Market Capitalization": 15623.32,
+          "Close Price": 433.15,
+          "Returns 1D": 1.54,
+          "Returns 1W": 5.8,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "516399ccd82ceff97bdbff8e",
+              "scanName": "Nifty Microcap 250 Strongest in bear market"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "bulk+block+deals",
+              "scanName": "Bulk Block Deals"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:EBGNG",
+          "Name": "GNG Electronics Ltd",
+          "Industry": "New age - Platform - E-Retail",
+          "Market Capitalization": 5722.81,
+          "Close Price": 501.95,
+          "Returns 1D": 9.99,
+          "Returns 1W": 16.06,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "bulk+block+deals",
+              "scanName": "Bulk Block Deals"
+            },
+            {
+              "scanId": "insider+trading+buying",
+              "scanName": "Insider Trading Buying"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:CGCL",
+          "Name": "Capri Global Capital Ltd",
+          "Industry": "Finance & Investments - Gold Loan",
+          "Market Capitalization": 21259.75,
+          "Close Price": 220.96,
+          "Returns 1D": 0.07,
+          "Returns 1W": 5.99,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            },
+            {
+              "scanId": "96d0ef170d25ecc08f677780",
+              "scanName": "Nifty small cap 250 strongest"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "monthly+trend+twist",
+              "scanName": "Monthly Trend Twist"
+            },
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "BSE:NIBE",
+          "Name": "NIBE Ltd",
+          "Industry": "Aerospace & Defence - Equipments",
+          "Market Capitalization": 2771.6,
+          "Close Price": 1816.1,
+          "Returns 1D": 3.92,
+          "Returns 1W": 14.83,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "monthly+trend+twist",
+              "scanName": "Monthly Trend Twist"
+            },
+            {
+              "scanId": "breakout+horizon",
+              "scanName": "Breakout Horizon"
+            },
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "institutional+influx",
+              "scanName": "Institutional Influx"
+            },
+            {
+              "scanId": "bulk+block+deals",
+              "scanName": "Bulk Block Deals"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:XPROINDIA",
+          "Name": "XPRO India Ltd",
+          "Industry": "Packaging - Films",
+          "Market Capitalization": 3156.3,
+          "Close Price": 1344.8,
+          "Returns 1D": 3.15,
+          "Returns 1W": 11.41,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "ea731d297d5e64c806cd5b62",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "6af419612760e2fd15785ca2",
+              "scanName": "Volume Rocketing"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "monthly+trend+twist",
+              "scanName": "Monthly Trend Twist"
+            },
+            {
+              "scanId": "breakout+horizon",
+              "scanName": "Breakout Horizon"
+            },
+            {
+              "scanId": "smart+money+moves",
+              "scanName": "Smart Money Moves"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:RATEGAIN",
+          "Name": "Rategain Travel Technologies Ltd",
+          "Industry": "IT Product Companies",
+          "Market Capitalization": 10275.79,
+          "Close Price": 867.7,
+          "Returns 1D": -2.4,
+          "Returns 1W": 10.81,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "516399ccd82ceff97bdbff8e",
+              "scanName": "Nifty Microcap 250 Strongest in bear market"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "breakout+horizon",
+              "scanName": "Breakout Horizon"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:KIRLPNU",
+          "Name": "Kirloskar Pneumatic Company Ltd",
+          "Industry": "Compressors",
+          "Market Capitalization": 12666.85,
+          "Close Price": 1950.0,
+          "Returns 1D": 6.67,
+          "Returns 1W": 21.42,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "516399ccd82ceff97bdbff8e",
+              "scanName": "Nifty Microcap 250 Strongest in bear market"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "insider+trading+selling",
+              "scanName": "Insider Trading Selling"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:NAM-INDIA",
+          "Name": "Nippon Life India Asset Management Ltd",
+          "Industry": "Finance - AMC",
+          "Market Capitalization": 75816.82,
+          "Close Price": 1186.9,
+          "Returns 1D": 1.67,
+          "Returns 1W": 8.98,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "margin+mavericks",
+              "scanName": "Margin Mavericks"
+            },
+            {
+              "scanId": "insider+trading+buying",
+              "scanName": "Insider Trading Buying"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:SILVERTUC",
+          "Name": "Silver Touch Technologies Ltd",
+          "Industry": "IT - Software",
+          "Market Capitalization": 2359.43,
+          "Close Price": 186.06,
+          "Returns 1D": 0.2,
+          "Returns 1W": -6.4,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "margin+mavericks",
+              "scanName": "Margin Mavericks"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            }
+          ]
+        },
+        {
+          "companyId": "BSE:LLOYDSENT",
+          "Name": "Lloyds Enterprises Ltd",
+          "Industry": "Trading",
+          "Market Capitalization": 11603.51,
+          "Close Price": 77.2,
+          "Returns 1D": 0.32,
+          "Returns 1W": 15.41,
+          "Scans": 10,
+          "savedScans": [
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "the+consolidators",
+              "scanName": "The Consolidators"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:KERNEX",
+          "Name": "Kernex Microsystems (India) Ltd",
+          "Industry": "Railways - Kavach/Springs",
+          "Market Capitalization": 3359.88,
+          "Close Price": 1999.5,
+          "Returns 1D": -3.76,
+          "Returns 1W": 0.31,
+          "Scans": 9,
+          "savedScans": [
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:IOLCP",
+          "Name": "IOL Chemicals & Pharmaceuticals Ltd",
+          "Industry": "Pharma - API & CRAMS",
+          "Market Capitalization": 3822.02,
+          "Close Price": 130.21,
+          "Returns 1D": 1.49,
+          "Returns 1W": -3.0,
+          "Scans": 9,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "breakout+horizon",
+              "scanName": "Breakout Horizon"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:CERA",
+          "Name": "Cera Sanitaryware Ltd",
+          "Industry": "Ceramics/Tiles/Sanitaryware",
+          "Market Capitalization": 8316.33,
+          "Close Price": 6448.0,
+          "Returns 1D": 4.68,
+          "Returns 1W": 4.95,
+          "Scans": 9,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "ea731d297d5e64c806cd5b62",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "6af419612760e2fd15785ca2",
+              "scanName": "Volume Rocketing"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "monthly+trend+twist",
+              "scanName": "Monthly Trend Twist"
+            },
+            {
+              "scanId": "bulk+block+deals",
+              "scanName": "Bulk Block Deals"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:PGIL",
+          "Name": "Pearl Global Industries Ltd",
+          "Industry": "Textiles - Readymade Apparel",
+          "Market Capitalization": 8283.12,
+          "Close Price": 1793.5,
+          "Returns 1D": 2.87,
+          "Returns 1W": 9.97,
+          "Scans": 9,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "short+term+breakout",
+              "scanName": "Short Term Breakout"
+            },
+            {
+              "scanId": "weekly+trend+twist",
+              "scanName": "Weekly Trend Twist"
+            },
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "the+consolidators",
+              "scanName": "The Consolidators"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "smart+money+moves",
+              "scanName": "Smart Money Moves"
+            },
+            {
+              "scanId": "institutional+influx",
+              "scanName": "Institutional Influx"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:DIACABS",
+          "Name": "Diamond Power Infrastructure Ltd",
+          "Industry": "Cables - Power",
+          "Market Capitalization": 11026.34,
+          "Close Price": 209.24,
+          "Returns 1D": 3.46,
+          "Returns 1W": 3.63,
+          "Scans": 9,
+          "savedScans": [
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "516399ccd82ceff97bdbff8e",
+              "scanName": "Nifty Microcap 250 Strongest in bear market"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            }
+          ]
+        },
+        {
+          "companyId": "BSE:AFCOM",
+          "Name": "Afcom Holdings Ltd",
+          "Industry": "Air Transport Service",
+          "Market Capitalization": 3404.09,
+          "Close Price": 1186.15,
+          "Returns 1D": -0.17,
+          "Returns 1W": 25.44,
+          "Scans": 9,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "breakout+horizon",
+              "scanName": "Breakout Horizon"
+            },
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            }
+          ]
+        },
+        {
+          "companyId": "BSE:RELTD",
+          "Name": "Ravindra Energy Ltd",
+          "Industry": "Capital Goods - Electric General",
+          "Market Capitalization": 3417.04,
+          "Close Price": 172.1,
+          "Returns 1D": 19.27,
+          "Returns 1W": 26.45,
+          "Scans": 9,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "short+term+breakout",
+              "scanName": "Short Term Breakout"
+            },
+            {
+              "scanId": "weekly+trend+twist",
+              "scanName": "Weekly Trend Twist"
+            },
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "the+consolidators",
+              "scanName": "The Consolidators"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "insider+trading+selling",
+              "scanName": "Insider Trading Selling"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:BHAGCHEM",
+          "Name": "Bhagiradha Chemicals & Industries Ltd",
+          "Industry": "Pesticides/Agrochemicals",
+          "Market Capitalization": 3621.14,
+          "Close Price": 279.26,
+          "Returns 1D": 7.83,
+          "Returns 1W": 3.41,
+          "Scans": 9,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "ea731d297d5e64c806cd5b62",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "6af419612760e2fd15785ca2",
+              "scanName": "Volume Rocketing"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:WINDMACHIN",
+          "Name": "Windsor Machines Ltd",
+          "Industry": "Capital Goods - Engineering Heavy",
+          "Market Capitalization": 2877.41,
+          "Close Price": 325.05,
+          "Returns 1D": 0.0,
+          "Returns 1W": 0.15,
+          "Scans": 9,
+          "savedScans": [
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "ea731d297d5e64c806cd5b62",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "6af419612760e2fd15785ca2",
+              "scanName": "Volume Rocketing"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "short+term+breakout",
+              "scanName": "Short Term Breakout"
+            },
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "monthly+trend+twist",
+              "scanName": "Monthly Trend Twist"
+            },
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "the+consolidators",
+              "scanName": "The Consolidators"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:GALAPREC",
+          "Name": "Gala Precision Engineering Ltd",
+          "Industry": "Castings, Forgings & Fastners",
+          "Market Capitalization": 1358.97,
+          "Close Price": 1060.35,
+          "Returns 1D": 3.85,
+          "Returns 1W": 14.15,
+          "Scans": 9,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "monthly+trend+twist",
+              "scanName": "Monthly Trend Twist"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:TVSSCS",
+          "Name": "TVS Supply Chain Solutions Ltd",
+          "Industry": "Logistics - Warehousing/Supply Chain",
+          "Market Capitalization": 6190.2,
+          "Close Price": 140.31,
+          "Returns 1D": 3.08,
+          "Returns 1W": 6.09,
+          "Scans": 9,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "516399ccd82ceff97bdbff8e",
+              "scanName": "Nifty Microcap 250 Strongest in bear market"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "monthly+trend+twist",
+              "scanName": "Monthly Trend Twist"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "buoyant+growth",
+              "scanName": "Buoyant Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:FCL",
+          "Name": "Fineotex Chemical Ltd",
+          "Industry": "Speciality Chemicals",
+          "Market Capitalization": 5067.91,
+          "Close Price": 43.52,
+          "Returns 1D": 0.16,
+          "Returns 1W": 11.11,
+          "Scans": 9,
+          "savedScans": [
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "bulk+block+deals",
+              "scanName": "Bulk Block Deals"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:FIEMIND",
+          "Name": "Fiem Industries Ltd",
+          "Industry": "Auto Ancillaries - 2&3 Wheelers",
+          "Market Capitalization": 6018.52,
+          "Close Price": 2286.7,
+          "Returns 1D": -0.12,
+          "Returns 1W": -0.95,
+          "Scans": 9,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "driving+deleverage",
+              "scanName": "Driving Deleverage"
+            },
+            {
+              "scanId": "margin+mavericks",
+              "scanName": "Margin Mavericks"
+            },
+            {
+              "scanId": "smart+money+moves",
+              "scanName": "Smart Money Moves"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:DATAPATTNS",
+          "Name": "Data Patterns (India) Ltd",
+          "Industry": "Aerospace & Defence - Equipments",
+          "Market Capitalization": 26996.03,
+          "Close Price": 4822.1,
+          "Returns 1D": 0.42,
+          "Returns 1W": 6.08,
+          "Scans": 9,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "96d0ef170d25ecc08f677780",
+              "scanName": "Nifty small cap 250 strongest"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "institutional+influx",
+              "scanName": "Institutional Influx"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:PREMIERENE",
+          "Name": "Premier Energies Ltd",
+          "Industry": "Capital Goods - Solar",
+          "Market Capitalization": 49008.61,
+          "Close Price": 1079.6,
+          "Returns 1D": 2.07,
+          "Returns 1W": 4.35,
+          "Scans": 9,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "short+term+breakout",
+              "scanName": "Short Term Breakout"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "institutional+influx",
+              "scanName": "Institutional Influx"
+            },
+            {
+              "scanId": "bulk+block+deals",
+              "scanName": "Bulk Block Deals"
+            },
+            {
+              "scanId": "insider+trading+selling",
+              "scanName": "Insider Trading Selling"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:PGHL",
+          "Name": "Procter & Gamble Health Ltd",
+          "Industry": "Pharma - MNC bulk Drugs",
+          "Market Capitalization": 10364.65,
+          "Close Price": 6244.0,
+          "Returns 1D": -1.05,
+          "Returns 1W": -0.68,
+          "Scans": 9,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "margin+mavericks",
+              "scanName": "Margin Mavericks"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:DEEDEV",
+          "Name": "DEE Development Engineers Ltd",
+          "Industry": "Steel - Tubes/Pipes",
+          "Market Capitalization": 4869.56,
+          "Close Price": 703.05,
+          "Returns 1D": -1.53,
+          "Returns 1W": 7.06,
+          "Scans": 9,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "66bc2b4cf53a06d74c63474f",
+              "scanName": "Tod fod result and gap up"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+1+year",
+              "scanName": "Industry Outperformance 1 Year"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:WELSPUNLIV",
+          "Name": "Welspun Living Ltd",
+          "Industry": "Textiles - Home Textile",
+          "Market Capitalization": 15560.33,
+          "Close Price": 162.23,
+          "Returns 1D": -0.47,
+          "Returns 1W": 17.1,
+          "Scans": 9,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "96d0ef170d25ecc08f677780",
+              "scanName": "Nifty small cap 250 strongest"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "monthly+trend+twist",
+              "scanName": "Monthly Trend Twist"
+            },
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "insider+trading+selling",
+              "scanName": "Insider Trading Selling"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:MSPL",
+          "Name": "MSP Steel & Power Ltd",
+          "Industry": "Steel - Sponge Iron",
+          "Market Capitalization": 2512.04,
+          "Close Price": 44.32,
+          "Returns 1D": 5.0,
+          "Returns 1W": 6.87,
+          "Scans": 9,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "664d682fdc8f73ce4df98b10",
+              "scanName": "Turnaround"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "long+term+breakout",
+              "scanName": "Long Term Breakout"
+            },
+            {
+              "scanId": "volume+rocketing",
+              "scanName": "Volume Rocketing"
+            },
+            {
+              "scanId": "the+consolidators",
+              "scanName": "The Consolidators"
+            },
+            {
+              "scanId": "insider+trading+buying",
+              "scanName": "Insider Trading Buying"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "index+outperformance+1+year",
+              "scanName": "Index Outperformance 1 Year"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:THYROCARE",
+          "Name": "Thyrocare Technologies Ltd",
+          "Industry": "Diagnostics",
+          "Market Capitalization": 8603.68,
+          "Close Price": 540.55,
+          "Returns 1D": 1.15,
+          "Returns 1W": 2.2,
+          "Scans": 9,
+          "savedScans": [
+            {
+              "scanId": "6660c7fd81f58b710db7759f",
+              "scanName": "CFO TO PAT"
+            },
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "short+term+breakout",
+              "scanName": "Short Term Breakout"
+            },
+            {
+              "scanId": "cyclone",
+              "scanName": "Cyclone"
+            },
+            {
+              "scanId": "turbo+surge",
+              "scanName": "Turbo Surge"
+            },
+            {
+              "scanId": "the+consolidators",
+              "scanName": "The Consolidators"
+            },
+            {
+              "scanId": "explosive+growth",
+              "scanName": "Explosive Growth"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            }
+          ]
+        },
+        {
+          "companyId": "NSE:SKYGOLD",
+          "Name": "Sky Gold & Diamonds Ltd",
+          "Industry": "Diamond, Gems & Jewellery",
+          "Market Capitalization": 7889.28,
+          "Close Price": 509.4,
+          "Returns 1D": -2.43,
+          "Returns 1W": 0.09,
+          "Scans": 9,
+          "savedScans": [
+            {
+              "scanId": "6660cbf507a7108f99e38db3",
+              "scanName": "OUTPERFORMANCE JUST STARTED"
+            },
+            {
+              "scanId": "24df839916cbeaf481cbd09f",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ],
+          "popularScans": [
+            {
+              "scanId": "alpha+leaders",
+              "scanName": "Alpha Leaders"
+            },
+            {
+              "scanId": "techno+funda",
+              "scanName": "Techno Funda"
+            },
+            {
+              "scanId": "smart+money+moves",
+              "scanName": "Smart Money Moves"
+            },
+            {
+              "scanId": "index+outperformance+3+months",
+              "scanName": "Index Outperformance 3 Months"
+            },
+            {
+              "scanId": "industry+outperformance+3+months",
+              "scanName": "Industry Outperformance 3 Months"
+            },
+            {
+              "scanId": "margin+expansion",
+              "scanName": "Margin Expansion"
+            },
+            {
+              "scanId": "quarterly+growth+picks",
+              "scanName": "Strong Quarterly Growth"
+            }
+          ]
+        }
+      ],
+      "fetched_at": "2026-06-21T14:06:39.197031+00:00",
+      "include_popular": true
     }
   },
   "aif_nav": [
@@ -3216,9 +9003,9 @@
   ],
   "huf_transfers": [],
   "cash_balances": {
-    "vibhanshu": 914582,
-    "manjari": 1437000,
-    "huf": 970506,
+    "vibhanshu": 723291,
+    "manjari": 1436000,
+    "huf": 702729,
     "manjbhawna": 318000
   },
   "us_watchlist": [
@@ -4300,10 +10087,19 @@
       "title": "FY26 Results Season Wrap",
       "created_date": "2026-06-18",
       "prompt": "-convert this PDF to HTML\n -make a research library from this report\n -I have a SOIC report, make it readable",
-      "filename": "FY26 Results Season Wrap",
+      "filename": null,
       "url": "https://visionary-selkie-8c85fe.netlify.app/",
       "notes": "",
       "id": "955bb621-2fa0-429d-aae0-32d51d2f814f"
+    },
+    {
+      "title": "India AI Story Q4 2026- SOIC Report",
+      "created_date": "2026-06-21",
+      "prompt": "This skill should be used when the user says \"convert this PDF to HTML\", \"make a research library from this report\", \"create HTML from this PDF\", \"extract companies from this report into HTML\", \"build a research page from this document\", or uploads a PDF research report and asks to make it readable/analysable. Converts multi-company research PDFs (quarterly wraps, analyst reports, fund letters) into a dark-themed standalone HTML research library with per-company cards, financial tables, scenario analysis, and sticky navigation",
+      "filename": null,
+      "url": "https://darling-pasca-159ac0.netlify.app/",
+      "notes": "",
+      "id": "50aeac2c-e8cc-497a-8060-8de14a927da1"
     }
   ],
   "soic_research": [

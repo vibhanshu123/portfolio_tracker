@@ -1,131 +1,52 @@
 {
   "SLV": {
-    "fetched_at": "2026-06-20T17:28:07",
+    "fetched_at": "2026-06-21T19:44:08",
     "popular_scans": [],
     "saved_scans": [],
     "count": 0,
     "scan_names": []
   },
   "NSE:TDPOWERSYS": {
-    "fetched_at": "2026-06-20T17:27:45",
-    "popular_scans": [
-      {
-        "scanId": "alpha+leaders",
-        "scanName": "Alpha Leaders"
-      },
-      {
-        "scanId": "smart+money+moves",
-        "scanName": "Smart Money Moves"
-      },
-      {
-        "scanId": "index+outperformance+3+months",
-        "scanName": "Index Outperformance 3 Months"
-      },
-      {
-        "scanId": "index+outperformance+1+year",
-        "scanName": "Index Outperformance 1 Year"
-      },
-      {
-        "scanId": "industry+outperformance+1+year",
-        "scanName": "Industry Outperformance 1 Year"
-      }
-    ],
+    "fetched_at": "2026-06-21T19:43:01",
+    "popular_scans": [],
     "saved_scans": [],
-    "count": 5,
-    "scan_names": [
-      "Alpha Leaders",
-      "Smart Money Moves",
-      "Index Outperformance 3 Months",
-      "Index Outperformance 1 Year",
-      "Industry Outperformance 1 Year"
-    ]
+    "count": 0,
+    "scan_names": []
   },
   "GDX": {
-    "fetched_at": "2026-06-20T17:28:32",
+    "fetched_at": "2026-06-21T19:43:28",
     "popular_scans": [],
     "saved_scans": [],
     "count": 0,
     "scan_names": []
   },
   "COPX": {
-    "fetched_at": "2026-06-20T17:27:04",
+    "fetched_at": "2026-06-21T19:43:04",
     "popular_scans": [],
     "saved_scans": [],
     "count": 0,
     "scan_names": []
   },
   "BE": {
-    "fetched_at": "2026-06-20T17:27:16",
+    "fetched_at": "2026-06-21T19:44:38",
     "popular_scans": [],
     "saved_scans": [],
     "count": 0,
     "scan_names": []
   },
   "NSE:CSBBANK": {
-    "fetched_at": "2026-06-20T17:27:35",
+    "fetched_at": "2026-06-21T19:43:18",
     "popular_scans": [],
     "saved_scans": [],
     "count": 0,
     "scan_names": []
   },
   "NSE:ACUTAAS": {
-    "fetched_at": "2026-06-20T17:28:25",
-    "popular_scans": [
-      {
-        "scanId": "cyclone",
-        "scanName": "Cyclone"
-      },
-      {
-        "scanId": "turbo+surge",
-        "scanName": "Turbo Surge"
-      },
-      {
-        "scanId": "alpha+leaders",
-        "scanName": "Alpha Leaders"
-      },
-      {
-        "scanId": "explosive+growth",
-        "scanName": "Explosive Growth"
-      },
-      {
-        "scanId": "smart+money+moves",
-        "scanName": "Smart Money Moves"
-      },
-      {
-        "scanId": "insider+trading+selling",
-        "scanName": "Insider Trading Selling"
-      },
-      {
-        "scanId": "index+outperformance+3+months",
-        "scanName": "Index Outperformance 3 Months"
-      },
-      {
-        "scanId": "index+outperformance+1+year",
-        "scanName": "Index Outperformance 1 Year"
-      },
-      {
-        "scanId": "industry+outperformance+1+year",
-        "scanName": "Industry Outperformance 1 Year"
-      },
-      {
-        "scanId": "margin+expansion",
-        "scanName": "Margin Expansion"
-      }
-    ],
+    "fetched_at": "2026-06-21T19:44:22",
+    "popular_scans": [],
     "saved_scans": [],
-    "count": 10,
-    "scan_names": [
-      "Cyclone",
-      "Turbo Surge",
-      "Alpha Leaders",
-      "Explosive Growth",
-      "Smart Money Moves",
-      "Insider Trading Selling",
-      "Index Outperformance 3 Months",
-      "Index Outperformance 1 Year",
-      "Industry Outperformance 1 Year",
-      "Margin Expansion"
-    ]
+    "count": 0,
+    "scan_names": []
   },
   "NSE:WINDLAS": {
     "fetched_at": "2026-06-15T11:48:11",
@@ -135,300 +56,130 @@
     "scan_names": []
   },
   "NSE:NH": {
-    "fetched_at": "2026-06-20T17:27:41",
-    "popular_scans": [
-      {
-        "scanId": "cyclone",
-        "scanName": "Cyclone"
-      }
-    ],
+    "fetched_at": "2026-06-21T19:42:40",
+    "popular_scans": [],
     "saved_scans": [],
-    "count": 1,
-    "scan_names": [
-      "Cyclone"
-    ]
+    "count": 0,
+    "scan_names": []
   },
   "NSE:FDC": {
-    "fetched_at": "2026-06-20T17:27:38",
-    "popular_scans": [
-      {
-        "scanId": "cyclone",
-        "scanName": "Cyclone"
-      },
-      {
-        "scanId": "margin+expansion",
-        "scanName": "Margin Expansion"
-      },
-      {
-        "scanId": "quarterly+growth+picks",
-        "scanName": "Strong Quarterly Growth"
-      }
-    ],
+    "fetched_at": "2026-06-21T19:44:48",
+    "popular_scans": [],
     "saved_scans": [],
-    "count": 3,
-    "scan_names": [
-      "Cyclone",
-      "Margin Expansion",
-      "Strong Quarterly Growth"
-    ]
+    "count": 0,
+    "scan_names": []
   },
   "NSE:SONACOMS": {
-    "fetched_at": "2026-06-20T17:28:41",
+    "fetched_at": "2026-06-21T19:43:41",
     "popular_scans": [],
     "saved_scans": [],
     "count": 0,
     "scan_names": []
   },
   "NSE:JAYNECOIND": {
-    "fetched_at": "2026-06-20T17:28:19",
-    "popular_scans": [
-      {
-        "scanId": "the+consolidators",
-        "scanName": "The Consolidators"
-      },
-      {
-        "scanId": "driving+deleverage",
-        "scanName": "Driving Deleverage"
-      },
-      {
-        "scanId": "margin+mavericks",
-        "scanName": "Margin Mavericks"
-      },
-      {
-        "scanId": "index+outperformance+1+year",
-        "scanName": "Index Outperformance 1 Year"
-      },
-      {
-        "scanId": "industry+outperformance+1+year",
-        "scanName": "Industry Outperformance 1 Year"
-      },
-      {
-        "scanId": "quarterly+growth+picks",
-        "scanName": "Strong Quarterly Growth"
-      }
-    ],
+    "fetched_at": "2026-06-21T19:43:14",
+    "popular_scans": [],
     "saved_scans": [],
-    "count": 6,
-    "scan_names": [
-      "The Consolidators",
-      "Driving Deleverage",
-      "Margin Mavericks",
-      "Index Outperformance 1 Year",
-      "Industry Outperformance 1 Year",
-      "Strong Quarterly Growth"
-    ]
+    "count": 0,
+    "scan_names": []
   },
   "SIL": {
-    "fetched_at": "2026-06-20T17:27:54",
+    "fetched_at": "2026-06-21T19:44:35",
     "popular_scans": [],
     "saved_scans": [],
     "count": 0,
     "scan_names": []
   },
   "NSE:SOLARA": {
-    "fetched_at": "2026-06-20T17:27:19",
-    "popular_scans": [
-      {
-        "scanId": "cyclone",
-        "scanName": "Cyclone"
-      }
-    ],
+    "fetched_at": "2026-06-21T19:44:05",
+    "popular_scans": [],
     "saved_scans": [],
-    "count": 1,
-    "scan_names": [
-      "Cyclone"
-    ]
+    "count": 0,
+    "scan_names": []
   },
   "NSE:MCX": {
-    "fetched_at": "2026-06-20T17:28:16",
-    "popular_scans": [
-      {
-        "scanId": "alpha+leaders",
-        "scanName": "Alpha Leaders"
-      },
-      {
-        "scanId": "bulk+block+deals",
-        "scanName": "Bulk Block Deals"
-      },
-      {
-        "scanId": "index+outperformance+1+year",
-        "scanName": "Index Outperformance 1 Year"
-      },
-      {
-        "scanId": "margin+expansion",
-        "scanName": "Margin Expansion"
-      }
-    ],
+    "fetched_at": "2026-06-21T19:43:58",
+    "popular_scans": [],
     "saved_scans": [],
-    "count": 4,
-    "scan_names": [
-      "Alpha Leaders",
-      "Bulk Block Deals",
-      "Index Outperformance 1 Year",
-      "Margin Expansion"
-    ]
+    "count": 0,
+    "scan_names": []
   },
   "GLD": {
-    "fetched_at": "2026-06-20T17:28:03",
+    "fetched_at": "2026-06-21T19:42:47",
     "popular_scans": [],
     "saved_scans": [],
     "count": 0,
     "scan_names": []
   },
   "NSE:ENTERO": {
-    "fetched_at": "2026-06-20T17:27:26",
-    "popular_scans": [
-      {
-        "scanId": "quarterly+growth+picks",
-        "scanName": "Strong Quarterly Growth"
-      }
-    ],
+    "fetched_at": "2026-06-21T19:42:57",
+    "popular_scans": [],
     "saved_scans": [],
-    "count": 1,
-    "scan_names": [
-      "Strong Quarterly Growth"
-    ]
+    "count": 0,
+    "scan_names": []
   },
   "NSE:J&KBANK": {
-    "fetched_at": "2026-06-20T17:27:07",
-    "popular_scans": [
-      {
-        "scanId": "long+term+breakout",
-        "scanName": "Long Term Breakout"
-      },
-      {
-        "scanId": "alpha+leaders",
-        "scanName": "Alpha Leaders"
-      },
-      {
-        "scanId": "techno+funda",
-        "scanName": "Techno Funda"
-      },
-      {
-        "scanId": "index+outperformance+3+months",
-        "scanName": "Index Outperformance 3 Months"
-      }
-    ],
+    "fetched_at": "2026-06-21T19:43:45",
+    "popular_scans": [],
     "saved_scans": [],
-    "count": 4,
-    "scan_names": [
-      "Long Term Breakout",
-      "Alpha Leaders",
-      "Techno Funda",
-      "Index Outperformance 3 Months"
-    ]
+    "count": 0,
+    "scan_names": []
   },
   "NSE:SAMHI": {
-    "fetched_at": "2026-06-20T17:27:01",
-    "popular_scans": [
-      {
-        "scanId": "driving+deleverage",
-        "scanName": "Driving Deleverage"
-      }
-    ],
+    "fetched_at": "2026-06-21T19:44:02",
+    "popular_scans": [],
     "saved_scans": [],
-    "count": 1,
-    "scan_names": [
-      "Driving Deleverage"
-    ]
+    "count": 0,
+    "scan_names": []
   },
   "NSE:GOLDBEES": {
-    "fetched_at": "2026-06-20T17:27:32",
+    "fetched_at": "2026-06-21T19:43:38",
     "popular_scans": [],
     "saved_scans": [],
     "count": 0,
     "scan_names": []
   },
   "RKLB": {
-    "fetched_at": "2026-06-20T17:26:48",
+    "fetched_at": "2026-06-21T19:43:24",
     "popular_scans": [],
     "saved_scans": [],
     "count": 0,
     "scan_names": []
   },
   "NSE:QPOWER": {
-    "fetched_at": "2026-06-20T17:26:54",
-    "popular_scans": [
-      {
-        "scanId": "explosive+growth",
-        "scanName": "Explosive Growth"
-      },
-      {
-        "scanId": "index+outperformance+3+months",
-        "scanName": "Index Outperformance 3 Months"
-      },
-      {
-        "scanId": "index+outperformance+1+year",
-        "scanName": "Index Outperformance 1 Year"
-      },
-      {
-        "scanId": "industry+outperformance+1+year",
-        "scanName": "Industry Outperformance 1 Year"
-      }
-    ],
+    "fetched_at": "2026-06-21T19:44:12",
+    "popular_scans": [],
     "saved_scans": [],
-    "count": 4,
-    "scan_names": [
-      "Explosive Growth",
-      "Index Outperformance 3 Months",
-      "Index Outperformance 1 Year",
-      "Industry Outperformance 1 Year"
-    ]
+    "count": 0,
+    "scan_names": []
   },
   "PAVE": {
-    "fetched_at": "2026-06-20T17:28:35",
+    "fetched_at": "2026-06-21T19:43:51",
     "popular_scans": [],
     "saved_scans": [],
     "count": 0,
     "scan_names": []
   },
   "NSE:SILVERBEES": {
-    "fetched_at": "2026-06-20T17:28:38",
+    "fetched_at": "2026-06-21T19:44:28",
     "popular_scans": [],
     "saved_scans": [],
     "count": 0,
     "scan_names": []
   },
   "GEV": {
-    "fetched_at": "2026-06-20T17:27:29",
+    "fetched_at": "2026-06-21T19:43:21",
     "popular_scans": [],
     "saved_scans": [],
     "count": 0,
     "scan_names": []
   },
   "NSE:SHILPAMED": {
-    "fetched_at": "2026-06-20T17:28:22",
-    "popular_scans": [
-      {
-        "scanId": "long+term+breakout",
-        "scanName": "Long Term Breakout"
-      },
-      {
-        "scanId": "techno+funda",
-        "scanName": "Techno Funda"
-      },
-      {
-        "scanId": "buoyant+growth",
-        "scanName": "Buoyant Growth"
-      },
-      {
-        "scanId": "index+outperformance+3+months",
-        "scanName": "Index Outperformance 3 Months"
-      },
-      {
-        "scanId": "industry+outperformance+3+months",
-        "scanName": "Industry Outperformance 3 Months"
-      }
-    ],
+    "fetched_at": "2026-06-21T19:44:42",
+    "popular_scans": [],
     "saved_scans": [],
-    "count": 5,
-    "scan_names": [
-      "Long Term Breakout",
-      "Techno Funda",
-      "Buoyant Growth",
-      "Index Outperformance 3 Months",
-      "Industry Outperformance 3 Months"
-    ]
+    "count": 0,
+    "scan_names": []
   },
   "NSE:UJJIVANSFB": {
     "date": "2026-06-08",
@@ -446,206 +197,81 @@
     "fetched_at": "2026-06-08T00:00:00"
   },
   "NSE:SAILIFE": {
-    "fetched_at": "2026-06-20T17:27:48",
-    "popular_scans": [
-      {
-        "scanId": "turbo+surge",
-        "scanName": "Turbo Surge"
-      },
-      {
-        "scanId": "explosive+growth",
-        "scanName": "Explosive Growth"
-      },
-      {
-        "scanId": "index+outperformance+1+year",
-        "scanName": "Index Outperformance 1 Year"
-      }
-    ],
+    "fetched_at": "2026-06-21T19:43:07",
+    "popular_scans": [],
     "saved_scans": [],
-    "count": 3,
-    "scan_names": [
-      "Turbo Surge",
-      "Explosive Growth",
-      "Index Outperformance 1 Year"
-    ]
+    "count": 0,
+    "scan_names": []
   },
   "NSE:SANSERA": {
-    "fetched_at": "2026-06-20T17:27:57",
-    "popular_scans": [
-      {
-        "scanId": "alpha+leaders",
-        "scanName": "Alpha Leaders"
-      },
-      {
-        "scanId": "smart+money+moves",
-        "scanName": "Smart Money Moves"
-      },
-      {
-        "scanId": "index+outperformance+3+months",
-        "scanName": "Index Outperformance 3 Months"
-      },
-      {
-        "scanId": "index+outperformance+1+year",
-        "scanName": "Index Outperformance 1 Year"
-      },
-      {
-        "scanId": "industry+outperformance+1+year",
-        "scanName": "Industry Outperformance 1 Year"
-      }
-    ],
+    "fetched_at": "2026-06-21T19:43:31",
+    "popular_scans": [],
     "saved_scans": [],
-    "count": 5,
-    "scan_names": [
-      "Alpha Leaders",
-      "Smart Money Moves",
-      "Index Outperformance 3 Months",
-      "Index Outperformance 1 Year",
-      "Industry Outperformance 1 Year"
-    ]
+    "count": 0,
+    "scan_names": []
   },
   "SII": {
-    "fetched_at": "2026-06-20T17:27:51",
+    "fetched_at": "2026-06-21T19:42:51",
     "popular_scans": [],
     "saved_scans": [],
     "count": 0,
     "scan_names": []
   },
   "URNM": {
-    "fetched_at": "2026-06-20T17:28:13",
+    "fetched_at": "2026-06-21T19:43:55",
     "popular_scans": [],
     "saved_scans": [],
     "count": 0,
     "scan_names": []
   },
   "NSE:GOLDIETF": {
-    "fetched_at": "2026-06-20T17:27:13",
+    "fetched_at": "2026-06-21T19:44:15",
     "popular_scans": [],
     "saved_scans": [],
     "count": 0,
     "scan_names": []
   },
   "REMX": {
-    "fetched_at": "2026-06-20T17:26:57",
+    "fetched_at": "2026-06-21T19:42:43",
     "popular_scans": [],
     "saved_scans": [],
     "count": 0,
     "scan_names": []
   },
   "NSE:DEEDEV": {
-    "fetched_at": "2026-06-20T17:28:29",
-    "popular_scans": [
-      {
-        "scanId": "turbo+surge",
-        "scanName": "Turbo Surge"
-      },
-      {
-        "scanId": "alpha+leaders",
-        "scanName": "Alpha Leaders"
-      },
-      {
-        "scanId": "index+outperformance+3+months",
-        "scanName": "Index Outperformance 3 Months"
-      },
-      {
-        "scanId": "index+outperformance+1+year",
-        "scanName": "Index Outperformance 1 Year"
-      },
-      {
-        "scanId": "industry+outperformance+3+months",
-        "scanName": "Industry Outperformance 3 Months"
-      },
-      {
-        "scanId": "industry+outperformance+1+year",
-        "scanName": "Industry Outperformance 1 Year"
-      }
-    ],
+    "fetched_at": "2026-06-21T19:44:18",
+    "popular_scans": [],
     "saved_scans": [],
-    "count": 6,
-    "scan_names": [
-      "Turbo Surge",
-      "Alpha Leaders",
-      "Index Outperformance 3 Months",
-      "Index Outperformance 1 Year",
-      "Industry Outperformance 3 Months",
-      "Industry Outperformance 1 Year"
-    ]
+    "count": 0,
+    "scan_names": []
   },
   "NSE:LAURUSLABS": {
-    "fetched_at": "2026-06-20T17:26:51",
-    "popular_scans": [
-      {
-        "scanId": "turbo+surge",
-        "scanName": "Turbo Surge"
-      },
-      {
-        "scanId": "alpha+leaders",
-        "scanName": "Alpha Leaders"
-      },
-      {
-        "scanId": "explosive+growth",
-        "scanName": "Explosive Growth"
-      },
-      {
-        "scanId": "index+outperformance+3+months",
-        "scanName": "Index Outperformance 3 Months"
-      },
-      {
-        "scanId": "index+outperformance+1+year",
-        "scanName": "Index Outperformance 1 Year"
-      },
-      {
-        "scanId": "industry+outperformance+1+year",
-        "scanName": "Industry Outperformance 1 Year"
-      }
-    ],
+    "fetched_at": "2026-06-21T19:44:32",
+    "popular_scans": [],
     "saved_scans": [],
-    "count": 6,
-    "scan_names": [
-      "Turbo Surge",
-      "Alpha Leaders",
-      "Explosive Growth",
-      "Index Outperformance 3 Months",
-      "Index Outperformance 1 Year",
-      "Industry Outperformance 1 Year"
-    ]
+    "count": 0,
+    "scan_names": []
   },
   "NSE:JMFINANCIL": {
-    "fetched_at": "2026-06-20T17:28:10",
+    "fetched_at": "2026-06-21T19:43:48",
     "popular_scans": [],
     "saved_scans": [],
     "count": 0,
     "scan_names": []
   },
   "GRID": {
-    "fetched_at": "2026-06-20T17:27:23",
+    "fetched_at": "2026-06-21T19:43:35",
     "popular_scans": [],
     "saved_scans": [],
     "count": 0,
     "scan_names": []
   },
   "NSE:NEULANDLAB": {
-    "fetched_at": "2026-06-20T17:28:00",
-    "popular_scans": [
-      {
-        "scanId": "the+consolidators",
-        "scanName": "The Consolidators"
-      },
-      {
-        "scanId": "index+outperformance+3+months",
-        "scanName": "Index Outperformance 3 Months"
-      },
-      {
-        "scanId": "margin+expansion",
-        "scanName": "Margin Expansion"
-      }
-    ],
+    "fetched_at": "2026-06-21T19:44:25",
+    "popular_scans": [],
     "saved_scans": [],
-    "count": 3,
-    "scan_names": [
-      "The Consolidators",
-      "Index Outperformance 3 Months",
-      "Margin Expansion"
-    ]
+    "count": 0,
+    "scan_names": []
   },
   "NSE:INTERARCH": {
     "fetched_at": "2026-06-15T11:48:36",
@@ -662,65 +288,31 @@
     ]
   },
   "NSE:SBCL": {
-    "fetched_at": "2026-06-20T17:26:45",
-    "popular_scans": [
-      {
-        "scanId": "smart+money+moves",
-        "scanName": "Smart Money Moves"
-      },
-      {
-        "scanId": "index+outperformance+3+months",
-        "scanName": "Index Outperformance 3 Months"
-      }
-    ],
+    "fetched_at": "2026-06-21T19:44:45",
+    "popular_scans": [],
     "saved_scans": [],
-    "count": 2,
-    "scan_names": [
-      "Smart Money Moves",
-      "Index Outperformance 3 Months"
-    ]
+    "count": 0,
+    "scan_names": []
   },
   "NSE:CONCORDBIO": {
-    "fetched_at": "2026-06-20T17:28:44",
-    "popular_scans": [
-      {
-        "scanId": "short+term+breakout",
-        "scanName": "Short Term Breakout"
-      },
-      {
-        "scanId": "cyclone",
-        "scanName": "Cyclone"
-      }
-    ],
+    "fetched_at": "2026-06-21T19:42:54",
+    "popular_scans": [],
     "saved_scans": [],
-    "count": 2,
-    "scan_names": [
-      "Short Term Breakout",
-      "Cyclone"
-    ]
+    "count": 0,
+    "scan_names": []
   },
   "NSE:CENTUM": {
-    "fetched_at": "2026-06-20T17:27:10",
-    "popular_scans": [
-      {
-        "scanId": "alpha+leaders",
-        "scanName": "Alpha Leaders"
-      },
-      {
-        "scanId": "smart+money+moves",
-        "scanName": "Smart Money Moves"
-      },
-      {
-        "scanId": "index+outperformance+3+months",
-        "scanName": "Index Outperformance 3 Months"
-      }
-    ],
+    "fetched_at": "2026-06-21T19:43:11",
+    "popular_scans": [],
     "saved_scans": [],
-    "count": 3,
-    "scan_names": [
-      "Alpha Leaders",
-      "Smart Money Moves",
-      "Index Outperformance 3 Months"
-    ]
+    "count": 0,
+    "scan_names": []
+  },
+  "NSE:EPACKPEB": {
+    "fetched_at": "2026-06-21T23:32:49",
+    "popular_scans": [],
+    "saved_scans": [],
+    "count": 0,
+    "scan_names": []
   }
 }

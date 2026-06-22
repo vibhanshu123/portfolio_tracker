@@ -18,6 +18,18 @@ router = APIRouter()
 _analysis_jobs: dict = {}
 
 
+def _find_wl_item(data: dict, wid: str):
+    """Search all watchlist collections for an item by id."""
+    all_lists = ["watchlist", "us_watchlist", "soic_research"]
+    # also include any custom wl_* keys
+    all_lists += [k for k in data if k.startswith("wl_") and k not in all_lists]
+    for key in all_lists:
+        for item in data.get(key, []):
+            if item.get("id") == wid:
+                return item
+    return None
+
+
 def _get_dashboard_path(symbol: str, stock_name: str = ""):
     local = DASHBOARDS_DIR / f"{symbol}_Dashboard.html"
     if local.exists():
@@ -150,15 +162,19 @@ def _resolve_job(wid: str, ticker: str, stock_name: str = "") -> dict:
 def get_all_status():
     data   = load()
     result = {}
-    for w in data["watchlist"]:
-        result[w["id"]] = _resolve_job(w["id"], w.get("ticker", ""), w.get("stock_name", ""))
+    # Cover all watchlist collections so SOIC Research / custom lists get status too
+    all_lists = ["watchlist", "us_watchlist", "soic_research"]
+    all_lists += [k for k in data if k.startswith("wl_") and k not in all_lists]
+    for key in all_lists:
+        for w in data.get(key, []):
+            result[w["id"]] = _resolve_job(w["id"], w.get("ticker", ""), w.get("stock_name", ""))
     return result
 
 
 @router.get("/api/watchlist/{wid}/status")
 def get_status(wid: str):
     data = load()
-    item = next((w for w in data["watchlist"] if w["id"] == wid), None)
+    item = _find_wl_item(data, wid)
     if not item:
         raise HTTPException(404, "Not found")
     return _resolve_job(wid, item.get("ticker", ""), item.get("stock_name", ""))
@@ -167,7 +183,7 @@ def get_status(wid: str):
 @router.post("/api/watchlist/{wid}/download")
 def wl_download(wid: str):
     data = load()
-    item = next((w for w in data["watchlist"] if w["id"] == wid), None)
+    item = _find_wl_item(data, wid)
     if not item:
         raise HTTPException(404, "Not found")
     symbol = _get_symbol(item.get("ticker", ""))
@@ -180,7 +196,7 @@ def wl_download(wid: str):
 @router.post("/api/watchlist/{wid}/extract")
 def wl_extract(wid: str):
     data = load()
-    item = next((w for w in data["watchlist"] if w["id"] == wid), None)
+    item = _find_wl_item(data, wid)
     if not item:
         raise HTTPException(404, "Not found")
     ticker = item.get("ticker", "")
@@ -196,7 +212,7 @@ def wl_extract(wid: str):
 @router.post("/api/watchlist/{wid}/deepdive")
 def wl_deepdive(wid: str):
     data = load()
-    item = next((w for w in data["watchlist"] if w["id"] == wid), None)
+    item = _find_wl_item(data, wid)
     if not item:
         raise HTTPException(404, "Not found")
     ticker = item.get("ticker", "")
@@ -212,7 +228,7 @@ def wl_deepdive(wid: str):
 @router.get("/dashboard/{wid}", response_class=HTMLResponse)
 def serve_dashboard(wid: str):
     data = load()
-    item = next((w for w in data["watchlist"] if w["id"] == wid), None)
+    item = _find_wl_item(data, wid)
     if not item:
         raise HTTPException(404, "Not found")
     dp = _get_dashboard_path(_get_symbol(item.get("ticker", "")), item.get("stock_name", ""))

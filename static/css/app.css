@@ -845,3 +845,98 @@ body.numbers-hidden .pn {
 
 /* ── Section fade-up on tab switch ───────────────────────────────────────── */
 #tab-content { animation: fadeUp .3s ease both; }
+
+/* ── Top Ideas tab (stockscans.in proxy) ─────────────────────────────────── */
+.ti-wrap { padding: 16px; }
+.ti-login-card {
+  max-width: 380px; margin: 60px auto; padding: 32px;
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+}
+.ti-login-title { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.ti-login-sub   { font-size: 12px; color: var(--text-faint); margin-bottom: 20px; }
+.ti-login-form  { display: flex; flex-direction: column; gap: 10px; }
+.ti-input {
+  padding: 9px 12px; border: 1px solid var(--border2); border-radius: 8px;
+  background: var(--bg); color: var(--text); font-size: 13px; outline: none;
+}
+.ti-input:focus { border-color: var(--accent); }
+.ti-err  { font-size: 12px; color: #f87171; padding: 6px 0; }
+.ti-login-btn { padding: 9px 18px; font-size: 13px; font-weight: 600; }
+
+/* Inline login card shown above the table when logged out but cache exists */
+.ti-login-inline {
+  max-width: 420px; margin: 0 0 16px 0; padding: 20px 24px;
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+}
+.ti-login-inline .ti-login-title { font-size: 14px; margin-bottom: 4px; }
+.ti-login-inline .ti-login-sub   { margin-bottom: 12px; }
+.ti-login-inline .ti-login-form  { flex-direction: row; align-items: center; flex-wrap: wrap; gap: 8px; }
+.ti-login-inline .ti-input       { flex: 1; min-width: 140px; }
+
+.ti-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px; flex-wrap: wrap; gap: 8px;
+}
+.ti-toolbar-left  { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.ti-toolbar-right { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.ti-count { font-size: 12px; color: var(--text-faint); }
+.ti-fetched-at {
+  font-size: 12px; color: var(--text-faint);
+  display: flex; align-items: center; gap: 5px;
+}
+.ti-fetched-at::before { content: '🕐'; font-size: 11px; opacity: .7; }
+.ti-logout-btn { color: #ef4444 !important; }
+.ti-refreshing  { opacity: .6; }
+
+.ti-name-link { text-decoration: none; }
+.ti-name-link:hover .ti-name { color: var(--accent); }
+.ti-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.ti-sym  { font-size: 11px; color: var(--text-faint); margin-top: 2px; display: flex; align-items: center; gap: 5px; }
+
+.ti-exch-badge {
+  font-size: 9px; font-weight: 800; letter-spacing: .6px; text-transform: uppercase;
+  padding: 1px 5px; border-radius: 3px;
+}
+.ti-exch-nse { background: rgba(52,211,153,.15); color: #34d399; }
+.ti-exch-bse { background: rgba(96,165,250,.15); color: #60a5fa; }
+
+.ti-scans-badge {
+  display: inline-block; min-width: 28px; text-align: center;
+  padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: 700;
+  background: rgba(96,165,250,.15); color: #60a5fa;
+}
+.ti-th-active { color: var(--accent) !important; }
+.ti-error {
+  background: rgba(248,81,73,.08); border: 1px solid rgba(248,81,73,.3);
+  border-radius: 8px; padding: 14px 18px; color: #f87171; font-size: 13px;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+}
+
+/* ── Portfolio region switcher ───────────────────────────────────────────── */
+.region-switcher {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 16px 0;
+}
+.region-pill {
+  padding: 5px 18px;
+  border-radius: 20px;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--text-faint);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+  letter-spacing: .01em;
+}
+.region-pill:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+.region-pill.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
