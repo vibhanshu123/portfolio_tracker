@@ -38,8 +38,8 @@ const ACCT_LABELS = {
   manjbhawna: 'Manj/Bhawna', us_vibhanshu: 'US–Vib',
   us_manjari: 'US–Manj', us_huf: 'US–HUF',
 };
-const US_ACCTS  = ['us_vibhanshu', 'us_manjari', 'us_huf'];
-const INR_ACCTS = ['vibhanshu', 'manjari', 'huf', 'manjbhawna'];
+let US_ACCTS  = ['us_vibhanshu', 'us_manjari', 'us_huf'];
+let INR_ACCTS = ['vibhanshu', 'manjari', 'huf', 'manjbhawna'];
 const SECTOR_COLORS = [
   '#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6',
   '#06b6d4','#f97316','#84cc16','#ec4899','#14b8a6',
@@ -87,7 +87,47 @@ async function init() {
   );
 }
 
-let stockscans = {};   // ticker → { date, count, scan_names, popular_scans }
+let stockscans   = {};   // ticker → { date, count, scan_names, popular_scans }
+let livePrices   = {};   // orig ticker → latest cmp (refreshed by Fetch Prices)
+let _lastFetchTs = '';   // time string of last successful price fetch
+let _ttsBtn      = null; // button currently showing ⏹ (active TTS)
+
+function speakNotes(rawText, btn) {
+  // Toggle off if same button tapped again or something else is speaking
+  if (window.speechSynthesis.speaking) {
+    window.speechSynthesis.cancel();
+    if (_ttsBtn) { _ttsBtn.textContent = '🔊'; _ttsBtn.title = 'Listen'; }
+    if (_ttsBtn === btn) { _ttsBtn = null; return; }
+  }
+  // Strip soic markers, HTML tags, excess whitespace
+  const clean = rawText
+    .replace(/soic:\d+/gi, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!clean) return;
+
+  const utt  = new SpeechSynthesisUtterance(clean);
+  utt.rate   = 0.92;
+  utt.lang   = 'en-IN';
+  const done = () => {
+    if (_ttsBtn) { _ttsBtn.textContent = '🔊'; _ttsBtn.title = 'Listen'; }
+    _ttsBtn = null;
+  };
+  utt.onend  = done;
+  utt.onerror = done;
+
+  _ttsBtn = btn;
+  btn.textContent = '⏹';
+  btn.title = 'Stop';
+  window.speechSynthesis.speak(utt);
+}
+
+function _ttsBtn_html(notesEscaped) {
+  return `<button data-notes="${notesEscaped}" onclick="event.stopPropagation();speakNotes(this.dataset.notes,this)" title="Listen"
+    style="background:none;border:none;cursor:pointer;font-size:11px;color:var(--text-faint);padding:1px 3px;line-height:1;opacity:.5"
+    onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.5'">🔊</button>`;
+}
 
 async function fetchData() {
   const [dataRes, navRes, scansRes] = await Promise.all([
@@ -110,6 +150,11 @@ async function fetchData() {
   state.sold_positions      = state.sold_positions      || [];
   state.market_dashboards   = state.market_dashboards   || [];
   state.scorer_reports      = state.scorer_reports      || [];
+  // Derive consolidated account lists from portfolio_groups (consolidated !== false)
+  const _pg = state.settings?.portfolio_groups || {};
+  INR_ACCTS = (_pg.indian || []).filter(p => p.consolidated !== false).map(p => p.id);
+  US_ACCTS  = (_pg.us     || []).filter(p => p.consolidated !== false).map(p => p.id);
+  if (!INR_ACCTS.length) INR_ACCTS = ['vibhanshu', 'manjari', 'huf', 'manjbhawna']; // fallback
   // Also fetch scorer reports
   fetch('/api/scorer/reports').then(r=>r.json()).then(r => { state.scorer_reports = r; }).catch(()=>{});
   // update journal tab badge
@@ -197,7 +242,10 @@ function renderHeader() {
 }
 
 // ─── Tabs ─────────────────────────────────────────────────────────────────────
-const _INDIAN_ACCOUNTS = ['vibhanshu', 'manjari', 'huf', 'manjbhawna'];
+function _indianAccounts() {
+  const pg = state.settings?.portfolio_groups?.indian || [];
+  return pg.length ? pg.map(p => p.id) : ['vibhanshu', 'manjari', 'huf', 'manjbhawna'];
+}
 
 function _usAccounts() {
   const pg = state.settings?.portfolio_groups?.us || [];
@@ -209,7 +257,12 @@ function _wlIds() {
 }
 
 function switchTab(tab) {
-  if (_INDIAN_ACCOUNTS.includes(tab)) { currentIndianTab = tab; currentRegion = 'indian'; tab = 'portfolio'; }
+  // Stop any in-progress TTS when navigating away
+  if (window.speechSynthesis?.speaking) {
+    window.speechSynthesis.cancel();
+    if (_ttsBtn) { _ttsBtn.textContent = '🔊'; _ttsBtn.title = 'Listen'; _ttsBtn = null; }
+  }
+  if (_indianAccounts().includes(tab)) { currentIndianTab = tab; currentRegion = 'indian'; tab = 'portfolio'; }
   if (_usAccounts().includes(tab))    { currentUSTab = tab;     currentRegion = 'us';     tab = 'portfolio'; }
   if (tab === 'indian')               { currentRegion = 'indian'; tab = 'portfolio'; }
   if (tab === 'us')                   { currentRegion = 'us';     tab = 'portfolio'; }
@@ -231,17 +284,71 @@ function toggleIyerCol() {
 }
 
 // ─── Portfolio group management ───────────────────────────────────────────────
-async function _portfolioGroupAction(group, id, name) {
+async function _portfolioGroupAction(group, id, name, extra = {}) {
   const url    = id ? `/api/portfolio-groups/${group}/${id}` : `/api/portfolio-groups/${group}`;
   const method = id ? 'PATCH' : 'POST';
-  const res    = await fetch(url, { method, headers: {'Content-Type':'application/json'}, body: JSON.stringify({name}) });
+  const res    = await fetch(url, { method, headers: {'Content-Type':'application/json'}, body: JSON.stringify({name, ...extra}) });
   if (!res.ok) { alert((await res.json()).detail || 'Error'); return; }
   await fetchData();
   renderTab();
 }
 
-function openAddPortfolioModal_indian() { _openNameModal('Add Indian Portfolio', '', n => _portfolioGroupAction('indian', null, n)); }
-function openAddPortfolioModal_us()     { _openNameModal('Add US Portfolio',     '', n => _portfolioGroupAction('us',     null, n)); }
+function openAddPortfolioModal_indian() { _openAddPortfolioModal('indian'); }
+function openAddPortfolioModal_us()     { _openAddPortfolioModal('us'); }
+
+function _openAddPortfolioModal(group) {
+  const existing = document.getElementById('add-portfolio-modal');
+  if (existing) existing.remove();
+  const html = `
+  <div id="add-portfolio-modal" onclick="if(event.target===this)this.remove()"
+    style="position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center">
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:24px;width:340px;box-shadow:0 20px 60px rgba(0,0,0,.4)">
+      <div style="font-size:14px;font-weight:700;color:var(--text-strong);margin-bottom:20px">Add Portfolio</div>
+
+      <label style="font-size:11px;color:var(--text-faint);display:block;margin-bottom:6px;letter-spacing:.05em">NAME</label>
+      <input id="add-port-name" placeholder="e.g. Arya"
+        style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);font-size:13px;box-sizing:border-box;margin-bottom:16px"
+        onkeydown="if(event.key==='Enter')_submitAddPortfolio('${group}')">
+
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+          <div>
+            <div style="font-size:13px;color:var(--text-strong);font-weight:600">Include in Consolidated</div>
+            <div style="font-size:11px;color:var(--text-faint);margin-top:3px">Count these trades in total portfolio numbers and allocation</div>
+          </div>
+          <div id="add-port-toggle" onclick="_togglePortConsolidated()"
+            style="flex-shrink:0;width:40px;height:22px;background:var(--accent);border-radius:22px;cursor:pointer;position:relative;transition:background .2s">
+            <div id="add-port-knob" style="position:absolute;top:3px;left:3px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform .2s;transform:translateX(18px)"></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button onclick="document.getElementById('add-portfolio-modal').remove()"
+          style="padding:8px 16px;background:none;border:1px solid var(--border);border-radius:6px;color:var(--text-muted);font-size:13px;cursor:pointer">Cancel</button>
+        <button onclick="_submitAddPortfolio('${group}')"
+          style="padding:8px 16px;background:var(--accent);border:none;border-radius:6px;color:#fff;font-size:13px;font-weight:600;cursor:pointer">Add</button>
+      </div>
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+  setTimeout(() => document.getElementById('add-port-name')?.focus(), 50);
+}
+
+let _addPortConsolidated = true;
+function _togglePortConsolidated() {
+  _addPortConsolidated = !_addPortConsolidated;
+  document.getElementById('add-port-toggle').style.background = _addPortConsolidated ? 'var(--accent)' : 'var(--border)';
+  document.getElementById('add-port-knob').style.transform    = _addPortConsolidated ? 'translateX(18px)' : 'translateX(0)';
+}
+async function _submitAddPortfolio(group) {
+  const name = document.getElementById('add-port-name')?.value.trim();
+  if (!name) { document.getElementById('add-port-name')?.focus(); return; }
+  const consolidated = _addPortConsolidated;
+  document.getElementById('add-portfolio-modal').remove();
+  _addPortConsolidated = true; // reset for next open
+  await _portfolioGroupAction(group, null, name, { consolidated });
+}
 function openRenamePortfolioModal_indian(id, name) { _openNameModal('Rename Portfolio', name, n => _portfolioGroupAction('indian', id, n)); }
 function openRenamePortfolioModal_us(id, name)     { _openNameModal('Rename Portfolio', name, n => _portfolioGroupAction('us',     id, n)); }
 function openDeletePortfolioModal_indian(id, name) { _confirmDelete(`Remove portfolio "${name}"? Positions remain in the data but the tab will be hidden.`, () => _deletePortfolioGroup('indian', id)); }
@@ -416,15 +523,39 @@ const _INDIAN_SUB_TABS = [
 
 function _subTabBar(tabs, activeId, onSwitch, onAdd, onRename, onDelete) {
   return `<div class="sub-tab-bar">
-    ${tabs.map(t => `
-      <div class="sub-tab-item ${activeId === t.id ? 'active' : ''}">
-        <button class="sub-tab-btn ${activeId === t.id ? 'active' : ''}"
+    ${tabs.map(t => {
+      const isActive = activeId === t.id;
+      const showManage = isActive && (onRename || onDelete);
+      return `
+      <div class="sub-tab-item ${isActive ? 'active' : ''}">
+        <button class="sub-tab-btn ${isActive ? 'active' : ''}"
                 onclick="${onSwitch}('${t.id}')">${t.name}</button>
-        <button class="sub-tab-rename" onclick="${onRename}('${t.id}','${esc(t.name)}')" title="Rename">✎</button>
-        ${onDelete ? `<button class="sub-tab-delete" onclick="${onDelete}('${t.id}','${esc(t.name)}')" title="Remove">✕</button>` : ''}
-      </div>`).join('')}
+        ${showManage ? `<button class="sub-tab-manage" onclick="openTabManageModal('${t.id}','${esc(t.name)}','${onRename||''}','${onDelete||''}')" title="Manage">⚙</button>` : ''}
+      </div>`;
+    }).join('')}
     <button class="sub-tab-add" onclick="${onAdd}()">+ Add</button>
   </div>`;
+}
+
+function openTabManageModal(id, name, onRename, onDelete) {
+  const existing = document.getElementById('tab-manage-modal');
+  if (existing) existing.remove();
+  const close = "document.getElementById('tab-manage-modal').remove();";
+  const html = `
+  <div id="tab-manage-modal" onclick="if(event.target===this)this.remove()" style="position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center">
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:8px;width:200px;box-shadow:0 12px 40px rgba(0,0,0,.35)">
+      <div style="font-size:11px;color:var(--text-faint);padding:8px 12px 6px;font-weight:600;letter-spacing:.05em;text-transform:uppercase">${esc(name)}</div>
+      ${onRename ? `<button onclick="${close}${onRename}('${id}','${esc(name)}')"
+        style="display:block;width:100%;padding:9px 14px;border:none;background:none;text-align:left;font-size:13px;color:var(--text-muted);cursor:pointer;border-radius:6px"
+        onmouseover="this.style.background='var(--row-hover)';this.style.color='var(--text)'"
+        onmouseout="this.style.background='none';this.style.color='var(--text-muted)'">Rename</button>` : ''}
+      ${onDelete ? `<button onclick="${close}${onDelete}('${id}','${esc(name)}')"
+        style="display:block;width:100%;padding:9px 14px;border:none;background:none;text-align:left;font-size:13px;color:#f87171;cursor:pointer;border-radius:6px"
+        onmouseover="this.style.background='rgba(239,68,68,.1)'"
+        onmouseout="this.style.background='none'">Remove tab</button>` : ''}
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
 }
 
 // ─── Portfolio hub: region pill + nested account tabs ────────────────────────
@@ -449,15 +580,27 @@ function renderPortfolioTab() {
 function renderIndianTab() { return _renderIndianTabContent(); }
 function renderUSTab()    { return _renderUSTabContent(); }
 
+function _isNonConsolidated(group, tabId) {
+  const pg = state.settings?.portfolio_groups?.[group] || [];
+  const entry = pg.find(p => p.id === tabId);
+  return entry?.consolidated === false;
+}
+
 function _renderIndianTabContent() {
   const tabs = state.settings?.portfolio_groups?.indian || _INDIAN_SUB_TABS.map(t => ({id:t.id, name:t.label}));
   const bar  = _subTabBar(tabs, currentIndianTab, 'switchIndianTab', 'openAddPortfolioModal_indian', 'openRenamePortfolioModal_indian', 'openDeletePortfolioModal_indian');
 
-  // Fallback if currentIndianTab was removed
   if (!tabs.find(t => t.id === currentIndianTab)) currentIndianTab = tabs[0]?.id || 'vibhanshu';
 
-  const positions = state.positions.filter(p => p.account === currentIndianTab);
-  return bar + renderSummaryCards(positions, currentIndianTab) + renderTable(positions, currentIndianTab);
+  const positions  = state.positions.filter(p => p.account === currentIndianTab);
+  const nonCon     = _isNonConsolidated('indian', currentIndianTab);
+  const extras     = nonCon
+    ? renderSectorPieChart(positions) + renderPortfolioCashCard(currentIndianTab)
+    : '';
+  return bar
+    + renderSummaryCards(positions, currentIndianTab)
+    + renderTable(positions, currentIndianTab)
+    + extras;
 }
 
 function _renderUSTabContent() {
@@ -481,6 +624,7 @@ function _renderUSTabContent() {
 
   // Individual portfolio sub-tab
   const positions = state.positions.filter(p => p.account === currentUSTab);
+  const nonCon    = _isNonConsolidated('us', currentUSTab);
   const addBtn = `<div class="flex justify-end mb-3">
     <button class="btn btn-blue text-xs" onclick="openAdd('${currentUSTab}')">+ Add US Stock</button>
   </div>`;
@@ -488,7 +632,140 @@ function _renderUSTabContent() {
     + addBtn
     + renderSummaryCards(positions, 'us')
     + renderUSCapitalSection(null, [currentUSTab])
-    + renderTable(positions, 'us');
+    + renderTable(positions, 'us')
+    + (nonCon ? renderSectorPieChart(positions, true) : '');
+}
+
+function renderSectorPieChart(positions, isUS = false) {
+  const rate = state.settings?.usd_inr_rate || 84;
+  // group by sector, weighted by current value in INR
+  const map = {};
+  for (const p of positions) {
+    const sector = (p.sector || 'Other').trim() || 'Other';
+    const val    = isUS
+      ? (p.current_value || 0) * rate
+      : (p.current_value_inr || p.current_value || 0);
+    map[sector] = (map[sector] || 0) + val;
+  }
+  const total = Object.values(map).reduce((a, b) => a + b, 0);
+  if (!total || Object.keys(map).length === 0) return '';
+
+  const sectors = Object.entries(map)
+    .map(([name, val]) => ({ name, val, pct: val / total * 100 }))
+    .sort((a, b) => b.val - a.val);
+
+  // SVG donut
+  const cx = 110, cy = 110, R = 88, ri = 52;
+  let angle = -Math.PI / 2;
+  const paths = sectors.map((s, i) => {
+    const color  = SECTOR_COLORS[i % SECTOR_COLORS.length];
+    const sweep  = s.pct / 100 * 2 * Math.PI;
+    const end    = angle + sweep;
+    const large  = sweep > Math.PI ? 1 : 0;
+    const x1 = cx + R  * Math.cos(angle), y1 = cy + R  * Math.sin(angle);
+    const x2 = cx + R  * Math.cos(end),   y2 = cy + R  * Math.sin(end);
+    const xi1= cx + ri * Math.cos(angle), yi1= cy + ri * Math.sin(angle);
+    const xi2= cx + ri * Math.cos(end),   yi2= cy + ri * Math.sin(end);
+    const d  = `M${x1},${y1} A${R},${R} 0 ${large},1 ${x2},${y2} L${xi2},${yi2} A${ri},${ri} 0 ${large},0 ${xi1},${yi1}Z`;
+    angle = end;
+    return `<path d="${d}" fill="${color}" stroke="var(--surface)" stroke-width="2"/>`;
+  }).join('');
+
+  const legend = sectors.map((s, i) => {
+    const color = SECTOR_COLORS[i % SECTOR_COLORS.length];
+    const warn  = s.pct > 30 ? ' ⚠️' : s.pct > 20 ? ' ▲' : '';
+    const wclr  = s.pct > 30 ? '#f87171' : s.pct > 20 ? '#f59e0b' : 'var(--text-strong)';
+    return `<div style="display:flex;align-items:center;gap:7px;padding:4px 0;border-bottom:1px solid var(--border)">
+      <div style="width:10px;height:10px;border-radius:2px;background:${color};flex-shrink:0"></div>
+      <div style="font-size:12px;color:var(--text-muted);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(s.name)}</div>
+      <div style="font-size:12px;font-weight:700;color:${wclr};white-space:nowrap">${s.pct.toFixed(1)}%${warn}</div>
+    </div>`;
+  }).join('');
+
+  return `
+  <div style="padding:20px 20px 32px;border-top:1px solid var(--border);margin-top:8px">
+    <div style="font-size:13px;font-weight:700;color:var(--text-strong);margin-bottom:4px">Sector Allocation</div>
+    <div style="font-size:11px;color:var(--text-faint);margin-bottom:16px">⚠️ &gt;30% · ▲ &gt;20% concentration warning</div>
+    <div style="display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap">
+      <svg width="220" height="220" viewBox="0 0 220 220" style="flex-shrink:0">
+        ${paths}
+      </svg>
+      <div style="flex:1;min-width:180px">${legend}</div>
+    </div>
+  </div>`;
+}
+
+function renderPortfolioCashCard(accountId) {
+  const cb       = state.cash_balances || {};
+  const cash     = cb[accountId] || 0;
+  const pg       = state.settings?.portfolio_groups?.indian || [];
+  const entry    = pg.find(p => p.id === accountId);
+  const name     = entry?.name || accountId;
+  const positions = state.positions.filter(p => p.account === accountId);
+  const portVal  = positions.reduce((s, p) => s + (p.current_value_inr || p.current_value || 0), 0);
+  const total    = portVal + cash;
+  const cashPct  = total > 0 ? (cash / total * 100) : 0;
+  const cashClr  = cashPct < 5 ? 'var(--neg)' : cashPct > 30 ? '#f59e0b' : 'var(--pos)';
+
+  return `
+  <div style="padding:20px;border-top:1px solid var(--border);margin-top:0">
+    <div style="font-size:13px;font-weight:700;color:var(--text-strong);margin-bottom:12px">Cash Position — ${esc(name)}</div>
+    <div style="display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap">
+      <div>
+        <div style="font-size:11px;color:var(--text-faint);margin-bottom:4px">Cash Balance (₹)</div>
+        <input id="pcash-${accountId}" type="text"
+          value="${cash ? cash.toLocaleString('en-IN') : ''}"
+          placeholder="0"
+          style="font-family:'JetBrains Mono',monospace;font-size:13px;text-align:right;width:160px"
+          oninput="recalcPortfolioCash('${accountId}')">
+      </div>
+      <div id="pcash-stats-${accountId}" style="font-size:12px;color:var(--text-muted)">
+        ${cash > 0 ? `<span style="color:var(--text-faint)">Portfolio:</span> <strong>${fmt(portVal)}</strong>
+        &nbsp;·&nbsp; <span style="color:var(--text-faint)">Total:</span> <strong>${fmt(total)}</strong>
+        &nbsp;·&nbsp; <span style="color:${cashClr};font-weight:700">${cashPct.toFixed(1)}% cash</span>` : ''}
+      </div>
+      <button onclick="savePortfolioCash('${accountId}')" class="btn btn-blue text-xs" style="height:34px">Save Cash</button>
+      <span id="pcash-msg-${accountId}" style="font-size:11px;color:var(--pos);min-width:60px"></span>
+    </div>
+  </div>`;
+}
+
+function recalcPortfolioCash(accountId) {
+  const inp      = document.getElementById('pcash-' + accountId);
+  const statsEl  = document.getElementById('pcash-stats-' + accountId);
+  if (!inp || !statsEl) return;
+  const cash     = parseRupees(inp.value || '0');
+  const positions = state.positions.filter(p => p.account === accountId);
+  const portVal  = positions.reduce((s, p) => s + (p.current_value_inr || p.current_value || 0), 0);
+  const total    = portVal + cash;
+  const cashPct  = total > 0 ? (cash / total * 100) : 0;
+  const cashClr  = cashPct < 5 ? 'var(--neg)' : cashPct > 30 ? '#f59e0b' : 'var(--pos)';
+  statsEl.innerHTML = cash > 0
+    ? `<span style="color:var(--text-faint)">Portfolio:</span> <strong>${fmt(portVal)}</strong>
+       &nbsp;·&nbsp; <span style="color:var(--text-faint)">Total:</span> <strong>${fmt(total)}</strong>
+       &nbsp;·&nbsp; <span style="color:${cashClr};font-weight:700">${cashPct.toFixed(1)}% cash</span>`
+    : '';
+}
+
+async function savePortfolioCash(accountId) {
+  const inp  = document.getElementById('pcash-' + accountId);
+  const msgEl = document.getElementById('pcash-msg-' + accountId);
+  if (!inp) return;
+  const cash = parseRupees(inp.value || '0');
+  // Merge with existing balances so we don't overwrite other accounts
+  const existing = { ...(state.cash_balances || {}) };
+  existing[accountId] = cash;
+  const res = await fetch('/api/cash_balances', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(existing),
+  });
+  if (res.ok) {
+    if (msgEl) { msgEl.textContent = '✓ Saved'; setTimeout(() => { if (msgEl) msgEl.textContent = ''; }, 2000); }
+    await fetchData();
+  } else {
+    if (msgEl) { msgEl.style.color = 'var(--neg)'; msgEl.textContent = '✕ Failed'; }
+  }
 }
 
 function renderWatchlistHub() {
@@ -1137,18 +1414,15 @@ function renderTable(positions, tab) {
 
     return `<tr>
       <td>
-        <a href="https://www.stockscans.in/company/${p.ticker.replace(/\s+/g,'')}" target="_blank" rel="noopener"
-           style="font-weight:500;color:var(--text-strong);text-decoration:none;border-bottom:1px dotted var(--border)"
-           onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='var(--text-strong)'"
-        >${esc(p.stock_name)}</a>
+        ${_stockLink(p.ticker, p.stock_name)}
         <div style="font-size:10px" class="t-faint">${esc(p.ticker)}</div>
         ${p.conviction ? `<div style="font-size:10px" class="t-yellow">⭐ ${p.conviction}</div>` : ''}
-        ${!isUSCon ? (function(){
+        ${(function(){
           const tc = (p.trades||[]).length;
           const ac = (p._accounts||[]).length;
           const lbl = tc + ' trade' + (tc !== 1 ? 's' : '') + (ac > 1 ? ' (' + ac + ' accts)' : '');
           return '<button onclick="toggleTradesRow(\'' + p.id + '\')" style="background:none;border:none;cursor:pointer;font-size:9px;color:var(--text-faint);padding:0;margin-top:2px" title="Show trades">▶ ' + lbl + '</button>';
-        })() : ''}
+        })()}
       </td>
       <td>${p.sector ? `<span class="badge">${esc(p.sector)}</span>` : `<span class="t-faint" style="font-size:11px">—</span>`}</td>
       <td class="text-right">${num(p.avg_buy_price)}</td>
@@ -1193,11 +1467,11 @@ function renderTable(positions, tab) {
         </div>
       </td>
     </tr>
-    ${!isUSCon ? `<tr id="trades-row-${p.id}" style="display:none">
+    <tr id="trades-row-${p.id}" style="display:none">
       <td colspan="20" style="padding:0 0 0 24px;background:var(--bg2);border-bottom:1px solid var(--border)">
         ${renderTradesPanel(p, isCon || isUSCon, isUS)}
       </td>
-    </tr>` : ''}
+    </tr>
     ${isCon ? `<tr id="sig-row-${p.id}" style="display:none">
       <td colspan="20" style="padding:0;border-bottom:2px solid var(--border2)">
         ${getSigPanel(p.cmp, iyerExit, technicals[p.ticker], p.ticker)}
@@ -2283,15 +2557,17 @@ function setAifFilter(f) {
 // ─── Watchlist ────────────────────────────────────────────────────────────────
 // ── Watchlist helper: CMP + % since added (2 <td> cells) ─────────────────────
 function wlPriceCells(w, t, cur) {
-  const cmp = t?.cmp ?? null;
+  // livePrices is populated after Fetch Prices; technicals.cmp is from last technical run
+  const cmp = livePrices[w.ticker] ?? t?.cmp ?? null;
   const ap  = w.added_price ?? null;
   const fmt = cur === '$'
     ? v => '$' + Number(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
     : v => '₹' + Number(v).toLocaleString('en-IN', { maximumFractionDigits: 2 });
 
-  // CMP cell
+  // CMP cell — prefer live price timestamp over stale technicals timestamp
+  const cmpTs = livePrices[w.ticker] != null ? _lastFetchTs : (t?.updated || '');
   const cmpCell = cmp != null
-    ? `<td class="text-right num" style="font-size:12px;font-weight:600;color:var(--text-strong)">${fmt(cmp)}<div style="font-size:9px;color:var(--text-faint);font-weight:400;margin-top:1px">${t?.updated || ''}</div></td>`
+    ? `<td class="text-right num" style="font-size:12px;font-weight:600;color:var(--text-strong)">${fmt(cmp)}<div style="font-size:9px;color:var(--text-faint);font-weight:400;margin-top:1px">${cmpTs}</div></td>`
     : `<td class="text-right t-faint" style="font-size:11px">—</td>`;
 
   // Since added cell
@@ -2336,11 +2612,14 @@ function inlineCollapsibleNotes(notes) {
     const contentStyle = `display:none;margin-top:5px;background:var(--surface2);border-left:2px solid var(--accent)55;border-radius:0 4px 4px 0;padding:6px 9px;font-size:11px;color:var(--text-muted);line-height:1.55;max-width:300px;white-space:pre-wrap`;
     return `<div style="display:flex;flex-direction:column;gap:4px">${link}
       <div>
-        <button onclick="const nb=this.nextElementSibling;nb.style.display=nb.style.display==='none'?'block':'none';this.querySelector('.cn-icon').textContent=nb.style.display==='none'?'▶':'▼'"
-          style="background:none;border:none;padding:0;cursor:pointer;display:flex;align-items:center;gap:4px">
-          <span class="cn-icon" style="font-size:9px;color:var(--text-faint)">▶</span>
-          <span style="font-size:11px;color:var(--text-faint)">Notes</span>
-        </button>
+        <div style="display:flex;align-items:center;gap:5px">
+          <button onclick="const nb=this.closest('div').nextElementSibling;nb.style.display=nb.style.display==='none'?'block':'none';this.querySelector('.cn-icon').textContent=nb.style.display==='none'?'▶':'▼'"
+            style="background:none;border:none;padding:0;cursor:pointer;display:flex;align-items:center;gap:4px">
+            <span class="cn-icon" style="font-size:9px;color:var(--text-faint)">▶</span>
+            <span style="font-size:11px;color:var(--text-faint)">Notes</span>
+          </button>
+          ${_ttsBtn_html(escapedExtra)}
+        </div>
         <div style="${contentStyle}">${escapedExtra}</div>
       </div>
     </div>`;
@@ -2358,6 +2637,7 @@ function inlineCollapsibleNotes(notes) {
         <button data-notes="${escaped}" onclick="event.stopPropagation();copyNotes(this)" title="Copy"
           style="background:none;border:none;cursor:pointer;font-size:10px;color:var(--text-faint);padding:1px 3px;line-height:1;opacity:.5"
           onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.5'">⎘</button>
+        ${_ttsBtn_html(escaped)}
       </div>
       <div style="${contentStyle}">${escaped}</div>
     </div>`;
@@ -2989,10 +3269,7 @@ function renderWatchlist(listId, extraAddBtn) {
     return `
     <tr>
       <td>
-        <a href="https://www.stockscans.in/company/${w.ticker.replace(/\s+/g,'')}" target="_blank" rel="noopener"
-           style="font-weight:500;color:var(--text-strong);text-decoration:none;border-bottom:1px dotted var(--border)"
-           onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='var(--text-strong)'"
-        >${esc(w.stock_name)}</a>
+        ${_stockLink(w.ticker, w.stock_name)}
         <div style="font-size:10px" class="t-faint">${esc(w.ticker)}</div>
       </td>
       <td style="max-width:130px"><div style="white-space:normal;line-height:1.4">${w.sector ? `<span class="badge" style="white-space:normal;line-height:1.4;display:inline">${esc(w.sector)}</span>` : '<span class="t-faint">—</span>'}</div></td>
@@ -3301,22 +3578,37 @@ async function updateCmp(id, val) {
   await fetchData();
 }
 
+function _rebuildAccountSelect(selectedId) {
+  const sel = document.getElementById('f-account');
+  if (!sel) return;
+  const pg  = state.settings?.portfolio_groups || {};
+  const indian = (pg.indian || []);
+  const us     = (pg.us     || []);
+  sel.innerHTML =
+    indian.map(p => `<option value="${p.id}">${p.name}</option>`).join('') +
+    us.map(p => `<option value="${p.id}">US – ${p.name}</option>`).join('');
+  if (selectedId) sel.value = selectedId;
+}
+
 function openAdd(account) {
   document.getElementById('modal-title').textContent = 'Add Position';
   document.getElementById('edit-id').value = '';
   document.getElementById('pos-form').reset();
-  const ACCT_TABS = ['vibhanshu','manjari','huf','manjbhawna','us_vibhanshu','us_manjari','us_huf'];
+  const allAccts = [
+    ..._indianAccounts(),
+    ..._usAccounts(),
+  ];
   const resolved = account
-    || (ACCT_TABS.includes(currentTab) ? currentTab : null)
-    || (currentRegion === 'us' ? 'us_vibhanshu' : 'vibhanshu');
-  document.getElementById('f-account').value = resolved;
+    || (allAccts.includes(currentTab) ? currentTab : null)
+    || (currentRegion === 'us' ? _usAccounts()[0] || 'us_vibhanshu' : _indianAccounts()[0] || 'vibhanshu');
+  _rebuildAccountSelect(resolved);
   document.getElementById('modal').classList.remove('hidden');
 }
 
 function openEdit(p) {
   document.getElementById('modal-title').textContent = 'Edit Position';
   document.getElementById('edit-id').value       = p.id;
-  document.getElementById('f-account').value     = p.account     || 'vibhanshu';
+  _rebuildAccountSelect(p.account || 'vibhanshu');
   document.getElementById('f-currency').value    = p.currency    || 'INR';
   document.getElementById('f-name').value        = p.stock_name  || '';
   document.getElementById('f-ticker').value      = p.ticker      || '';
@@ -3357,6 +3649,7 @@ async function savePosition(e) {
     ticker:        document.getElementById('f-ticker').value.trim(),
     avg_buy_price: buyRaw,
     quantity:      qtyRaw,
+    cmp:           isNaN(cmpRaw) ? undefined : cmpRaw,
     buy_date:      document.getElementById('f-date').value      || null,
     sector:        document.getElementById('f-sector').value    || null,
     pe:            parseFloat(document.getElementById('f-pe').value)         || null,
@@ -4040,7 +4333,8 @@ function renderTax() {
   const etfBadge = `<span style="font-size:9px;font-weight:700;color:#8b5cf6;background:#8b5cf622;padding:1px 5px;border-radius:3px;margin-left:4px">ETF</span>`;
 
   // FY selector — arrow navigation
-  const curFY = taxData?.fy || (new Date().getMonth() >= 3 ? new Date().getFullYear() + 1 : new Date().getFullYear());
+  const now = new Date();
+  const curFY = now.getMonth() >= 3 ? now.getFullYear() + 1 : now.getFullYear();
   const fy = taxFY || curFY;
   const fyBtn = (y, label, active, disabled) => {
     const base = 'padding:4px 10px;background:none;border:none;font-size:13px;';
@@ -4308,6 +4602,15 @@ function renderAlpha() {
   };
 
   const computing = d?.status === 'loading';
+
+  let staleLabel = '';
+  if (d?.computed_at) {
+    const mins = Math.round((Date.now() - new Date(d.computed_at)) / 60000);
+    if      (mins < 60)             staleLabel = `${mins}m ago`;
+    else if (mins < 60 * 24)        staleLabel = `${Math.round(mins/60)}h ago`;
+    else                            staleLabel = `${Math.round(mins/1440)}d ago`;
+  }
+
   const hdr = `
   <div style="padding:20px;max-width:1200px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
@@ -4317,8 +4620,8 @@ function renderAlpha() {
           Rolling returns vs Nifty 50 · sorted by 1Y alpha
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:10px">
-        ${d?.as_of ? `<span style="font-size:11px;color:var(--text-faint)">as of ${d.as_of}</span>` : ''}
+      <div style="display:flex;align-items:center;gap:12px">
+        ${staleLabel ? `<span style="font-size:11px;color:var(--text-faint)">Last computed: <strong style="color:var(--text-muted)">${staleLabel}</strong></span>` : ''}
         <button onclick="refreshAlpha()" class="btn btn-ghost text-xs"
           style="border:1px solid var(--accent);color:var(--accent);padding:6px 14px" ${computing ? 'disabled' : ''}>
           ${computing ? '⟳ Computing…' : '⟳ Compute'}
@@ -4779,6 +5082,12 @@ async function refreshPrices() {
     if (data.error) { alert('Price fetch error: ' + data.error); reset(); return; }
     if (data.positions) {
       state.positions = data.positions;
+    }
+    if (data.prices) {
+      livePrices   = data.prices;
+      _lastFetchTs = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    }
+    if (data.positions || data.prices) {
       renderHeader();
       renderTab();
     }
@@ -4921,13 +5230,14 @@ function getSigPanel(cmp, iyerExit, t, ticker) {
   if (ss.crs_broken)
     sellRows.push(`<tr><td style="color:var(--neg);font-weight:700;padding:3px 6px 3px 0">✗</td><td colspan="2" style="font-size:11px;color:var(--neg)">CRS below MA</td></tr>`);
 
-  // ── StockScans panel ──
-  const sc         = ticker ? (stockscans[ticker] || null) : null;
+  // ── StockScans panel (Indian tickers only) ──
+  const isIndian   = _isIndianTicker(ticker);
+  const sc         = isIndian && ticker ? (stockscans[ticker] || null) : null;
   const scCount    = sc ? sc.count : null;
   const scNames    = sc ? (sc.scan_names || []) : [];
   const scFetchedAt = sc ? sc.fetched_at : null;
   const scCountCol = scCount > 3 ? '#34d399' : scCount > 0 ? '#f59e0b' : '#64748b';
-  const scansUrl   = ticker ? 'https://www.stockscans.in/company/' + encodeURIComponent(ticker) : '#';
+  const scansUrl   = ticker ? 'https://www.stockscans.in/company/' + ticker.replace(/\s+/g,'') : '#';
 
   // Format fetched_at → "8 Jun 2026, 3:42 PM" + hours-ago hint
   let scTimestamp = '';
@@ -4941,7 +5251,7 @@ function getSigPanel(cmp, iyerExit, t, ticker) {
     } catch(e) { scTimestamp = scFetchedAt; }
   }
 
-  const scPanel = '<div>' +
+  const scPanel = !isIndian ? '' : '<div>' +
     '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">' +
       '<span style="font-size:11px;font-weight:700;color:var(--text-strong)">StockScans</span>' +
       (scCount !== null
@@ -4979,8 +5289,7 @@ function getSigPanel(cmp, iyerExit, t, ticker) {
       <div style="font-size:11px;font-weight:700;color:var(--text-strong);margin-bottom:8px">Sell Signals</div>
       <table style="border-spacing:0">${sellRows.join('')}</table>
     </div>
-    <div style="width:1px;background:var(--border);align-self:stretch"></div>
-    ${scPanel}
+    ${scPanel ? `<div style="width:1px;background:var(--border);align-self:stretch"></div>${scPanel}` : ''}
   </div>`;
 }
 
@@ -5443,6 +5752,29 @@ function esc(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+function _isIndianTicker(ticker) {
+  if (!ticker) return false;
+  const t = ticker.toUpperCase();
+  return t.startsWith('NSE:') || t.startsWith('BSE:');
+}
+
+function _stockLink(ticker, label) {
+  const name = esc(label || ticker);
+  if (_isIndianTicker(ticker)) {
+    // stockscans.in expects the full ticker e.g. "NSE:EPACKPEB"
+    return `<a href="https://www.stockscans.in/company/${ticker.replace(/\s+/g,'')}" target="_blank" rel="noopener"
+       style="font-weight:500;color:var(--text-strong);text-decoration:none;border-bottom:1px dotted var(--border)"
+       onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='var(--text-strong)'"
+    >${name}</a>`;
+  }
+  // Non-Indian: link to Yahoo Finance
+  const ytick = ticker.replace(/^[A-Z]+:/i, '');
+  return `<a href="https://finance.yahoo.com/quote/${encodeURIComponent(ytick)}" target="_blank" rel="noopener"
+     style="font-weight:500;color:var(--text-strong);text-decoration:none;border-bottom:1px dotted var(--border)"
+     onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='var(--text-strong)'"
+  >${name}</a>`;
+}
+
 function copyNotes(btn, text) {
   const raw = text || btn.dataset.notes || '';
   if (!raw) return;
@@ -5461,11 +5793,14 @@ function copyNotes(btn, text) {
 
 function renderCash() {
   const cb           = state.cash_balances || {};
-  const accts        = ['vibhanshu','manjari','huf','manjbhawna'];
-  const acctLabels   = { vibhanshu:'Vibhanshu', manjari:'Manjari', huf:'HUF', manjbhawna:'Manj/Bhawna' };
-  const totalCash    = accts.reduce((s, k) => s + (cb[k] || 0), 0);
+  const pg           = state.settings?.portfolio_groups?.indian || [];
+  const conAccts     = pg.filter(p => p.consolidated !== false);
+  const nonConAccts  = pg.filter(p => p.consolidated === false);
+  const totalCash    = conAccts.reduce((s, p) => s + (cb[p.id] || 0), 0);
   const aifVal       = aifLatestNav();
-  const portfolioVal = sum(state.positions, p => p.current_value_inr) + aifVal;
+  const conIds       = new Set(conAccts.map(p => p.id));
+  const conPositions = state.positions.filter(p => conIds.has(p.account));
+  const portfolioVal = sum(conPositions, p => p.current_value_inr) + aifVal;
   const totalCapital = portfolioVal + totalCash;
   const cashPct      = totalCapital > 0 ? (totalCash / totalCapital * 100) : 0;
   const target       = state.settings.target_cash_pct || 10;
@@ -5477,7 +5812,7 @@ function renderCash() {
     <div class="flex items-center gap-3 flex-wrap mb-5">
       <div class="card min-w-[130px] text-center" style="border-color:#f59e0b44">
         <div class="text-xl font-bold" style="color:#f59e0b">${fmt(totalCash)}</div>
-        <div class="text-xs t-faint mt-0.5">Total Cash</div>
+        <div class="text-xs t-faint mt-0.5">Total Cash (Consolidated)</div>
       </div>
       <div class="card min-w-[130px] text-center">
         <div class="text-xl font-bold t-muted">${fmt(portfolioVal)}</div>
@@ -5498,22 +5833,27 @@ function renderCash() {
     </div>`;
 
   // ── Cash balance inputs per account ───────────────────────────────────────
-  const cashInputRows = accts.map(k => `
+  const _cashRow = (p) => `
     <div class="flex items-center gap-3">
-      <div style="width:110px;font-size:12px;color:var(--text-muted);font-weight:500">${acctLabels[k]}</div>
+      <div style="width:110px;font-size:12px;color:var(--text-muted);font-weight:500">${esc(p.name)}</div>
       <div style="flex:1">
-        <input id="cash-${k}" type="text"
-          value="${(cb[k]||0).toLocaleString('en-IN')}"
+        <input id="cash-${p.id}" type="text"
+          value="${(cb[p.id]||0).toLocaleString('en-IN')}"
           placeholder="0"
           style="text-align:right;font-family:'JetBrains Mono',monospace;font-size:12px"
           oninput="recalcCashPreview()">
       </div>
-    </div>`).join('');
+    </div>`;
+
+  const consolidatedRows = conAccts.map(_cashRow).join('');
+  const nonConRows = nonConAccts.length ? `
+    <div style="font-size:10px;font-weight:600;color:var(--text-faint);letter-spacing:.06em;text-transform:uppercase;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border)">Non-consolidated</div>
+    ${nonConAccts.map(_cashRow).join('')}` : '';
 
   const cashBalancesCard = `
     <div class="card" style="max-width:380px">
       <div class="text-xs font-semibold t-muted mb-3 uppercase tracking-wide">Cash Balances</div>
-      <div class="space-y-2.5 mb-4">${cashInputRows}</div>
+      <div class="space-y-2.5 mb-4">${consolidatedRows}${nonConRows}</div>
       <div class="flex items-center gap-3 pt-3" style="border-top:1px solid var(--border)">
         <div style="width:110px;font-size:11px;color:var(--text-faint)">Target Cash %</div>
         <input id="cash-target-pct" type="number" step="0.5" min="0" max="100"
@@ -5646,15 +5986,18 @@ function renderCash() {
 }
 
 function recalcCashPreview() {
-  const accts = ['vibhanshu','manjari','huf','manjbhawna'];
+  // Only consolidated accounts count toward portfolio cash %
+  const conIds = (state.settings?.portfolio_groups?.indian || [])
+    .filter(p => p.consolidated !== false).map(p => p.id);
   let total = 0;
-  accts.forEach(k => {
+  conIds.forEach(k => {
     const v = parseRupees(document.getElementById('cash-'+k)?.value || '0');
     total += v;
   });
   const target = parseFloat(document.getElementById('cash-target-pct')?.value || 10);
   const aifVal = aifLatestNav();
-  const portfolioVal = sum(state.positions, p => p.current_value_inr) + aifVal;
+  const conIdSet = new Set(conIds);
+  const portfolioVal = sum(state.positions.filter(p => conIdSet.has(p.account)), p => p.current_value_inr) + aifVal;
   const totalCapital = portfolioVal + total;
   const cashPct = totalCapital > 0 ? (total/totalCapital*100).toFixed(1) : '0.0';
   const deployable = Math.max(0, total - (target/100)*totalCapital);
@@ -5671,15 +6014,17 @@ function recalcAlloc() {
   if (!amount || amount <= 0) { el.innerHTML = ''; return; }
 
   const cb = state.cash_balances || {};
-  const accts = ['vibhanshu','manjari','huf','manjbhawna'];
+  const conIds = (state.settings?.portfolio_groups?.indian || [])
+    .filter(p => p.consolidated !== false).map(p => p.id);
   let cashNow = 0;
-  accts.forEach(k => {
+  conIds.forEach(k => {
     const inp = document.getElementById('cash-'+k);
     cashNow += inp ? parseRupees(inp.value||'0') : (cb[k]||0);
   });
 
   const aifVal = aifLatestNav();
-  const portfolioVal = sum(state.positions, p => p.current_value_inr) + aifVal;
+  const conIdSet2 = new Set(conIds);
+  const portfolioVal = sum(state.positions.filter(p => conIdSet2.has(p.account)), p => p.current_value_inr) + aifVal;
   const totalCapital = portfolioVal + cashNow;
   const allocPct = totalCapital > 0 ? (amount/totalCapital*100) : 0;
   const cashAfter = cashNow - amount;
@@ -5716,9 +6061,9 @@ function recalcAlloc() {
 async function saveCashBalances() {
   const btn  = document.getElementById('save-cash-btn');
   const msg  = document.getElementById('cash-save-msg');
-  const accts = ['vibhanshu','manjari','huf','manjbhawna'];
+  const allIds = (state.settings?.portfolio_groups?.indian || []).map(p => p.id);
   const balances = {};
-  accts.forEach(k => {
+  allIds.forEach(k => {
     const raw = document.getElementById('cash-'+k)?.value || '0';
     balances[k] = parseRupees(raw);
   });

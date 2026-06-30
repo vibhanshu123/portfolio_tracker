@@ -147,7 +147,18 @@ def add_trade(pos_id: str, trade: dict[str, Any]):
             data["positions"][i].setdefault("trades", []).append(new_trade)
             all_trades = data["positions"][i]["trades"]
 
-            if new_trade["type"] == "sell":
+            if new_trade["type"] == "buy":
+                buy_qty    = new_trade["qty"]
+                buy_price  = new_trade["price"]
+                current_qty = p.get("quantity", 0) or 0
+                avg_buy     = p.get("avg_buy_price", 0) or 0
+                new_qty     = current_qty + buy_qty
+                if new_qty > 0:
+                    new_avg = ((avg_buy * current_qty) + (buy_price * buy_qty)) / new_qty
+                    data["positions"][i]["avg_buy_price"] = round(new_avg, 4)
+                data["positions"][i]["quantity"] = new_qty
+
+            elif new_trade["type"] == "sell":
                 sell_qty      = new_trade["qty"]
                 sell_price    = new_trade["price"]
                 current_qty   = p.get("quantity", 0) or 0

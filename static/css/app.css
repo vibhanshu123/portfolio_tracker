@@ -341,8 +341,7 @@ header {
 .sub-tab-btn.active { color: var(--accent); background: rgba(99,102,241,.08); font-weight: 600; }
 [data-theme="dark"] .sub-tab-btn.active { text-shadow: 0 0 12px rgba(99,102,241,.45); }
 
-.sub-tab-rename {
-  display: none;
+.sub-tab-manage {
   padding: 4px 7px;
   border: none;
   border-left: 1px solid var(--border);
@@ -351,25 +350,10 @@ header {
   font-size: 11px;
   cursor: pointer;
   transition: color .15s, background .15s;
+  display: inline-flex;
+  align-items: center;
 }
-.sub-tab-item:hover .sub-tab-rename,
-.sub-tab-item.active .sub-tab-rename { display: inline-flex; align-items: center; }
-.sub-tab-rename:hover { color: var(--accent); background: rgba(99,102,241,.08); }
-
-.sub-tab-delete {
-  display: none;
-  padding: 4px 6px;
-  border: none;
-  border-left: 1px solid var(--border);
-  background: transparent;
-  color: var(--text-faint);
-  font-size: 10px;
-  cursor: pointer;
-  transition: color .15s, background .15s;
-}
-.sub-tab-item:hover .sub-tab-delete,
-.sub-tab-item.active .sub-tab-delete { display: inline-flex; align-items: center; }
-.sub-tab-delete:hover { color: #ef4444; background: rgba(239,68,68,.08); }
+.sub-tab-manage:hover { color: var(--accent); background: rgba(99,102,241,.08); }
 
 .sub-tab-add {
   padding: 5px 12px;

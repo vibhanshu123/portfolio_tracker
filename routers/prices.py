@@ -204,17 +204,32 @@ def refresh_prices():
     data = load()
     rate = data["settings"].get("usd_inr_rate", 84.0)
 
-    ticker_map: dict[str, str] = {}
+    # Position tickers: yahoo_ticker → position id
+    pos_map: dict[str, str] = {}
     for p in data["positions"]:
         yt = p.get("yahoo_ticker") or _to_yahoo(p.get("ticker", ""), p.get("currency", "INR"))
         if yt:
-            ticker_map[yt] = p["id"]
+            pos_map[yt] = p["id"]
 
-    updated = {}
-    if ticker_map:
-        yts = list(ticker_map.keys())
+    # Watchlist tickers: yahoo_ticker → orig ticker string
+    wl_map: dict[str, str] = {}
+    # top_ideas is sourced from stockscans directly — skip it
+    wl_keys = ["watchlist", "us_watchlist", "soic_research"] + [k for k in data if k.startswith("wl_")]
+    for k in wl_keys:
+        for item in data.get(k, []):
+            orig = item.get("ticker", "")
+            if not orig:
+                continue
+            cur = "USD" if (k == "us_watchlist" or not orig.upper().startswith(("NSE:", "BSE:"))) else "INR"
+            yt = item.get("yahoo_ticker") or _to_yahoo(orig, cur)
+            if yt and yt not in pos_map:
+                wl_map[yt] = orig
 
-        def _extract(raw):
+    all_yts = list(pos_map.keys()) + list(wl_map.keys())
+
+    all_prices: dict[str, float] = {}
+    if all_yts:
+        def _extract(raw, yts):
             result = {}
             for yt in yts:
                 try:
@@ -227,27 +242,42 @@ def refresh_prices():
             return result
 
         try:
-            raw = yf.download(yts, period="1d", interval="5m",
+            raw = yf.download(all_yts, period="1d", interval="5m",
                               progress=False, auto_adjust=True, group_by="ticker")
-            updated = _extract(raw)
+            all_prices = _extract(raw, all_yts)
         except Exception:
             pass
 
-        if not updated:
+        if not all_prices:
             try:
-                raw = yf.download(yts, period="5d", interval="1d",
+                raw = yf.download(all_yts, period="5d", interval="1d",
                                   progress=False, auto_adjust=True, group_by="ticker")
-                updated = _extract(raw)
+                all_prices = _extract(raw, all_yts)
             except Exception as e:
                 return {"error": str(e), "updated": 0}
 
+    # Update positions
     for p in data["positions"]:
         yt = p.get("yahoo_ticker") or _to_yahoo(p.get("ticker", ""), p.get("currency", "INR"))
-        if yt and yt in updated:
-            new_cmp         = round(updated[yt], 2)
+        if yt and yt in all_prices:
+            new_cmp         = round(all_prices[yt], 2)
             p["cmp"]        = new_cmp
             p["peak_price"] = round(max(p.get("peak_price") or 0,
                                         p.get("avg_buy_price") or 0, new_cmp), 4)
     save(data)
     data["positions"] = [enrich(p, rate) for p in data["positions"]]
-    return {"updated": len(updated), "positions": data["positions"]}
+
+    # Combined prices dict: orig_ticker → latest cmp (positions + watchlist)
+    prices: dict[str, float] = {}
+    for p in data["positions"]:
+        if p.get("ticker") and p.get("cmp"):
+            prices[p["ticker"]] = p["cmp"]
+    for yt, orig in wl_map.items():
+        if yt in all_prices:
+            prices[orig] = round(all_prices[yt], 2)
+
+    return {
+        "updated":   len([yt for yt in pos_map if yt in all_prices]),
+        "positions": data["positions"],
+        "prices":    prices,
+    }

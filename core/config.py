@@ -16,6 +16,7 @@ if _data_dir != BASE and not (_data_dir / "data.json").exists() and _bundled.exi
 DATA_FILE        = _data_dir / "data.json"
 TECH_FILE        = _data_dir / "technicals.json"
 SCANS_CACHE_FILE = _data_dir / "stockscans_cache.json"
+ALPHA_CACHE_FILE = _data_dir / "alpha_cache.json"
 
 SOIC_DIR              = Path("/Users/arya/workspace/agents/soic-er-shashank-dashboard-generator")
 CLAUDE_CLI            = "/Users/arya/.npm-global/bin/claude"

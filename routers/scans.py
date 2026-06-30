@@ -76,7 +76,8 @@ def _do_refresh_scans():
     try:
         data    = load()
         cache   = _load_scans_cache()
-        tickers = list({p["ticker"] for p in data["positions"] if p.get("ticker")})
+        tickers = list({p["ticker"] for p in data["positions"]
+                        if p.get("ticker") and p["ticker"].upper().startswith(("NSE:", "BSE:"))})
         for ticker in tickers:
             if not _scans_ticker_is_stale(cache.get(ticker, {})):
                 continue
@@ -101,7 +102,8 @@ def _do_refresh_scans():
 def _maybe_start_scans_refresh():
     cache   = _load_scans_cache()
     data    = load()
-    tickers = {p["ticker"] for p in data["positions"] if p.get("ticker")}
+    tickers = {p["ticker"] for p in data["positions"]
+               if p.get("ticker") and p["ticker"].upper().startswith(("NSE:", "BSE:"))}
     if any(_scans_ticker_is_stale(cache.get(t, {})) for t in tickers):
         t = threading.Thread(target=_do_refresh_scans, daemon=True)
         t.start()

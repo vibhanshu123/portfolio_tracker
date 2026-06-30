@@ -76,10 +76,10 @@ async def add_portfolio(group: str, request: Request):
     if pid in existing_ids:
         pid = f"{base}_{uuid.uuid4().hex[:4]}"
 
-    entry = {"id": pid, "name": name}
+    consolidated = body.get("consolidated", True)
+    entry = {"id": pid, "name": name, "consolidated": consolidated}
     groups[group].append(entry)
     data["settings"]["portfolio_groups"] = groups
-    # Ensure data key exists for new watchlist-style storage if needed
     save(data)
     return entry
 

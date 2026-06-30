@@ -3,6 +3,7 @@ Alpha Tracker — computes per-position and portfolio-level returns vs benchmark
 GET  /api/alpha         → cached result  {status: idle|loading|ready|error}
 POST /api/alpha/refresh → kick off background computation
 """
+import json
 import threading
 from datetime import date, datetime, timedelta
 
@@ -10,6 +11,7 @@ import pandas as pd
 import yfinance as yf
 from fastapi import APIRouter
 
+from core.config import ALPHA_CACHE_FILE
 from core.enrichment import _to_yahoo, enrich
 from core.persistence import load
 
@@ -18,6 +20,26 @@ router = APIRouter()
 _cache:   dict = {}
 _lock         = threading.Lock()
 _running      = False
+
+
+def _load_disk_cache():
+    try:
+        if ALPHA_CACHE_FILE.exists():
+            data = json.loads(ALPHA_CACHE_FILE.read_text())
+            if data.get("status") == "ready":
+                _cache.update(data)
+    except Exception:
+        pass
+
+def _save_disk_cache():
+    try:
+        tmp = ALPHA_CACHE_FILE.with_suffix(".tmp")
+        tmp.write_text(json.dumps(_cache))
+        tmp.replace(ALPHA_CACHE_FILE)
+    except Exception:
+        pass
+
+_load_disk_cache()
 
 PERIODS = {"1m": 30, "3m": 91, "6m": 182, "1y": 365}
 _NIFTY   = "^NSEI"
@@ -179,8 +201,9 @@ def _do_compute():
         with _lock:
             _cache.clear()
             _cache.update({
-                "status":    "ready",
-                "as_of":     str(today),
+                "status":      "ready",
+                "as_of":       str(today),
+                "computed_at": datetime.now().isoformat(timespec="seconds"),
                 "benchmarks": {
                     "nifty50":   nifty_ret,
                     "midcap150": midcap_ret,
@@ -189,6 +212,7 @@ def _do_compute():
                 "portfolio": portfolio_summary(inr_pos, _NIFTY),
                 "positions": result_pos,
             })
+        _save_disk_cache()
 
     except Exception as e:
         with _lock:
