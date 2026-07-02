@@ -3326,7 +3326,7 @@ function renderUSWatchlist() {
     const t = technicals[w.ticker] || null;
     const entryHtml = getEntryBadges(t);
     const tJson = JSON.stringify(t || null).replace(/&/g,'&amp;').replace(/</g,'\\u003c').replace(/>/g,'\\u003e').replace(/"/g,'&quot;');
-    const yhLink = `https://finance.yahoo.com/quote/${encodeURIComponent(w.ticker)}`;
+    const yhLink = `https://www.perplexity.ai/finance/${encodeURIComponent(w.ticker)}`;
     const safeId  = w.id.replace(/'/g, "\\'");
     const safeName   = esc(w.stock_name).replace(/'/g, "\\'");
     const safeTicker = esc(w.ticker).replace(/'/g, "\\'");
@@ -5767,9 +5767,9 @@ function _stockLink(ticker, label) {
        onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='var(--text-strong)'"
     >${name}</a>`;
   }
-  // Non-Indian: link to Yahoo Finance
+  // Non-Indian: link to Perplexity Finance
   const ytick = ticker.replace(/^[A-Z]+:/i, '');
-  return `<a href="https://finance.yahoo.com/quote/${encodeURIComponent(ytick)}" target="_blank" rel="noopener"
+  return `<a href="https://www.perplexity.ai/finance/${encodeURIComponent(ytick)}" target="_blank" rel="noopener"
      style="font-weight:500;color:var(--text-strong);text-decoration:none;border-bottom:1px dotted var(--border)"
      onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='var(--text-strong)'"
   >${name}</a>`;
