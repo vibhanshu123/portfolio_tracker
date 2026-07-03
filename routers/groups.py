@@ -243,3 +243,32 @@ def delete_generic_wl_item(list_id: str, item_id: str):
     data[list_id] = [it for it in data.get(list_id, []) if it["id"] != item_id]
     save(data)
     return {"ok": True}
+
+
+@router.post("/api/wl-move")
+async def move_wl_item(request: Request):
+    """Move an item from one watchlist to another atomically."""
+    body      = await request.json()
+    item_id   = body.get("item_id")
+    from_list = body.get("from_list")
+    to_list   = body.get("to_list")
+    if not all([item_id, from_list, to_list]):
+        raise HTTPException(400, "item_id, from_list, to_list required")
+    if from_list == to_list:
+        raise HTTPException(400, "Source and destination are the same")
+
+    data = load()
+    src = data.get(from_list, [])
+    item = next((it for it in src if it["id"] == item_id), None)
+    if not item:
+        raise HTTPException(404, f"Item {item_id} not found in {from_list}")
+
+    # Remove from source
+    data[from_list] = [it for it in src if it["id"] != item_id]
+
+    # Add to destination with a fresh ID (keep all other fields)
+    new_item = {**item, "id": str(uuid.uuid4())}
+    data.setdefault(to_list, []).append(new_item)
+
+    save(data)
+    return {"ok": True, "new_id": new_item["id"], "to_list": to_list}

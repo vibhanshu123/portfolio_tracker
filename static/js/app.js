@@ -20,10 +20,12 @@ let currentTab = 'consolidated';
 let NUMBERS_VISIBLE = false;
 document.body.classList.add('numbers-hidden');
 let sortKey = null, sortDir = -1;
+let wlSortKey = null, wlSortDir = -1;
 let currentIndianTab    = 'vibhanshu';
 let currentUSTab        = 'us_consolidated';
-let currentWatchlistTab = 'watchlist';
-let currentRegion       = 'indian'; // 'indian' | 'us'
+let currentWatchlistTab    = 'watchlist';
+let currentWatchlistRegion = 'india'; // 'india' | 'international'
+let currentRegion          = 'indian'; // 'indian' | 'us'
 let allocMode = 'current'; // 'current' = by market value, 'invested' = by cost basis
 let iyerExpanded = false;
 let analysisJobs = {};
@@ -38,6 +40,136 @@ const ACCT_LABELS = {
   manjbhawna: 'Manj/Bhawna', us_vibhanshu: 'US–Vib',
   us_manjari: 'US–Manj', us_huf: 'US–HUF',
 };
+
+// Lists that get extra columns: Market Cap, Conviction, Exchange
+const _INTL_WL_IDS = new Set(['wl_soic_research_international', 'wl_rick_rule_s_stocks']);
+
+// Watchlist region membership: India vs International
+const _WL_INDIA_IDS = new Set(['watchlist', 'soic_research', 'top_ideas']);
+function _wlRegionOf(id) { return _WL_INDIA_IDS.has(id) ? 'india' : 'international'; }
+
+function _extractExchange(item) {
+  if (item.exchange) return item.exchange;
+  const t = (item.ticker || '').toUpperCase();
+  if (t.endsWith('.AX'))  return 'ASX';
+  if (t.endsWith('.TO'))  return 'TSX';
+  if (t.endsWith('.V'))   return 'TSXV';
+  if (t.endsWith('.L'))   return 'LSE';
+  if (t.endsWith('.DE'))  return 'Frankfurt';
+  if (t.endsWith('.NS') || t.startsWith('NSE:')) return 'NSE';
+  if (t.endsWith('.BO') || t.startsWith('BSE:')) return 'BSE';
+  return 'US';
+}
+
+// TVGP = Theme, Value, Growth, Promoter — colored dot badges
+const _TVGP_COLORS = {
+  G: { bg: 'rgba(52,211,153,.2)',  fg: '#34d399', bd: 'rgba(52,211,153,.5)'  },
+  Y: { bg: 'rgba(251,191,36,.2)',  fg: '#f59e0b', bd: 'rgba(251,191,36,.5)'  },
+  R: { bg: 'rgba(248,113,113,.2)', fg: '#f87171', bd: 'rgba(248,113,113,.5)' },
+};
+const _TVGP_LABELS = { T: 'Theme', V: 'Value', G: 'Growth', P: 'Promoter' };
+
+function _tvgpDot(val, key) {
+  const c = _TVGP_COLORS[val] || { bg: 'rgba(148,163,184,.15)', fg: '#64748b', bd: 'rgba(148,163,184,.3)' };
+  const label = _TVGP_LABELS[key] || key;
+  const valLabel = val === 'G' ? 'Green' : val === 'Y' ? 'Yellow' : val === 'R' ? 'Red' : '—';
+  return `<span title="${label}: ${valLabel}"
+    style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;
+           border-radius:50%;font-size:9px;font-weight:700;
+           background:${c.bg};color:${c.fg};border:1px solid ${c.bd};margin:1px">${key}</span>`;
+}
+
+function _tvgpCell(w) {
+  return `<td style="white-space:nowrap;padding:4px 8px">
+    ${_tvgpDot(w.tvgp_theme,    'T')}${_tvgpDot(w.tvgp_value,    'V')}${_tvgpDot(w.tvgp_growth,   'G')}${_tvgpDot(w.tvgp_promoter, 'P')}
+  </td>`;
+}
+
+const _TVGP_FIELD_MAP = { T: 'tvgp_theme', V: 'tvgp_value', G: 'tvgp_growth', P: 'tvgp_promoter' };
+
+function _tvgpDotEditable(val, key, itemId, listId) {
+  const c = _TVGP_COLORS[val] || { bg: 'rgba(148,163,184,.15)', fg: '#64748b', bd: 'rgba(148,163,184,.3)' };
+  const label = _TVGP_LABELS[key] || key;
+  const valLabel = val === 'G' ? 'Green' : val === 'Y' ? 'Yellow' : val === 'R' ? 'Red' : '—';
+  const safeId   = itemId.replace(/'/g, "\\'");
+  const safeList = listId.replace(/'/g, "\\'");
+  return `<span title="${label}: ${valLabel} — click to cycle"
+    onclick="cycleTvgp('${safeId}','${safeList}','${_TVGP_FIELD_MAP[key]}','${val || ''}')"
+    style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;
+           border-radius:50%;font-size:9px;font-weight:700;cursor:pointer;
+           background:${c.bg};color:${c.fg};border:1px solid ${c.bd};margin:1px">${key}</span>`;
+}
+
+function _tvgpCellEditable(w, listId) {
+  return `<td style="white-space:nowrap;padding:4px 8px">
+    ${_tvgpDotEditable(w.tvgp_theme,    'T', w.id, listId)}
+    ${_tvgpDotEditable(w.tvgp_value,    'V', w.id, listId)}
+    ${_tvgpDotEditable(w.tvgp_growth,   'G', w.id, listId)}
+    ${_tvgpDotEditable(w.tvgp_promoter, 'P', w.id, listId)}
+  </td>`;
+}
+
+async function cycleTvgp(itemId, listId, field, currentVal) {
+  const cycle = { '': 'G', G: 'Y', Y: 'R', R: '' };
+  const nextVal = (cycle[currentVal] !== undefined) ? cycle[currentVal] : 'G';
+  await fetch(`${_wlApiBase(listId)}/${itemId}`, {
+    method: 'PUT', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ [field]: nextVal || null })
+  });
+  await fetchData();
+  renderTab();
+}
+
+function _wlDateCell(w, listId) {
+  const safeId   = w.id.replace(/'/g, "\\'");
+  const safeList = listId.replace(/'/g, "\\'");
+  const isoDate  = w.added_date || '';
+  return `<td class="t-faint" data-date="${isoDate}"
+    style="font-size:12px;cursor:pointer;white-space:nowrap;
+           border-bottom:1px dashed transparent;transition:border-color .15s"
+    onmouseover="this.style.borderBottomColor='var(--border)'"
+    onmouseout="this.style.borderBottomColor='transparent'"
+    onclick="editWlDate('${safeId}','${safeList}',this)">${isoDate || '—'}</td>`;
+}
+
+async function editWlDate(itemId, listId, cell) {
+  if (cell.querySelector('input')) return;
+  const currentDate = cell.dataset.date || '';
+  const orig = cell.innerHTML;
+  cell.innerHTML = `<input type="date" value="${currentDate}"
+    style="background:var(--surface2);border:1px solid var(--accent);border-radius:4px;
+           color:var(--text);font-size:11px;padding:2px 4px;width:115px" />`;
+  const input = cell.querySelector('input');
+  input.focus();
+  let committed = false;
+  const commit = async () => {
+    if (committed) return;
+    committed = true;
+    const newDate = input.value;
+    if (!newDate || newDate === currentDate) { cell.innerHTML = orig; return; }
+    cell.innerHTML = '<span style="font-size:10px;color:var(--text-faint)">…</span>';
+    try {
+      await fetch(`${_wlApiBase(listId)}/${itemId}`, {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ added_date: newDate })
+      });
+      await fetchData();
+      renderTab();
+    } catch(e) { cell.innerHTML = orig; }
+  };
+  input.addEventListener('blur', commit);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { committed = true; cell.innerHTML = orig; }
+    if (e.key === 'Enter')  input.blur();
+  });
+}
+
+function _convBadge(conviction) {
+  if (!conviction) return '<span class="t-faint">—</span>';
+  const colors = { High: '#34d399', Medium: '#f59e0b', Low: '#94a3b8' };
+  const c = colors[conviction] || '#94a3b8';
+  return `<span style="font-size:11px;font-weight:600;color:${c};border:1px solid ${c}44;padding:1px 6px;border-radius:4px">${conviction}</span>`;
+}
 let US_ACCTS  = ['us_vibhanshu', 'us_manjari', 'us_huf'];
 let INR_ACCTS = ['vibhanshu', 'manjari', 'huf', 'manjbhawna'];
 const SECTOR_COLORS = [
@@ -79,6 +211,7 @@ async function init() {
     document.documentElement.dataset.theme === 'dark' ? '🌙' : '☀️';
 
   await fetchData();
+  buildSectorDatalist();
   await loadTechnicals();
   loadAnalysisStatuses();        // fire-and-forget
   silentBackfillAddedPrices();   // fire-and-forget: fills missing added_price from history
@@ -88,7 +221,8 @@ async function init() {
 }
 
 let stockscans   = {};   // ticker → { date, count, scan_names, popular_scans }
-let livePrices   = {};   // orig ticker → latest cmp (refreshed by Fetch Prices)
+let livePrices      = {};   // orig ticker → latest cmp (refreshed by Fetch Prices)
+let liveMarketCaps  = {};   // orig ticker → market cap integer (refreshed with prices)
 let _lastFetchTs = '';   // time string of last successful price fetch
 let _ttsBtn      = null; // button currently showing ⏹ (active TTS)
 
@@ -266,8 +400,8 @@ function switchTab(tab) {
   if (_usAccounts().includes(tab))    { currentUSTab = tab;     currentRegion = 'us';     tab = 'portfolio'; }
   if (tab === 'indian')               { currentRegion = 'indian'; tab = 'portfolio'; }
   if (tab === 'us')                   { currentRegion = 'us';     tab = 'portfolio'; }
-  if (_wlIds().includes(tab) && tab !== 'watchlist') { currentWatchlistTab = tab; tab = 'watchlist'; }
-  if (tab === 'us_watchlist') { currentWatchlistTab = 'us_watchlist'; tab = 'watchlist'; }
+  if (_wlIds().includes(tab) && tab !== 'watchlist') { currentWatchlistTab = tab; currentWatchlistRegion = _wlRegionOf(tab); tab = 'watchlist'; }
+  if (tab === 'us_watchlist') { currentWatchlistTab = 'us_watchlist'; currentWatchlistRegion = 'international'; tab = 'watchlist'; }
   currentTab = tab;
   sortKey = null;
   document.querySelectorAll('.tab-btn').forEach(b =>
@@ -469,7 +603,19 @@ function switchUSTab(account) {
 }
 
 function switchWatchlistTab(id) {
-  currentWatchlistTab = id;
+  currentWatchlistTab    = id;
+  currentWatchlistRegion = _wlRegionOf(id);
+  wlSortKey = null; wlSortDir = -1;
+  renderTab();
+}
+
+function switchWatchlistRegion(region) {
+  currentWatchlistRegion = region;
+  const allGroups = state.settings?.watchlist_groups || [];
+  const regionGroups = allGroups.filter(g => _wlRegionOf(g.id) === region);
+  if (regionGroups.length && !regionGroups.find(g => g.id === currentWatchlistTab)) {
+    currentWatchlistTab = regionGroups[0].id;
+  }
   renderTab();
 }
 
@@ -769,17 +915,32 @@ async function savePortfolioCash(accountId) {
 }
 
 function renderWatchlistHub() {
-  const groups = state.settings?.watchlist_groups ||
-                 [{id:'watchlist', name:'India'}, {id:'us_watchlist', name:'US'}];
+  const allGroups = state.settings?.watchlist_groups ||
+                   [{id:'watchlist', name:'India - MyResearch'}, {id:'us_watchlist', name:'US - MyResearch'}];
 
-  if (!groups.find(g => g.id === currentWatchlistTab)) currentWatchlistTab = groups[0]?.id || 'watchlist';
+  // Sync region from current tab in case state drifted
+  if (currentWatchlistTab) currentWatchlistRegion = _wlRegionOf(currentWatchlistTab);
 
-  const bar = _subTabBar(groups, currentWatchlistTab, 'switchWatchlistTab', 'openAddWatchlistModal', 'openRenameWatchlistModal', 'openDeleteWatchlistModal');
+  const regionGroups = allGroups.filter(g => _wlRegionOf(g.id) === currentWatchlistRegion);
 
-  if (currentWatchlistTab === 'us_watchlist') return bar + renderUSWatchlist();
-  if (currentWatchlistTab === 'top_ideas')   return bar + renderTopIdeas();
-  // For built-in 'watchlist' or any custom watchlist stored under that key
-  return bar + renderWatchlistById(currentWatchlistTab);
+  // Ensure currentWatchlistTab belongs to the active region
+  if (!regionGroups.find(g => g.id === currentWatchlistTab)) {
+    currentWatchlistTab = regionGroups[0]?.id || 'watchlist';
+  }
+
+  const regionBar = `
+    <div class="region-switcher">
+      <button class="region-pill${currentWatchlistRegion === 'india' ? ' active' : ''}"
+              onclick="switchWatchlistRegion('india')">🇮🇳 India</button>
+      <button class="region-pill${currentWatchlistRegion === 'international' ? ' active' : ''}"
+              onclick="switchWatchlistRegion('international')">🌐 International</button>
+    </div>`;
+
+  const bar = _subTabBar(regionGroups, currentWatchlistTab, 'switchWatchlistTab', 'openAddWatchlistModal', 'openRenameWatchlistModal', 'openDeleteWatchlistModal');
+
+  if (currentWatchlistTab === 'us_watchlist') return regionBar + bar + renderUSWatchlist();
+  if (currentWatchlistTab === 'top_ideas')   return regionBar + bar + renderTopIdeas();
+  return regionBar + bar + renderWatchlistById(currentWatchlistTab);
 }
 
 function renderWatchlistById(id) {
@@ -791,6 +952,9 @@ function renderWatchlistById(id) {
   if (!wl.length) return `<div class="flex justify-end mb-3">${addBtn}</div>
     <div class="t-faint text-center py-12">No items yet — add the first one above.</div>`;
 
+  // All international-region lists use the intl renderer (with signals vs S&P 500)
+  if (_INTL_WL_IDS.has(id) || _wlRegionOf(id) === 'international') return _renderIntlWatchlist(id, wl, addBtn);
+
   // Temporarily swap state so renderWatchlist picks up the right items
   const saved = state.watchlist;
   state.watchlist = wl;
@@ -798,6 +962,100 @@ function renderWatchlistById(id) {
   const html = renderWatchlist(id, addBtn);
   state.watchlist = saved;
   return html;
+}
+
+function _renderIntlWatchlist(listId, wl, addBtn) {
+  const showExtraCols = _INTL_WL_IDS.has(listId);
+  const colCount = 9 + (showExtraCols ? 3 : 0);
+  const rows = _sortWl(wl).map(w => {
+    const safeId   = w.id.replace(/'/g, "\\'");
+    const ticker   = w.ticker || '';
+    const yhLink   = `https://www.perplexity.ai/finance/${encodeURIComponent(ticker)}`;
+    const exchange = _extractExchange(w);
+    const t        = technicals[ticker] || null;
+    const tJson    = JSON.stringify(t || null).replace(/&/g,'&amp;').replace(/</g,'\\u003c').replace(/>/g,'\\u003e').replace(/"/g,'&quot;');
+
+    // Market cap: prefer live (current session) → stored numeric (last refresh) → manual string
+    const liveMc    = liveMarketCaps[ticker];
+    const storedNum = w.market_cap_live;
+    const mcNum     = liveMc ?? storedNum ?? null;
+    const mcFmt     = mcNum ? fmtMktCap(mcNum) : null;
+    const mcIsLive  = liveMc != null;
+    const mcHtml = mcFmt
+      ? `<span style="font-size:12px;font-weight:500${mcIsLive ? '' : ';color:var(--text-faint)'}">${mcFmt}</span>`
+      : (w.market_cap ? `<span style="font-size:11px" class="t-faint">${esc(w.market_cap)}</span>` : '<span class="t-faint">—</span>');
+
+    // Research button: dashboard_url shown as a Netlify link
+    const resHtml = w.dashboard_url
+      ? `<a href="${esc(w.dashboard_url)}" target="_blank" rel="noopener"
+           class="btn text-xs py-1 px-2"
+           style="background:rgba(52,211,153,.15);color:#34d399;border:1px solid rgba(52,211,153,.3)">📊 Report</a>`
+      : '<span class="t-faint" style="font-size:11px">—</span>';
+
+    const extraCols = showExtraCols ? `
+      <td>${mcHtml}</td>
+      <td>${_convBadge(w.conviction)}</td>
+      <td style="font-size:12px;color:var(--text-muted)">${esc(exchange)}</td>` : '';
+
+    return `
+    <tr>
+      <td>
+        <a href="${yhLink}" target="_blank" rel="noopener"
+           style="font-weight:500;color:var(--text-strong);text-decoration:none;border-bottom:1px dotted var(--border)"
+           onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='var(--text-strong)'"
+        >${esc(w.stock_name)}</a>
+        <div style="font-size:10px" class="t-faint">${esc(ticker)}</div>
+      </td>
+      <td style="max-width:130px"><div style="white-space:normal;line-height:1.4">${w.sector ? `<span class="badge" style="white-space:normal;line-height:1.4;display:inline">${esc(w.sector)}</span>` : '<span class="t-faint">—</span>'}</div></td>
+      ${extraCols}
+      <td class="hoverable"
+          onmouseenter="showUSEntryTooltip(event, ${tJson})"
+          onmousemove="moveSigTooltip(event)"
+          onmouseleave="hideSigTooltip()">${getEntryBadges(t)}</td>
+      ${wlPriceCells(w, t)}
+      <td>${resHtml}</td>
+      ${_wlDateCell(w, listId)}
+      <td style="font-size:12px;max-width:180px">${inlineCollapsibleNotes(w.notes)}</td>
+      <td>
+        <div class="flex gap-1">
+          ${_wlMoveSelect(w.id, listId)}
+          <button class="btn btn-ghost text-xs py-1 px-2" onclick="editWl('${safeId}','${listId}')">✎</button>
+          <button class="btn btn-red text-xs py-1 px-2" onclick="deleteWl('${safeId}','${listId}')">✕</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  const extraHeaders = showExtraCols ? `
+    ${_wlTh('Mkt Cap',    'market_cap')}
+    ${_wlTh('Conviction', 'conviction')}
+    ${_wlTh('Exchange',   'exchange')}` : '';
+
+  const safeListId = listId.replace(/'/g, "\\'");
+  return `
+    <div class="flex items-center gap-2 flex-wrap mb-3">
+      <button class="btn btn-ghost text-xs" id="intl-wl-signals-btn"
+              onclick="refreshIntlWatchlistSignals('${safeListId}')">⟳ Refresh Signals</button>
+      <span class="text-xs t-faint">Fetches EMAs, RSI, ADX, Weinstein Stage vs S&amp;P 500</span>
+      ${addBtn}
+    </div>
+    <div style="overflow-x:auto">
+      <table class="tbl">
+        <thead><tr>
+          ${_wlTh('Stock',       'stock_name')}
+          ${_wlTh('Industry',    'sector')}
+          ${extraHeaders}
+          <th class="text-left">Signals</th>
+          ${_wlTh('CMP',         'cmp',     'right')}
+          ${_wlTh('Since Added', 'pct_chg', 'right')}
+          <th class="text-left">Research</th>
+          ${_wlTh('Added',       'added_date')}
+          <th class="text-left">Notes</th>
+          <th></th>
+        </tr></thead>
+        <tbody>${rows || `<tr><td colspan="${colCount}" class="text-center t-faint py-8">No items yet</td></tr>`}</tbody>
+      </table>
+    </div>`;
 }
 
 // ─── Top Ideas (stockscans.in proxy) ────────────────────────────────────────
@@ -1241,15 +1499,15 @@ function renderSummaryCards(positions, tab) {
   return `
     <div class="flex items-center gap-3 flex-wrap mb-4">
       <div class="card text-center min-w-[118px]">
-        <div class="text-lg font-bold t-strong">${cur}${fmtNum(val)}</div>
+        <div class="text-lg font-bold t-strong">${fmtCur(val, isUS)}</div>
         <div class="text-xs t-faint mt-0.5">Current Value</div>
       </div>
       <div class="card text-center min-w-[118px]">
-        <div class="text-lg font-bold t-muted">${cur}${fmtNum(inv)}</div>
+        <div class="text-lg font-bold t-muted">${fmtCur(inv, isUS)}</div>
         <div class="text-xs t-faint mt-0.5">Invested</div>
       </div>
       <div class="card text-center min-w-[118px]">
-        <div class="text-lg font-bold ${pnlClass}">${pnl >= 0 ? '+' : ''}${cur}${fmtNum(Math.abs(pnl))}</div>
+        <div class="text-lg font-bold ${pnlClass}">${fmtCur(pnl, isUS, true)}</div>
         <div class="text-xs t-faint mt-0.5">P&amp;L (<span class="pn">${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(1)}%</span>)</div>
       </div>
       <div class="card text-center min-w-[100px]">
@@ -1425,15 +1683,18 @@ function renderTable(positions, tab) {
         })()}
       </td>
       <td>${p.sector ? `<span class="badge">${esc(p.sector)}</span>` : `<span class="t-faint" style="font-size:11px">—</span>`}</td>
-      <td class="text-right">${num(p.avg_buy_price)}</td>
+      <td class="text-right">${isUS
+        ? `<span class="pn t-faint" style="font-size:10px">$</span>${num(p.avg_buy_price)}`
+        : num(p.avg_buy_price)}</td>
       <td class="text-right">${num(p.quantity, isUS ? 4 : 0)}</td>
       <td class="text-right">
+        ${isUS ? `<span class="pn t-faint" style="font-size:10px">$</span>` : ''}
         <input class="inline-edit" type="number" value="${p.cmp ? p.cmp.toFixed(2) : ''}"
                onblur="updateCmp('${p.id}', this.value)" title="Edit CMP">
       </td>
-      <td class="text-right t-muted">${fmtNum(inv)}</td>
-      <td class="text-right t-strong font-medium">${fmtNum(val)}</td>
-      <td class="text-right ${pnlCls}" style="${pnlBg(pnlPct)}padding:9px 12px;font-weight:600">${pnl >= 0 ? '+' : ''}${fmtNum(pnl)}</td>
+      <td class="text-right t-muted">${fmtCur(inv, isUS)}</td>
+      <td class="text-right t-strong font-medium">${fmtCur(val, isUS)}</td>
+      <td class="text-right ${pnlCls}" style="${pnlBg(pnlPct)}padding:9px 12px;font-weight:600">${fmtCur(pnl, isUS, true)}</td>
       <td class="text-right ${pnlCls}" style="${pnlBg(pnlPct)}padding:9px 12px;font-weight:700">${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(1)}%</td>
       <td class="text-right ${cagrCls}" style="${cgrv !== null ? pnlBg(cgrv) : ''}padding:9px 12px">${cgrv !== null ? `<span class="pn">${(cgrv >= 0 ? '+' : '') + cgrv.toFixed(1)}%</span>` : '—'}</td>
       ${isCon ? `
@@ -1464,6 +1725,7 @@ function renderTable(positions, tab) {
         <div class="flex gap-1">
           <button class="btn btn-ghost text-xs py-1 px-2" onclick="openEditById('${p.id}')">✏️</button>
           <button class="btn btn-ghost text-xs py-1 px-2" style="color:#f87171;border-color:#f8717133" onclick="openSellModal('${p.id}','${esc(p.stock_name)}',${p.cmp||p.avg_buy_price},${p.quantity})" title="Sell & Archive">📤</button>
+          <button class="btn btn-ghost text-xs py-1 px-2" style="color:#f87171;border-color:#f8717133" onclick="deletePos('${p.id}')" title="Delete Position">🗑️</button>
         </div>
       </td>
     </tr>
@@ -1594,17 +1856,17 @@ function renderUS() {
     <div class="flex items-center gap-3 flex-wrap mb-6">
       <div class="card min-w-[140px]">
         <div class="text-xs t-faint mb-1">US Portfolio Value</div>
-        <div class="text-lg font-bold t-strong">$${fmtNum(totalVal)}</div>
-        <div class="text-xs t-faint mt-1">≈ ₹${fmtNum(totalValInr)} @ ₹${usdRate}/$</div>
+        <div class="text-lg font-bold t-strong">${fmtCur(totalVal, true)}</div>
+        <div class="text-xs t-faint mt-1">≈ ${fmtCur(totalValInr, false)} @ ₹${usdRate}/$</div>
       </div>
       <div class="card min-w-[120px]">
         <div class="text-xs t-faint mb-1">Invested</div>
-        <div class="text-lg font-bold t-muted">$${fmtNum(totalInv)}</div>
-        <div class="text-xs t-faint mt-1">₹${fmtNum(totalInvInr)}</div>
+        <div class="text-lg font-bold t-muted">${fmtCur(totalInv, true)}</div>
+        <div class="text-xs t-faint mt-1">${fmtCur(totalInvInr, false)}</div>
       </div>
       <div class="card min-w-[120px]">
         <div class="text-xs t-faint mb-1">P&amp;L</div>
-        <div class="text-lg font-bold ${pnlCls}">${pnl >= 0 ? '+' : ''}$${fmtNum(Math.abs(pnl))}</div>
+        <div class="text-lg font-bold ${pnlCls}">${fmtCur(pnl, true, true)}</div>
         <div class="text-xs ${pnlCls} mt-1">${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(1)}%</div>
       </div>
       <div class="card min-w-[100px]">
@@ -1635,11 +1897,11 @@ function renderUS() {
       <div class="mb-8">
         <div class="flex items-center gap-3 mb-3 flex-wrap">
           <h3 class="font-semibold t-strong text-sm">${label}</h3>
-          <span class="badge">$${fmtNum(sVal)}</span>
+          <span class="badge">${fmtCur(sVal, true)}</span>
           <span class="${sCls} text-xs font-semibold">
-            ${sPnl >= 0 ? '+' : ''}$${fmtNum(Math.abs(sPnl))} (${sPnlPct >= 0 ? '+' : ''}${sPnlPct.toFixed(1)}%)
+            ${fmtCur(sPnl, true, true)} (${sPnlPct >= 0 ? '+' : ''}${sPnlPct.toFixed(1)}%)
           </span>
-          <span class="text-xs t-faint">≈ ₹${fmtNum(sum(pos, p => p.current_value_inr))}</span>
+          <span class="text-xs t-faint">≈ ${fmtCur(sum(pos, p => p.current_value_inr), false)}</span>
           ${acctKey ? `<button class="btn btn-ghost text-xs ml-auto" onclick="openAdd('${acctKey}')">+ Add</button>` : ''}
         </div>
         ${renderTable(pos, acctKey ? 'us' : 'us_con')}
@@ -1886,7 +2148,9 @@ function renderSectors() {
     if (!sectorMap.has(sector)) sectorMap.set(sector, { value: 0, invested: 0, count: 0, accounts: new Set(), portfolio: classifyPortfolio(p), tickers: [] });
     const s = sectorMap.get(sector);
     s.value += valInr; s.invested += invInr; s.count += 1; s.accounts.add(p.account);
-    if (!s.tickers.some(t => t.ticker === p.ticker)) s.tickers.push({ ticker: p.ticker, name: p.stock_name });
+    const existing = s.tickers.find(t => t.ticker === p.ticker);
+    if (!existing) s.tickers.push({ ticker: p.ticker, name: p.stock_name, ids: [p.id] });
+    else existing.ids.push(p.id);
   }
   if (aifVal > 0) {
     const aifInv = state.settings.aif_invested || 0;
@@ -1905,9 +2169,17 @@ function renderSectors() {
     const [tagCol, tagLbl] = portfolioTag[d.portfolio] || ['#94a3b8', ''];
     const mergeTag = PIE_GROUPS[sector] && PIE_GROUPS[sector] !== sector
       ? `<span style="font-size:9px;color:var(--text-faint);margin-left:4px">→ ${esc(PIE_GROUPS[sector])}</span>` : '';
-    const tickerChips = d.tickers.map(({ticker, name}) =>
-      `<span title="${esc(name)}" style="background:var(--surface3);color:var(--text-muted);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:10px;font-family:'JetBrains Mono',monospace;white-space:nowrap">${esc(ticker.replace(/\.(NS|BO)$/i,''))}</span>`
-    ).join('');
+    const tickerChips = d.tickers.map(({ticker, name, ids}) => {
+      const chipKey = 'sc_' + ticker.replace(/[^a-zA-Z0-9]/g,'_');
+      const idsJson = JSON.stringify(ids).replace(/"/g,'&quot;');
+      return `<span id="${chipKey}" title="${esc(name)}" style="display:inline-flex;align-items:center;gap:3px;background:var(--surface3);color:var(--text-muted);border:1px solid var(--border);border-radius:3px;padding:1px 5px 1px 6px;font-size:10px;font-family:'JetBrains Mono',monospace;white-space:nowrap">
+        ${esc(ticker.replace(/\.(NS|BO)$/i,''))}
+        <button onclick="editSectorTag('${chipKey}','${esc(sector)}','${esc(ticker)}',${idsJson})"
+          title="Change sector for ${esc(name)}"
+          style="background:none;border:none;cursor:pointer;font-size:9px;color:var(--text-faint);padding:0 1px;line-height:1;opacity:.6"
+          onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.6'">✎</button>
+      </span>`;
+    }).join('');
     return `<tr>
       <td style="padding:7px 10px">
         <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px">
@@ -1969,11 +2241,11 @@ function renderSectors() {
     <!-- Full sector breakdown table -->
     <div class="card" style="overflow-x:auto">
       <div class="text-sm font-semibold t-strong mb-2">Full Sector Breakdown
-        <span class="t-faint" style="font-size:11px;font-weight:400"> — color bar shows % of grand total</span>
+        <span class="t-faint" style="font-size:11px;font-weight:400"> — click ✎ on any ticker to reassign its sector</span>
       </div>
       <table class="tbl">
         <thead><tr>
-          <th class="text-left">Sector</th>
+          <th class="text-left">Sector · Tickers</th>
           <th class="text-right">#</th>
           <th class="text-right">Value (₹)</th>
           <th class="text-right">P&amp;L</th>
@@ -1982,7 +2254,78 @@ function renderSectors() {
         </tr></thead>
         <tbody>${rows}</tbody>
       </table>
+    </div>
+
+    <!-- Manage Sectors -->
+    ${_renderSectorMgmtCard(sorted.map(([s]) => s))}`;
+}
+
+function _renderSectorMgmtCard(inUseSectors) {
+  const custom = state.settings?.custom_sectors || [];
+  return `
+    <div class="card mt-6">
+      <div class="text-xs font-semibold t-muted mb-3 uppercase tracking-wide">Manage Sectors</div>
+      <div style="font-size:11px;color:var(--text-faint);margin-bottom:10px">
+        Custom sectors appear in the sector dropdown everywhere. To reassign a ticker, click ✎ next to it in the table above.
+      </div>
+      <div style="margin-bottom:6px;font-size:11px;font-weight:600;color:var(--text-muted)">In use (${inUseSectors.length})</div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px">
+        ${inUseSectors.map(s => `<span style="display:inline-block;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:11px;color:var(--text-muted)">${esc(s)}</span>`).join('')}
+      </div>
+      <div style="margin-bottom:6px;font-size:11px;font-weight:600;color:var(--text-muted)">Custom added (${custom.length})</div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px">
+        ${custom.length ? custom.map(s => `
+          <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.3);border-radius:4px;padding:2px 8px;font-size:11px;color:#a5b4fc">
+            ${esc(s)}
+            <button onclick="removeCustomSector('${esc(s).replace(/'/g,"\\'")}')"
+              style="background:none;border:none;cursor:pointer;color:var(--text-faint);font-size:10px;line-height:1;padding:0 1px"
+              title="Remove">✕</button>
+          </span>`).join('') : '<span class="t-faint" style="font-size:11px">None yet</span>'}
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <input id="new-sector-input" type="text" list="sector-datalist" placeholder="New sector name…"
+          style="flex:1;max-width:260px"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();addCustomSector();}">
+        <button onclick="addCustomSector()" class="btn btn-blue text-xs">+ Add Sector</button>
+      </div>
     </div>`;
+}
+
+function editSectorTag(chipKey, currentSector, ticker, ids) {
+  const el = document.getElementById(chipKey);
+  if (!el) return;
+  const shortTicker = ticker.replace(/\.(NS|BO)$/i,'');
+  const idsAttr = JSON.stringify(ids).replace(/"/g,'&quot;');
+  el.style.background = 'rgba(99,102,241,.12)';
+  el.style.borderColor = 'rgba(99,102,241,.4)';
+  el.innerHTML = `
+    <input id="sec-inp-${chipKey}" type="text" list="sector-datalist"
+      value="${esc(currentSector)}"
+      style="width:140px;font-size:11px;padding:2px 6px;font-family:inherit"
+      onkeydown="if(event.key==='Enter')saveSectorTag('${chipKey}','${esc(ticker)}',${idsAttr});if(event.key==='Escape')render();">
+    <button onclick="saveSectorTag('${chipKey}','${esc(ticker)}',${idsAttr})"
+      style="background:rgba(59,130,246,.2);border:1px solid #3b82f6;color:#60a5fa;border-radius:3px;padding:1px 6px;font-size:10px;cursor:pointer">✓</button>
+    <button onclick="render()"
+      style="background:none;border:1px solid var(--border);color:var(--text-faint);border-radius:3px;padding:1px 5px;font-size:10px;cursor:pointer">✕</button>`;
+  document.getElementById('sec-inp-' + chipKey)?.focus();
+}
+
+async function saveSectorTag(chipKey, ticker, ids) {
+  const newSector = (document.getElementById('sec-inp-' + chipKey)?.value || '').trim();
+  if (!newSector) return;
+  await Promise.all(ids.map(id =>
+    fetch(`/api/positions/${id}`, {
+      method: 'PUT',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ sector: newSector }),
+    })
+  ));
+  // Update local state immediately so everything reflects before full re-fetch
+  state.positions.forEach(p => { if (ids.includes(p.id)) p.sector = newSector; });
+  buildSectorDatalist();
+  render();
+  // Then sync with server in background
+  fetchData().then(() => { buildSectorDatalist(); render(); });
 }
 
 function _buildPie(slices, cx, cy, outerR, innerR, total) {
@@ -2556,13 +2899,15 @@ function setAifFilter(f) {
 
 // ─── Watchlist ────────────────────────────────────────────────────────────────
 // ── Watchlist helper: CMP + % since added (2 <td> cells) ─────────────────────
-function wlPriceCells(w, t, cur) {
+function wlPriceCells(w, t) {
+  // Auto-detect currency from ticker: Indian = ₹, everything else = $
+  const isIndian = _isIndianTicker(w.ticker);
   // livePrices is populated after Fetch Prices; technicals.cmp is from last technical run
   const cmp = livePrices[w.ticker] ?? t?.cmp ?? null;
   const ap  = w.added_price ?? null;
-  const fmt = cur === '$'
-    ? v => '$' + Number(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-    : v => '₹' + Number(v).toLocaleString('en-IN', { maximumFractionDigits: 2 });
+  const fmt = isIndian
+    ? v => '₹' + Number(v).toLocaleString('en-IN', { maximumFractionDigits: 2 })
+    : v => '$' + Number(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   // CMP cell — prefer live price timestamp over stale technicals timestamp
   const cmpTs = livePrices[w.ticker] != null ? _lastFetchTs : (t?.updated || '');
@@ -3260,8 +3605,10 @@ async function deleteUl(id) {
 
 function renderWatchlist(listId, extraAddBtn) {
   listId = listId || 'watchlist';
-  const wl = state.watchlist;  // caller may have swapped this via renderWatchlistById
+  const isSoicIndia = listId === 'soic_research';
+  const wl  = _sortWl(state.watchlist);  // caller may have swapped this via renderWatchlistById
   const lbl = (state.settings?.watchlist_groups || []).find(g => g.id === listId)?.name || 'Watchlist';
+
   const rows = wl.map(w => {
     const t = technicals[w.ticker] || null;
     const entryHtml = getEntryBadges(t);
@@ -3273,13 +3620,14 @@ function renderWatchlist(listId, extraAddBtn) {
         <div style="font-size:10px" class="t-faint">${esc(w.ticker)}</div>
       </td>
       <td style="max-width:130px"><div style="white-space:normal;line-height:1.4">${w.sector ? `<span class="badge" style="white-space:normal;line-height:1.4;display:inline">${esc(w.sector)}</span>` : '<span class="t-faint">—</span>'}</div></td>
+      ${isSoicIndia ? _tvgpCellEditable(w, listId) : ''}
       <td class="hoverable"
           onmouseenter="showEntryTooltip(event, ${tJson})"
           onmousemove="moveSigTooltip(event)"
           onmouseleave="hideSigTooltip()">${entryHtml}</td>
-      ${wlPriceCells(w, technicals[w.ticker], '₹')}
+      ${wlPriceCells(w, technicals[w.ticker])}
       <td>${getResearchButtons(w)}</td>
-      <td style="font-size:12px" class="t-faint">${w.added_date || '—'}</td>
+      ${_wlDateCell(w, listId)}
       <td style="font-size:12px;max-width:200px">
         ${inlineCollapsibleNotes(w.notes)}
       </td>
@@ -3287,6 +3635,7 @@ function renderWatchlist(listId, extraAddBtn) {
         <div class="flex gap-1">
           <button class="btn btn-blue text-xs py-1 px-2"
             onclick="moveToPortfolio('${w.id}','${esc(w.stock_name)}','${esc(w.ticker)}')">→ Portfolio</button>
+          ${_wlMoveSelect(w.id, listId)}
           <button class="btn btn-ghost text-xs py-1 px-2" onclick="editWl('${w.id}','${listId}')">✎</button>
           <button class="btn btn-red text-xs py-1 px-2" onclick="deleteWl('${w.id}','${listId}')">✕</button>
         </div>
@@ -3295,7 +3644,18 @@ function renderWatchlist(listId, extraAddBtn) {
   }).join('');
 
   const addBtn = extraAddBtn || `<button class="btn btn-blue text-xs ml-auto" onclick="openWlAdd('${listId}')">+ Add to ${esc(lbl)}</button>`;
+  const colCount = 9 + (isSoicIndia ? 1 : 0);
+
+  // "Last updated" banner for SOIC Research India
+  const updatedRaw = isSoicIndia && state.settings?.soic_research_updated;
+  const updatedBanner = updatedRaw
+    ? `<div style="font-size:11px;color:var(--text-faint);margin-bottom:8px">
+         🕐 List last refreshed: <strong>${new Date(updatedRaw).toLocaleDateString('en-IN', {day:'numeric',month:'long',year:'numeric'})}</strong>
+       </div>`
+    : '';
+
   return `
+    ${updatedBanner}
     <div class="flex items-center gap-2 flex-wrap mb-3">
       <button class="btn btn-ghost text-xs" onclick="refreshWatchlistSignals()" id="wl-signals-btn">⟳ Refresh Signals</button>
       <span class="text-xs t-faint">Fetches live EMAs, RSI, ADX, Stage for each watchlist stock</span>
@@ -3304,30 +3664,31 @@ function renderWatchlist(listId, extraAddBtn) {
     <div style="overflow-x:auto">
       <table class="tbl">
         <thead><tr>
-          <th class="text-left">Stock</th>
-          <th class="text-left">Sector</th>
+          ${_wlTh('Stock',       'stock_name')}
+          ${_wlTh('Sector',      'sector')}
+          ${isSoicIndia ? '<th class="text-left">TVGP</th>' : ''}
           <th class="text-left">Signals</th>
-          <th class="text-right">CMP</th>
-          <th class="text-right">Since Added</th>
+          ${_wlTh('CMP',         'cmp',       'right')}
+          ${_wlTh('Since Added', 'pct_chg',   'right')}
           <th class="text-left">Research</th>
-          <th class="text-left">Added</th>
+          ${_wlTh('Added',       'added_date')}
           <th class="text-left">Notes</th>
           <th></th>
         </tr></thead>
-        <tbody>${rows || `<tr><td colspan="9" class="text-center t-faint py-8">No watchlist items</td></tr>`}</tbody>
+        <tbody>${rows || `<tr><td colspan="${colCount}" class="text-center t-faint py-8">No watchlist items</td></tr>`}</tbody>
       </table>
     </div>`;
 }
 
 // ─── US Watchlist ─────────────────────────────────────────────────────────────
 function renderUSWatchlist() {
-  const wl = state.us_watchlist || [];
+  const wl  = _sortWl(state.us_watchlist || []);
   const rows = wl.map(w => {
     const t = technicals[w.ticker] || null;
     const entryHtml = getEntryBadges(t);
     const tJson = JSON.stringify(t || null).replace(/&/g,'&amp;').replace(/</g,'\\u003c').replace(/>/g,'\\u003e').replace(/"/g,'&quot;');
     const yhLink = `https://www.perplexity.ai/finance/${encodeURIComponent(w.ticker)}`;
-    const safeId  = w.id.replace(/'/g, "\\'");
+    const safeId     = w.id.replace(/'/g, "\\'");
     const safeName   = esc(w.stock_name).replace(/'/g, "\\'");
     const safeTicker = esc(w.ticker).replace(/'/g, "\\'");
     return `
@@ -3345,8 +3706,8 @@ function renderUSWatchlist() {
           onmouseenter="showUSEntryTooltip(event, ${tJson})"
           onmousemove="moveSigTooltip(event)"
           onmouseleave="hideSigTooltip()">${entryHtml}</td>
-      ${wlPriceCells(w, technicals[w.ticker], '$')}
-      <td style="font-size:12px" class="t-faint">${w.added_date || '—'}</td>
+      ${wlPriceCells(w, technicals[w.ticker])}
+      ${_wlDateCell(w, 'us_watchlist')}
       <td style="font-size:12px;max-width:200px">
         ${inlineCollapsibleNotes(w.notes)}
       </td>
@@ -3354,6 +3715,7 @@ function renderUSWatchlist() {
         <div class="flex gap-1">
           <button class="btn btn-blue text-xs py-1 px-2"
             onclick="usWlMoveToPortfolio('${safeId}','${safeName}','${safeTicker}')">→ Portfolio</button>
+          ${_wlMoveSelect(w.id, 'us_watchlist')}
           <button class="btn btn-ghost text-xs py-1 px-2" onclick="editUSWl('${safeId}')">✎</button>
           <button class="btn btn-red text-xs py-1 px-2" onclick="deleteUSWl('${safeId}')">✕</button>
         </div>
@@ -3371,12 +3733,12 @@ function renderUSWatchlist() {
     <div style="overflow-x:auto">
       <table class="tbl">
         <thead><tr>
-          <th class="text-left">Stock / ETF</th>
-          <th class="text-left">Sector</th>
+          ${_wlTh('Stock / ETF', 'stock_name')}
+          ${_wlTh('Sector',      'sector')}
           <th class="text-left">Signals</th>
-          <th class="text-right">CMP</th>
-          <th class="text-right">Since Added</th>
-          <th class="text-left">Added</th>
+          ${_wlTh('CMP',         'cmp',       'right')}
+          ${_wlTh('Since Added', 'pct_chg',   'right')}
+          ${_wlTh('Added',       'added_date')}
           <th class="text-left">Notes</th>
           <th></th>
         </tr></thead>
@@ -3547,6 +3909,38 @@ async function refreshUSWatchlistSignals() {
   setTimeout(() => { renderTab(); setBtn('⟳ Refresh Signals', false); }, 100);
 }
 
+async function refreshIntlWatchlistSignals(listId) {
+  await fetchData();
+  const wl = (state[listId] || []);
+  if (!wl.length) return;
+
+  const setBtn = (txt, dis) => {
+    const b = document.getElementById('intl-wl-signals-btn');
+    if (b) { b.textContent = txt; b.disabled = dis; }
+  };
+  setBtn(`⟳ 0/${wl.length}`, true);
+
+  let done = 0;
+  for (const w of wl) {
+    if (!w.ticker) continue;
+    try {
+      const res  = await fetch('/api/technicals/single', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ticker: w.ticker }),
+      });
+      const data = await res.json();
+      technicals[w.ticker] = data.data || { error: 'no data' };
+    } catch (e) {
+      technicals[w.ticker] = { error: String(e) };
+    }
+    done++;
+    renderTab();
+    setBtn(`⟳ ${done}/${wl.length}`, true);
+  }
+  setTimeout(() => { renderTab(); setBtn('⟳ Refresh Signals', false); }, 100);
+}
+
 // ─── Sorting ──────────────────────────────────────────────────────────────────
 function sortBy(key) {
   if (sortKey === key) sortDir *= -1;
@@ -3564,6 +3958,64 @@ function sortPositions(arr) {
     if (typeof va === 'string') return sortDir * va.localeCompare(vb);
     return sortDir * (vb - va);
   });
+}
+
+// ─── Watchlist sort helpers ───────────────────────────────────────────────────
+function sortWlBy(key) {
+  if (wlSortKey === key) wlSortDir *= -1;
+  else { wlSortKey = key; wlSortDir = -1; }
+  renderTab();
+}
+
+const _CONV_ORDER = { High: 3, Medium: 2, Low: 1 };
+
+function _wlSortVal(w, key) {
+  const cmp = livePrices[w.ticker] ?? technicals[w.ticker]?.cmp ?? null;
+  switch (key) {
+    case 'stock_name':  return (w.stock_name || '').toLowerCase();
+    case 'sector':      return (w.sector || '').toLowerCase();
+    case 'added_date':  return w.added_date || '';
+    case 'added_price': return w.added_price ?? null;
+    case 'cmp':         return cmp;
+    case 'pct_chg': {
+      if (cmp == null || !w.added_price) return null;
+      return (cmp - w.added_price) / w.added_price * 100;
+    }
+    case 'market_cap': {
+      const live = liveMarketCaps[w.ticker] ?? w.market_cap_live ?? null;
+      if (live) return live;
+      // try to parse stored string like "$2.93T USD" → rough numeric
+      const raw = (w.market_cap || '').replace(/[,$\s]/g, '');
+      const m = raw.match(/([\d.]+)([TBMK]?)/i);
+      if (!m) return null;
+      const n = parseFloat(m[1]);
+      const u = (m[2] || '').toUpperCase();
+      return n * (u === 'T' ? 1e12 : u === 'B' ? 1e9 : u === 'M' ? 1e6 : u === 'K' ? 1e3 : 1);
+    }
+    case 'conviction':  return _CONV_ORDER[w.conviction] ?? 0;
+    case 'exchange':    return (w.exchange || _extractExchange(w)).toLowerCase();
+    default:            return null;
+  }
+}
+
+function _sortWl(arr) {
+  if (!wlSortKey) return arr;
+  return [...arr].sort((a, b) => {
+    let va = _wlSortVal(a, wlSortKey);
+    let vb = _wlSortVal(b, wlSortKey);
+    const inf = wlSortDir > 0 ? Infinity : -Infinity;
+    if (va == null) va = typeof vb === 'string' ? '￿' : inf;
+    if (vb == null) vb = typeof va === 'string' ? '￿' : inf;
+    if (typeof va === 'string') return wlSortDir * va.localeCompare(vb);
+    return wlSortDir * (vb - va);
+  });
+}
+
+// Render a sortable <th> for watchlist tables
+function _wlTh(label, key, align = 'left') {
+  const active = wlSortKey === key;
+  const arrow  = active ? (wlSortDir > 0 ? ' ↑' : ' ↓') : '';
+  return `<th class="sort-th text-${align}" onclick="sortWlBy('${key}')">${label}${arrow}</th>`;
 }
 
 // ─── CRUD ─────────────────────────────────────────────────────────────────────
@@ -4164,10 +4616,14 @@ function openWlAdd(listId) {
   const lid = listId || currentWatchlistTab;
   const lbl = (state.settings?.watchlist_groups || []).find(g => g.id === lid)?.name || 'Watchlist';
   document.getElementById('wl-modal-title').textContent = `Add to ${lbl}`;
-  ['wl-edit-id','wl-name','wl-ticker','wl-added-price','wl-notes','wl-dashboard-url']
-    .forEach(id => document.getElementById(id).value = '');
+  ['wl-edit-id','wl-name','wl-ticker','wl-added-price','wl-notes','wl-dashboard-url','wl-market-cap','wl-exchange']
+    .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
   document.getElementById('wl-sector').value  = '';
+  const convEl = document.getElementById('wl-conviction');
+  if (convEl) convEl.value = '';
   if (document.getElementById('wl-list-id')) document.getElementById('wl-list-id').value = lid;
+  const intlFields = document.getElementById('wl-intl-fields');
+  if (intlFields) intlFields.classList.toggle('hidden', !_INTL_WL_IDS.has(lid));
   document.getElementById('wl-modal').classList.remove('hidden');
 }
 
@@ -4185,6 +4641,17 @@ function editWl(id, listId) {
   document.getElementById('wl-notes').value               = w.notes || '';
   document.getElementById('wl-dashboard-url').value       = w.dashboard_url || '';
   if (document.getElementById('wl-list-id')) document.getElementById('wl-list-id').value = lid;
+  const intlFields = document.getElementById('wl-intl-fields');
+  const isIntl = _INTL_WL_IDS.has(lid);
+  if (intlFields) intlFields.classList.toggle('hidden', !isIntl);
+  if (isIntl) {
+    const mcEl = document.getElementById('wl-market-cap');
+    const cvEl = document.getElementById('wl-conviction');
+    const exEl = document.getElementById('wl-exchange');
+    if (mcEl) mcEl.value = w.market_cap || '';
+    if (cvEl) cvEl.value = w.conviction || '';
+    if (exEl) exEl.value = w.exchange   || '';
+  }
   document.getElementById('wl-modal').classList.remove('hidden');
 }
 
@@ -4210,6 +4677,14 @@ async function saveWatchlist(e) {
     notes:            document.getElementById('wl-notes').value,
     dashboard_url:    document.getElementById('wl-dashboard-url').value || null,
   };
+  if (_INTL_WL_IDS.has(listId)) {
+    const mcEl = document.getElementById('wl-market-cap');
+    const cvEl = document.getElementById('wl-conviction');
+    const exEl = document.getElementById('wl-exchange');
+    if (mcEl) body.market_cap  = mcEl.value.trim() || null;
+    if (cvEl) body.conviction  = cvEl.value || null;
+    if (exEl) body.exchange    = exEl.value.trim() || null;
+  }
   const base   = _wlApiBase(listId);
   const url    = id ? `${base}/${id}` : base;
   const method = id ? 'PUT' : 'POST';
@@ -4223,6 +4698,33 @@ async function deleteWl(id, listId) {
   if (!confirm('Remove from watchlist?')) return;
   await fetch(`${_wlApiBase(listId || currentWatchlistTab)}/${id}`, { method: 'DELETE' });
   await fetchData();
+}
+
+function _wlMoveSelect(itemId, fromListId) {
+  const groups = (state.settings?.watchlist_groups || [])
+    .filter(g => g.id !== fromListId && g.id !== 'top_ideas');
+  if (!groups.length) return '';
+  const opts = groups.map(g =>
+    `<option value="${esc(g.id)}">${esc(g.name)}</option>`
+  ).join('');
+  return `<select title="Move to…" onchange="moveWlItem('${itemId}','${fromListId}',this.value);this.value=''"
+    style="background:var(--surface2);border:1px solid var(--border);border-radius:4px;
+           font-size:10px;color:var(--text-muted);cursor:pointer;padding:2px 4px;height:26px;max-width:80px">
+    <option value="">⇄ Move</option>
+    ${opts}
+  </select>`;
+}
+
+async function moveWlItem(itemId, fromListId, toListId) {
+  if (!toListId || toListId === fromListId) return;
+  const r = await fetch('/api/wl-move', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ item_id: itemId, from_list: fromListId, to_list: toListId }),
+  });
+  if (!r.ok) { alert('Move failed'); return; }
+  await fetchData();
+  render();
 }
 
 // Fetch live price for watchlist add form. prefix = 'wl' | 'us-wl'
@@ -5087,6 +5589,9 @@ async function refreshPrices() {
       livePrices   = data.prices;
       _lastFetchTs = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
     }
+    if (data.market_caps) {
+      liveMarketCaps = data.market_caps;
+    }
     if (data.positions || data.prices) {
       renderHeader();
       renderTab();
@@ -5690,6 +6195,28 @@ function fmtNum(v) {
   return `<span class="pn">${s}</span>`;
 }
 
+// Currency-aware formatter: USD uses $K/$M/$B; INR uses ₹K/₹L/₹Cr
+// withSign=true adds '+' prefix for positive values (P&L display)
+function fmtCur(v, isUS, withSign) {
+  if (v == null || isNaN(v)) return '—';
+  const a = Math.abs(v);
+  const neg = v < 0;
+  let mag;
+  if (isUS) {
+    if (a >= 1e9)      mag = '$' + (a / 1e9).toFixed(2) + 'B';
+    else if (a >= 1e6) mag = '$' + (a / 1e6).toFixed(2) + 'M';
+    else if (a >= 1e3) mag = '$' + (a / 1e3).toFixed(1) + 'K';
+    else               mag = '$' + a.toFixed(0);
+  } else {
+    if (a >= 1e7)      mag = '₹' + (a / 1e7).toFixed(2) + ' Cr';
+    else if (a >= 1e5) mag = '₹' + (a / 1e5).toFixed(2) + ' L';
+    else if (a >= 1e3) mag = '₹' + (a / 1e3).toFixed(1) + 'K';
+    else               mag = '₹' + a.toFixed(0);
+  }
+  const sign = neg ? '-' : (withSign ? '+' : '');
+  return `<span class="pn">${sign}${mag}</span>`;
+}
+
 function fmt(v) {
   if (v == null) return '—';
   const a = Math.abs(v), sign = v >= 0 ? '₹' : '-₹';
@@ -5698,6 +6225,15 @@ function fmt(v) {
   else if (a >= 1e5) s = sign + (a / 1e5).toFixed(2) + ' L';
   else               s = sign + a.toFixed(0);
   return `<span class="pn">${s}</span>`;
+}
+
+// Format a raw market-cap integer (from Yahoo Finance) → human-readable string
+function fmtMktCap(v) {
+  if (v == null || isNaN(v) || v <= 0) return null;
+  if (v >= 1e12) return (v / 1e12).toFixed(2) + 'T';
+  if (v >= 1e9)  return (v / 1e9).toFixed(2) + 'B';
+  if (v >= 1e6)  return (v / 1e6).toFixed(1) + 'M';
+  return v.toLocaleString();
 }
 
 function num(v, d = 2) {
@@ -5787,6 +6323,65 @@ function copyNotes(btn, text) {
   btn.textContent = '✓';
   btn.style.color = '#34d399';
   setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 1400);
+}
+
+// ─── Sector Datalist ──────────────────────────────────────────────────────────
+const _SECTOR_SEED = [
+  // Indian
+  'CDMO','Pharma','Hospitals','Chemicals','Banking','SFB','NBFC','Fintech',
+  'Capital Goods','Defence','Infrastructure','Building Materials','Hospitality',
+  'Consumer','IT','Energy','Electrification Theme','Alternative Energy',
+  'Space Tech','Aerospace','Automotive - Ancilliary','Automotive - CV',
+  'Recycling','Metals','Precious Metals','Commodities','Gold Commodity ETF',
+  'Silver Commodity ETF','Gold Miners','Silver Miners','Gold Financiers',
+  'Gold/Silver ETF','US Equity',
+  // US / international
+  'Technology','AI / Semiconductors','Healthcare','Financials','Utilities',
+  'Materials','Industrials','Defense / Aerospace','Gaming','Uranium',
+  'Gold / Precious Metals','Silver','ETF – Broad Market','ETF – Sector','ETF – Thematic',
+  'Other',
+];
+
+function buildSectorDatalist() {
+  const fromPos = (state.positions || []).map(p => p.sector).filter(Boolean);
+  const fromWl  = [...(state.watchlist||[]), ...(state.us_watchlist||[])]
+                    .map(w => w.sector).filter(Boolean);
+  const custom  = state.settings?.custom_sectors || [];
+  const all = [...new Set([..._SECTOR_SEED, ...fromPos, ...fromWl, ...custom])].sort();
+  const dl = document.getElementById('sector-datalist');
+  if (dl) dl.innerHTML = all.map(s => `<option value="${esc(s)}">`).join('');
+}
+
+async function addCustomSector() {
+  const input = document.getElementById('new-sector-input');
+  const name = (input?.value || '').trim();
+  if (!name) return;
+  const current = state.settings?.custom_sectors || [];
+  if (current.map(s=>s.toLowerCase()).includes(name.toLowerCase())) { input.value = ''; return; }
+  const updated = [...current, name].sort();
+  const r = await fetch('/api/settings', {
+    method: 'PUT', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ custom_sectors: updated }),
+  });
+  if (r.ok) {
+    state.settings.custom_sectors = updated;
+    input.value = '';
+    buildSectorDatalist();
+    render();
+  }
+}
+
+async function removeCustomSector(name) {
+  const updated = (state.settings?.custom_sectors || []).filter(s => s !== name);
+  const r = await fetch('/api/settings', {
+    method: 'PUT', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ custom_sectors: updated }),
+  });
+  if (r.ok) {
+    state.settings.custom_sectors = updated;
+    buildSectorDatalist();
+    render();
+  }
 }
 
 // ─── Cash & HUF Tab ───────────────────────────────────────────────────────────

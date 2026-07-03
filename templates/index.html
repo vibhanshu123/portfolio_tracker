@@ -216,21 +216,7 @@
         <div><label class="text-xs block mb-1">Date of Buy</label>
           <input id="f-date" type="date"></div>
         <div><label class="text-xs block mb-1">Sector</label>
-          <select id="f-sector">
-            <option value="">— None —</option>
-            <option>CDMO</option><option>Pharma</option><option>Hospitals</option>
-            <option>Chemicals</option><option>Banking</option><option>SFB</option>
-            <option>NBFC</option><option>Fintech</option><option>Capital Goods</option>
-            <option>Defence</option><option>Infrastructure</option><option>Building Materials</option>
-            <option>Hospitality</option><option>Consumer</option><option>IT</option>
-            <option>Energy</option><option>Electrification Theme</option><option>Alternative Energy</option>
-            <option>Space Tech</option><option>Aerospace</option><option>Automotive - Ancilliary</option>
-            <option>Automotive - CV</option><option>Recycling</option><option>Metals</option>
-            <option>Precious Metals</option><option>Commodities</option><option>Gold Commodity ETF</option>
-            <option>Silver Commodity ETF</option><option>Gold Miners</option><option>Silver Miners</option>
-            <option>Gold Financiers</option><option>Gold/Silver ETF</option><option>US Equity</option>
-            <option>Other</option>
-          </select></div>
+          <input id="f-sector" type="text" list="sector-datalist" placeholder="Type or pick…" autocomplete="off"></div>
         <div><label class="text-xs block mb-1">PE</label>
           <input id="f-pe" type="number" step="0.01" placeholder="optional"></div>
         <div><label class="text-xs block mb-1">Conviction (1–10)</label>
@@ -272,21 +258,20 @@
             <button type="button" onclick="fetchWlAddedPrice('wl')" class="btn btn-ghost text-xs" style="flex-shrink:0;padding:4px 8px">Fetch</button>
           </div></div>
         <div><label class="text-xs block mb-1">Sector</label>
-          <select id="wl-sector">
-            <option value="">— None —</option>
-            <option>CDMO</option><option>Pharma</option><option>Hospitals</option>
-            <option>Chemicals</option><option>Banking</option><option>SFB</option>
-            <option>NBFC</option><option>Fintech</option><option>Capital Goods</option>
-            <option>Defence</option><option>Infrastructure</option><option>Building Materials</option>
-            <option>Hospitality</option><option>Consumer</option><option>IT</option>
-            <option>Energy</option><option>Electrification Theme</option><option>Alternative Energy</option>
-            <option>Space Tech</option><option>Aerospace</option><option>Automotive - Ancilliary</option>
-            <option>Automotive - CV</option><option>Recycling</option><option>Metals</option>
-            <option>Precious Metals</option><option>Commodities</option><option>Gold Commodity ETF</option>
-            <option>Silver Commodity ETF</option><option>Gold Miners</option><option>Silver Miners</option>
-            <option>Gold Financiers</option><option>Gold/Silver ETF</option><option>US Equity</option>
-            <option>Other</option>
+          <input id="wl-sector" type="text" list="sector-datalist" placeholder="Type or pick…" autocomplete="off"></div>
+      </div>
+      <div id="wl-intl-fields" class="hidden grid grid-cols-2 gap-3" style="margin-top:0">
+        <div><label class="text-xs block mb-1">Market Cap</label>
+          <input id="wl-market-cap" type="text" placeholder="e.g. $2.93T USD"></div>
+        <div><label class="text-xs block mb-1">Conviction</label>
+          <select id="wl-conviction" style="width:100%">
+            <option value="">—</option>
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
           </select></div>
+        <div style="grid-column:span 2"><label class="text-xs block mb-1">Exchange</label>
+          <input id="wl-exchange" type="text" placeholder="e.g. Nasdaq, NYSE, TSX, Frankfurt"></div>
       </div>
       <div><label class="text-xs block mb-1">Notes / Thesis</label>
         <textarea id="wl-notes" rows="2"></textarea></div>
@@ -637,18 +622,7 @@
             <button type="button" onclick="fetchWlAddedPrice('us-wl')" class="btn btn-ghost text-xs" style="flex-shrink:0;padding:4px 8px">Fetch</button>
           </div></div>
         <div><label class="text-xs block mb-1">Sector</label>
-          <select id="us-wl-sector">
-            <option value="">— None —</option>
-            <option>Technology</option><option>AI / Semiconductors</option>
-            <option>Healthcare</option><option>Financials</option>
-            <option>Energy</option><option>Utilities</option><option>Consumer</option>
-            <option>Materials</option><option>Industrials</option><option>Defense / Aerospace</option>
-            <option>Gaming</option><option>Space Tech</option>
-            <option>Gold / Precious Metals</option><option>Silver</option>
-            <option>Gold Miners</option><option>Uranium</option><option>Alternative Energy</option>
-            <option>ETF – Broad Market</option><option>ETF – Sector</option>
-            <option>ETF – Thematic</option><option>Other</option>
-          </select></div>
+          <input id="us-wl-sector" type="text" list="sector-datalist" placeholder="Type or pick…" autocomplete="off"></div>
       </div>
       <div><label class="text-xs block mb-1">Notes / Thesis</label>
         <textarea id="us-wl-notes" rows="2" placeholder="Why watching this…"></textarea></div>
@@ -659,6 +633,9 @@
     </form>
   </div>
 </div>
+
+<!-- ── SECTOR DATALIST (populated dynamically by buildSectorDatalist()) ──── -->
+<datalist id="sector-datalist"></datalist>
 
 <!-- ── SCRIPTS ─────────────────────────────────────────────────────────────── -->
 <script src="/static/js/app.js"></script>

@@ -42,6 +42,7 @@ class SettingsIn(BaseModel):
     portfolio_risk_pct: Optional[float] = None
     aif_invested:       Optional[float] = None
     target_cash_pct:    Optional[float] = None
+    custom_sectors:     Optional[list]  = None
 
 
 class HufTransferIn(BaseModel):

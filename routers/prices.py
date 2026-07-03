@@ -199,6 +199,29 @@ def get_quote(ticker: str, on: Optional[str] = None):
     return {"error": "Could not fetch price"}
 
 
+# Watchlist lists that show a Market Cap column (international lists)
+_INTL_WL_IDS = {"wl_soic_research_international", "wl_rick_rule_s_stocks", "us_watchlist"}
+
+
+def _fetch_mkt_caps(yt_orig_map: dict) -> dict:
+    """Fetch market caps via fast_info.market_cap. Returns {orig_ticker: int}."""
+    result = {}
+    if not yt_orig_map:
+        return result
+    try:
+        obj = yf.Tickers(" ".join(yt_orig_map.keys()))
+        for yt, orig in yt_orig_map.items():
+            try:
+                mc = getattr(obj.tickers[yt].fast_info, "market_cap", None)
+                if mc and mc == mc:  # not NaN
+                    result[orig] = int(mc)
+            except Exception:
+                pass
+    except Exception:
+        pass
+    return result
+
+
 @router.get("/api/prices")
 def refresh_prices():
     data = load()
@@ -224,6 +247,16 @@ def refresh_prices():
             yt = item.get("yahoo_ticker") or _to_yahoo(orig, cur)
             if yt and yt not in pos_map:
                 wl_map[yt] = orig
+
+    # Build mkt-cap map for international watchlist items only
+    mkt_cap_yt_map: dict[str, str] = {}
+    for k in _INTL_WL_IDS:
+        for item in data.get(k, []):
+            orig = item.get("ticker", "")
+            if not orig:
+                continue
+            yt = item.get("yahoo_ticker") or orig
+            mkt_cap_yt_map[yt] = orig
 
     all_yts = list(pos_map.keys()) + list(wl_map.keys())
 
@@ -276,8 +309,24 @@ def refresh_prices():
         if yt in all_prices:
             prices[orig] = round(all_prices[yt], 2)
 
+    # Fetch market caps for international watchlist items
+    market_caps = _fetch_mkt_caps(mkt_cap_yt_map)
+
+    # Persist live market caps back to watchlist items so they survive page reloads
+    if market_caps:
+        changed = False
+        for k in _INTL_WL_IDS:
+            for item in data.get(k, []):
+                orig = item.get("ticker", "")
+                if orig in market_caps:
+                    item["market_cap_live"] = market_caps[orig]
+                    changed = True
+        if changed:
+            save(data)
+
     return {
-        "updated":   len([yt for yt in pos_map if yt in all_prices]),
-        "positions": data["positions"],
-        "prices":    prices,
+        "updated":     len([yt for yt in pos_map if yt in all_prices]),
+        "positions":   data["positions"],
+        "prices":      prices,
+        "market_caps": market_caps,
     }
