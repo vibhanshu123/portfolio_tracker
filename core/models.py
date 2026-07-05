@@ -31,6 +31,7 @@ class WatchlistIn(BaseModel):
 class MarketDashboardIn(BaseModel):
     title:        str
     created_date: str
+    category:     Optional[str] = "my_resources"
     prompt:       Optional[str] = ""
     filename:     Optional[str] = None
     url:          Optional[str] = None

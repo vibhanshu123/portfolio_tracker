@@ -2,12 +2,19 @@ import uuid
 from pathlib import Path
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 
 from core.config import MARKET_DASHBOARDS_DIR
 from core.models import MarketDashboardIn
 from core.persistence import load, save
+
+_DEFAULT_RESOURCE_CATEGORIES = [
+    {"id": "rick_rule",     "name": "Rick Rule"},
+    {"id": "my_resources",  "name": "My Resources"},
+    {"id": "sajal_kapoor",  "name": "Sajal Kapoor"},
+    {"id": "soic_research", "name": "SOIC Research"},
+]
 
 router = APIRouter()
 
@@ -18,6 +25,45 @@ _SOIC_FILES = {
     "SOIC_FY26_Research.html",
 }
 _SOIC_DIR = Path("/Users/arya/workspace/agents")
+
+
+def _get_resource_cats(data):
+    return data["settings"].setdefault("resource_categories", list(_DEFAULT_RESOURCE_CATEGORIES))
+
+
+@router.get("/api/resource-categories")
+def get_resource_categories():
+    data = load()
+    return _get_resource_cats(data)
+
+
+@router.post("/api/resource-categories")
+async def add_resource_category(request: Request):
+    body = await request.json()
+    name = body.get("name", "").strip()
+    if not name:
+        raise HTTPException(400, "name required")
+    data = load()
+    cats = _get_resource_cats(data)
+    import re
+    cid = re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_") or "cat"
+    existing = {c["id"] for c in cats}
+    if cid in existing:
+        cid = f"{cid}_{uuid.uuid4().hex[:4]}"
+    entry = {"id": cid, "name": name}
+    cats.append(entry)
+    data["settings"]["resource_categories"] = cats
+    save(data)
+    return entry
+
+
+@router.delete("/api/resource-categories/{cid}")
+def delete_resource_category(cid: str):
+    data = load()
+    cats = _get_resource_cats(data)
+    data["settings"]["resource_categories"] = [c for c in cats if c["id"] != cid]
+    save(data)
+    return {"ok": True}
 
 
 @router.get("/api/market_dashboards")

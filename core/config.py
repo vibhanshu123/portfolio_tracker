@@ -18,6 +18,9 @@ TECH_FILE        = _data_dir / "technicals.json"
 SCANS_CACHE_FILE = _data_dir / "stockscans_cache.json"
 ALPHA_CACHE_FILE = _data_dir / "alpha_cache.json"
 
+UPLOADS_DIR           = _data_dir / "uploads"
+UPLOADS_DIR.mkdir(exist_ok=True)
+
 SOIC_DIR              = Path("/Users/arya/workspace/agents/soic-er-shashank-dashboard-generator")
 CLAUDE_CLI            = "/Users/arya/.npm-global/bin/claude"
 DASHBOARDS_DIR        = BASE / "dashboards"

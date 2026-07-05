@@ -142,7 +142,8 @@ async def add_watchlist_group(request: Request):
     if wid in existing_ids:
         wid = f"{base}_{uuid.uuid4().hex[:4]}"
 
-    entry = {"id": wid, "name": name}
+    region = body.get("region", "india")
+    entry = {"id": wid, "name": name, "region": region}
     wl_groups.append(entry)
     data["settings"]["watchlist_groups"] = wl_groups
     data.setdefault(wid, [])   # create empty list for this watchlist

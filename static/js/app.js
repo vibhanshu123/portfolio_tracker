@@ -46,7 +46,12 @@ const _INTL_WL_IDS = new Set(['wl_soic_research_international', 'wl_rick_rule_s_
 
 // Watchlist region membership: India vs International
 const _WL_INDIA_IDS = new Set(['watchlist', 'soic_research', 'top_ideas']);
-function _wlRegionOf(id) { return _WL_INDIA_IDS.has(id) ? 'india' : 'international'; }
+function _wlRegionOf(id) {
+  if (_WL_INDIA_IDS.has(id)) return 'india';
+  // Check stored region on dynamic groups (set when group was created)
+  const g = (state?.settings?.watchlist_groups || []).find(x => x.id === id);
+  return g?.region || 'international';
+}
 
 function _extractExchange(item) {
   if (item.exchange) return item.exchange;
@@ -149,9 +154,27 @@ async function editWlDate(itemId, listId, cell) {
     if (!newDate || newDate === currentDate) { cell.innerHTML = orig; return; }
     cell.innerHTML = '<span style="font-size:10px;color:var(--text-faint)">…</span>';
     try {
+      // Find ticker for this item so we can fetch the historical price
+      const allLists = ['watchlist','us_watchlist',...(state.settings?.watchlist_groups||[]).map(g=>g.id)];
+      let ticker = null;
+      for (const lid of allLists) {
+        const item = (state[lid]||[]).find(x => x.id === itemId);
+        if (item) { ticker = item.ticker; break; }
+      }
+
+      // Fetch historical close on the new date (non-blocking fallback if it fails)
+      const updates = { added_date: newDate };
+      if (ticker) {
+        try {
+          const qRes  = await fetch(`/api/quote?ticker=${encodeURIComponent(ticker)}&on=${newDate}`);
+          const qData = await qRes.json();
+          if (qData.price) updates.added_price = qData.price;
+        } catch { /* ignore — date save still proceeds */ }
+      }
+
       await fetch(`${_wlApiBase(listId)}/${itemId}`, {
         method: 'PUT', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ added_date: newDate })
+        body: JSON.stringify(updates)
       });
       await fetchData();
       renderTab();
@@ -273,9 +296,9 @@ async function fetchData() {
   state.us_watchlist  = state.us_watchlist  || [];
   // Ensure all custom watchlist arrays are initialised
   (state.settings?.watchlist_groups || []).forEach(g => { state[g.id] = state[g.id] || []; });
-  // Sync currentWatchlistTab to first group if not yet valid
+  // Sync currentWatchlistTab to first group if not yet valid (but preserve virtual tabs like '_overlap')
   const _wg = state.settings?.watchlist_groups || [];
-  if (_wg.length && !_wg.find(g => g.id === currentWatchlistTab)) currentWatchlistTab = _wg[0].id;
+  if (_wg.length && currentWatchlistTab !== '_overlap' && !_wg.find(g => g.id === currentWatchlistTab)) currentWatchlistTab = _wg[0].id;
   state.mutual_funds  = state.mutual_funds  || [];
   state.fixed_income  = state.fixed_income  || [];
   state.unlisted      = state.unlisted      || [];
@@ -504,7 +527,8 @@ async function _deletePortfolioGroup(group, id) {
 async function _watchlistGroupAction(id, name) {
   const url    = id ? `/api/watchlist-groups/${id}` : '/api/watchlist-groups';
   const method = id ? 'PATCH' : 'POST';
-  const res    = await fetch(url, { method, headers: {'Content-Type':'application/json'}, body: JSON.stringify({name}) });
+  const body   = id ? { name } : { name, region: currentWatchlistRegion };
+  const res    = await fetch(url, { method, headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
   if (!res.ok) { alert((await res.json()).detail || 'Error'); return; }
   await fetchData();
   if (!id) {
@@ -603,8 +627,8 @@ function switchUSTab(account) {
 }
 
 function switchWatchlistTab(id) {
-  currentWatchlistTab    = id;
-  currentWatchlistRegion = _wlRegionOf(id);
+  currentWatchlistTab = id;
+  if (id !== '_overlap') currentWatchlistRegion = _wlRegionOf(id);
   wlSortKey = null; wlSortDir = -1;
   renderTab();
 }
@@ -613,8 +637,10 @@ function switchWatchlistRegion(region) {
   currentWatchlistRegion = region;
   const allGroups = state.settings?.watchlist_groups || [];
   const regionGroups = allGroups.filter(g => _wlRegionOf(g.id) === region);
-  if (regionGroups.length && !regionGroups.find(g => g.id === currentWatchlistTab)) {
-    currentWatchlistTab = regionGroups[0].id;
+  // Reset to first real tab if current tab doesn't belong to the new region
+  // (_overlap is always reset so clicking a region pill always lands on the main list)
+  if (!regionGroups.find(g => g.id === currentWatchlistTab)) {
+    currentWatchlistTab = regionGroups[0]?.id || (region === 'india' ? 'watchlist' : 'us_watchlist');
   }
   renderTab();
 }
@@ -670,10 +696,12 @@ const _INDIAN_SUB_TABS = [
 function _subTabBar(tabs, activeId, onSwitch, onAdd, onRename, onDelete) {
   return `<div class="sub-tab-bar">
     ${tabs.map(t => {
-      const isActive = activeId === t.id;
-      const showManage = isActive && (onRename || onDelete);
-      return `
-      <div class="sub-tab-item ${isActive ? 'active' : ''}">
+      const isActive   = activeId === t.id;
+      const showManage = isActive && !t.noManage && (onRename || onDelete);
+      const sep = t.separator
+        ? `<div style="width:1px;background:var(--border);align-self:stretch;margin:6px 6px 0"></div>`
+        : '';
+      return sep + `<div class="sub-tab-item ${isActive ? 'active' : ''}">
         <button class="sub-tab-btn ${isActive ? 'active' : ''}"
                 onclick="${onSwitch}('${t.id}')">${t.name}</button>
         ${showManage ? `<button class="sub-tab-manage" onclick="openTabManageModal('${t.id}','${esc(t.name)}','${onRename||''}','${onDelete||''}')" title="Manage">⚙</button>` : ''}
@@ -914,17 +942,19 @@ async function savePortfolioCash(accountId) {
   }
 }
 
+
+
 function renderWatchlistHub() {
   const allGroups = state.settings?.watchlist_groups ||
                    [{id:'watchlist', name:'India - MyResearch'}, {id:'us_watchlist', name:'US - MyResearch'}];
 
   // Sync region from current tab in case state drifted
-  if (currentWatchlistTab) currentWatchlistRegion = _wlRegionOf(currentWatchlistTab);
+  if (currentWatchlistTab && currentWatchlistTab !== '_overlap') currentWatchlistRegion = _wlRegionOf(currentWatchlistTab);
 
   const regionGroups = allGroups.filter(g => _wlRegionOf(g.id) === currentWatchlistRegion);
 
-  // Ensure currentWatchlistTab belongs to the active region
-  if (!regionGroups.find(g => g.id === currentWatchlistTab)) {
+  // Ensure currentWatchlistTab belongs to the active region (ignore '_overlap' — it's always valid)
+  if (currentWatchlistTab !== '_overlap' && !regionGroups.find(g => g.id === currentWatchlistTab)) {
     currentWatchlistTab = regionGroups[0]?.id || 'watchlist';
   }
 
@@ -936,11 +966,148 @@ function renderWatchlistHub() {
               onclick="switchWatchlistRegion('international')">🌐 International</button>
     </div>`;
 
-  const bar = _subTabBar(regionGroups, currentWatchlistTab, 'switchWatchlistTab', 'openAddWatchlistModal', 'openRenameWatchlistModal', 'openDeleteWatchlistModal');
+  // Append Overlap as a visually separated last tab in the sub-tab-bar
+  const tabsForBar = [
+    ...regionGroups,
+    { id: '_overlap', name: '⊕ Overlap', noManage: true, separator: true }
+  ];
+  const bar = _subTabBar(tabsForBar, currentWatchlistTab, 'switchWatchlistTab', 'openAddWatchlistModal', 'openRenameWatchlistModal', 'openDeleteWatchlistModal');
 
+  if (currentWatchlistTab === '_overlap')     return regionBar + bar + renderOverlapTab();
   if (currentWatchlistTab === 'us_watchlist') return regionBar + bar + renderUSWatchlist();
-  if (currentWatchlistTab === 'top_ideas')   return regionBar + bar + renderTopIdeas();
+  if (currentWatchlistTab === 'top_ideas')    return regionBar + bar + renderTopIdeas();
   return regionBar + bar + renderWatchlistById(currentWatchlistTab);
+}
+
+function renderOverlapTab() {
+  const region = currentWatchlistRegion;
+  const allGroups = state.settings?.watchlist_groups || [];
+
+  // Collect all list IDs for this region — exclude built-ins from custom to prevent duplicates
+  const _INDIA_BUILTINS = ['watchlist', 'soic_research'];
+  const _INTL_BUILTINS  = ['us_watchlist'];
+  let listIds;
+  if (region === 'india') {
+    const customIndia = allGroups
+      .filter(g => _wlRegionOf(g.id) === 'india' && !_INDIA_BUILTINS.includes(g.id))
+      .map(g => g.id);
+    listIds = [..._INDIA_BUILTINS, ...customIndia];
+  } else {
+    const customIntl = allGroups
+      .filter(g => _wlRegionOf(g.id) === 'international' && !_INTL_BUILTINS.includes(g.id))
+      .map(g => g.id);
+    listIds = [..._INTL_BUILTINS, ...customIntl];
+  }
+
+  // Map listId → display name
+  const listName = id => {
+    if (id === 'watchlist')    return 'My Research';
+    if (id === 'us_watchlist') return 'US Research';
+    if (id === 'soic_research') return 'SOIC Research';
+    return allGroups.find(g => g.id === id)?.name || id;
+  };
+
+  // Build ticker → { item, itemsPerList, lists[] } map
+  const tickerMap = {};
+  for (const lid of listIds) {
+    const items = lid === 'watchlist' ? (state.watchlist || []) : (state[lid] || []);
+    for (const w of items) {
+      const tk = w.ticker || '';
+      if (!tk) continue;
+      if (!tickerMap[tk]) tickerMap[tk] = { item: w, itemsPerList: {}, lists: [] };
+      if (!tickerMap[tk].lists.includes(lid)) {
+        tickerMap[tk].lists.push(lid);
+        tickerMap[tk].itemsPerList[lid] = w;
+      }
+    }
+  }
+
+  // Keep only tickers in 2+ lists
+  const overlaps = Object.values(tickerMap)
+    .filter(v => v.lists.length >= 2)
+    .sort((a, b) => b.lists.length - a.lists.length || (a.item.stock_name||'').localeCompare(b.item.stock_name||''));
+
+  // Helper: combined notes + research for all lists this ticker appears in
+  const combinedNotes = (itemsPerList, lists) => {
+    const sections = lists.map(lid => {
+      const w = itemsPerList[lid];
+      if (!w) return null;
+      const notesText = (w.notes || '').trim();
+      const hasNotes = !!notesText;
+      const hasLinks = (w.research_links && w.research_links.trim()) || w.dashboard_url;
+      if (!hasNotes && !hasLinks) return null;
+      const lname = listName(lid);
+      let inner = '';
+      if (hasNotes) {
+        inner += `<div style="margin-top:4px;background:var(--surface2);border-left:2px solid var(--accent)55;border-radius:0 4px 4px 0;padding:5px 8px;font-size:11px;color:var(--text-muted);line-height:1.55;white-space:pre-wrap">${_linkifyNotes(notesText)}</div>`;
+      }
+      if (hasLinks) {
+        inner += `<div style="margin-top:5px">${_renderResearchLinks(w, { collapsible: true })}</div>`;
+      }
+      return `<div style="margin-bottom:6px">
+        <button onclick="const nb=this.closest('div').querySelector('.ol-body');nb.style.display=nb.style.display==='none'?'block':'none';this.querySelector('.cn-icon').textContent=nb.style.display==='none'?'▶':'▼'"
+          style="background:none;border:none;padding:0;cursor:pointer;display:flex;align-items:center;gap:4px">
+          <span class="cn-icon" style="font-size:9px;color:var(--text-faint)">▶</span>
+          <span style="font-size:9px;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:.05em">${esc(lname)}</span>
+        </button>
+        <div class="ol-body" style="display:none">${inner}</div>
+      </div>`;
+    }).filter(Boolean);
+    if (!sections.length) return '<span class="t-faint" style="font-size:11px">—</span>';
+    return `<div style="display:flex;flex-direction:column">${sections.join('')}</div>`;
+  };
+
+  if (overlaps.length === 0) {
+    return `<div style="text-align:center;padding:60px 0;color:var(--text-faint);font-size:13px">
+      No overlaps yet — a stock appears here when it's in 2 or more ${region === 'india' ? 'India' : 'International'} watchlists.
+    </div>`;
+  }
+
+  const rows = overlaps.map(({ item: w, itemsPerList, lists }) => {
+    const ticker = w.ticker || '';
+    const isIndian = _isIndianTicker(ticker);
+    const stockUrl = isIndian
+      ? `https://www.stockscans.in/company/${ticker.replace(/\s+/g, '')}`
+      : `https://www.perplexity.ai/finance/${ticker.replace(/^[A-Z]+:/i, '')}`;
+    const listPills = lists.map(lid =>
+      `<span style="background:var(--accent)22;color:var(--accent);border:1px solid var(--accent)44;
+        border-radius:12px;padding:2px 9px;font-size:10px;white-space:nowrap">${esc(listName(lid))}</span>`
+    ).join('');
+    return `<tr class="hover:bg-row-hover" style="border-bottom:1px solid var(--border)">
+      <td style="padding:10px 12px;font-weight:600;color:var(--text-strong)">${esc(w.stock_name||ticker)}</td>
+      <td style="padding:10px 12px;font-family:'JetBrains Mono',monospace;font-size:12px">
+        <a href="${stockUrl}" target="_blank" style="color:var(--accent);text-decoration:none">${esc(ticker)}</a>
+      </td>
+      <td style="padding:10px 12px;text-align:center">
+        <span style="background:var(--surface2);border-radius:12px;padding:2px 10px;font-size:12px;font-weight:700;color:var(--text-strong)">${lists.length}</span>
+      </td>
+      <td style="padding:10px 12px">
+        <div style="display:flex;gap:5px;flex-wrap:wrap">${listPills}</div>
+      </td>
+      <td style="padding:10px 12px;color:var(--text-muted);font-size:12px">${w.sector||'—'}</td>
+      <td style="padding:10px 12px;font-size:12px;max-width:260px">${combinedNotes(itemsPerList, lists)}</td>
+    </tr>`;
+  }).join('');
+
+  return `
+  <div style="padding:4px 0 0">
+    <div style="font-size:11px;color:var(--text-faint);margin-bottom:12px">
+      ${overlaps.length} stock${overlaps.length!==1?'s':''} appear in multiple ${region === 'india' ? '🇮🇳 India' : '🌐 International'} watchlists
+    </div>
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr style="border-bottom:2px solid var(--border)">
+          <th style="padding:8px 12px;text-align:left;font-size:11px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Stock</th>
+          <th style="padding:8px 12px;text-align:left;font-size:11px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Ticker</th>
+          <th style="padding:8px 12px;text-align:center;font-size:11px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.05em"># Lists</th>
+          <th style="padding:8px 12px;text-align:left;font-size:11px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Appears In</th>
+          <th style="padding:8px 12px;text-align:left;font-size:11px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Sector</th>
+          <th style="padding:8px 12px;text-align:left;font-size:11px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Research & Notes</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  </div>`;
 }
 
 function renderWatchlistById(id) {
@@ -985,12 +1152,7 @@ function _renderIntlWatchlist(listId, wl, addBtn) {
       ? `<span style="font-size:12px;font-weight:500${mcIsLive ? '' : ';color:var(--text-faint)'}">${mcFmt}</span>`
       : (w.market_cap ? `<span style="font-size:11px" class="t-faint">${esc(w.market_cap)}</span>` : '<span class="t-faint">—</span>');
 
-    // Research button: dashboard_url shown as a Netlify link
-    const resHtml = w.dashboard_url
-      ? `<a href="${esc(w.dashboard_url)}" target="_blank" rel="noopener"
-           class="btn text-xs py-1 px-2"
-           style="background:rgba(52,211,153,.15);color:#34d399;border:1px solid rgba(52,211,153,.3)">📊 Report</a>`
-      : '<span class="t-faint" style="font-size:11px">—</span>';
+    const resHtml = _renderResearchLinks(w, { collapsible: true });
 
     const extraCols = showExtraCols ? `
       <td>${mcHtml}</td>
@@ -2452,9 +2614,12 @@ function getResearchButtons(w) {
   else
     dashBtn = _stepBtn('📊 Dashboard', `wlDeepDive('${wid}')`, false);
 
+  const extraLinks = _renderResearchLinks(w, { skipDashboardUrl: true, collapsible: true });
+  const hasExtra = w.research_links?.trim();
   return `<div class="flex gap-1 items-center flex-wrap">
     ${dlBtn}
     ${dashBtn}
+    ${hasExtra ? extraLinks : ''}
   </div>`;
 }
 
@@ -2939,6 +3104,184 @@ function soicResearchUrl(num) {
   return `https://visionary-selkie-8c85fe.netlify.app/#c${num}`;
 }
 
+const _IMG_URL_RE = /\.(jpe?g|png|gif|webp|svg)(\?[^\s]*)?$/i;
+
+function _linkifyNotes(text) {
+  return text.split(/(https?:\/\/[^\s]+)/g).map((part, i) => {
+    if (i % 2 === 1) {
+      const href = esc(part);
+      if (_IMG_URL_RE.test(part)) {
+        return `<a href="${href}" target="_blank" rel="noopener" style="display:inline-block;margin:3px 0">
+          <img src="${href}" loading="lazy"
+            style="max-width:220px;max-height:130px;border-radius:5px;object-fit:contain;
+                   border:1px solid var(--border);vertical-align:middle" /></a>`;
+      }
+      return `<a href="${href}" target="_blank" rel="noopener"
+        style="color:#60a5fa;text-decoration:underline;word-break:break-all"
+        onmouseover="this.style.color='#93c5fd'" onmouseout="this.style.color='#60a5fa'">${href}</a>`;
+    }
+    return esc(part);
+  }).join('');
+}
+
+// Parse research_links (newline-separated, "Label::URL" or bare URL) + legacy dashboard_url
+function _parseResearchLinks(w, { skipDashboardUrl = false } = {}) {
+  const links = [];
+  const seen  = new Set();
+  const add   = (url, label) => {
+    url = (url || '').trim();
+    if (!url || seen.has(url)) return;
+    seen.add(url);
+    links.push({ url, label: (label || '').trim() || null });
+  };
+  if (w.research_links) {
+    w.research_links.split('\n').forEach(line => {
+      line = line.trim();
+      if (!line) return;
+      const sep = line.indexOf('::');
+      if (sep > 0) add(line.slice(sep + 2), line.slice(0, sep));
+      else add(line, null);
+    });
+  }
+  if (!skipDashboardUrl && w.dashboard_url) add(w.dashboard_url, '📊 Report');
+  return links;
+}
+
+function _renderResearchLinks(w, opts = {}) {
+  const links = _parseResearchLinks(w, opts);
+  if (!links.length) return '<span class="t-faint" style="font-size:11px">—</span>';
+  const pillsHtml = `<div class="flex gap-1 flex-wrap items-center">${links.map(({ url, label }) => {
+    const href = esc(url);
+    if (_IMG_URL_RE.test(url)) {
+      const caption = esc(label || '');
+      return `<a href="${href}" target="_blank" rel="noopener"
+        style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none">
+        <img src="${href}" loading="lazy"
+          style="max-width:56px;max-height:38px;border-radius:4px;object-fit:cover;
+                 border:1px solid var(--border);cursor:zoom-in" />
+        ${caption ? `<span style="font-size:9px;color:var(--text-faint);max-width:60px;overflow:hidden;
+          text-overflow:ellipsis;white-space:nowrap;text-align:center">${caption}</span>` : ''}
+      </a>`;
+    }
+    const display = esc(label || '📊 Report');
+    return `<a href="${href}" target="_blank" rel="noopener" class="btn text-xs py-1 px-2"
+      style="background:rgba(52,211,153,.15);color:#34d399;border:1px solid rgba(52,211,153,.3);
+             white-space:nowrap">${display}</a>`;
+  }).join('')}</div>`;
+  if (opts.collapsible && links.length >= 1) {
+    return `<div>
+      <button onclick="const nb=this.closest('div').querySelector('.rl-body');nb.style.display=nb.style.display==='none'?'flex':'none';this.querySelector('.cn-icon').textContent=nb.style.display==='none'?'▶':'▼'"
+        style="background:none;border:none;padding:0;cursor:pointer;display:flex;align-items:center;gap:4px">
+        <span class="cn-icon" style="font-size:9px;color:var(--text-faint)">▶</span>
+        <span style="font-size:11px;color:var(--text-faint)">Research (${links.length})</span>
+      </button>
+      <div class="rl-body" style="display:none;margin-top:4px">${pillsHtml}</div>
+    </div>`;
+  }
+  return pillsHtml;
+}
+
+// ── Research link rows UI ─────────────────────────────────────────────────────
+let _uploadTargetPrefix = null;
+
+function _wlLinkRowHtml(name, url) {
+  const safeName = (name || '').replace(/"/g, '&quot;');
+  const safeUrl  = (url  || '').replace(/"/g, '&quot;');
+  return `<div style="display:flex;gap:4px;align-items:center">
+    <input type="text" class="wl-link-name" value="${safeName}"
+      placeholder="Name (e.g. Dashboard)"
+      style="flex:0 0 120px;font-size:11px;padding:4px 6px;min-width:0;
+             background:var(--surface2);border:1px solid var(--border);border-radius:4px;color:var(--text)">
+    <input type="text" class="wl-link-url" value="${safeUrl}"
+      placeholder="https://… or /uploads/…"
+      style="flex:1;font-size:11px;padding:4px 6px;min-width:0;
+             background:var(--surface2);border:1px solid var(--border);border-radius:4px;color:var(--text)">
+    <button type="button" onclick="this.closest('div').remove()"
+      style="background:none;border:none;cursor:pointer;font-size:16px;line-height:1;
+             color:var(--text-faint);padding:0 4px;flex-shrink:0"
+      title="Remove">×</button>
+  </div>`;
+}
+
+function addWlLinkRow(prefix) {
+  const c = document.getElementById(`${prefix}-research-link-rows`);
+  if (!c) return;
+  c.insertAdjacentHTML('beforeend', _wlLinkRowHtml('', ''));
+  c.querySelector('div:last-child .wl-link-name')?.focus();
+}
+
+function _wlLinksSerialize(prefix) {
+  const c = document.getElementById(`${prefix}-research-link-rows`);
+  if (!c) return '';
+  const lines = [];
+  c.querySelectorAll('div').forEach(row => {
+    const name = row.querySelector('.wl-link-name')?.value.trim() || '';
+    const url  = row.querySelector('.wl-link-url')?.value.trim()  || '';
+    if (!url) return;
+    lines.push(name ? `${name}::${url}` : url);
+  });
+  return lines.join('\n');
+}
+
+function _wlLinksPopulate(prefix, researchLinks, dashboardUrl) {
+  const c = document.getElementById(`${prefix}-research-link-rows`);
+  if (!c) return;
+  c.innerHTML = '';
+  const src = { research_links: researchLinks || null, dashboard_url: (dashboardUrl && !researchLinks) ? dashboardUrl : null };
+  const links = _parseResearchLinks(src);
+  links.forEach(({ label, url }) => c.insertAdjacentHTML('beforeend', _wlLinkRowHtml(label || '', url)));
+}
+
+function uploadWlImage(prefix) {
+  _uploadTargetPrefix = prefix;
+  const inp = document.getElementById('wl-img-file-input');
+  if (inp) { inp.value = ''; inp.click(); }
+}
+
+async function handleWlImageUpload(event) {
+  const file = event.target.files[0];
+  if (!file || !_uploadTargetPrefix) return;
+
+  const prefix = _uploadTargetPrefix;
+  const c = document.getElementById(`${prefix}-research-link-rows`);
+
+  // Notes prefix falls back to textarea append
+  const notesEl = !c ? document.getElementById(`${prefix}`) : null;
+
+  if (!c && !notesEl) return;
+
+  if (c) {
+    // Add a placeholder row
+    c.insertAdjacentHTML('beforeend', _wlLinkRowHtml('Screenshot', ''));
+    const lastRow = c.querySelector('div:last-child');
+    const urlInput = lastRow?.querySelector('.wl-link-url');
+    if (urlInput) urlInput.placeholder = '⏳ Uploading…';
+
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await fetch('/api/upload-image', { method: 'POST', body: fd });
+      if (!res.ok) { const e = await res.json().catch(()=>{}); alert('Upload failed: '+(e?.detail||res.status)); lastRow?.remove(); return; }
+      const { url } = await res.json();
+      if (urlInput) { urlInput.value = url; urlInput.placeholder = 'https://… or /uploads/…'; }
+      lastRow?.querySelector('.wl-link-name')?.focus();
+    } catch(e) { alert('Upload error: '+e.message); c.querySelector('div:last-child')?.remove(); }
+  } else {
+    // Notes textarea fallback
+    const origPh = notesEl.placeholder;
+    notesEl.disabled = true; notesEl.placeholder = '⏳ Uploading…';
+    try {
+      const fd = new FormData(); fd.append('file', file);
+      const res = await fetch('/api/upload-image', { method: 'POST', body: fd });
+      if (!res.ok) { const e = await res.json().catch(()=>{}); alert('Upload failed: '+(e?.detail||res.status)); return; }
+      const { url } = await res.json();
+      const cur = notesEl.value.trim();
+      notesEl.value = cur ? cur + '\n' + url : url;
+    } catch(e) { alert('Upload error: '+e.message); }
+    finally { notesEl.placeholder = origPh; notesEl.disabled = false; notesEl.focus(); }
+  }
+}
+
 function inlineCollapsibleNotes(notes) {
   if (!notes) return '<span class="t-faint">—</span>';
   const escaped = esc(notes);
@@ -2965,7 +3308,7 @@ function inlineCollapsibleNotes(notes) {
           </button>
           ${_ttsBtn_html(escapedExtra)}
         </div>
-        <div style="${contentStyle}">${escapedExtra}</div>
+        <div style="${contentStyle}">${_linkifyNotes(extra)}</div>
       </div>
     </div>`;
   }
@@ -2984,7 +3327,7 @@ function inlineCollapsibleNotes(notes) {
           onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.5'">⎘</button>
         ${_ttsBtn_html(escaped)}
       </div>
-      <div style="${contentStyle}">${escaped}</div>
+      <div style="${contentStyle}">${_linkifyNotes(notes)}</div>
     </div>`;
 }
 
@@ -3707,6 +4050,7 @@ function renderUSWatchlist() {
           onmousemove="moveSigTooltip(event)"
           onmouseleave="hideSigTooltip()">${entryHtml}</td>
       ${wlPriceCells(w, technicals[w.ticker])}
+      <td>${_renderResearchLinks(w, { collapsible: true })}</td>
       ${_wlDateCell(w, 'us_watchlist')}
       <td style="font-size:12px;max-width:200px">
         ${inlineCollapsibleNotes(w.notes)}
@@ -3738,11 +4082,12 @@ function renderUSWatchlist() {
           <th class="text-left">Signals</th>
           ${_wlTh('CMP',         'cmp',       'right')}
           ${_wlTh('Since Added', 'pct_chg',   'right')}
+          <th class="text-left">Research</th>
           ${_wlTh('Added',       'added_date')}
           <th class="text-left">Notes</th>
           <th></th>
         </tr></thead>
-        <tbody>${rows || `<tr><td colspan="8" class="text-center t-faint py-8">No US watchlist items — click + Add US Stock</td></tr>`}</tbody>
+        <tbody>${rows || `<tr><td colspan="9" class="text-center t-faint py-8">No US watchlist items — click + Add US Stock</td></tr>`}</tbody>
       </table>
     </div>`;
 }
@@ -3790,7 +4135,8 @@ function showUSEntryTooltip(event, t) {
 function openUSWlAdd() {
   document.getElementById('us-wl-modal-title').textContent = 'Add to US Watchlist';
   ['us-wl-edit-id','us-wl-name','us-wl-ticker','us-wl-added-price','us-wl-notes']
-    .forEach(id => document.getElementById(id).value = '');
+    .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  _wlLinksPopulate('us-wl', '', '');
   document.getElementById('us-wl-sector').value = '';
   document.getElementById('us-wl-modal').classList.remove('hidden');
 }
@@ -3805,6 +4151,7 @@ function editUSWl(id) {
   document.getElementById('us-wl-added-price').value      = w.added_price ?? '';
   document.getElementById('us-wl-sector').value           = w.sector || '';
   document.getElementById('us-wl-notes').value            = w.notes || '';
+  _wlLinksPopulate('us-wl', w.research_links || '', w.dashboard_url || '');
   document.getElementById('us-wl-modal').classList.remove('hidden');
 }
 
@@ -3820,6 +4167,7 @@ async function saveUSWatchlist(e) {
     added_price:      parseFloat(document.getElementById('us-wl-added-price').value) || null,
     sector:           document.getElementById('us-wl-sector').value || null,
     notes:            document.getElementById('us-wl-notes').value,
+    research_links:   _wlLinksSerialize('us-wl') || null,
   };
   const url    = id ? `/api/us_watchlist/${id}` : '/api/us_watchlist';
   const method = id ? 'PUT' : 'POST';
@@ -4616,8 +4964,9 @@ function openWlAdd(listId) {
   const lid = listId || currentWatchlistTab;
   const lbl = (state.settings?.watchlist_groups || []).find(g => g.id === lid)?.name || 'Watchlist';
   document.getElementById('wl-modal-title').textContent = `Add to ${lbl}`;
-  ['wl-edit-id','wl-name','wl-ticker','wl-added-price','wl-notes','wl-dashboard-url','wl-market-cap','wl-exchange']
+  ['wl-edit-id','wl-name','wl-ticker','wl-added-price','wl-notes','wl-market-cap','wl-exchange']
     .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  _wlLinksPopulate('wl', '', '');
   document.getElementById('wl-sector').value  = '';
   const convEl = document.getElementById('wl-conviction');
   if (convEl) convEl.value = '';
@@ -4639,7 +4988,7 @@ function editWl(id, listId) {
   document.getElementById('wl-added-price').value         = w.added_price ?? '';
   document.getElementById('wl-sector').value              = w.sector || '';
   document.getElementById('wl-notes').value               = w.notes || '';
-  document.getElementById('wl-dashboard-url').value       = w.dashboard_url || '';
+  _wlLinksPopulate('wl', w.research_links || '', w.dashboard_url || '');
   if (document.getElementById('wl-list-id')) document.getElementById('wl-list-id').value = lid;
   const intlFields = document.getElementById('wl-intl-fields');
   const isIntl = _INTL_WL_IDS.has(lid);
@@ -4675,7 +5024,7 @@ async function saveWatchlist(e) {
     added_price:      parseFloat(document.getElementById('wl-added-price').value) || null,
     sector:           document.getElementById('wl-sector').value || null,
     notes:            document.getElementById('wl-notes').value,
-    dashboard_url:    document.getElementById('wl-dashboard-url').value || null,
+    research_links:   _wlLinksSerialize('wl') || null,
   };
   if (_INTL_WL_IDS.has(listId)) {
     const mcEl = document.getElementById('wl-market-cap');
@@ -5270,39 +5619,98 @@ function renderAlpha() {
 
 // ─── Market Dashboards ────────────────────────────────────────────────────────
 
+let _rsYear = null, _rsMonth = null, _rsCategory = null;
+
+const _MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function _rsCategories() {
+  return state.settings?.resource_categories || [
+    {id:'rick_rule',name:'Rick Rule'},{id:'my_resources',name:'My Resources'},
+    {id:'sajal_kapoor',name:'Sajal Kapoor'},{id:'soic_research',name:'SOIC Research'},
+  ];
+}
+
+function switchResourceCat(c)   { _rsCategory = c; _rsYear = null; _rsMonth = null; renderTab(); }
+function switchResourceYear(y)  { _rsYear = y; _rsMonth = null; renderTab(); }
+function switchResourceMonth(m) { _rsMonth = m; renderTab(); }
+
+async function addResourceCategory() {
+  const name = prompt('New category name:');
+  if (!name?.trim()) return;
+  const res = await fetch('/api/resource-categories', {
+    method: 'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({name: name.trim()})
+  });
+  if (!res.ok) { showToast('Error adding category'); return; }
+  const cat = await res.json();
+  if (!state.settings.resource_categories) state.settings.resource_categories = _rsCategories();
+  state.settings.resource_categories.push(cat);
+  _rsCategory = cat.id;
+  renderTab();
+}
+
+async function deleteResourceCategory(cid) {
+  const cat = _rsCategories().find(c => c.id === cid);
+  if (!confirm(`Remove tab "${cat?.name}"? Items in it will keep their data but show under "My Resources".`)) return;
+  await fetch(`/api/resource-categories/${cid}`, {method:'DELETE'});
+  state.settings.resource_categories = _rsCategories().filter(c => c.id !== cid);
+  if (_rsCategory === cid) _rsCategory = null;
+  renderTab();
+}
+
 function renderMarketDashboards() {
-  const items = (state.market_dashboards || []).slice().sort((a, b) =>
-    (b.created_date || '').localeCompare(a.created_date || '')
-  );
+  const allItems = (state.market_dashboards || []);
+  const _MONTH_NAMES_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-  const rows = items.map(m => {
+  // ── 1. Resolve active category ──────────────────────────────────────────────
+  const cats = _rsCategories();
+  if (!_rsCategory || !cats.find(c => c.id === _rsCategory)) _rsCategory = cats[0]?.id || 'my_resources';
+
+  // Items in the active category
+  const catItems = allItems.filter(m => (m.category || 'my_resources') === _rsCategory && m.created_date);
+
+  // ── 2. Resolve active year (within this category) ───────────────────────────
+  const years = [...new Set(catItems.map(m => m.created_date.slice(0,4)))].sort((a,b) => b-a);
+  if (!_rsYear || !years.includes(_rsYear)) _rsYear = years[0] || String(new Date().getFullYear());
+
+  // ── 3. Resolve active month (within category + year) ───────────────────────
+  const monthsWithContent = [...new Set(
+    catItems.filter(m => m.created_date.startsWith(_rsYear)).map(m => +m.created_date.slice(5,7))
+  )].sort((a,b) => a-b);
+  if (!_rsMonth || !monthsWithContent.includes(_rsMonth)) _rsMonth = monthsWithContent[monthsWithContent.length-1] || null;
+
+  // ── 4. Visible items ────────────────────────────────────────────────────────
+  const periodPfx = _rsMonth ? `${_rsYear}-${String(_rsMonth).padStart(2,'0')}` : null;
+  const visibleItems = periodPfx
+    ? catItems.filter(m => m.created_date.startsWith(periodPfx)).sort((a,b) => (b.created_date||'').localeCompare(a.created_date||''))
+    : [];
+
+  // ── Build rows ──────────────────────────────────────────────────────────────
+  const rows = visibleItems.map(m => {
     const viewBtn = m.filename
-      ? `<a href="/market_dashboard/${m.id}" target="_blank" class="btn btn-ghost text-xs py-1 px-2">View</a>`
+      ? `<a href="/market_dashboard/${m.id}" target="_blank" class="btn btn-ghost text-xs py-1 px-2">↗ View</a>`
       : m.url
-        ? `<a href="${esc(m.url)}" target="_blank" class="btn btn-ghost text-xs py-1 px-2">View</a>`
+        ? `<a href="${esc(m.url)}" target="_blank" class="btn btn-ghost text-xs py-1 px-2">↗ View</a>`
         : `<span style="color:var(--text-faint);font-size:11px">—</span>`;
-
     const promptId = `md-prompt-${m.id}`;
-    const short    = (m.prompt || '').length > 120
-      ? esc(m.prompt.slice(0, 120)) + '…'
-      : esc(m.prompt || '');
-
+    const short = (m.prompt||'').length > 120 ? esc(m.prompt.slice(0,120))+'…' : esc(m.prompt||'');
     return `<tr style="border-bottom:1px solid var(--border)">
       <td style="padding:10px 12px;font-weight:600;color:var(--text-strong);min-width:160px">${esc(m.title)}</td>
-      <td style="padding:10px 12px;color:var(--text-muted);white-space:nowrap">${m.created_date || '—'}</td>
-      <td style="padding:10px 12px;max-width:420px">
-        <div id="${promptId}-short" style="font-size:11px;color:var(--text-muted);line-height:1.5">${short}
-          ${(m.prompt||'').length > 120 ? `<span onclick="document.getElementById('${promptId}-short').style.display='none';document.getElementById('${promptId}-full').style.display='block'"
-            style="color:var(--accent);cursor:pointer;margin-left:4px;font-size:10px">show more</span>` : ''}
+      <td style="padding:10px 12px;color:var(--text-muted);white-space:nowrap;font-size:12px">${m.created_date||'—'}</td>
+      <td style="padding:10px 12px;max-width:380px">
+        <div id="${promptId}-s" style="font-size:11px;color:var(--text-muted);line-height:1.5">${short}
+          ${(m.prompt||'').length>120?`<span onclick="document.getElementById('${promptId}-s').style.display='none';document.getElementById('${promptId}-f').style.display='block'"
+            style="color:var(--accent);cursor:pointer;margin-left:4px;font-size:10px">more</span>`:''}
         </div>
-        <div id="${promptId}-full" style="display:none;font-size:11px;color:var(--text-muted);line-height:1.6;white-space:pre-wrap">${esc(m.prompt||'')}
-          <span onclick="document.getElementById('${promptId}-full').style.display='none';document.getElementById('${promptId}-short').style.display='block'"
-            style="color:var(--accent);cursor:pointer;font-size:10px;display:block;margin-top:4px">show less</span>
+        <div id="${promptId}-f" style="display:none;font-size:11px;color:var(--text-muted);line-height:1.6;white-space:pre-wrap">${esc(m.prompt||'')}
+          <span onclick="document.getElementById('${promptId}-f').style.display='none';document.getElementById('${promptId}-s').style.display='block'"
+            style="color:var(--accent);cursor:pointer;font-size:10px;display:block;margin-top:4px">less</span>
         </div>
+        ${m.notes?`<div style="font-size:11px;color:var(--text-muted);margin-top:6px;line-height:1.55;white-space:pre-wrap">${_linkifyNotes(m.notes)}</div>`:''}
       </td>
       <td style="padding:10px 12px">${viewBtn}</td>
       <td style="padding:10px 12px;white-space:nowrap">
-        <button onclick="openEditMarketDashboard('${m.id}')" class="btn btn-ghost text-xs py-1 px-2" style="margin-right:4px">Edit</button>
+        <button onclick="openEditMarketDashboard('${m.id}')" class="btn btn-ghost text-xs py-1 px-2">✎</button>
         <button onclick="deleteMarketDashboard('${m.id}')" class="btn btn-ghost text-xs py-1 px-2" style="color:var(--neg)">✕</button>
       </td>
     </tr>`;
@@ -5341,78 +5749,167 @@ function renderMarketDashboards() {
     <div style="border-bottom:1px solid var(--border);margin:24px 0"></div>
   </div>`;
 
+  // ── Category tabs (top level) ───────────────────────────────────────────────
+  const catTabs = cats.map(c => {
+    const active = c.id === _rsCategory;
+    const total  = allItems.filter(m => (m.category||'my_resources') === c.id).length;
+    const isBuiltIn = ['rick_rule','my_resources','sajal_kapoor','soic_research'].includes(c.id);
+    return `<div style="display:inline-flex;align-items:center;gap:1px">
+      <button onclick="switchResourceCat('${c.id}')"
+        style="padding:7px 16px;border-radius:${isBuiltIn||!active?'6px':'6px 0 0 6px'};
+               background:${active?'var(--accent)':'var(--surface2)'};
+               border:1px solid ${active?'var(--accent)':'var(--border)'};
+               color:${active?'#000':'var(--text-muted)'};
+               font-size:12px;font-weight:${active?'700':'400'};cursor:pointer;white-space:nowrap">
+        ${esc(c.name)}${total?` <span style="font-size:10px;opacity:.75;margin-left:3px">${total}</span>`:''}
+      </button>
+      ${!isBuiltIn ? `<button onclick="deleteResourceCategory('${c.id}')" title="Remove tab"
+          style="padding:7px 6px;border-radius:0 6px 6px 0;border:1px solid var(--border);border-left:none;
+                 background:var(--surface2);cursor:pointer;color:var(--text-faint);font-size:11px;line-height:1">×</button>` : ''}
+    </div>`;
+  }).join('');
+
+  // ── Year pills (scoped to active category) ──────────────────────────────────
+  const yearPills = years.map(y => {
+    const active = y === _rsYear;
+    return `<button onclick="switchResourceYear('${y}')"
+      style="padding:3px 12px;border-radius:20px;border:1px solid ${active?'var(--accent)':'var(--border)'};
+             background:${active?'var(--accent)22':'transparent'};
+             color:${active?'var(--accent)':'var(--text-muted)'};font-size:11px;font-weight:${active?'700':'400'};cursor:pointer">${y}</button>`;
+  }).join('');
+
+  // ── Month tabs (scoped to active category + year) ───────────────────────────
+  const monthTabs = monthsWithContent.map(mn => {
+    const active = mn === _rsMonth;
+    const cnt    = catItems.filter(m => m.created_date.startsWith(`${_rsYear}-${String(mn).padStart(2,'0')}`)).length;
+    return `<button onclick="switchResourceMonth(${mn})"
+      style="padding:5px 14px;border-bottom:2px solid ${active?'var(--accent)':'transparent'};
+             background:transparent;border-top:none;border-left:none;border-right:none;
+             color:${active?'var(--accent)':'var(--text-muted)'};font-size:12px;font-weight:${active?'700':'400'};
+             cursor:pointer;white-space:nowrap">
+      ${_MONTH_NAMES[mn-1]}${cnt>1?` <span style="font-size:10px;opacity:.6">${cnt}</span>`:''}
+    </button>`;
+  }).join('');
+
   return `
   <div style="padding:20px;max-width:1100px">
     ${scorerSection}
+
+    <!-- Header + Add button -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-      <div>
-        <div style="font-size:16px;font-weight:700;color:var(--text-strong)">Resources</div>
-        <div style="font-size:11px;color:var(--text-faint);margin-top:2px">
-          Run these prompts monthly or yearly to snapshot market conditions over time.
-        </div>
-      </div>
-      <button onclick="openAddMarketDashboard()" class="btn btn-ghost text-xs" style="border:1px solid var(--accent);color:var(--accent);padding:6px 14px">
-        + Add Dashboard
+      <div style="font-size:16px;font-weight:700;color:var(--text-strong)">Resources</div>
+      <button onclick="openAddMarketDashboard()"
+        class="btn btn-ghost text-xs" style="border:1px solid var(--accent);color:var(--accent);padding:6px 14px">
+        + Add Resource
       </button>
     </div>
 
-    ${items.length === 0 ? `
+    <!-- Category tabs (top level) -->
+    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:20px">
+      ${catTabs}
+      <button onclick="addResourceCategory()"
+        style="padding:7px 10px;border-radius:6px;border:1px dashed var(--border);
+               background:transparent;color:var(--text-faint);font-size:11px;cursor:pointer">+ New Tab</button>
+    </div>
+
+    ${years.length === 0 ? `
       <div style="text-align:center;padding:60px 0;color:var(--text-faint);font-size:13px">
-        No dashboards yet. Add one to start tracking market snapshots.
+        No resources in this tab yet.<br>
+        <button onclick="openAddMarketDashboard()" style="margin-top:12px;background:none;border:1px solid var(--border);
+          border-radius:6px;padding:6px 16px;color:var(--accent);cursor:pointer;font-size:12px">+ Add one</button>
       </div>
     ` : `
-      <div style="overflow-x:auto">
-        <table style="width:100%;border-collapse:collapse">
-          <thead>
-            <tr style="border-bottom:2px solid var(--border)">
-              <th style="padding:8px 12px;text-align:left;font-size:11px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Title</th>
-              <th style="padding:8px 12px;text-align:left;font-size:11px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Date</th>
-              <th style="padding:8px 12px;text-align:left;font-size:11px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Prompt</th>
-              <th style="padding:8px 12px;text-align:left;font-size:11px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Link</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>${rows}</tbody>
-        </table>
+      <!-- Year pills -->
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:14px">
+        <span style="font-size:11px;color:var(--text-faint);margin-right:2px">Year:</span>
+        ${yearPills}
       </div>
+
+      <!-- Month underline tabs -->
+      ${monthsWithContent.length === 0 ? `
+        <div style="text-align:center;padding:40px 0;color:var(--text-faint);font-size:13px">No resources for ${_rsYear}.</div>
+      ` : `
+        <div style="border-bottom:1px solid var(--border);margin-bottom:18px">
+          <div style="display:flex;gap:0;align-items:flex-end">${monthTabs}</div>
+        </div>
+
+        <!-- Items table -->
+        ${visibleItems.length === 0 ? `
+          <div style="text-align:center;padding:40px 0;color:var(--text-faint);font-size:13px">
+            No items for ${_MONTH_NAMES_FULL[(_rsMonth||1)-1]} ${_rsYear}.
+            <button onclick="openAddMarketDashboard()" style="margin-top:10px;display:block;margin-left:auto;margin-right:auto;
+              background:none;border:1px solid var(--border);border-radius:6px;padding:5px 14px;color:var(--accent);cursor:pointer;font-size:12px">+ Add here</button>
+          </div>
+        ` : `
+          <div style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse">
+              <thead><tr style="border-bottom:2px solid var(--border)">
+                <th style="padding:8px 12px;text-align:left;font-size:11px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Title</th>
+                <th style="padding:8px 12px;text-align:left;font-size:11px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Date</th>
+                <th style="padding:8px 12px;text-align:left;font-size:11px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Notes / Prompt</th>
+                <th style="padding:8px 12px;text-align:left;font-size:11px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Link</th>
+                <th></th>
+              </tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
+        `}
+      `}
     `}
   </div>
 
-  <!-- Add modal -->
+  <!-- Add / Edit modal -->
   <div id="md-modal" style="display:none;position:fixed;inset:0;background:#0009;z-index:200;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px">
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px;width:560px;max-width:100%;flex-shrink:0">
-      <div id="md-modal-title" style="font-size:15px;font-weight:700;color:var(--text-strong);margin-bottom:16px">Add Market Dashboard</div>
+      <div id="md-modal-title" style="font-size:15px;font-weight:700;color:var(--text-strong);margin-bottom:16px">Add Resource</div>
       <div style="display:flex;flex-direction:column;gap:12px">
-        <div>
-          <label style="font-size:12px;font-weight:600;color:var(--text-strong);display:block;margin-bottom:5px">Title <span style="color:var(--neg)">*</span></label>
-          <input id="md-title" type="text" placeholder="e.g. Nifty Overview June 2026"
-            style="width:100%;background:var(--surface2);border:2px solid var(--accent);border-radius:6px;padding:8px 10px;font-size:13px;color:var(--text);box-sizing:border-box;outline:none">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div>
+            <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">Title *</label>
+            <input id="md-title" type="text" placeholder="e.g. Nifty Overview"
+              style="width:100%;background:var(--surface2);border:2px solid var(--accent);border-radius:6px;padding:7px 10px;font-size:13px;color:var(--text);box-sizing:border-box">
+          </div>
+          <div>
+            <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">Date *</label>
+            <input id="md-date" type="date"
+              style="width:100%;background:var(--surface2);border:1px solid var(--text-muted);border-radius:6px;padding:7px 10px;font-size:13px;color:var(--text);box-sizing:border-box">
+          </div>
         </div>
         <div>
-          <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">Date Created <span style="color:var(--neg)">*</span></label>
-          <input id="md-date" type="date"
+          <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">Category / Tab</label>
+          <select id="md-category"
             style="width:100%;background:var(--surface2);border:1px solid var(--text-muted);border-radius:6px;padding:7px 10px;font-size:13px;color:var(--text);box-sizing:border-box">
+            ${cats.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}
+          </select>
         </div>
         <div>
-          <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">Prompt Used</label>
-          <textarea id="md-prompt" rows="6" placeholder="Paste the exact prompt used to generate this dashboard…"
+          <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">Prompt Used (optional)</label>
+          <textarea id="md-prompt" rows="4" placeholder="Paste the prompt used to generate this…"
             style="width:100%;background:var(--surface2);border:1px solid var(--text-muted);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--text);resize:vertical;box-sizing:border-box;line-height:1.5"></textarea>
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">External URL</label>
+          <input id="md-url" type="text" placeholder="https://…"
+            style="width:100%;background:var(--surface2);border:1px solid var(--text-muted);border-radius:6px;padding:7px 10px;font-size:13px;color:var(--text);box-sizing:border-box">
         </div>
         <div>
           <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">HTML File (in market_dashboards/ folder)</label>
           <input id="md-filename" type="text" placeholder="e.g. nifty_june_2026.html"
             style="width:100%;background:var(--surface2);border:1px solid var(--text-muted);border-radius:6px;padding:7px 10px;font-size:13px;color:var(--text);box-sizing:border-box">
-          <div style="font-size:10px;color:var(--text-faint);margin-top:3px">Drop the .html file in the market_dashboards/ folder first, then enter its filename here.</div>
         </div>
         <div>
-          <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">Or External URL</label>
-          <input id="md-url" type="text" placeholder="https://…"
-            style="width:100%;background:var(--surface2);border:1px solid var(--text-muted);border-radius:6px;padding:7px 10px;font-size:13px;color:var(--text);box-sizing:border-box">
-        </div>
-        <div>
-          <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">Notes (optional)</label>
-          <textarea id="md-notes" rows="2"
-            style="width:100%;background:var(--surface2);border:1px solid var(--text-muted);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--text);resize:vertical;box-sizing:border-box"></textarea>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+            <label style="font-size:11px;color:var(--text-muted)">Notes / Images (optional)</label>
+            <button type="button" onclick="uploadMdImage()"
+              style="background:none;border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:10px;color:var(--text-faint);cursor:pointer">
+              📎 Upload Image
+            </button>
+          </div>
+          <textarea id="md-notes" rows="3"
+            style="width:100%;background:var(--surface2);border:1px solid var(--text-muted);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--text);resize:vertical;box-sizing:border-box"
+            placeholder="Text notes, or image URLs will be inserted here after upload…"></textarea>
+          <input type="file" id="md-img-file-input" accept="image/*" style="display:none"
+            onchange="handleMdImageUpload(event)">
         </div>
       </div>
       <div style="display:flex;gap:8px;margin-top:18px;justify-content:flex-end">
@@ -5427,13 +5924,15 @@ let _mdEditId = null;
 
 function openAddMarketDashboard() {
   _mdEditId = null;
-  document.getElementById('md-modal-title').textContent = 'Add Market Dashboard';
+  document.getElementById('md-modal-title').textContent = 'Add Resource';
   document.getElementById('md-date').value     = new Date().toISOString().split('T')[0];
   document.getElementById('md-title').value    = '';
   document.getElementById('md-prompt').value   = '';
   document.getElementById('md-filename').value = '';
   document.getElementById('md-url').value      = '';
   document.getElementById('md-notes').value    = '';
+  const catSel = document.getElementById('md-category');
+  if (catSel) catSel.value = _rsCategory || catSel.options[0]?.value || 'my_resources';
   document.getElementById('md-modal').style.display = 'flex';
   setTimeout(() => document.getElementById('md-title')?.focus(), 50);
 }
@@ -5442,13 +5941,15 @@ function openEditMarketDashboard(id) {
   const m = (state.market_dashboards || []).find(x => x.id === id);
   if (!m) return;
   _mdEditId = id;
-  document.getElementById('md-modal-title').textContent = 'Edit Market Dashboard';
+  document.getElementById('md-modal-title').textContent = 'Edit Resource';
   document.getElementById('md-title').value    = m.title || '';
   document.getElementById('md-date').value     = m.created_date || '';
   document.getElementById('md-prompt').value   = m.prompt || '';
   document.getElementById('md-filename').value = m.filename || '';
   document.getElementById('md-url').value      = m.url || '';
   document.getElementById('md-notes').value    = m.notes || '';
+  const catSel = document.getElementById('md-category');
+  if (catSel) catSel.value = m.category || 'my_resources';
   document.getElementById('md-modal').style.display = 'flex';
 }
 
@@ -5464,12 +5965,13 @@ async function saveMarketDashboard() {
   const filename = document.getElementById('md-filename').value.trim();
   const url      = document.getElementById('md-url').value.trim();
   const notes    = document.getElementById('md-notes').value.trim();
+  const category = document.getElementById('md-category')?.value || _rsCategory || 'my_resources';
 
   if (!title || !date) {
     showToast('Title and date are required'); return;
   }
 
-  const payload = { title, created_date: date, prompt, filename: filename || null, url: url || null, notes };
+  const payload = { title, created_date: date, category, prompt, filename: filename || null, url: url || null, notes };
 
   if (_mdEditId) {
     const res = await fetch(`/api/market_dashboards/${_mdEditId}`, {
@@ -5480,7 +5982,8 @@ async function saveMarketDashboard() {
     if (!res.ok) { showToast('Failed to update'); return; }
     const updated = await res.json();
     state.market_dashboards = state.market_dashboards.map(m => m.id === _mdEditId ? updated : m);
-    showToast('Dashboard updated');
+    _rsCategory = updated.category || 'my_resources';
+    showToast('Resource updated');
   } else {
     const res = await fetch('/api/market_dashboards', {
       method: 'POST',
@@ -5490,10 +5993,43 @@ async function saveMarketDashboard() {
     if (!res.ok) { showToast('Failed to save'); return; }
     const entry = await res.json();
     state.market_dashboards.push(entry);
-    showToast('Dashboard saved');
+    // Navigate to the newly saved item
+    _rsYear     = (entry.created_date || '').slice(0,4) || _rsYear;
+    _rsMonth    = +(entry.created_date || '').slice(5,7) || _rsMonth;
+    _rsCategory = entry.category || 'my_resources';
+    showToast('Resource saved');
   }
   closeAddMarketDashboard();
   renderTab();
+}
+
+function uploadMdImage() {
+  const inp = document.getElementById('md-img-file-input');
+  if (inp) { inp.value = ''; inp.click(); }
+}
+
+async function handleMdImageUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const notesEl = document.getElementById('md-notes');
+  if (!notesEl) return;
+  const orig = notesEl.placeholder;
+  notesEl.disabled = true;
+  notesEl.placeholder = '⏳ Uploading…';
+  try {
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await fetch('/api/upload-image', { method: 'POST', body: fd });
+    if (!res.ok) { const e = await res.json().catch(() => {}); alert('Upload failed: ' + (e?.detail || res.status)); return; }
+    const { url } = await res.json();
+    const cur = notesEl.value;
+    notesEl.value = cur ? cur + '\n' + url : url;
+  } catch (e) {
+    alert('Upload error: ' + e.message);
+  } finally {
+    notesEl.disabled = false;
+    notesEl.placeholder = orig;
+  }
 }
 
 async function deleteMarketDashboard(id) {

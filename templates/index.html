@@ -273,10 +273,27 @@
         <div style="grid-column:span 2"><label class="text-xs block mb-1">Exchange</label>
           <input id="wl-exchange" type="text" placeholder="e.g. Nasdaq, NYSE, TSX, Frankfurt"></div>
       </div>
-      <div><label class="text-xs block mb-1">Notes / Thesis</label>
-        <textarea id="wl-notes" rows="2"></textarea></div>
-      <div><label class="text-xs block mb-1">Dashboard URL (optional)</label>
-        <input id="wl-dashboard-url" type="url" placeholder="https://your-dashboard.netlify.app/"></div>
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <label class="text-xs">Notes / Thesis</label>
+          <button type="button" onclick="uploadWlImage('wl-notes')"
+            class="btn btn-ghost text-xs py-0 px-2" style="font-size:10px">📁 Upload Image</button>
+        </div>
+        <textarea id="wl-notes" rows="2"></textarea>
+      </div>
+      <div>
+        <label class="text-xs block mb-2">Research Links &amp; Images</label>
+        <div id="wl-research-link-rows" style="display:flex;flex-direction:column;gap:5px;margin-bottom:6px"></div>
+        <div class="flex gap-2">
+          <button type="button" onclick="addWlLinkRow('wl')"
+            class="btn btn-ghost text-xs" style="flex:1">+ Add Link</button>
+          <button type="button" onclick="uploadWlImage('wl')"
+            class="btn btn-ghost text-xs">📁 Upload Image</button>
+        </div>
+        <div style="font-size:10px;color:var(--text-faint);margin-top:4px">Image URLs display as thumbnails · Give each link a descriptive name</div>
+      </div>
+      <input type="file" id="wl-img-file-input" accept="image/*" style="display:none"
+             onchange="handleWlImageUpload(event)">
       <div class="flex justify-end gap-2 pt-2">
         <button type="button" class="btn btn-ghost" onclick="closeWlModal()">Cancel</button>
         <button type="submit" class="btn btn-blue">Save</button>
@@ -624,8 +641,25 @@
         <div><label class="text-xs block mb-1">Sector</label>
           <input id="us-wl-sector" type="text" list="sector-datalist" placeholder="Type or pick…" autocomplete="off"></div>
       </div>
-      <div><label class="text-xs block mb-1">Notes / Thesis</label>
-        <textarea id="us-wl-notes" rows="2" placeholder="Why watching this…"></textarea></div>
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <label class="text-xs">Notes / Thesis</label>
+          <button type="button" onclick="uploadWlImage('us-wl-notes')"
+            class="btn btn-ghost text-xs py-0 px-2" style="font-size:10px">📁 Upload Image</button>
+        </div>
+        <textarea id="us-wl-notes" rows="2" placeholder="Why watching this…"></textarea>
+      </div>
+      <div>
+        <label class="text-xs block mb-2">Research Links &amp; Images</label>
+        <div id="us-wl-research-link-rows" style="display:flex;flex-direction:column;gap:5px;margin-bottom:6px"></div>
+        <div class="flex gap-2">
+          <button type="button" onclick="addWlLinkRow('us-wl')"
+            class="btn btn-ghost text-xs" style="flex:1">+ Add Link</button>
+          <button type="button" onclick="uploadWlImage('us-wl')"
+            class="btn btn-ghost text-xs">📁 Upload Image</button>
+        </div>
+        <div style="font-size:10px;color:var(--text-faint);margin-top:4px">Image URLs display as thumbnails · Give each link a descriptive name</div>
+      </div>
       <div class="flex justify-end gap-2 pt-2">
         <button type="button" class="btn btn-ghost" onclick="closeUSWlModal()">Cancel</button>
         <button type="submit" class="btn btn-blue">Save</button>
