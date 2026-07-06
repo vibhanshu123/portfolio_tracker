@@ -1,7 +1,7 @@
 import uuid
 from typing import Any
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException, Request
 
 from core.models import SettingsIn, HufTransferIn, WatchlistIn
 from core.persistence import load, save
@@ -77,6 +77,19 @@ def add_huf_transfer(item: HufTransferIn):
     data.setdefault("huf_transfers", []).append(t)
     save(data)
     return t
+
+
+@router.put("/api/huf_transfers/{tid}")
+async def update_huf_transfer(tid: str, request: Request):
+    body = await request.json()
+    data = load()
+    for t in data.get("huf_transfers", []):
+        if t["id"] == tid:
+            if "notes" in body:
+                t["notes"] = body["notes"]
+            save(data)
+            return t
+    raise HTTPException(404, "Not found")
 
 
 @router.delete("/api/huf_transfers/{tid}")

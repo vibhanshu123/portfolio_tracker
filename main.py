@@ -24,6 +24,7 @@ from routers import (
     top_ideas,
     alpha,
     tax,
+    diary,
 )
 
 app = FastAPI(title="Portfolio Tracker")
@@ -45,6 +46,7 @@ app.include_router(groups.router)
 app.include_router(top_ideas.router)
 app.include_router(alpha.router)
 app.include_router(tax.router)
+app.include_router(diary.router)
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -76,18 +78,27 @@ def get_data():
 _ALLOWED_IMG_TYPES = {"image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml"}
 _ALLOWED_IMG_EXT   = {".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg"}
 
+_ALLOWED_DOC_EXT   = {".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".txt", ".csv", ".md"}
+
+async def _save_upload(file: UploadFile, allowed_ext: set, max_mb: int = 50) -> dict:
+    ext = "." + (file.filename or "file").rsplit(".", 1)[-1].lower()
+    if ext not in allowed_ext:
+        raise HTTPException(415, f"Unsupported file type '{ext}'")
+    content = await file.read()
+    if len(content) > max_mb * 1024 * 1024:
+        raise HTTPException(413, f"File too large (max {max_mb} MB)")
+    orig_stem = (file.filename or "file").rsplit(".", 1)[0][:40]
+    filename = f"{uuid.uuid4().hex[:8]}_{orig_stem}{ext}"
+    (UPLOADS_DIR / filename).write_bytes(content)
+    return {"url": f"/uploads/{filename}", "filename": filename, "original_name": file.filename or filename}
+
 @app.post("/api/upload-image")
 async def upload_image(file: UploadFile = File(...)):
-    ext = "." + (file.filename or "").rsplit(".", 1)[-1].lower()
-    if ext not in _ALLOWED_IMG_EXT:
-        raise HTTPException(415, f"Unsupported file type '{ext}'. Allowed: {', '.join(_ALLOWED_IMG_EXT)}")
-    filename = f"{uuid.uuid4().hex}{ext}"
-    dest = UPLOADS_DIR / filename
-    content = await file.read()
-    if len(content) > 20 * 1024 * 1024:   # 20 MB cap
-        raise HTTPException(413, "File too large (max 20 MB)")
-    dest.write_bytes(content)
-    return {"url": f"/uploads/{filename}", "filename": filename}
+    return await _save_upload(file, _ALLOWED_IMG_EXT, max_mb=20)
+
+@app.post("/api/upload-doc")
+async def upload_doc(file: UploadFile = File(...)):
+    return await _save_upload(file, _ALLOWED_DOC_EXT, max_mb=50)
 
 
 # Kick off deferred scans refresh on startup

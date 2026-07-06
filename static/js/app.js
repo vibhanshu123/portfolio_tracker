@@ -307,6 +307,7 @@ async function fetchData() {
   state.sold_positions      = state.sold_positions      || [];
   state.market_dashboards   = state.market_dashboards   || [];
   state.scorer_reports      = state.scorer_reports      || [];
+  state.diary               = state.diary               || {};
   // Derive consolidated account lists from portfolio_groups (consolidated !== false)
   const _pg = state.settings?.portfolio_groups || {};
   INR_ACCTS = (_pg.indian || []).filter(p => p.consolidated !== false).map(p => p.id);
@@ -673,6 +674,7 @@ function renderTab() {
   if (currentTab === 'alpha')            { el.innerHTML = renderAlpha();           return; }
   if (currentTab === 'tax')             { el.innerHTML = renderTax();             return; }
   if (currentTab === 'market_dashboards'){ el.innerHTML = renderMarketDashboards(); return; }
+  if (currentTab === 'diary')           { el.innerHTML = renderDiary(); if (!_diaryLoaded) _loadDiary(); return; }
 
   let positions;
   if (currentTab === 'consolidated') positions = state.positions.filter(p => INR_ACCTS.includes(p.account));
@@ -3107,18 +3109,28 @@ function soicResearchUrl(num) {
 const _IMG_URL_RE = /\.(jpe?g|png|gif|webp|svg)(\?[^\s]*)?$/i;
 
 function _linkifyNotes(text) {
-  return text.split(/(https?:\/\/[^\s]+)/g).map((part, i) => {
+  return text.split(/(https?:\/\/[^\s]+|\/uploads\/[^\s]+)/g).map((part, i) => {
     if (i % 2 === 1) {
       const href = esc(part);
       if (_IMG_URL_RE.test(part)) {
-        return `<a href="${href}" target="_blank" rel="noopener" style="display:inline-block;margin:3px 0">
-          <img src="${href}" loading="lazy"
-            style="max-width:220px;max-height:130px;border-radius:5px;object-fit:contain;
-                   border:1px solid var(--border);vertical-align:middle" /></a>`;
+        return `<span style="display:inline-block;vertical-align:top;margin:3px 6px 3px 0">
+          <button onclick="const nb=this.nextElementSibling;nb.style.display=nb.style.display==='none'?'block':'none';this.querySelector('.cn-icon').textContent=nb.style.display==='none'?'▶':'▼'"
+            style="background:none;border:none;padding:0;cursor:pointer;display:flex;align-items:center;gap:4px">
+            <span class="cn-icon" style="font-size:9px;color:var(--text-faint)">▶</span>
+            <span style="font-size:11px;color:var(--text-faint)">Image</span>
+          </button>
+          <div style="display:none;margin-top:4px">
+            <a href="${href}" target="_blank" rel="noopener" style="display:block">
+              <img src="${href}" loading="lazy"
+                style="max-width:240px;max-height:160px;border-radius:6px;object-fit:contain;
+                       border:1px solid var(--border);cursor:zoom-in;display:block" />
+            </a>
+          </div>
+        </span>`;
       }
       return `<a href="${href}" target="_blank" rel="noopener"
         style="color:#60a5fa;text-decoration:underline;word-break:break-all"
-        onmouseover="this.style.color='#93c5fd'" onmouseout="this.style.color='#60a5fa'">${href}</a>`;
+        onmouseover="this.style.color='#93c5fd'" onmouseout="this.style.color='#60a5fa'">${esc(part)}</a>`;
     }
     return esc(part);
   }).join('');
@@ -3838,13 +3850,12 @@ function renderUnlisted() {
     const val  = u.current_valuation || u.invested_amount || 0;
     const gain = val - (u.invested_amount || 0);
     const pct  = u.invested_amount > 0 ? (gain / u.invested_amount * 100) : null;
-    const isUrl = u.notes && u.notes.trim().startsWith('http');
-    const nameCell = isUrl
-      ? `<a href="${esc(u.notes.trim())}" target="_blank" rel="noopener" style="font-weight:500;color:var(--accent);text-decoration:none" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${esc(u.company_name)}</a>`
+    const notesTrimmed = (u.notes || '').trim();
+    const isBareUrl = /^https?:\/\/\S+$/.test(notesTrimmed);
+    const nameCell = isBareUrl
+      ? `<a href="${esc(notesTrimmed)}" target="_blank" rel="noopener" style="font-weight:500;color:var(--accent);text-decoration:none" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${esc(u.company_name)}</a>`
       : `<span style="font-weight:500;color:var(--text-strong)">${esc(u.company_name)}</span>`;
-    const notesCell = isUrl
-      ? `<a href="${esc(u.notes.trim())}" target="_blank" rel="noopener" style="color:var(--accent);font-size:13px;text-decoration:none" title="${esc(u.notes.trim())}">🔗</a>`
-      : inlineCollapsibleNotes(u.notes);
+    const notesCell = inlineCollapsibleNotes(u.notes);
     return `<tr>
       <td>
         ${nameCell}
@@ -5620,6 +5631,9 @@ function renderAlpha() {
 // ─── Market Dashboards ────────────────────────────────────────────────────────
 
 let _rsYear = null, _rsMonth = null, _rsCategory = null;
+let _diaryYear = null, _diaryMonth = null;
+let _diaryLoaded = false;
+let _diaryEditResId = null, _diaryEditPeriod = null;
 
 const _MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
@@ -6036,6 +6050,357 @@ async function deleteMarketDashboard(id) {
   if (!confirm('Remove this dashboard entry?')) return;
   await fetch(`/api/market_dashboards/${id}`, { method: 'DELETE' });
   state.market_dashboards = state.market_dashboards.filter(m => m.id !== id);
+  renderTab();
+}
+
+// ─── Diary ────────────────────────────────────────────────────────────────────
+const _DIARY_MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+async function _loadDiary() {
+  const res = await fetch('/api/diary');
+  state.diary = await res.json();
+  _diaryLoaded = true;
+  if (currentTab === 'diary') renderTab();
+}
+
+function _diaryPeriod() {
+  return `${_diaryYear}-${String(_diaryMonth).padStart(2,'0')}`;
+}
+
+function _diaryMonthData(period) {
+  return state.diary[period] || { notes: '', goals: [], resources: [] };
+}
+
+function _diaryResLink(url) {
+  const href = esc(url);
+  const fname = url.split('/').pop().split('?')[0];
+  const ext = fname.includes('.') ? fname.split('.').pop().toLowerCase() : '';
+  const icon = { pdf: '📄', doc: '📝', docx: '📝', xls: '📊', xlsx: '📊',
+                 ppt: '📑', pptx: '📑', txt: '📃', csv: '📊', md: '📃' }[ext] || '🔗';
+  const isUpload = url.startsWith('/uploads/');
+  const label = isUpload
+    ? esc(decodeURIComponent(fname).replace(/^[a-f0-9]{8}_/, ''))
+    : esc(url.length > 55 ? url.slice(0, 55) + '…' : url);
+  return `<a href="${href}" target="_blank" rel="noopener"
+    style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--accent);text-decoration:none;
+           padding:2px 8px;border:1px solid var(--accent)44;border-radius:4px;background:var(--accent)0d"
+    onmouseover="this.style.background='var(--accent)22'" onmouseout="this.style.background='var(--accent)0d'">
+    ${icon} ${label}
+  </a>`;
+}
+
+function renderDiary() {
+  const diary = state.diary || {};
+  const now   = new Date();
+
+  // Init year/month to current if not set
+  if (!_diaryYear)  _diaryYear  = String(now.getFullYear());
+  if (!_diaryMonth) _diaryMonth = now.getMonth() + 1;
+
+  // Years: current year + any year with content
+  const allYears = new Set([String(now.getFullYear())]);
+  Object.keys(diary).forEach(k => allYears.add(k.slice(0, 4)));
+  const years = [...allYears].sort((a, b) => b - a);
+
+  const period    = _diaryPeriod();
+  const monthData = _diaryMonthData(period);
+  const goals     = monthData.goals     || [];
+  const resources = monthData.resources || [];
+
+  // Year pills
+  const yearPills = years.map(y =>
+    `<button class="region-pill${_diaryYear === y ? ' active' : ''}" onclick="switchDiaryYear('${y}')">${y}</button>`
+  ).join('');
+
+  // Month row — all 12, dim months with no content
+  const monthBtns = _DIARY_MONTHS.map((m, i) => {
+    const mn = i + 1;
+    const p  = `${_diaryYear}-${String(mn).padStart(2,'0')}`;
+    const hasContent = !!diary[p];
+    const isActive   = _diaryMonth === mn;
+    return `<button class="sub-tab-btn${isActive ? ' active' : ''}"
+      style="${!hasContent && !isActive ? 'color:var(--text-faint);opacity:.5' : ''}"
+      onclick="switchDiaryMonth(${mn})">${m}</button>`;
+  }).join('');
+
+  // Goals rows
+  const doneCount = goals.filter(g => g.completed).length;
+  const goalRows  = goals.map(g => `
+    <div style="display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)">
+      <input type="checkbox" ${g.completed ? 'checked' : ''}
+        onchange="toggleDiaryGoal('${period}','${g.id}',this.checked)"
+        style="width:15px;height:15px;margin-top:1px;flex-shrink:0;cursor:pointer;accent-color:var(--accent)">
+      <span style="flex:1;font-size:13px;line-height:1.5;color:${g.completed ? 'var(--text-faint)' : 'var(--text-strong)'};
+        ${g.completed ? 'text-decoration:line-through' : ''}">${esc(g.text)}</span>
+      <button onclick="deleteDiaryGoal('${period}','${g.id}')"
+        style="flex-shrink:0;background:none;border:none;cursor:pointer;color:var(--neg);font-size:14px;opacity:.35;line-height:1;padding:0 2px"
+        onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.35'">✕</button>
+    </div>`).join('');
+
+  // Resource cards
+  const resCards = resources.map(r => `
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:10px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px">
+        <div style="font-size:13px;font-weight:600;color:var(--text-strong);line-height:1.4">${esc(r.heading || '—')}</div>
+        <div style="display:flex;gap:2px;flex-shrink:0">
+          <button onclick="openDiaryResModal('${period}','${r.id}')"
+            style="background:none;border:none;cursor:pointer;color:var(--text-faint);font-size:13px;padding:1px 5px;opacity:.5"
+            onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.5'" title="Edit">✎</button>
+          <button onclick="deleteDiaryRes('${period}','${r.id}')"
+            style="background:none;border:none;cursor:pointer;color:var(--neg);font-size:13px;padding:1px 5px;opacity:.4"
+            onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.4'" title="Delete">✕</button>
+        </div>
+      </div>
+      ${r.url ? `<div style="margin-bottom:8px">${_diaryResLink(r.url)}</div>` : ''}
+      ${r.learnings ? `
+        <div style="font-size:12px;color:var(--text-muted);line-height:1.6;white-space:pre-wrap;
+                    border-left:2px solid var(--accent)44;padding:5px 10px;border-radius:0 4px 4px 0;
+                    background:var(--surface)">${_linkifyNotes(r.learnings)}</div>` : ''}
+    </div>`).join('');
+
+  return `
+  <div style="max-width:900px;margin:0 auto">
+    <!-- Year pills -->
+    <div class="region-switcher" style="margin-bottom:14px">${yearPills}</div>
+
+    <!-- Month tabs -->
+    <div class="sub-tab-bar" style="margin-bottom:20px;flex-wrap:wrap">${monthBtns}</div>
+
+    ${!_diaryLoaded ? `<div style="text-align:center;padding:60px 0;color:var(--text-faint);font-size:13px">Loading…</div>` : `
+    <!-- Two-column layout -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
+
+      <!-- Left: Goals + Notes -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+
+        <!-- Goals card -->
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <div style="font-size:14px;font-weight:700;color:var(--text-strong)">🎯 Goals</div>
+            ${goals.length ? `<span style="font-size:11px;color:var(--text-faint)">${doneCount}/${goals.length} done</span>` : ''}
+          </div>
+          ${goalRows || `<div style="text-align:center;padding:16px 0;font-size:12px;color:var(--text-faint)">No goals yet</div>`}
+          <div style="display:flex;gap:6px;margin-top:10px">
+            <input id="diary-goal-input" type="text" placeholder="Add a goal…"
+              style="flex:1;font-size:12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text)"
+              onkeydown="if(event.key==='Enter')addDiaryGoal('${period}')">
+            <button onclick="addDiaryGoal('${period}')" class="btn btn-blue text-xs" style="white-space:nowrap">+ Add</button>
+          </div>
+        </div>
+
+        <!-- Notes card -->
+        <div class="card">
+          <div style="font-size:14px;font-weight:700;color:var(--text-strong);margin-bottom:12px">📝 Notes</div>
+          <textarea id="diary-notes-ta" rows="10" placeholder="Journal notes, reflections, market thoughts for this month…"
+            style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;
+                   padding:8px 10px;font-size:12px;color:var(--text);resize:vertical;box-sizing:border-box;line-height:1.6"
+          >${esc(monthData.notes || '')}</textarea>
+          <button onclick="saveDiaryNotes('${period}')" class="btn btn-blue text-xs" style="margin-top:10px">Save Notes</button>
+          <span id="diary-notes-saved" style="font-size:11px;color:var(--pos);margin-left:8px;opacity:0;transition:opacity .3s"></span>
+        </div>
+      </div>
+
+      <!-- Right: Resources -->
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div style="font-size:14px;font-weight:700;color:var(--text-strong)">📚 Resources & Learnings</div>
+          <button onclick="openDiaryResModal('${period}',null)" class="btn btn-blue text-xs">+ Add</button>
+        </div>
+        ${resCards || `<div style="text-align:center;padding:24px 0;font-size:12px;color:var(--text-faint)">No resources yet — add links, videos, or articles you want to track</div>`}
+      </div>
+    </div>
+    `}
+
+    <!-- Resource add/edit modal -->
+    <div id="diary-res-modal" style="display:none;position:fixed;inset:0;background:#0009;z-index:200;
+         align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;
+                  padding:24px;width:520px;max-width:100%;flex-shrink:0">
+        <div id="diary-res-modal-ttl" style="font-size:15px;font-weight:700;color:var(--text-strong);margin-bottom:16px">Add Resource</div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div>
+            <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">Heading *</label>
+            <input id="diary-res-heading" type="text" placeholder="e.g. HDFC Bank Q1 Results"
+              style="width:100%;background:var(--surface2);border:2px solid var(--accent);border-radius:6px;
+                     padding:7px 10px;font-size:13px;color:var(--text);box-sizing:border-box">
+          </div>
+          <div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+              <label style="font-size:11px;color:var(--text-muted)">Link / URL or Upload</label>
+              <button type="button" onclick="uploadDiaryDoc()"
+                style="background:none;border:1px solid var(--border);border-radius:4px;padding:2px 8px;
+                       font-size:10px;color:var(--text-faint);cursor:pointer">📎 Upload Document</button>
+            </div>
+            <input id="diary-res-url" type="text" placeholder="https://… or upload a file above"
+              style="width:100%;background:var(--surface2);border:1px solid var(--text-muted);border-radius:6px;
+                     padding:7px 10px;font-size:13px;color:var(--text);box-sizing:border-box">
+            <input type="file" id="diary-doc-file-input"
+              accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.md,image/*"
+              style="display:none" onchange="handleDiaryDocUpload(event)">
+          </div>
+          <div>
+            <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">Learnings / Notes</label>
+            <textarea id="diary-res-learnings" rows="6" placeholder="Key takeaways, insights, questions raised…"
+              style="width:100%;background:var(--surface2);border:1px solid var(--text-muted);border-radius:6px;
+                     padding:7px 10px;font-size:12px;color:var(--text);resize:vertical;box-sizing:border-box;line-height:1.5"></textarea>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:18px;justify-content:flex-end">
+          <button onclick="closeDiaryResModal()" class="btn btn-ghost text-xs" style="padding:7px 16px">Cancel</button>
+          <button onclick="saveDiaryRes()" class="btn text-xs"
+            style="background:var(--accent);color:#000;padding:7px 16px;font-weight:700;border-radius:6px">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function switchDiaryYear(y)  { _diaryYear = y; renderTab(); }
+function switchDiaryMonth(m) { _diaryMonth = m; renderTab(); }
+
+async function toggleDiaryGoal(period, gid, completed) {
+  await fetch(`/api/diary/${period}/goals/${gid}`, {
+    method: 'PUT', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ completed }),
+  });
+  const p = (state.diary[period] = state.diary[period] || {});
+  const g = (p.goals || []).find(x => x.id === gid);
+  if (g) g.completed = completed;
+  renderTab();
+}
+
+async function addDiaryGoal(period) {
+  const inp = document.getElementById('diary-goal-input');
+  const text = (inp?.value || '').trim();
+  if (!text) return;
+  const res = await fetch(`/api/diary/${period}/goals`, {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ text }),
+  });
+  const goal = await res.json();
+  state.diary[period] = state.diary[period] || { notes: '', goals: [], resources: [] };
+  state.diary[period].goals = state.diary[period].goals || [];
+  state.diary[period].goals.push(goal);
+  renderTab();
+}
+
+async function deleteDiaryGoal(period, gid) {
+  await fetch(`/api/diary/${period}/goals/${gid}`, { method: 'DELETE' });
+  const p = state.diary[period];
+  if (p) p.goals = (p.goals || []).filter(g => g.id !== gid);
+  renderTab();
+}
+
+async function saveDiaryNotes(period) {
+  const ta = document.getElementById('diary-notes-ta');
+  if (!ta) return;
+  const notes = ta.value;
+  await fetch(`/api/diary/${period}/notes`, {
+    method: 'PUT', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ notes }),
+  });
+  state.diary[period] = state.diary[period] || { notes: '', goals: [], resources: [] };
+  state.diary[period].notes = notes;
+  const badge = document.getElementById('diary-notes-saved');
+  if (badge) { badge.textContent = '✓ Saved'; badge.style.opacity = '1'; setTimeout(() => badge.style.opacity = '0', 2000); }
+}
+
+function openDiaryResModal(period, rid) {
+  _diaryEditPeriod = period;
+  _diaryEditResId  = rid || null;
+  const modal = document.getElementById('diary-res-modal');
+  if (!modal) return;
+  document.getElementById('diary-res-modal-ttl').textContent = rid ? 'Edit Resource' : 'Add Resource';
+  if (rid) {
+    const r = (state.diary[period]?.resources || []).find(x => x.id === rid);
+    document.getElementById('diary-res-heading').value   = r?.heading   || '';
+    document.getElementById('diary-res-url').value       = r?.url       || '';
+    document.getElementById('diary-res-learnings').value = r?.learnings || '';
+  } else {
+    document.getElementById('diary-res-heading').value   = '';
+    document.getElementById('diary-res-url').value       = '';
+    document.getElementById('diary-res-learnings').value = '';
+  }
+  modal.style.display = 'flex';
+  setTimeout(() => document.getElementById('diary-res-heading')?.focus(), 50);
+}
+
+function closeDiaryResModal() {
+  const modal = document.getElementById('diary-res-modal');
+  if (modal) modal.style.display = 'none';
+  _diaryEditResId = null;
+}
+
+function uploadDiaryDoc() {
+  const inp = document.getElementById('diary-doc-file-input');
+  if (inp) { inp.value = ''; inp.click(); }
+}
+
+async function handleDiaryDocUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const urlEl = document.getElementById('diary-res-url');
+  if (!urlEl) return;
+  const orig = urlEl.placeholder;
+  urlEl.disabled = true; urlEl.placeholder = '⏳ Uploading…';
+  try {
+    const isImage = /\.(jpe?g|png|gif|webp|svg)$/i.test(file.name);
+    const endpoint = isImage ? '/api/upload-image' : '/api/upload-doc';
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await fetch(endpoint, { method: 'POST', body: fd });
+    if (!res.ok) {
+      const e = await res.json().catch(() => ({}));
+      alert('Upload failed: ' + (e?.detail || res.status));
+      return;
+    }
+    const { url, original_name } = await res.json();
+    urlEl.value = url;
+    // Auto-fill heading from filename if empty
+    const headingEl = document.getElementById('diary-res-heading');
+    if (headingEl && !headingEl.value.trim()) {
+      headingEl.value = (original_name || file.name).replace(/\.[^.]+$/, '');
+    }
+  } catch (e) {
+    alert('Upload error: ' + e.message);
+  } finally {
+    urlEl.disabled = false;
+    urlEl.placeholder = orig;
+  }
+}
+
+async function saveDiaryRes() {
+  const heading   = document.getElementById('diary-res-heading').value.trim();
+  const url       = document.getElementById('diary-res-url').value.trim();
+  const learnings = document.getElementById('diary-res-learnings').value.trim();
+  if (!heading) { showToast('Heading is required'); return; }
+  const period = _diaryEditPeriod;
+  state.diary[period] = state.diary[period] || { notes: '', goals: [], resources: [] };
+  if (_diaryEditResId) {
+    const res = await fetch(`/api/diary/${period}/resources/${_diaryEditResId}`, {
+      method: 'PUT', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ heading, url, learnings }),
+    });
+    const updated = await res.json();
+    state.diary[period].resources = (state.diary[period].resources || []).map(r => r.id === _diaryEditResId ? updated : r);
+  } else {
+    const res = await fetch(`/api/diary/${period}/resources`, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ heading, url, learnings }),
+    });
+    const created = await res.json();
+    state.diary[period].resources = state.diary[period].resources || [];
+    state.diary[period].resources.push(created);
+  }
+  closeDiaryResModal();
+  renderTab();
+}
+
+async function deleteDiaryRes(period, rid) {
+  if (!confirm('Remove this resource?')) return;
+  await fetch(`/api/diary/${period}/resources/${rid}`, { method: 'DELETE' });
+  const p = state.diary[period];
+  if (p) p.resources = (p.resources || []).filter(r => r.id !== rid);
   renderTab();
 }
 
@@ -7034,12 +7399,14 @@ function renderCash() {
       <td class="t-muted">${t.date}</td>
       <td><span class="badge">${t.from_account === 'vibhanshu' ? 'Vibhanshu' : 'Manjari'}</span></td>
       <td class="num t-strong text-right">₹${(t.amount||0).toLocaleString('en-IN')}</td>
-      <td class="t-faint" style="font-size:11px;max-width:200px">
-        <div style="display:flex;align-items:center;gap:4px">
-          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${esc(t.notes||'')}</span>
-          ${t.notes ? `<button data-notes="${esc(t.notes)}" onclick="copyNotes(this)" title="Copy notes"
-            style="flex-shrink:0;background:none;border:none;cursor:pointer;font-size:10px;color:var(--text-faint);padding:1px 3px;line-height:1;opacity:.5"
-            onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.5'">⎘</button>` : ''}
+      <td style="font-size:11px;max-width:240px">
+        <div style="display:flex;align-items:flex-start;gap:4px">
+          <div style="flex:1;min-width:0" id="ht-note-display-${t.id}">
+            ${inlineCollapsibleNotes(t.notes)}
+          </div>
+          <button onclick="editHufNote('${t.id}', this)"
+            style="flex-shrink:0;background:none;border:none;cursor:pointer;font-size:11px;color:var(--text-faint);padding:1px 3px;opacity:.4;line-height:1"
+            onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.4'" title="Edit note">✎</button>
         </div>
       </td>
       <td class="text-right">
@@ -7251,6 +7618,29 @@ async function deleteHufTransfer(id) {
   await fetch(`/api/huf_transfers/${id}`, { method: 'DELETE' });
   await fetchData();
   if (currentTab === 'cash') renderTab();
+}
+
+function editHufNote(id, btn) {
+  const display = document.getElementById(`ht-note-display-${id}`);
+  if (!display) return;
+  const t = (state.huf_transfers || []).find(x => x.id === id);
+  const cur = t?.notes || '';
+  display.innerHTML = `<input type="text" value="${esc(cur)}"
+    style="width:100%;font-size:11px;background:var(--surface2);border:1px solid var(--accent);border-radius:4px;padding:3px 6px;color:var(--text)"
+    onblur="saveHufNote('${id}', this.value)"
+    onkeydown="if(event.key==='Enter'){this.blur()}if(event.key==='Escape'){renderTab()}">`;
+  display.querySelector('input')?.focus();
+}
+
+async function saveHufNote(id, notes) {
+  await fetch(`/api/huf_transfers/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ notes }),
+  });
+  const t = (state.huf_transfers || []).find(x => x.id === id);
+  if (t) t.notes = notes;
+  renderTab();
 }
 
 // parse comma-formatted Indian rupee strings → number
