@@ -118,9 +118,68 @@ def update_sold_position(sid: str, updates: dict[str, Any]):
     for i, s in enumerate(data.get("sold_positions", [])):
         if s["id"] == sid:
             data["sold_positions"][i].update(updates)
+            # Recalculate P&L whenever trade numbers change
+            e = data["sold_positions"][i]
+            if any(k in updates for k in ("sell_price", "sell_qty", "avg_buy_price")):
+                invested  = (e.get("avg_buy_price") or 0) * (e.get("sell_qty") or 0)
+                proceeds  = (e.get("sell_price") or 0)    * (e.get("sell_qty") or 0)
+                pnl       = proceeds - invested
+                pnl_pct   = (pnl / invested * 100) if invested else 0
+                e["invested"]         = round(invested, 2)
+                e["proceeds"]         = round(proceeds, 2)
+                e["realized_pnl"]     = round(pnl, 2)
+                e["realized_pnl_pct"] = round(pnl_pct, 2)
             save(data)
             return data["sold_positions"][i]
     raise HTTPException(404, "Not found")
+
+
+@router.post("/api/sold_positions/{sid}/undo")
+def undo_sold_position(sid: str):
+    """Reverse a sell: restore the position (or qty) and delete the journal entry."""
+    data = load()
+    entry = next((s for s in data.get("sold_positions", []) if s["id"] == sid), None)
+    if not entry:
+        raise HTTPException(404, "Journal entry not found")
+
+    original_id = entry.get("original_id")
+    sell_qty    = entry.get("sell_qty", 0)
+    existing    = next((p for p in data["positions"] if p["id"] == original_id), None)
+
+    if existing:
+        # Partial sell — position still exists; add qty back
+        existing["quantity"] = (existing.get("quantity") or 0) + sell_qty
+        # Remove the matching sell trade from trades (match by date + price + qty)
+        existing["trades"] = [
+            t for t in existing.get("trades", [])
+            if not (t.get("type") == "sell"
+                    and t.get("qty") == sell_qty
+                    and t.get("price") == entry.get("sell_price")
+                    and t.get("date") == entry.get("sell_date"))
+        ]
+    else:
+        # Full sell — reconstruct position
+        pos = {
+            "id":            original_id or str(uuid.uuid4()),
+            "stock_name":    entry.get("stock_name"),
+            "ticker":        entry.get("ticker"),
+            "account":       entry.get("account"),
+            "sector":        entry.get("sector"),
+            "currency":      entry.get("currency", "INR"),
+            "buy_date":      entry.get("buy_date"),
+            "avg_buy_price": entry.get("avg_buy_price"),
+            "quantity":      sell_qty,
+            "cmp":           entry.get("sell_price") or entry.get("avg_buy_price"),
+            "peak_price":    entry.get("peak_price"),
+            "trades":        entry.get("trades", []),
+            "created_at":    entry.get("archived_at") or date.today().isoformat(),
+        }
+        pos["yahoo_ticker"] = _to_yahoo(pos["ticker"] or "")
+        data["positions"].append(pos)
+
+    data["sold_positions"] = [s for s in data["sold_positions"] if s["id"] != sid]
+    save(data)
+    return {"ok": True, "restored": entry.get("stock_name")}
 
 
 @router.delete("/api/sold_positions/{sid}")

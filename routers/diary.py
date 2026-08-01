@@ -25,7 +25,17 @@ def _count_open_goals(data: dict) -> int:
 
 @router.get("/api/diary")
 def get_diary():
-    return load().get("diary", {})
+    data  = load()
+    today = date.today().isoformat()
+    dirty = False
+    for period_data in data.get("diary", {}).values():
+        for g in period_data.get("goals", []):
+            if not g.get("created_date"):
+                g["created_date"] = today
+                dirty = True
+    if dirty:
+        save(data)
+    return data.get("diary", {})
 
 
 @router.put("/api/diary/{period}/notes")
@@ -98,6 +108,7 @@ async def add_resource(period: str, request: Request):
         "heading":   (body.get("heading")   or "").strip(),
         "url":       (body.get("url")       or "").strip(),
         "learnings": (body.get("learnings") or "").strip(),
+        "image":     (body.get("image")     or "").strip(),
     }
     _period(data, period).setdefault("resources", []).append(res)
     save(data)
@@ -111,7 +122,7 @@ async def update_resource(period: str, rid: str, request: Request):
     p = _period(data, period)
     for r in p.get("resources", []):
         if r["id"] == rid:
-            for k in ("heading", "url", "learnings"):
+            for k in ("heading", "url", "learnings", "image"):
                 if k in body:
                     r[k] = body[k]
             save(data)

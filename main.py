@@ -1,3 +1,4 @@
+import re
 import uuid
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import HTMLResponse
@@ -88,6 +89,10 @@ async def _save_upload(file: UploadFile, allowed_ext: set, max_mb: int = 50) -> 
     if len(content) > max_mb * 1024 * 1024:
         raise HTTPException(413, f"File too large (max {max_mb} MB)")
     orig_stem = (file.filename or "file").rsplit(".", 1)[0][:40]
+    # Strip whitespace (incl. non-breaking variants like macOS screenshots' U+202F
+    # before AM/PM) and any other URL-unsafe characters so the returned /uploads/...
+    # URL never gets truncated by whitespace-splitting regexes downstream (e.g. note linkifiers).
+    orig_stem = re.sub(r"[^A-Za-z0-9_-]+", "_", orig_stem).strip("_") or "file"
     filename = f"{uuid.uuid4().hex[:8]}_{orig_stem}{ext}"
     (UPLOADS_DIR / filename).write_bytes(content)
     return {"url": f"/uploads/{filename}", "filename": filename, "original_name": file.filename or filename}

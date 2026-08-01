@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Optional
 from pydantic import BaseModel
 
 
@@ -36,6 +36,8 @@ class MarketDashboardIn(BaseModel):
     filename:     Optional[str] = None
     url:          Optional[str] = None
     notes:        Optional[str] = ""
+    # Each item: {"id": str, "url": str, "heading": str, "link": str}
+    images:       Optional[list[dict[str, Any]]] = None
 
 
 class SettingsIn(BaseModel):

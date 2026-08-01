@@ -1660,6 +1660,10 @@ function renderSummaryCards(positions, tab) {
   const signalsBtn = isCon ? `
     <button class="btn btn-ghost text-xs" onclick="refreshTechnicals()" id="signals-btn" title="Refresh EMA, RSI, Stage signals">⟳ Signals</button>` : '';
 
+  const marketScanBtn = isCon ? `
+    <a href="https://www.stockscans.in/market-scans/dashboard" target="_blank" rel="noopener"
+       class="btn btn-ghost text-xs" title="Open Market Scans on stockscans.in">📡 Market Scan</a>` : '';
+
   return `
     <div class="flex items-center gap-3 flex-wrap mb-4">
       <div class="card text-center min-w-[118px]">
@@ -1746,6 +1750,7 @@ function renderSummaryCards(positions, tab) {
         </div>`;
       })() : ''}
       <div class="ml-auto flex gap-2">
+        ${marketScanBtn}
         ${signalsBtn}
         <button class="btn btn-blue text-xs" onclick="openAdd('${defaultAcct}')">+ Add Stock</button>
       </div>
@@ -2643,9 +2648,12 @@ async function promptAifInvested() {
 async function saveAifNav() {
   const monthEl = document.getElementById('aif-month');
   const valEl   = document.getElementById('aif-value');
-  const month = monthEl.value.trim();
-  const value = parseFloat(valEl.value.replace(/,/g, ''));
-  if (!month || isNaN(value) || value <= 0) { alert('Enter a valid month and value'); return; }
+  // .value may be empty on Safari (type=month unsupported) — fall back to the attribute
+  const month = (monthEl.value || monthEl.getAttribute('value') || '').trim();
+  // strip ₹, spaces, and any other non-numeric chars except decimal point
+  const value = parseFloat((valEl.value || '').replace(/[^\d.]/g, ''));
+  if (!month) { alert('Enter a month (format: YYYY-MM, e.g. 2026-07)'); return; }
+  if (isNaN(value) || value <= 0) { alert('Enter a valid NAV value'); return; }
   await fetch('/api/aif_nav', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ month, value }) });
   const navRes = await fetch('/api/aif_nav');
   state.aifNav = await navRes.json();
@@ -2855,7 +2863,7 @@ function renderAIF() {
       <div class="flex gap-2 items-end flex-wrap">
         <div>
           <div class="text-xs t-faint mb-1">Month</div>
-          <input id="aif-month" type="month" value="${defaultMonth}"
+          <input id="aif-month" type="month" value="${defaultMonth}" placeholder="YYYY-MM"
             style="background:var(--input-bg);border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:12px;color:var(--text);outline:none">
         </div>
         <div>
@@ -2894,40 +2902,44 @@ function renderAIF() {
 }
 
 const AIF_DATA = [
-  // name, sector, feb, mar, apr, may | type & label reflect apr→may change
-  { name:"CSB Bank",                       sector:"Banking",       feb:8.4,  mar:7.6,  apr:7.3,  may:6.7,  type:"decreased", label:"CONTINUED TRIM"    },
-  { name:"Narayana Hrudayalaya",           sector:"Healthcare",    feb:6.3,  mar:5.8,  apr:5.4,  may:6.4,  type:"increased", label:"ADDING BACK"        },
-  { name:"SAMHI Hotels",                   sector:"Hospitality",   feb:5.0,  mar:4.1,  apr:4.3,  may:5.5,  type:"increased", label:"STRONG ADD"         },
-  { name:"Sai Life Sciences",              sector:"Healthcare",    feb:0.3,  mar:4.0,  apr:4.3,  may:4.6,  type:"increased", label:"FLAGSHIP - BUILDING"},
-  { name:"Cash",                           sector:"Cash",          feb:0,    mar:0,    apr:0,    may:4.3,  type:"stable",    label:"CASH"               },
-  { name:"Garware Hi-Tech Films",          sector:"Materials",     feb:3.3,  mar:2.9,  apr:2.9,  may:4.4,  type:"increased", label:"STRONG ADD"         },
-  { name:"Physicswallah",                  sector:"IT/EdTech",     feb:3.3,  mar:3.8,  apr:4.1,  may:3.8,  type:"decreased", label:"LIGHT TRIM"         },
-  { name:"Centum Electronics",             sector:"Electronics",   feb:0,    mar:0,    apr:0,    may:3.7,  type:"new",       label:"NEW - MAY"          },
-  { name:"SML Mahindra",                   sector:"Auto",          feb:4.9,  mar:4.1,  apr:3.4,  may:3.8,  type:"recovery",  label:"RECOVERY"           },
-  { name:"Lumax Auto Technologies",        sector:"Auto",          feb:6.2,  mar:5.6,  apr:3.8,  may:3.8,  type:"stable",    label:"STABLE"             },
-  { name:"Entero Healthcare Solutions",    sector:"Healthcare",    feb:4.1,  mar:5.4,  apr:4.5,  may:4.2,  type:"decreased", label:"TRIMMING"           },
-  { name:"Privi Speciality Chemicals",     sector:"Chemicals",     feb:3.5,  mar:3.9,  apr:3.9,  may:4.0,  type:"increased", label:"CORE STABLE+"       },
-  { name:"Aditya Infotech",                sector:"IT/EdTech",     feb:3.7,  mar:4.2,  apr:4.0,  may:3.5,  type:"decreased", label:"TRIMMING"           },
-  { name:"DEE Development Engineers",      sector:"Construction",  feb:0,    mar:0,    apr:1.9,  may:3.6,  type:"increased", label:"STRONG ADD"         },
-  { name:"JM Financial",                   sector:"Banking",       feb:4.1,  mar:3.8,  apr:3.9,  may:3.5,  type:"decreased", label:"TRIMMING"           },
-  { name:"Goldiam International",          sector:"Retail",        feb:3.5,  mar:2.8,  apr:3.4,  may:3.5,  type:"increased", label:"STABLE+"            },
-  { name:"Indian Metals & Ferro Alloys",   sector:"Commodities",   feb:3.1,  mar:3.1,  apr:3.3,  may:3.1,  type:"decreased", label:"MICRO TRIM"         },
-  { name:"Interarch Building Products",    sector:"Infrastructure",feb:3.4,  mar:3.2,  apr:3.4,  may:3.0,  type:"decreased", label:"LIGHT TRIM"         },
-  { name:"Nephrocare Health Services",     sector:"Healthcare",    feb:0,    mar:0,    apr:1.8,  may:2.9,  type:"increased", label:"ADDING"             },
-  { name:"Jayaswal Neco Industries",       sector:"Engineering",   feb:0,    mar:0,    apr:2.4,  may:2.9,  type:"increased", label:"ADDING"             },
-  { name:"Quality Power Electrical Equip", sector:"Electrical",   feb:0,    mar:0,    apr:3.6,  may:2.9,  type:"decreased", label:"LIGHT TRIM"         },
-  { name:"Shivalik Bimetal Controls",      sector:"Engineering",   feb:0,    mar:0,    apr:0,    may:2.6,  type:"new",       label:"NEW - MAY"          },
-  { name:"Pokarna",                        sector:"Commodities",   feb:2.9,  mar:2.8,  apr:2.6,  may:2.3,  type:"decreased", label:"MICRO TRIM"         },
-  { name:"Multi Commodity Exchange",       sector:"Commodities",   feb:5.3,  mar:4.9,  apr:5.2,  may:2.1,  type:"decreased", label:"MAJOR DUMP"         },
-  { name:"Acutaas Chemicals",              sector:"Chemicals",     feb:7.0,  mar:8.6,  apr:4.7,  may:5.4,  type:"increased", label:"REBUILDING"         },
-  { name:"Pricol",                         sector:"Auto",          feb:4.3,  mar:3.8,  apr:3.6,  may:3.4,  type:"decreased", label:"CONTINUED TRIM"     },
+  // name, sector, feb, mar, apr, may, jun | type & label reflect may→jun change
+  { name:"SAMHI Hotels",                   sector:"Hospitality",   feb:5.0,  mar:4.1,  apr:4.3,  may:5.5,  jun:5.9,  type:"increased", label:"ADDING"            },
+  { name:"CSB Bank",                       sector:"Banking",       feb:8.4,  mar:7.6,  apr:7.3,  may:6.7,  jun:5.7,  type:"decreased", label:"CONTINUED TRIM"    },
+  { name:"Narayana Hrudayalaya",           sector:"Healthcare",    feb:6.3,  mar:5.8,  apr:5.4,  may:6.4,  jun:5.7,  type:"decreased", label:"TRIMMING"          },
+  { name:"Acutaas Chemicals",              sector:"Chemicals",     feb:7.0,  mar:8.6,  apr:4.7,  may:5.4,  jun:5.0,  type:"decreased", label:"MICRO TRIM"        },
+  { name:"Privi Speciality Chemicals",     sector:"Chemicals",     feb:3.5,  mar:3.9,  apr:3.9,  may:4.0,  jun:5.0,  type:"increased", label:"STRONG ADD"        },
+  { name:"Physicswallah",                  sector:"IT/EdTech",     feb:3.3,  mar:3.8,  apr:4.1,  may:3.8,  jun:4.9,  type:"increased", label:"STRONG ADD"        },
+  { name:"Garware Hi-Tech Films",          sector:"Materials",     feb:3.3,  mar:2.9,  apr:2.9,  may:4.4,  jun:4.5,  type:"stable",    label:"STABLE+"           },
+  { name:"Sai Life Sciences",              sector:"Healthcare",    feb:0.3,  mar:4.0,  apr:4.3,  may:4.6,  jun:4.5,  type:"stable",    label:"MICRO TRIM"        },
+  { name:"HFCL",                           sector:"Telecom",       feb:0,    mar:0,    apr:0,    may:0,    jun:4.4,  type:"new",       label:"NEW - JUN"         },
+  { name:"Quality Power Electrical Equip", sector:"Electrical",   feb:0,    mar:0,    apr:3.6,  may:2.9,  jun:4.1,  type:"increased", label:"STRONG ADD"        },
+  { name:"Centum Electronics",             sector:"Electronics",   feb:0,    mar:0,    apr:0,    may:3.7,  jun:3.9,  type:"increased", label:"ADDING"            },
+  { name:"SML Mahindra",                   sector:"Auto",          feb:4.9,  mar:4.1,  apr:3.4,  may:3.8,  jun:3.9,  type:"stable",    label:"STABLE+"           },
+  { name:"Shivalik Bimetal Controls",      sector:"Engineering",   feb:0,    mar:0,    apr:0,    may:2.6,  jun:3.6,  type:"increased", label:"STRONG ADD"        },
+  { name:"DEE Development Engineers",      sector:"Construction",  feb:0,    mar:0,    apr:1.9,  may:3.6,  jun:3.6,  type:"stable",    label:"STABLE"            },
+  { name:"Pricol",                         sector:"Auto",          feb:4.3,  mar:3.8,  apr:3.6,  may:3.4,  jun:3.6,  type:"increased", label:"STABLE+"           },
+  { name:"Lumax Auto Technologies",        sector:"Auto",          feb:6.2,  mar:5.6,  apr:3.8,  may:3.8,  jun:3.3,  type:"decreased", label:"LIGHT TRIM"        },
+  { name:"JM Financial",                   sector:"Banking",       feb:4.1,  mar:3.8,  apr:3.9,  may:3.5,  jun:3.0,  type:"decreased", label:"TRIMMING"          },
+  { name:"Nephrocare Health Services",     sector:"Healthcare",    feb:0,    mar:0,    apr:1.8,  may:2.9,  jun:3.0,  type:"stable",    label:"STABLE+"           },
+  { name:"Interarch Building Products",    sector:"Infrastructure",feb:3.4,  mar:3.2,  apr:3.4,  may:3.0,  jun:3.0,  type:"stable",    label:"STABLE"            },
+  { name:"Entero Healthcare Solutions",    sector:"Healthcare",    feb:4.1,  mar:5.4,  apr:4.5,  may:4.2,  jun:2.8,  type:"decreased", label:"STRONG TRIM"       },
+  { name:"Goldiam International",          sector:"Retail",        feb:3.5,  mar:2.8,  apr:3.4,  may:3.5,  jun:2.8,  type:"decreased", label:"TRIMMING"          },
+  { name:"Indian Metals & Ferro Alloys",   sector:"Commodities",   feb:3.1,  mar:3.1,  apr:3.3,  may:3.1,  jun:2.8,  type:"decreased", label:"LIGHT TRIM"        },
+  { name:"Pokarna",                        sector:"Commodities",   feb:2.9,  mar:2.8,  apr:2.6,  may:2.3,  jun:2.8,  type:"increased", label:"ADDING"            },
+  { name:"NRB Bearings",                   sector:"Auto",          feb:0,    mar:0,    apr:0,    may:0,    jun:2.4,  type:"new",       label:"NEW - JUN"         },
+  { name:"Jayaswal Neco Industries",       sector:"Engineering",   feb:0,    mar:0,    apr:2.4,  may:2.9,  jun:2.4,  type:"decreased", label:"TRIMMING"          },
+  { name:"Rishabh Instruments",            sector:"Electronics",   feb:0,    mar:0,    apr:0,    may:0,    jun:1.8,  type:"new",       label:"NEW - JUN"         },
+  { name:"Cash",                           sector:"Cash",          feb:0,    mar:0,    apr:0,    may:4.3,  jun:1.3,  type:"decreased", label:"DEPLOYING"         },
+  // Exited in June
+  { name:"Aditya Infotech",                sector:"IT/EdTech",     feb:3.7,  mar:4.2,  apr:4.0,  may:3.5,  jun:0,    type:"exited",    label:"EXITED JUN"        },
+  { name:"Multi Commodity Exchange",       sector:"Commodities",   feb:5.3,  mar:4.9,  apr:5.2,  may:2.1,  jun:0,    type:"exited",    label:"EXITED JUN"        },
   // Exited in May
-  { name:"Ujjivan Small Finance Bank",     sector:"Banking",       feb:4.7,  mar:4.6,  apr:4.4,  may:0,    type:"exited",    label:"EXITED MAY"         },
-  { name:"Windlas Biotech Limited",        sector:"Pharma",        feb:2.3,  mar:2.3,  apr:2.3,  may:0,    type:"exited",    label:"EXITED MAY"         },
-  { name:"Pondy Oxides & Chemicals",       sector:"Chemicals",     feb:2.8,  mar:2.8,  apr:3.3,  may:0,    type:"exited",    label:"EXITED MAY"         },
+  { name:"Ujjivan Small Finance Bank",     sector:"Banking",       feb:4.7,  mar:4.6,  apr:4.4,  may:0,    jun:0,    type:"exited",    label:"EXITED MAY"        },
+  { name:"Windlas Biotech Limited",        sector:"Pharma",        feb:2.3,  mar:2.3,  apr:2.3,  may:0,    jun:0,    type:"exited",    label:"EXITED MAY"        },
+  { name:"Pondy Oxides & Chemicals",       sector:"Chemicals",     feb:2.8,  mar:2.8,  apr:3.3,  may:0,    jun:0,    type:"exited",    label:"EXITED MAY"        },
   // Previously exited
-  { name:"One 97 Communications",          sector:"FinTech",       feb:3.2,  mar:2.7,  apr:0,    may:0,    type:"exited",    label:"EXITED"             },
-  { name:"Sai Silks (Kalamandir)",         sector:"Retail",        feb:1.8,  mar:1.4,  apr:0,    may:0,    type:"exited",    label:"EXITED"             },
+  { name:"One 97 Communications",          sector:"FinTech",       feb:3.2,  mar:2.7,  apr:0,    may:0,    jun:0,    type:"exited",    label:"EXITED"            },
+  { name:"Sai Silks (Kalamandir)",         sector:"Retail",        feb:1.8,  mar:1.4,  apr:0,    may:0,    jun:0,    type:"exited",    label:"EXITED"            },
 ];
 
 let aifFilter = 'all';
@@ -4779,8 +4791,9 @@ function renderJournal() {
             '<span style="font-size:13px;font-weight:700;color:'+pc+'">' + ps + cur(p) + Math.abs(Math.round(p.realized_pnl||0)).toLocaleString('en-IN') + '</span>' +
             '<span style="font-size:11px;color:'+pc+';margin-left:4px">(' + ps + (p.realized_pnl_pct||0).toFixed(1) + '%)</span>' +
           '</div>' +
-          '<button onclick="editJournalEntry(\'' + p.id + '\')" class="btn btn-ghost text-xs py-1 px-2">✎</button>' +
-          '<button onclick="deleteJournalEntry(\'' + p.id + '\')" class="btn btn-ghost text-xs py-1 px-2" style="color:var(--neg)">✕</button>' +
+          '<button onclick="editJournalEntry(\'' + p.id + '\')" class="btn btn-ghost text-xs py-1 px-2" title="Edit trade / notes">✎</button>' +
+          '<button onclick="undoJournalTrade(\'' + p.id + '\',\'' + esc(p.stock_name||'') + '\')" class="btn btn-ghost text-xs py-1 px-2" title="Undo sell — restore position" style="color:#60a5fa">↩</button>' +
+          '<button onclick="deleteJournalEntry(\'' + p.id + '\')" class="btn btn-ghost text-xs py-1 px-2" style="color:var(--neg)" title="Delete journal entry">✕</button>' +
         '</div>' +
       '</div>' +
       renderJournalNotes(filtered) +
@@ -4934,15 +4947,20 @@ function renderJournal() {
 function editJournalEntry(id) {
   const p = (state.sold_positions || []).find(x => x.id === id);
   if (!p) return;
-  document.getElementById('jem-id').value       = id;
-  document.getElementById('jem-name').textContent = p.stock_name || '';
-  document.getElementById('jem-meta').textContent =
-    `${p.account} · ${p.sell_qty||0} shares @ ${p.currency==='USD'?'$':'₹'}${(p.sell_price||0).toLocaleString('en-IN')} · sold ${p.sell_date||'?'}`;
-  document.getElementById('jem-thesis').value    = p.thesis     || '';
-  document.getElementById('jem-antithesis').value= p.antithesis || '';
-  document.getElementById('jem-lessons').value   = p.lessons    || '';
+  document.getElementById('jem-id').value          = id;
+  document.getElementById('jem-currency').value    = p.currency || 'INR';
+  document.getElementById('jem-name').textContent  = p.stock_name || '';
+  document.getElementById('jem-sell-date').value   = p.sell_date  || '';
+  document.getElementById('jem-sell-price').value  = p.sell_price || '';
+  document.getElementById('jem-sell-qty').value    = p.sell_qty   || '';
+  const cur = p.currency === 'USD' ? '$' : '₹';
+  document.getElementById('jem-buy-price-disp').textContent =
+    `${cur}${(p.avg_buy_price||0).toLocaleString('en-IN')}`;
+  document.getElementById('jem-thesis').value      = p.thesis     || '';
+  document.getElementById('jem-antithesis').value  = p.antithesis || '';
+  document.getElementById('jem-lessons').value     = p.lessons    || '';
   document.getElementById('journal-edit-modal').classList.remove('hidden');
-  document.getElementById('jem-thesis').focus();
+  document.getElementById('jem-sell-date').focus();
 }
 
 function closeJournalEditModal() {
@@ -4952,17 +4970,36 @@ function closeJournalEditModal() {
 async function saveJournalEdit(e) {
   e.preventDefault();
   const id         = document.getElementById('jem-id').value;
+  const sell_date  = document.getElementById('jem-sell-date').value;
+  const sell_price = parseFloat(document.getElementById('jem-sell-price').value) || undefined;
+  const sell_qty   = parseFloat(document.getElementById('jem-sell-qty').value)   || undefined;
   const thesis     = document.getElementById('jem-thesis').value;
   const antithesis = document.getElementById('jem-antithesis').value;
   const lessons    = document.getElementById('jem-lessons').value;
+  const payload = { thesis, antithesis, lessons };
+  if (sell_date)  payload.sell_date  = sell_date;
+  if (sell_price) payload.sell_price = sell_price;
+  if (sell_qty)   payload.sell_qty   = sell_qty;
   await fetch(`/api/sold_positions/${id}`, {
     method: 'PUT',
     headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ thesis, antithesis, lessons })
+    body: JSON.stringify(payload)
   });
   closeJournalEditModal();
   await fetchData();
-  showToast('📓 Notes saved');
+  showToast('📓 Trade updated');
+}
+
+async function undoJournalTrade(id, name) {
+  if (!confirm(`Undo the sell of "${name}"? This will restore the position back to your portfolio.`)) return;
+  const res = await fetch(`/api/sold_positions/${id}/undo`, { method: 'POST' });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    showToast('❌ ' + (err.detail || 'Undo failed'), 4000);
+    return;
+  }
+  await fetchData();
+  showToast(`↩ ${name} restored to positions`);
 }
 
 async function deleteJournalEntry(id) {
@@ -5633,7 +5670,8 @@ function renderAlpha() {
 let _rsYear = null, _rsMonth = null, _rsCategory = null;
 let _diaryYear = null, _diaryMonth = null;
 let _diaryLoaded = false;
-let _diaryEditResId = null, _diaryEditPeriod = null;
+let _diaryNotesTimer = null;
+let _diaryEditResId = null, _diaryEditPeriod = null, _diaryEditResImage = '';
 
 const _MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
@@ -5708,7 +5746,16 @@ function renderMarketDashboards() {
         : `<span style="color:var(--text-faint);font-size:11px">—</span>`;
     const promptId = `md-prompt-${m.id}`;
     const short = (m.prompt||'').length > 120 ? esc(m.prompt.slice(0,120))+'…' : esc(m.prompt||'');
+    const imgs = m.images || [];
     return `<tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:10px 12px">
+        ${imgs.length ? `<div style="display:flex;gap:4px;flex-wrap:wrap;max-width:110px">
+          ${imgs.map(im => `<img src="${esc(im.url)}" alt="${esc(im.heading || m.title)}"
+              onclick="openMdImageLightbox('${m.id}','${im.id}')"
+              style="width:40px;height:40px;object-fit:cover;border-radius:5px;border:1px solid var(--border);cursor:zoom-in"
+              title="${esc(im.heading || 'Click to view full size')}">`).join('')}
+        </div>` : `<span style="color:var(--text-faint);font-size:11px">—</span>`}
+      </td>
       <td style="padding:10px 12px;font-weight:600;color:var(--text-strong);min-width:160px">${esc(m.title)}</td>
       <td style="padding:10px 12px;color:var(--text-muted);white-space:nowrap;font-size:12px">${m.created_date||'—'}</td>
       <td style="padding:10px 12px;max-width:380px">
@@ -5720,7 +5767,13 @@ function renderMarketDashboards() {
           <span onclick="document.getElementById('${promptId}-f').style.display='none';document.getElementById('${promptId}-s').style.display='block'"
             style="color:var(--accent);cursor:pointer;font-size:10px;display:block;margin-top:4px">less</span>
         </div>
-        ${m.notes?`<div style="font-size:11px;color:var(--text-muted);margin-top:6px;line-height:1.55;white-space:pre-wrap">${_linkifyNotes(m.notes)}</div>`:''}
+        ${m.notes?`<div style="margin-top:6px">
+          <span onclick="const nb=document.getElementById('${promptId}-notes');nb.style.display=nb.style.display==='none'?'block':'none';this.querySelector('.mn-icon').textContent=nb.style.display==='none'?'▶':'▼'"
+            style="cursor:pointer;font-size:10px;color:var(--text-faint);display:inline-flex;align-items:center;gap:3px;user-select:none">
+            <span class="mn-icon" style="font-size:9px">▶</span> Notes
+          </span>
+          <div id="${promptId}-notes" style="display:none;font-size:11px;color:var(--text-muted);margin-top:4px;line-height:1.55;white-space:pre-wrap">${_linkifyNotes(m.notes)}</div>
+        </div>`:''}
       </td>
       <td style="padding:10px 12px">${viewBtn}</td>
       <td style="padding:10px 12px;white-space:nowrap">
@@ -5858,6 +5911,7 @@ function renderMarketDashboards() {
           <div style="overflow-x:auto">
             <table style="width:100%;border-collapse:collapse">
               <thead><tr style="border-bottom:2px solid var(--border)">
+                <th style="padding:8px 12px;text-align:left;font-size:11px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Image</th>
                 <th style="padding:8px 12px;text-align:left;font-size:11px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Title</th>
                 <th style="padding:8px 12px;text-align:left;font-size:11px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Date</th>
                 <th style="padding:8px 12px;text-align:left;font-size:11px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Notes / Prompt</th>
@@ -5912,18 +5966,20 @@ function renderMarketDashboards() {
             style="width:100%;background:var(--surface2);border:1px solid var(--text-muted);border-radius:6px;padding:7px 10px;font-size:13px;color:var(--text);box-sizing:border-box">
         </div>
         <div>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-            <label style="font-size:11px;color:var(--text-muted)">Notes / Images (optional)</label>
-            <button type="button" onclick="uploadMdImage()"
-              style="background:none;border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:10px;color:var(--text-faint);cursor:pointer">
-              📎 Upload Image
-            </button>
-          </div>
-          <textarea id="md-notes" rows="3"
-            style="width:100%;background:var(--surface2);border:1px solid var(--text-muted);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--text);resize:vertical;box-sizing:border-box"
-            placeholder="Text notes, or image URLs will be inserted here after upload…"></textarea>
+          <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">Images (optional — each can have its own heading &amp; link)</label>
+          <div id="md-images-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px"></div>
+          <button type="button" id="md-image-btn" onclick="uploadMdImage()"
+            style="background:none;border:1px solid var(--border);border-radius:4px;padding:5px 10px;font-size:12px;color:var(--text-muted);cursor:pointer">
+            🖼️ + Add Image
+          </button>
           <input type="file" id="md-img-file-input" accept="image/*" style="display:none"
             onchange="handleMdImageUpload(event)">
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">Notes (optional)</label>
+          <textarea id="md-notes" rows="3"
+            style="width:100%;background:var(--surface2);border:1px solid var(--text-muted);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--text);resize:vertical;box-sizing:border-box"
+            placeholder="Text notes…"></textarea>
         </div>
       </div>
       <div style="display:flex;gap:8px;margin-top:18px;justify-content:flex-end">
@@ -5931,10 +5987,39 @@ function renderMarketDashboards() {
         <button onclick="saveMarketDashboard()" class="btn text-xs" style="background:var(--accent);color:#000;padding:7px 16px;font-weight:700;border-radius:6px">Save</button>
       </div>
     </div>
+  </div>
+
+  <!-- Image lightbox -->
+  <div id="md-img-lightbox" onclick="if(event.target===this)closeMdImageLightbox()"
+    style="display:none;position:fixed;inset:0;background:#000c;z-index:300;
+           align-items:center;justify-content:center;padding:32px;cursor:zoom-out;flex-direction:column;gap:12px">
+    <img id="md-img-lightbox-img" src="" alt=""
+      style="max-width:100%;max-height:80vh;border-radius:8px;box-shadow:0 20px 60px #0009;cursor:default">
+    <div id="md-img-lightbox-caption" style="text-align:center;max-width:80vw"></div>
   </div>`;
 }
 
-let _mdEditId = null;
+let _mdEditId = null, _mdEditImages = [];
+
+function _renderMdImagesList() {
+  const list = document.getElementById('md-images-list');
+  if (!list) return;
+  list.innerHTML = _mdEditImages.map((im, i) => `
+    <div style="display:flex;gap:8px;align-items:flex-start;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px">
+      <img src="${esc(im.url)}" alt="" style="width:48px;height:48px;object-fit:cover;border-radius:5px;border:1px solid var(--border);flex-shrink:0">
+      <div style="flex:1;display:flex;flex-direction:column;gap:5px;min-width:0">
+        <input type="text" value="${esc(im.heading || '')}" placeholder="Heading / caption"
+          oninput="_mdEditImages[${i}].heading = this.value"
+          style="width:100%;background:var(--surface);border:1px solid var(--text-muted);border-radius:5px;padding:5px 8px;font-size:12px;color:var(--text);box-sizing:border-box">
+        <input type="text" value="${esc(im.link || '')}" placeholder="Link (optional) — https://…"
+          oninput="_mdEditImages[${i}].link = this.value"
+          style="width:100%;background:var(--surface);border:1px solid var(--text-muted);border-radius:5px;padding:5px 8px;font-size:12px;color:var(--text);box-sizing:border-box">
+      </div>
+      <button type="button" onclick="removeMdImageAt(${i})"
+        style="flex-shrink:0;background:none;border:none;cursor:pointer;color:var(--neg);font-size:14px;opacity:.5;padding:2px 4px"
+        onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.5'" title="Remove image">✕</button>
+    </div>`).join('');
+}
 
 function openAddMarketDashboard() {
   _mdEditId = null;
@@ -5945,6 +6030,8 @@ function openAddMarketDashboard() {
   document.getElementById('md-filename').value = '';
   document.getElementById('md-url').value      = '';
   document.getElementById('md-notes').value    = '';
+  _mdEditImages = [];
+  _renderMdImagesList();
   const catSel = document.getElementById('md-category');
   if (catSel) catSel.value = _rsCategory || catSel.options[0]?.value || 'my_resources';
   document.getElementById('md-modal').style.display = 'flex';
@@ -5962,6 +6049,8 @@ function openEditMarketDashboard(id) {
   document.getElementById('md-filename').value = m.filename || '';
   document.getElementById('md-url').value      = m.url || '';
   document.getElementById('md-notes').value    = m.notes || '';
+  _mdEditImages = (m.images || []).map(im => ({ ...im }));
+  _renderMdImagesList();
   const catSel = document.getElementById('md-category');
   if (catSel) catSel.value = m.category || 'my_resources';
   document.getElementById('md-modal').style.display = 'flex';
@@ -5979,13 +6068,14 @@ async function saveMarketDashboard() {
   const filename = document.getElementById('md-filename').value.trim();
   const url      = document.getElementById('md-url').value.trim();
   const notes    = document.getElementById('md-notes').value.trim();
+  const images   = _mdEditImages;
   const category = document.getElementById('md-category')?.value || _rsCategory || 'my_resources';
 
   if (!title || !date) {
     showToast('Title and date are required'); return;
   }
 
-  const payload = { title, created_date: date, category, prompt, filename: filename || null, url: url || null, notes };
+  const payload = { title, created_date: date, category, prompt, filename: filename || null, url: url || null, notes, images };
 
   if (_mdEditId) {
     const res = await fetch(`/api/market_dashboards/${_mdEditId}`, {
@@ -6025,25 +6115,53 @@ function uploadMdImage() {
 async function handleMdImageUpload(event) {
   const file = event.target.files[0];
   if (!file) return;
-  const notesEl = document.getElementById('md-notes');
-  if (!notesEl) return;
-  const orig = notesEl.placeholder;
-  notesEl.disabled = true;
-  notesEl.placeholder = '⏳ Uploading…';
+  const btn = document.getElementById('md-image-btn');
+  const orig = btn ? btn.textContent : '🖼️ + Add Image';
+  if (btn) { btn.textContent = '⏳ Uploading…'; btn.disabled = true; }
   try {
     const fd = new FormData();
     fd.append('file', file);
     const res = await fetch('/api/upload-image', { method: 'POST', body: fd });
-    if (!res.ok) { const e = await res.json().catch(() => {}); alert('Upload failed: ' + (e?.detail || res.status)); return; }
+    if (!res.ok) {
+      const e = await res.json().catch(() => ({}));
+      alert('Upload failed: ' + (e?.detail || res.status));
+      return;
+    }
     const { url } = await res.json();
-    const cur = notesEl.value;
-    notesEl.value = cur ? cur + '\n' + url : url;
+    _mdEditImages.push({ id: (crypto.randomUUID ? crypto.randomUUID() : `img_${Date.now()}_${Math.random().toString(36).slice(2,8)}`), url, heading: '', link: '' });
+    _renderMdImagesList();
   } catch (e) {
     alert('Upload error: ' + e.message);
   } finally {
-    notesEl.disabled = false;
-    notesEl.placeholder = orig;
+    if (btn) { btn.disabled = false; btn.textContent = orig; }
   }
+}
+
+function removeMdImageAt(i) {
+  _mdEditImages.splice(i, 1);
+  _renderMdImagesList();
+}
+
+function openMdImageLightbox(mid, imgId) {
+  const m  = (state.market_dashboards || []).find(x => x.id === mid);
+  const im = m && (m.images || []).find(x => x.id === imgId);
+  if (!im) return;
+  const box = document.getElementById('md-img-lightbox');
+  const img = document.getElementById('md-img-lightbox-img');
+  const cap = document.getElementById('md-img-lightbox-caption');
+  if (!box || !img) return;
+  img.src = im.url;
+  if (cap) {
+    const heading = im.heading ? `<div style="font-size:14px;color:#fff;font-weight:600">${esc(im.heading)}</div>` : '';
+    const link = im.link ? `<a href="${esc(im.link)}" target="_blank" rel="noopener" style="font-size:12px;color:#93c5fd;text-decoration:underline">${esc(im.link)}</a>` : '';
+    cap.innerHTML = heading + link;
+  }
+  box.style.display = 'flex';
+}
+
+function closeMdImageLightbox() {
+  const box = document.getElementById('md-img-lightbox');
+  if (box) box.style.display = 'none';
 }
 
 async function deleteMarketDashboard(id) {
@@ -6123,39 +6241,76 @@ function renderDiary() {
       onclick="switchDiaryMonth(${mn})">${m}</button>`;
   }).join('');
 
+  // Collect spilled-over (incomplete) goals from previous months (up to 3 months back)
+  const spilledGoals = [];
+  for (let back = 1; back <= 3; back++) {
+    let sy = parseInt(_diaryYear, 10), sm = _diaryMonth - back;
+    while (sm <= 0) { sm += 12; sy--; }
+    const sp = `${sy}-${String(sm).padStart(2,'0')}`;
+    if (!diary[sp]) break;
+    const prevIncomplete = (diary[sp].goals || []).filter(g => !g.completed);
+    if (!prevIncomplete.length) break;
+    const mLabel = _DIARY_MONTHS[sm - 1];
+    prevIncomplete.forEach(g => spilledGoals.push({ ...g, _fromPeriod: sp, _fromLabel: mLabel }));
+  }
+
   // Goals rows
   const doneCount = goals.filter(g => g.completed).length;
-  const goalRows  = goals.map(g => `
+  const openCount = goals.filter(g => !g.completed).length;
+  // Count open goals across ALL diary periods for limit display
+  const globalOpenCount = Object.values(state.diary || {}).reduce((acc, p) => acc + (p.goals || []).filter(g => !g.completed).length, 0);
+  const _renderGoalRow = (g, ownerPeriod) => {
+    const dateLine = [
+      g.created_date ? `created ${g.created_date}` : '',
+      g.closed_date  ? `closed ${g.closed_date}`   : '',
+      g._fromLabel   ? `↩ from ${g._fromLabel}`    : '',
+    ].filter(Boolean).join(' · ');
+    return `
     <div style="display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)">
       <input type="checkbox" ${g.completed ? 'checked' : ''}
-        onchange="toggleDiaryGoal('${period}','${g.id}',this.checked)"
-        style="width:15px;height:15px;margin-top:1px;flex-shrink:0;cursor:pointer;accent-color:var(--accent)">
-      <span style="flex:1;font-size:13px;line-height:1.5;color:${g.completed ? 'var(--text-faint)' : 'var(--text-strong)'};
-        ${g.completed ? 'text-decoration:line-through' : ''}">${esc(g.text)}</span>
-      <button onclick="deleteDiaryGoal('${period}','${g.id}')"
+        onchange="toggleDiaryGoal('${ownerPeriod}','${g.id}',this.checked)"
+        style="width:15px;height:15px;margin-top:3px;flex-shrink:0;cursor:pointer;accent-color:var(--accent)">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;line-height:1.5;color:${g.completed ? 'var(--text-faint)' : 'var(--text-strong)'};
+          ${g.completed ? 'text-decoration:line-through' : ''}">${esc(g.text)}</div>
+        ${dateLine ? `<div style="font-size:10px;color:var(--text-faint);margin-top:1px">${dateLine}</div>` : ''}
+      </div>
+      <button onclick="deleteDiaryGoal('${ownerPeriod}','${g.id}')"
         style="flex-shrink:0;background:none;border:none;cursor:pointer;color:var(--neg);font-size:14px;opacity:.35;line-height:1;padding:0 2px"
         onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.35'">✕</button>
-    </div>`).join('');
+    </div>`;
+  };
+  const spilledRows = spilledGoals.map(g => _renderGoalRow(g, g._fromPeriod)).join('');
+  const goalRows    = goals.map(g => _renderGoalRow(g, period)).join('');
 
   // Resource cards
   const resCards = resources.map(r => `
     <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:10px">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px">
-        <div style="font-size:13px;font-weight:600;color:var(--text-strong);line-height:1.4">${esc(r.heading || '—')}</div>
-        <div style="display:flex;gap:2px;flex-shrink:0">
-          <button onclick="openDiaryResModal('${period}','${r.id}')"
-            style="background:none;border:none;cursor:pointer;color:var(--text-faint);font-size:13px;padding:1px 5px;opacity:.5"
-            onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.5'" title="Edit">✎</button>
-          <button onclick="deleteDiaryRes('${period}','${r.id}')"
-            style="background:none;border:none;cursor:pointer;color:var(--neg);font-size:13px;padding:1px 5px;opacity:.4"
-            onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.4'" title="Delete">✕</button>
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        ${r.image ? `
+        <img src="${esc(r.image)}" alt="${esc(r.heading || 'Resource image')}"
+          onclick="openDiaryImageLightbox('${esc(r.image)}')"
+          style="width:64px;height:64px;object-fit:cover;border-radius:6px;border:1px solid var(--border);
+                 cursor:zoom-in;flex-shrink:0" title="Click to view full size">` : ''}
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px">
+            <div style="font-size:13px;font-weight:600;color:var(--text-strong);line-height:1.4">${esc(r.heading || '—')}</div>
+            <div style="display:flex;gap:2px;flex-shrink:0">
+              <button onclick="openDiaryResModal('${period}','${r.id}')"
+                style="background:none;border:none;cursor:pointer;color:var(--text-faint);font-size:13px;padding:1px 5px;opacity:.5"
+                onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.5'" title="Edit">✎</button>
+              <button onclick="deleteDiaryRes('${period}','${r.id}')"
+                style="background:none;border:none;cursor:pointer;color:var(--neg);font-size:13px;padding:1px 5px;opacity:.4"
+                onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.4'" title="Delete">✕</button>
+            </div>
+          </div>
+          ${r.url ? `<div style="margin-bottom:8px">${_diaryResLink(r.url)}</div>` : ''}
+          ${r.learnings ? `
+            <div style="font-size:12px;color:var(--text-muted);line-height:1.6;white-space:pre-wrap;
+                        border-left:2px solid var(--accent)44;padding:5px 10px;border-radius:0 4px 4px 0;
+                        background:var(--surface)">${_linkifyNotes(r.learnings)}</div>` : ''}
         </div>
       </div>
-      ${r.url ? `<div style="margin-bottom:8px">${_diaryResLink(r.url)}</div>` : ''}
-      ${r.learnings ? `
-        <div style="font-size:12px;color:var(--text-muted);line-height:1.6;white-space:pre-wrap;
-                    border-left:2px solid var(--accent)44;padding:5px 10px;border-radius:0 4px 4px 0;
-                    background:var(--surface)">${_linkifyNotes(r.learnings)}</div>` : ''}
     </div>`).join('');
 
   return `
@@ -6177,9 +6332,19 @@ function renderDiary() {
         <div class="card">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
             <div style="font-size:14px;font-weight:700;color:var(--text-strong)">🎯 Goals</div>
-            ${goals.length ? `<span style="font-size:11px;color:var(--text-faint)">${doneCount}/${goals.length} done</span>` : ''}
+            <div style="display:flex;align-items:center;gap:8px">
+              ${goals.length ? `<span style="font-size:11px;color:var(--text-faint)">${doneCount}/${goals.length} done</span>` : ''}
+              <span style="font-size:11px;font-weight:600;color:${globalOpenCount >= 20 ? 'var(--neg)' : globalOpenCount >= 15 ? '#f59e0b' : 'var(--text-faint)'}"
+                title="Open goals across all months">${globalOpenCount}/20 open</span>
+            </div>
           </div>
-          ${goalRows || `<div style="text-align:center;padding:16px 0;font-size:12px;color:var(--text-faint)">No goals yet</div>`}
+          ${spilledRows ? `
+            <div style="margin-bottom:4px">
+              <div style="font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--text-faint);margin-bottom:2px;padding:0 0 4px;border-bottom:1px dashed var(--border)">↩ Carried over</div>
+              ${spilledRows}
+            </div>` : ''}
+          ${spilledRows && goalRows ? `<div style="font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--text-faint);margin:6px 0 2px;padding-bottom:4px;border-bottom:1px dashed var(--border)">This month</div>` : ''}
+          ${goalRows || (!spilledRows ? `<div style="text-align:center;padding:16px 0;font-size:12px;color:var(--text-faint)">No goals yet</div>` : '')}
           <div style="display:flex;gap:6px;margin-top:10px">
             <input id="diary-goal-input" type="text" placeholder="Add a goal…"
               style="flex:1;font-size:12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text)"
@@ -6192,11 +6357,13 @@ function renderDiary() {
         <div class="card">
           <div style="font-size:14px;font-weight:700;color:var(--text-strong);margin-bottom:12px">📝 Notes</div>
           <textarea id="diary-notes-ta" rows="10" placeholder="Journal notes, reflections, market thoughts for this month…"
+            oninput="debouncedSaveDiaryNotes('${period}')" onblur="saveDiaryNotes('${period}')"
             style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;
                    padding:8px 10px;font-size:12px;color:var(--text);resize:vertical;box-sizing:border-box;line-height:1.6"
           >${esc(monthData.notes || '')}</textarea>
           <button onclick="saveDiaryNotes('${period}')" class="btn btn-blue text-xs" style="margin-top:10px">Save Notes</button>
           <span id="diary-notes-saved" style="font-size:11px;color:var(--pos);margin-left:8px;opacity:0;transition:opacity .3s"></span>
+          <span style="font-size:11px;color:var(--text-faint);margin-left:8px">autosaves as you type</span>
         </div>
       </div>
 
@@ -6239,6 +6406,22 @@ function renderDiary() {
               style="display:none" onchange="handleDiaryDocUpload(event)">
           </div>
           <div>
+            <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">Image (optional — shown as a thumbnail on the card)</label>
+            <div id="diary-res-image-preview-wrap" style="display:none;margin-bottom:8px;position:relative;width:fit-content">
+              <img id="diary-res-image-preview" src="" alt="Preview"
+                style="width:96px;height:96px;object-fit:cover;border-radius:6px;border:1px solid var(--border);display:block">
+              <button type="button" onclick="removeDiaryResImage()"
+                style="position:absolute;top:-8px;right:-8px;width:20px;height:20px;border-radius:50%;
+                       background:var(--neg);color:#fff;border:2px solid var(--surface);cursor:pointer;
+                       font-size:11px;line-height:1;padding:0" title="Remove image">✕</button>
+            </div>
+            <button type="button" id="diary-res-image-btn" onclick="uploadDiaryResImage()"
+              style="background:none;border:1px solid var(--border);border-radius:4px;padding:5px 10px;
+                     font-size:12px;color:var(--text-muted);cursor:pointer">🖼️ Upload Image</button>
+            <input type="file" id="diary-res-image-input" accept="image/*"
+              style="display:none" onchange="handleDiaryResImageUpload(event)">
+          </div>
+          <div>
             <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">Learnings / Notes</label>
             <textarea id="diary-res-learnings" rows="6" placeholder="Key takeaways, insights, questions raised…"
               style="width:100%;background:var(--surface2);border:1px solid var(--text-muted);border-radius:6px;
@@ -6252,6 +6435,14 @@ function renderDiary() {
         </div>
       </div>
     </div>
+
+    <!-- Image lightbox -->
+    <div id="diary-img-lightbox" onclick="closeDiaryImageLightbox()"
+      style="display:none;position:fixed;inset:0;background:#000c;z-index:300;
+             align-items:center;justify-content:center;padding:32px;cursor:zoom-out">
+      <img id="diary-img-lightbox-img" src="" alt=""
+        style="max-width:100%;max-height:100%;border-radius:8px;box-shadow:0 20px 60px #0009">
+    </div>
   </div>`;
 }
 
@@ -6259,13 +6450,17 @@ function switchDiaryYear(y)  { _diaryYear = y; renderTab(); }
 function switchDiaryMonth(m) { _diaryMonth = m; renderTab(); }
 
 async function toggleDiaryGoal(period, gid, completed) {
-  await fetch(`/api/diary/${period}/goals/${gid}`, {
+  const res = await fetch(`/api/diary/${period}/goals/${gid}`, {
     method: 'PUT', headers: {'Content-Type':'application/json'},
     body: JSON.stringify({ completed }),
   });
+  const updated = await res.json().catch(() => null);
   const p = (state.diary[period] = state.diary[period] || {});
   const g = (p.goals || []).find(x => x.id === gid);
-  if (g) g.completed = completed;
+  if (g) {
+    g.completed = completed;
+    g.closed_date = updated?.closed_date ?? (completed ? new Date().toISOString().slice(0, 10) : null);
+  }
   renderTab();
 }
 
@@ -6277,10 +6472,21 @@ async function addDiaryGoal(period) {
     method: 'POST', headers: {'Content-Type':'application/json'},
     body: JSON.stringify({ text }),
   });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    const msg = err.detail || 'Could not add goal';
+    if (msg.startsWith('limit_reached')) {
+      showToast('⚠️ 20 open goals limit reached — close some before adding more', 5000);
+    } else {
+      showToast(msg, 4000);
+    }
+    return;
+  }
   const goal = await res.json();
   state.diary[period] = state.diary[period] || { notes: '', goals: [], resources: [] };
   state.diary[period].goals = state.diary[period].goals || [];
   state.diary[period].goals.push(goal);
+  if (inp) inp.value = '';
   renderTab();
 }
 
@@ -6291,7 +6497,13 @@ async function deleteDiaryGoal(period, gid) {
   renderTab();
 }
 
+function debouncedSaveDiaryNotes(period) {
+  clearTimeout(_diaryNotesTimer);
+  _diaryNotesTimer = setTimeout(() => saveDiaryNotes(period), 900);
+}
+
 async function saveDiaryNotes(period) {
+  clearTimeout(_diaryNotesTimer);
   const ta = document.getElementById('diary-notes-ta');
   if (!ta) return;
   const notes = ta.value;
@@ -6305,6 +6517,23 @@ async function saveDiaryNotes(period) {
   if (badge) { badge.textContent = '✓ Saved'; badge.style.opacity = '1'; setTimeout(() => badge.style.opacity = '0', 2000); }
 }
 
+function _setDiaryResImagePreview(url) {
+  _diaryEditResImage = url || '';
+  const wrap = document.getElementById('diary-res-image-preview-wrap');
+  const img  = document.getElementById('diary-res-image-preview');
+  const btn  = document.getElementById('diary-res-image-btn');
+  if (!wrap || !img || !btn) return;
+  if (_diaryEditResImage) {
+    img.src = _diaryEditResImage;
+    wrap.style.display = 'block';
+    btn.textContent = '🖼️ Replace Image';
+  } else {
+    img.src = '';
+    wrap.style.display = 'none';
+    btn.textContent = '🖼️ Upload Image';
+  }
+}
+
 function openDiaryResModal(period, rid) {
   _diaryEditPeriod = period;
   _diaryEditResId  = rid || null;
@@ -6316,10 +6545,12 @@ function openDiaryResModal(period, rid) {
     document.getElementById('diary-res-heading').value   = r?.heading   || '';
     document.getElementById('diary-res-url').value       = r?.url       || '';
     document.getElementById('diary-res-learnings').value = r?.learnings || '';
+    _setDiaryResImagePreview(r?.image || '');
   } else {
     document.getElementById('diary-res-heading').value   = '';
     document.getElementById('diary-res-url').value       = '';
     document.getElementById('diary-res-learnings').value = '';
+    _setDiaryResImagePreview('');
   }
   modal.style.display = 'flex';
   setTimeout(() => document.getElementById('diary-res-heading')?.focus(), 50);
@@ -6329,6 +6560,53 @@ function closeDiaryResModal() {
   const modal = document.getElementById('diary-res-modal');
   if (modal) modal.style.display = 'none';
   _diaryEditResId = null;
+}
+
+function uploadDiaryResImage() {
+  const inp = document.getElementById('diary-res-image-input');
+  if (inp) { inp.value = ''; inp.click(); }
+}
+
+async function handleDiaryResImageUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const btn = document.getElementById('diary-res-image-btn');
+  const orig = btn ? btn.textContent : '';
+  if (btn) { btn.textContent = '⏳ Uploading…'; btn.disabled = true; }
+  try {
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await fetch('/api/upload-image', { method: 'POST', body: fd });
+    if (!res.ok) {
+      const e = await res.json().catch(() => ({}));
+      alert('Image upload failed: ' + (e?.detail || res.status));
+      return;
+    }
+    const { url } = await res.json();
+    _setDiaryResImagePreview(url);
+  } catch (e) {
+    alert('Image upload error: ' + e.message);
+  } finally {
+    if (btn) btn.disabled = false;
+    if (!_diaryEditResImage && btn) btn.textContent = orig;
+  }
+}
+
+function removeDiaryResImage() {
+  _setDiaryResImagePreview('');
+}
+
+function openDiaryImageLightbox(url) {
+  const box = document.getElementById('diary-img-lightbox');
+  const img = document.getElementById('diary-img-lightbox-img');
+  if (!box || !img) return;
+  img.src = url;
+  box.style.display = 'flex';
+}
+
+function closeDiaryImageLightbox() {
+  const box = document.getElementById('diary-img-lightbox');
+  if (box) box.style.display = 'none';
 }
 
 function uploadDiaryDoc() {
@@ -6373,20 +6651,21 @@ async function saveDiaryRes() {
   const heading   = document.getElementById('diary-res-heading').value.trim();
   const url       = document.getElementById('diary-res-url').value.trim();
   const learnings = document.getElementById('diary-res-learnings').value.trim();
+  const image     = _diaryEditResImage || '';
   if (!heading) { showToast('Heading is required'); return; }
   const period = _diaryEditPeriod;
   state.diary[period] = state.diary[period] || { notes: '', goals: [], resources: [] };
   if (_diaryEditResId) {
     const res = await fetch(`/api/diary/${period}/resources/${_diaryEditResId}`, {
       method: 'PUT', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ heading, url, learnings }),
+      body: JSON.stringify({ heading, url, learnings, image }),
     });
     const updated = await res.json();
     state.diary[period].resources = (state.diary[period].resources || []).map(r => r.id === _diaryEditResId ? updated : r);
   } else {
     const res = await fetch(`/api/diary/${period}/resources`, {
       method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ heading, url, learnings }),
+      body: JSON.stringify({ heading, url, learnings, image }),
     });
     const created = await res.json();
     state.diary[period].resources = state.diary[period].resources || [];
