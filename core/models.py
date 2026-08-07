@@ -41,11 +41,12 @@ class MarketDashboardIn(BaseModel):
 
 
 class SettingsIn(BaseModel):
-    usd_inr_rate:       Optional[float] = None
-    portfolio_risk_pct: Optional[float] = None
-    aif_invested:       Optional[float] = None
-    target_cash_pct:    Optional[float] = None
-    custom_sectors:     Optional[list]  = None
+    usd_inr_rate:       Optional[float]            = None
+    portfolio_risk_pct: Optional[float]             = None
+    aif_invested:       Optional[float]             = None
+    target_cash_pct:    Optional[float]             = None
+    custom_sectors:     Optional[list]               = None
+    fx_rates:           Optional[dict[str, float]]  = None
 
 
 class HufTransferIn(BaseModel):
@@ -68,6 +69,17 @@ class AifInvestorMeetIn(BaseModel):
     summary_url:  Optional[str] = None
     notes:        Optional[str] = None
     added_date:   Optional[str] = None
+
+
+class AifHoldingEntry(BaseModel):
+    name:       str
+    sector:     Optional[str] = None
+    weight_pct: float
+
+
+class AifHoldingsMonthIn(BaseModel):
+    month:    str  # YYYY-MM
+    holdings: list[AifHoldingEntry]
 
 
 class MutualFundIn(BaseModel):

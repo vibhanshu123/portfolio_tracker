@@ -70,10 +70,11 @@ def _do_compute():
     try:
         data     = load()
         rate     = data["settings"].get("usd_inr_rate", 84.0)
+        fx_rates = data["settings"].get("fx_rates", {})
         active   = [p for p in data["positions"] if p.get("active", True)]
-        enriched = [enrich(dict(p), rate) for p in active]
+        enriched = [enrich(dict(p), rate, fx_rates) for p in active]
 
-        inr_pos = [p for p in enriched if p.get("currency", "INR") != "USD"]
+        inr_pos = [p for p in enriched if p.get("currency", "INR") == "INR"]
 
         # yahoo-ticker → enriched position (deduplicate by ticker)
         yt_map: dict[str, dict] = {}
@@ -117,7 +118,7 @@ def _do_compute():
 
         for yt, p in yt_map.items():
             cur     = p.get("currency", "INR")
-            bench_r = nifty_ret if cur != "USD" else sp500_ret
+            bench_r = nifty_ret if cur == "INR" else sp500_ret
             now     = _close(raw, yt, today)
 
             pos_ret = {
@@ -143,7 +144,7 @@ def _do_compute():
             if bd_str:
                 try:
                     bd      = datetime.fromisoformat(bd_str).date()
-                    bench_yt = _NIFTY if cur != "USD" else _SP500
+                    bench_yt = _NIFTY if cur == "INR" else _SP500
                     p_buy   = _close(raw, yt, bd)
                     bn_buy  = _close(raw, bench_yt, bd)
                     bn_now  = _close(raw, bench_yt, today)

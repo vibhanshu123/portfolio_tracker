@@ -16,12 +16,17 @@ def cagr(invested, current, buy_date_str) -> Optional[float]:
         return None
 
 
-def enrich(pos: dict, usd_inr: float = 84.0) -> dict:
+def enrich(pos: dict, usd_inr: float = 84.0, fx_rates: dict = None) -> dict:
     avg     = pos.get("avg_buy_price", 0) or 0
     qty     = pos.get("quantity", 0) or 0
     cmp_val = pos.get("cmp") or avg
     cur     = pos.get("currency", "INR")
-    rate    = usd_inr if cur == "USD" else 1.0
+    if cur == "INR":
+        rate = 1.0
+    elif cur == "USD":
+        rate = usd_inr
+    else:
+        rate = (fx_rates or {}).get(cur, 1.0)
 
     invested = avg * qty
     current  = cmp_val * qty
@@ -48,13 +53,15 @@ def _to_yahoo(ticker: str, currency: str = "INR") -> Optional[str]:
     if not ticker:
         return None
     t = ticker.strip()
-    if currency == "USD":
-        return t
     if t.startswith("NSE:"):
         return t[4:].strip() + ".NS"
     if t.startswith("BSE:"):
         return t[4:].strip() + ".BO"
-    return t + ".NS"
+    if currency == "INR":
+        return t + ".NS"
+    # USD, EUR, GBP, SGD, AUD, etc. — ticker already carries its own exchange
+    # suffix (e.g. "ASML.AS", "SHEL.L", "D05.SI", "BHP.AX"), pass through as-is.
+    return t
 
 
 def _get_symbol(ticker: str) -> str:

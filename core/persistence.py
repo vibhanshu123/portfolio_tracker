@@ -3,7 +3,7 @@ import os
 import re
 import tempfile
 import threading
-from .config import DATA_FILE, TECH_FILE, DEFAULT_SETTINGS
+from .config import DATA_FILE, TECH_FILE, DEFAULT_SETTINGS, DEFAULT_FX_RATES
 
 _save_lock = threading.Lock()
 
@@ -17,11 +17,19 @@ def load() -> dict:
         data = json.loads(DATA_FILE.read_text())
         for k, v in DEFAULT_SETTINGS.items():
             data["settings"].setdefault(k, v)
+        # Backfill any individual currency missing from an already-existing
+        # fx_rates dict (not just when the whole dict is absent) — otherwise a
+        # currency added before its first live-rate fetch silently prices at
+        # a wrong 1:1 INR rate inside enrich().
+        fx = data["settings"].setdefault("fx_rates", {})
+        for ccy, seed_rate in DEFAULT_FX_RATES.items():
+            fx.setdefault(ccy, seed_rate)
         data.setdefault("aif_nav", [])
         data.setdefault("huf_transfers", [])
         data.setdefault("cash_balances", {})
         data.setdefault("us_watchlist", [])
         data.setdefault("aif_investor_meets", [])
+        data.setdefault("aif_holdings", [])
         data.setdefault("mutual_funds", [])
         data.setdefault("fixed_income", [])
         data.setdefault("unlisted", [])

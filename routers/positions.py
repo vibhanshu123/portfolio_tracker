@@ -30,13 +30,14 @@ def add_position(p: PositionIn):
     }]
     data["positions"].append(pos)
     save(data)
-    return enrich(pos, data["settings"].get("usd_inr_rate", 84.0))
+    return enrich(pos, data["settings"].get("usd_inr_rate", 84.0), data["settings"].get("fx_rates", {}))
 
 
 @router.put("/api/positions/{pos_id}")
 def update_position(pos_id: str, updates: dict[str, Any]):
-    data = load()
-    rate = data["settings"].get("usd_inr_rate", 84.0)
+    data     = load()
+    rate     = data["settings"].get("usd_inr_rate", 84.0)
+    fx_rates = data["settings"].get("fx_rates", {})
     for i, p in enumerate(data["positions"]):
         if p["id"] == pos_id:
             data["positions"][i].update(updates)
@@ -48,7 +49,7 @@ def update_position(pos_id: str, updates: dict[str, Any]):
                         updates["cmp"]), 4)
             row["yahoo_ticker"] = _to_yahoo(row.get("ticker", ""), row.get("currency", "INR"))
             save(data)
-            return enrich(row, rate)
+            return enrich(row, rate, fx_rates)
     raise HTTPException(404, "Not found")
 
 
@@ -67,7 +68,8 @@ def sell_position(pos_id: str, journal: dict[str, Any]):
     if not pos:
         raise HTTPException(404, "Position not found")
     rate      = data["settings"].get("usd_inr_rate", 84.0)
-    enriched  = enrich(pos, rate)
+    fx_rates  = data["settings"].get("fx_rates", {})
+    enriched  = enrich(pos, rate, fx_rates)
     sell_price = journal.get("sell_price") or enriched.get("cmp") or pos.get("avg_buy_price", 0)
     sell_qty   = journal.get("sell_qty") or pos.get("quantity", 0)
     invested   = pos.get("avg_buy_price", 0) * sell_qty
@@ -174,7 +176,7 @@ def undo_sold_position(sid: str):
             "trades":        entry.get("trades", []),
             "created_at":    entry.get("archived_at") or date.today().isoformat(),
         }
-        pos["yahoo_ticker"] = _to_yahoo(pos["ticker"] or "")
+        pos["yahoo_ticker"] = _to_yahoo(pos["ticker"] or "", pos.get("currency", "INR"))
         data["positions"].append(pos)
 
     data["sold_positions"] = [s for s in data["sold_positions"] if s["id"] != sid]

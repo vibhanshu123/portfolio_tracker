@@ -62,9 +62,10 @@ def index():
 
 @app.get("/api/data")
 def get_data():
-    data = load()
-    rate = data["settings"].get("usd_inr_rate", 84.0)
-    data["positions"] = [enrich(p, rate) for p in data["positions"]]
+    data = load()  # load() already seeds/backfills settings["fx_rates"]
+    rate     = data["settings"].get("usd_inr_rate", 84.0)
+    fx_rates = data["settings"].get("fx_rates", {})
+    data["positions"] = [enrich(p, rate, fx_rates) for p in data["positions"]]
     # Build dynamic accounts list from portfolio groups
     pg = data["settings"].get("portfolio_groups", _DEFAULT_PORTFOLIO_GROUPS)
     data["accounts"] = [p["id"] for grp in pg.values() for p in grp]

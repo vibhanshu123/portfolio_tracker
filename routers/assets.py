@@ -7,7 +7,7 @@ from typing import Optional, Any
 
 from fastapi import APIRouter, HTTPException
 
-from core.models import AifNavIn, AifInvestorMeetIn, MutualFundIn, FixedIncomeIn, UnlistedIn, NpsIn
+from core.models import AifNavIn, AifInvestorMeetIn, AifHoldingsMonthIn, MutualFundIn, FixedIncomeIn, UnlistedIn, NpsIn
 from core.persistence import load, save
 
 router = APIRouter()
@@ -83,6 +83,55 @@ def update_aif_investor_meet(mid: str, item: AifInvestorMeetIn):
 def delete_aif_investor_meet(mid: str):
     data = load()
     data["aif_investor_meets"] = [m for m in data.get("aif_investor_meets", []) if m["id"] != mid]
+    save(data)
+    return {"ok": True}
+
+
+# ─── AIF Holdings Breakdown ─────────────────────────────────────────────────────
+# Stored as one flat list of {id, month, name, sector, weight_pct} rows (long format,
+# one row per holding per month) — matches how a monthly factsheet is actually pasted
+# in: a full list of names+weights for one month at a time. The frontend pivots this
+# into the wide month-columns table it renders.
+
+@router.get("/api/aif_holdings")
+def get_aif_holdings():
+    return load().get("aif_holdings", [])
+
+
+@router.post("/api/aif_holdings/month")
+def save_aif_holdings_month(payload: AifHoldingsMonthIn):
+    data     = load()
+    holdings = data.setdefault("aif_holdings", [])
+    # Replace-all-for-month semantics: re-saving a month overwrites its previous rows,
+    # so correcting a mistake is just "paste the corrected list again".
+    holdings[:] = [h for h in holdings if h.get("month") != payload.month]
+    saved = []
+    for entry in payload.holdings:
+        row = {
+            "id":         str(uuid.uuid4())[:8],
+            "month":      payload.month,
+            "name":       entry.name,
+            "sector":     entry.sector,
+            "weight_pct": entry.weight_pct,
+        }
+        holdings.append(row)
+        saved.append(row)
+    save(data)
+    return {"ok": True, "month": payload.month, "count": len(saved), "holdings": saved}
+
+
+@router.delete("/api/aif_holdings/month/{month}")
+def delete_aif_holdings_month(month: str):
+    data = load()
+    data["aif_holdings"] = [h for h in data.get("aif_holdings", []) if h.get("month") != month]
+    save(data)
+    return {"ok": True}
+
+
+@router.delete("/api/aif_holdings/entry/{entry_id}")
+def delete_aif_holding_entry(entry_id: str):
+    data = load()
+    data["aif_holdings"] = [h for h in data.get("aif_holdings", []) if h.get("id") != entry_id]
     save(data)
     return {"ok": True}
 

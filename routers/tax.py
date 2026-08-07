@@ -79,7 +79,7 @@ def get_tax(fy: int = Query(default=None)):
     processed = []
 
     for s in sold:
-        if s.get("currency") == "USD":
+        if s.get("currency", "INR") != "INR":
             continue
         sd_str = s.get("sell_date") or s.get("archived_at", "")
         if not sd_str:
@@ -142,7 +142,7 @@ def get_tax(fy: int = Query(default=None)):
 
     # ── LTCG countdown for active positions (gains only) ─────────────────────
     active   = [p for p in data["positions"]
-                if p.get("active", True) and p.get("currency", "INR") != "USD"]
+                if p.get("active", True) and p.get("currency", "INR") == "INR"]
     enriched = [enrich(dict(p), rate) for p in active]
 
     ltcg_countdown        = []

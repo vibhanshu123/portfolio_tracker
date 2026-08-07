@@ -30,7 +30,12 @@ MARKET_DASHBOARDS_DIR.mkdir(exist_ok=True)
 ACCOUNTS = ["vibhanshu", "manjari", "huf", "manjbhawna",
             "us_vibhanshu", "us_manjari", "us_huf"]
 
+# Non-USD FX rates for global positions, keyed by currency code -> INR rate.
+# USD keeps its own dedicated `usd_inr_rate` field since most of the code predates this dict.
+DEFAULT_FX_RATES = {"EUR": 91.0, "GBP": 106.0, "SGD": 62.0, "AUD": 55.0}
+
 DEFAULT_SETTINGS = {
     "usd_inr_rate": 84.0, "portfolio_risk_pct": 1.0,
     "aif_invested": 0.0, "target_cash_pct": 10.0,
+    "fx_rates": dict(DEFAULT_FX_RATES),
 }

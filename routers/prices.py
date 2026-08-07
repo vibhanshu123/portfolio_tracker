@@ -168,6 +168,29 @@ def get_usd_rate():
     return {"error": "Could not fetch rate"}
 
 
+_FX_YAHOO_PAIRS = {"EUR": "EURINR=X", "GBP": "GBPINR=X", "SGD": "SGDINR=X", "AUD": "AUDINR=X"}
+
+
+@router.get("/api/fx_rate/{currency}")
+def get_fx_rate(currency: str):
+    """Fetch and persist a live INR rate for a non-USD global currency (EUR/GBP/SGD/AUD)."""
+    currency = currency.upper()
+    pair = _FX_YAHOO_PAIRS.get(currency)
+    if not pair:
+        return {"error": f"Unsupported currency '{currency}'"}
+    try:
+        ticker = yf.Ticker(pair)
+        rate   = float(ticker.fast_info.last_price)
+        if rate and rate > 0:
+            data = load()
+            data["settings"].setdefault("fx_rates", {})[currency] = round(rate, 2)
+            save(data)
+            return {"currency": currency, "rate": round(rate, 2)}
+    except Exception as e:
+        return {"error": str(e)}
+    return {"error": "Could not fetch rate"}
+
+
 @router.get("/api/quote")
 def get_quote(ticker: str, on: Optional[str] = None):
     try:
@@ -224,8 +247,9 @@ def _fetch_mkt_caps(yt_orig_map: dict) -> dict:
 
 @router.get("/api/prices")
 def refresh_prices():
-    data = load()
-    rate = data["settings"].get("usd_inr_rate", 84.0)
+    data     = load()
+    rate     = data["settings"].get("usd_inr_rate", 84.0)
+    fx_rates = data["settings"].get("fx_rates", {})
 
     # Position tickers: yahoo_ticker → position id
     pos_map: dict[str, str] = {}
@@ -298,7 +322,7 @@ def refresh_prices():
             p["peak_price"] = round(max(p.get("peak_price") or 0,
                                         p.get("avg_buy_price") or 0, new_cmp), 4)
     save(data)
-    data["positions"] = [enrich(p, rate) for p in data["positions"]]
+    data["positions"] = [enrich(p, rate, fx_rates) for p in data["positions"]]
 
     # Combined prices dict: orig_ticker → latest cmp (positions + watchlist)
     prices: dict[str, float] = {}

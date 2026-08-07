@@ -41,6 +41,21 @@ const ACCT_LABELS = {
   us_manjari: 'US–Manj', us_huf: 'US–HUF',
 };
 
+// Shared currency → symbol map, so a position's own `currency` field (not just
+// the Indian/US tab it lives in) drives what symbol is shown.
+const CURRENCY_SYMBOLS = { INR: '₹', USD: '$', EUR: '€', GBP: '£', SGD: 'S$', AUD: 'A$' };
+function curSym(currency) { return CURRENCY_SYMBOLS[currency] || '₹'; }
+// currency -> INR rate, reading whichever settings field actually holds it
+// (USD has its own dedicated `usd_inr_rate`; everything else lives in `fx_rates`).
+function rateFor(currency) {
+  if (currency === 'INR') return 1;
+  if (currency === 'USD') return state.settings?.usd_inr_rate || 84;
+  return (state.settings?.fx_rates || {})[currency] || 1;
+}
+// Non-USD global currencies that get their own live-rate card + fetch button
+// in the "US"/global tab, alongside the existing dedicated USD rate.
+const GLOBAL_FX_CURRENCIES = ['EUR', 'GBP', 'SGD', 'AUD'];
+
 // Lists that get extra columns: Market Cap, Conviction, Exchange
 const _INTL_WL_IDS = new Set(['wl_soic_research_international', 'wl_rick_rule_s_stocks']);
 
@@ -1626,8 +1641,16 @@ async function deleteCapitalEntry(account, id) {
 function renderSummaryCards(positions, tab) {
   const isUS = tab === 'us';
   const cur = isUS ? '$' : '₹';
-  const inv = isUS ? sum(positions, p => p.invested)          : sum(positions, p => p.invested_inr);
-  const val = isUS ? sum(positions, p => p.current_value)     : sum(positions, p => p.current_value_inr);
+  // The "us" tab can now hold mixed currencies (USD/EUR/GBP/SGD/AUD), so raw
+  // per-position amounts can't just be summed together. Always total via the
+  // already-INR-converted fields, then (for the US/global tab only) re-express
+  // that INR total in USD-equivalent terms so the display stays $-denominated
+  // and unchanged for anyone with a pure-USD portfolio.
+  const usdRate = state.settings?.usd_inr_rate || 84;
+  const invInr = sum(positions, p => p.invested_inr);
+  const valInr = sum(positions, p => p.current_value_inr);
+  const inv = isUS ? invInr / usdRate : invInr;
+  const val = isUS ? valInr / usdRate : valInr;
   const pnl = val - inv;
   const pnlPct = inv > 0 ? (pnl / inv) * 100 : 0;
   const pnlClass = pnl >= 0 ? 't-pos' : 't-neg';
@@ -1656,6 +1679,23 @@ function renderSummaryCards(positions, tab) {
         <button class="btn btn-ghost text-xs py-0 px-1" onclick="fetchUsdRate()" id="fetch-rate-btn" title="Fetch live rate">⟳</button>
       </div>
     </div>` : '';
+
+  // One rate card per non-USD currency actually held in this tab, so EUR/GBP/
+  // SGD/AUD only show up once you actually have a position in that currency.
+  const heldFxCurrencies = isUS
+    ? GLOBAL_FX_CURRENCIES.filter(c => positions.some(p => p.currency === c))
+    : [];
+  const fxRateCards = heldFxCurrencies.map(c => {
+    const rate = (state.settings?.fx_rates || {})[c];
+    return `
+    <div class="card text-center min-w-[118px]">
+      <div class="text-lg font-bold t-strong" id="fx-rate-display-${c}">${rate != null ? '₹' + rate.toFixed(2) : '—'}</div>
+      <div class="text-xs t-faint mt-0.5 flex items-center justify-center gap-1">
+        ${c}/INR
+        <button class="btn btn-ghost text-xs py-0 px-1" onclick="fetchFxRate('${c}')" title="Fetch live rate">⟳</button>
+      </div>
+    </div>`;
+  }).join('');
 
   const signalsBtn = isCon ? `
     <button class="btn btn-ghost text-xs" onclick="refreshTechnicals()" id="signals-btn" title="Refresh EMA, RSI, Stage signals">⟳ Signals</button>` : '';
@@ -1687,6 +1727,7 @@ function renderSummaryCards(positions, tab) {
         <div class="text-xs t-faint mt-0.5">Holdings</div>
       </div>
       ${usdRateCard}
+      ${fxRateCards}
       ${isCon ? (function(){
         const cb = state.cash_balances || {};
         const cash = (cb.vibhanshu||0)+(cb.manjari||0)+(cb.huf||0)+(cb.manjbhawna||0);
@@ -1762,17 +1803,20 @@ function renderTable(positions, tab) {
   const isCon   = tab === 'consolidated';
   const isUSCon = tab === 'us_con';          // consolidated US (Vib + Manj merged)
   const isUS    = tab === 'us' || isUSCon;
-  const cur     = isUS ? '$' : '₹';
+  // The "us"/global tab can hold mixed currencies now, so a single header-level
+  // symbol would be misleading — leave it blank there and rely on each row's
+  // own currency symbol instead (see the trs cells below).
+  const cur     = isUS ? '' : '₹';
 
   const headers = [
     { k: 'stock_name', l: 'Stock' },
     { k: 'sector',     l: 'Sector' },
-    { k: 'avg_buy_price', l: `Avg Buy ${cur}` },
+    { k: 'avg_buy_price', l: `Avg Buy ${cur}`.trim() },
     { k: 'quantity',   l: 'Qty' },
-    { k: 'cmp',        l: `CMP ${cur}` },
-    { k: 'invested',   l: `Invested ${cur}` },
-    { k: 'current_value', l: `Value ${cur}` },
-    { k: 'pnl',        l: `P&L ${cur}` },
+    { k: 'cmp',        l: `CMP ${cur}`.trim() },
+    { k: 'invested',   l: `Invested ${cur}`.trim() },
+    { k: 'current_value', l: `Value ${cur}`.trim() },
+    { k: 'pnl',        l: `P&L ${cur}`.trim() },
     { k: 'pnl_pct',   l: 'P&L %' },
     { k: 'cagr', l: 'CAGR' },
     ...(isCon ? [
@@ -1790,11 +1834,15 @@ function renderTable(positions, tab) {
   const grouped  = isCon    ? groupConsolidated(positions)
                  : isUSCon  ? groupUS(positions)
                  : positions.map(p => ({...p, _accounts: [p.account]}));
-  const totalInv = sum(grouped, p => isUS ? p.invested       : p.invested_inr);
-  const totalVal = sum(grouped, p => isUS ? p.current_value  : p.current_value_inr);
+  // Allocation % must always be computed on a common-currency basis — the "us"
+  // tab can mix USD/EUR/GBP/SGD/AUD, so this uses the INR-converted fields
+  // regardless of tab (unlike the native-currency `inv`/`val` used for display
+  // further down in `trs`, which intentionally stays per-position).
+  const totalInv = sum(grouped, p => p.invested_inr);
+  const totalVal = sum(grouped, p => p.current_value_inr);
   const withAlloc = grouped.map(p => {
-    const inv = isUS ? p.invested      : p.invested_inr;
-    const val = isUS ? p.current_value : p.current_value_inr;
+    const inv = p.invested_inr;
+    const val = p.current_value_inr;
     return {
       ...p,
       alloc_invested: totalInv > 0 ? (inv / totalInv) * 100 : 0,
@@ -1853,17 +1901,17 @@ function renderTable(positions, tab) {
       </td>
       <td>${p.sector ? `<span class="badge">${esc(p.sector)}</span>` : `<span class="t-faint" style="font-size:11px">—</span>`}</td>
       <td class="text-right">${isUS
-        ? `<span class="pn t-faint" style="font-size:10px">$</span>${num(p.avg_buy_price)}`
+        ? `<span class="pn t-faint" style="font-size:10px">${curSym(p.currency)}</span>${num(p.avg_buy_price)}`
         : num(p.avg_buy_price)}</td>
       <td class="text-right">${num(p.quantity, isUS ? 4 : 0)}</td>
       <td class="text-right">
-        ${isUS ? `<span class="pn t-faint" style="font-size:10px">$</span>` : ''}
+        ${isUS ? `<span class="pn t-faint" style="font-size:10px">${curSym(p.currency)}</span>` : ''}
         <input class="inline-edit" type="number" value="${p.cmp ? p.cmp.toFixed(2) : ''}"
                onblur="updateCmp('${p.id}', this.value)" title="Edit CMP">
       </td>
-      <td class="text-right t-muted">${fmtCur(inv, isUS)}</td>
-      <td class="text-right t-strong font-medium">${fmtCur(val, isUS)}</td>
-      <td class="text-right ${pnlCls}" style="${pnlBg(pnlPct)}padding:9px 12px;font-weight:600">${fmtCur(pnl, isUS, true)}</td>
+      <td class="text-right t-muted">${fmtCur(inv, isUS, false, isUS ? p.currency : undefined)}</td>
+      <td class="text-right t-strong font-medium">${fmtCur(val, isUS, false, isUS ? p.currency : undefined)}</td>
+      <td class="text-right ${pnlCls}" style="${pnlBg(pnlPct)}padding:9px 12px;font-weight:600">${fmtCur(pnl, isUS, true, isUS ? p.currency : undefined)}</td>
       <td class="text-right ${pnlCls}" style="${pnlBg(pnlPct)}padding:9px 12px;font-weight:700">${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(1)}%</td>
       <td class="text-right ${cagrCls}" style="${cgrv !== null ? pnlBg(cgrv) : ''}padding:9px 12px">${cgrv !== null ? `<span class="pn">${(cgrv >= 0 ? '+' : '') + cgrv.toFixed(1)}%</span>` : '—'}</td>
       ${isCon ? `
@@ -1989,8 +2037,9 @@ function groupUS(positions) {
       g.current_value      = (g.cmp || g.avg_buy_price) * g.quantity;
       g.pnl                = g.current_value - g.invested;
       g.pnl_pct            = g.invested > 0 ? (g.pnl / g.invested) * 100 : 0;
-      // keep INR values in sync (for header summary cards)
-      const rate           = state.settings.usd_inr_rate || 84;
+      // keep INR values in sync (for header summary cards) — same ticker/name
+      // always implies the same currency, so g.currency already reflects it.
+      const rate           = rateFor(g.currency);
       g.invested_inr       = g.invested * rate;
       g.current_value_inr  = g.current_value * rate;
       if (!g._accounts.includes(p.account)) g._accounts.push(p.account);
@@ -2012,10 +2061,13 @@ function renderUS() {
   const manjPos = state.positions.filter(p => p.account === 'us_manjari');
   const conPos  = [...vibPos, ...manjPos];
 
-  const totalInv    = sum(conPos, p => p.invested);
-  const totalVal    = sum(conPos, p => p.current_value);
+  // Sum via the already-INR-converted fields (safe for mixed USD/EUR/GBP/SGD/
+  // AUD holdings), then re-express as a USD-equivalent for the $ headline —
+  // identical to a pure-USD sum when every position really is USD.
   const totalInvInr = sum(conPos, p => p.invested_inr);
   const totalValInr = sum(conPos, p => p.current_value_inr);
+  const totalInv    = totalInvInr / usdRate;
+  const totalVal    = totalValInr / usdRate;
   const pnl         = totalVal - totalInv;
   const pnlPct      = totalInv > 0 ? (pnl / totalInv) * 100 : 0;
   const pnlCls      = pnl >= 0 ? 't-pos' : 't-neg';
@@ -2057,8 +2109,10 @@ function renderUS() {
 
   function sectionHtml(pos, label, acctKey) {
     if (!pos.length) return '';
-    const sInv    = sum(pos, p => p.invested);
-    const sVal    = sum(pos, p => p.current_value);
+    // INR-based sums re-expressed in USD-equivalent terms — safe once a
+    // section mixes USD with EUR/GBP/SGD/AUD positions.
+    const sInv    = sum(pos, p => p.invested_inr) / usdRate;
+    const sVal    = sum(pos, p => p.current_value_inr) / usdRate;
     const sPnl    = sVal - sInv;
     const sPnlPct = sInv > 0 ? (sPnl / sInv) * 100 : 0;
     const sCls    = sPnl >= 0 ? 't-pos' : 't-neg';
@@ -2894,55 +2948,88 @@ function renderAIF() {
       ${renderAIFInvestorMeets()}
     </div>
 
-    <!-- Holdings breakdown (reference) -->
+    <!-- Holdings breakdown -->
     <div class="mt-6">
-      <div class="text-sm font-semibold t-muted mb-3" style="padding-left:2px">AIF Holdings Breakdown</div>
+      <div class="flex items-center justify-between mb-3" style="padding-left:2px">
+        <div class="text-sm font-semibold t-muted">AIF Holdings Breakdown</div>
+        <button class="btn btn-blue text-xs" onclick="openAifHoldingsModal()">+ Update Holdings</button>
+      </div>
       ${renderAIFHoldings()}
     </div>`;
 }
 
-const AIF_DATA = [
-  // name, sector, feb, mar, apr, may, jun | type & label reflect may→jun change
-  { name:"SAMHI Hotels",                   sector:"Hospitality",   feb:5.0,  mar:4.1,  apr:4.3,  may:5.5,  jun:5.9,  type:"increased", label:"ADDING"            },
-  { name:"CSB Bank",                       sector:"Banking",       feb:8.4,  mar:7.6,  apr:7.3,  may:6.7,  jun:5.7,  type:"decreased", label:"CONTINUED TRIM"    },
-  { name:"Narayana Hrudayalaya",           sector:"Healthcare",    feb:6.3,  mar:5.8,  apr:5.4,  may:6.4,  jun:5.7,  type:"decreased", label:"TRIMMING"          },
-  { name:"Acutaas Chemicals",              sector:"Chemicals",     feb:7.0,  mar:8.6,  apr:4.7,  may:5.4,  jun:5.0,  type:"decreased", label:"MICRO TRIM"        },
-  { name:"Privi Speciality Chemicals",     sector:"Chemicals",     feb:3.5,  mar:3.9,  apr:3.9,  may:4.0,  jun:5.0,  type:"increased", label:"STRONG ADD"        },
-  { name:"Physicswallah",                  sector:"IT/EdTech",     feb:3.3,  mar:3.8,  apr:4.1,  may:3.8,  jun:4.9,  type:"increased", label:"STRONG ADD"        },
-  { name:"Garware Hi-Tech Films",          sector:"Materials",     feb:3.3,  mar:2.9,  apr:2.9,  may:4.4,  jun:4.5,  type:"stable",    label:"STABLE+"           },
-  { name:"Sai Life Sciences",              sector:"Healthcare",    feb:0.3,  mar:4.0,  apr:4.3,  may:4.6,  jun:4.5,  type:"stable",    label:"MICRO TRIM"        },
-  { name:"HFCL",                           sector:"Telecom",       feb:0,    mar:0,    apr:0,    may:0,    jun:4.4,  type:"new",       label:"NEW - JUN"         },
-  { name:"Quality Power Electrical Equip", sector:"Electrical",   feb:0,    mar:0,    apr:3.6,  may:2.9,  jun:4.1,  type:"increased", label:"STRONG ADD"        },
-  { name:"Centum Electronics",             sector:"Electronics",   feb:0,    mar:0,    apr:0,    may:3.7,  jun:3.9,  type:"increased", label:"ADDING"            },
-  { name:"SML Mahindra",                   sector:"Auto",          feb:4.9,  mar:4.1,  apr:3.4,  may:3.8,  jun:3.9,  type:"stable",    label:"STABLE+"           },
-  { name:"Shivalik Bimetal Controls",      sector:"Engineering",   feb:0,    mar:0,    apr:0,    may:2.6,  jun:3.6,  type:"increased", label:"STRONG ADD"        },
-  { name:"DEE Development Engineers",      sector:"Construction",  feb:0,    mar:0,    apr:1.9,  may:3.6,  jun:3.6,  type:"stable",    label:"STABLE"            },
-  { name:"Pricol",                         sector:"Auto",          feb:4.3,  mar:3.8,  apr:3.6,  may:3.4,  jun:3.6,  type:"increased", label:"STABLE+"           },
-  { name:"Lumax Auto Technologies",        sector:"Auto",          feb:6.2,  mar:5.6,  apr:3.8,  may:3.8,  jun:3.3,  type:"decreased", label:"LIGHT TRIM"        },
-  { name:"JM Financial",                   sector:"Banking",       feb:4.1,  mar:3.8,  apr:3.9,  may:3.5,  jun:3.0,  type:"decreased", label:"TRIMMING"          },
-  { name:"Nephrocare Health Services",     sector:"Healthcare",    feb:0,    mar:0,    apr:1.8,  may:2.9,  jun:3.0,  type:"stable",    label:"STABLE+"           },
-  { name:"Interarch Building Products",    sector:"Infrastructure",feb:3.4,  mar:3.2,  apr:3.4,  may:3.0,  jun:3.0,  type:"stable",    label:"STABLE"            },
-  { name:"Entero Healthcare Solutions",    sector:"Healthcare",    feb:4.1,  mar:5.4,  apr:4.5,  may:4.2,  jun:2.8,  type:"decreased", label:"STRONG TRIM"       },
-  { name:"Goldiam International",          sector:"Retail",        feb:3.5,  mar:2.8,  apr:3.4,  may:3.5,  jun:2.8,  type:"decreased", label:"TRIMMING"          },
-  { name:"Indian Metals & Ferro Alloys",   sector:"Commodities",   feb:3.1,  mar:3.1,  apr:3.3,  may:3.1,  jun:2.8,  type:"decreased", label:"LIGHT TRIM"        },
-  { name:"Pokarna",                        sector:"Commodities",   feb:2.9,  mar:2.8,  apr:2.6,  may:2.3,  jun:2.8,  type:"increased", label:"ADDING"            },
-  { name:"NRB Bearings",                   sector:"Auto",          feb:0,    mar:0,    apr:0,    may:0,    jun:2.4,  type:"new",       label:"NEW - JUN"         },
-  { name:"Jayaswal Neco Industries",       sector:"Engineering",   feb:0,    mar:0,    apr:2.4,  may:2.9,  jun:2.4,  type:"decreased", label:"TRIMMING"          },
-  { name:"Rishabh Instruments",            sector:"Electronics",   feb:0,    mar:0,    apr:0,    may:0,    jun:1.8,  type:"new",       label:"NEW - JUN"         },
-  { name:"Cash",                           sector:"Cash",          feb:0,    mar:0,    apr:0,    may:4.3,  jun:1.3,  type:"decreased", label:"DEPLOYING"         },
-  // Exited in June
-  { name:"Aditya Infotech",                sector:"IT/EdTech",     feb:3.7,  mar:4.2,  apr:4.0,  may:3.5,  jun:0,    type:"exited",    label:"EXITED JUN"        },
-  { name:"Multi Commodity Exchange",       sector:"Commodities",   feb:5.3,  mar:4.9,  apr:5.2,  may:2.1,  jun:0,    type:"exited",    label:"EXITED JUN"        },
-  // Exited in May
-  { name:"Ujjivan Small Finance Bank",     sector:"Banking",       feb:4.7,  mar:4.6,  apr:4.4,  may:0,    jun:0,    type:"exited",    label:"EXITED MAY"        },
-  { name:"Windlas Biotech Limited",        sector:"Pharma",        feb:2.3,  mar:2.3,  apr:2.3,  may:0,    jun:0,    type:"exited",    label:"EXITED MAY"        },
-  { name:"Pondy Oxides & Chemicals",       sector:"Chemicals",     feb:2.8,  mar:2.8,  apr:3.3,  may:0,    jun:0,    type:"exited",    label:"EXITED MAY"        },
-  // Previously exited
-  { name:"One 97 Communications",          sector:"FinTech",       feb:3.2,  mar:2.7,  apr:0,    may:0,    jun:0,    type:"exited",    label:"EXITED"            },
-  { name:"Sai Silks (Kalamandir)",         sector:"Retail",        feb:1.8,  mar:1.4,  apr:0,    may:0,    jun:0,    type:"exited",    label:"EXITED"            },
-];
-
 let aifFilter = 'all';
+
+// ─── AIF Holdings: long-format state → wide table pivot ────────────────────────
+function _aifMonthLabel(ym) {
+  const MON = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const [y, m] = (ym || '').split('-');
+  return m ? `${MON[parseInt(m, 10)]}'${y.slice(2)}` : ym;
+}
+
+// Classify a holding that IS still held as of latestM (hasNow=true) — increased/
+// decreased/stable/new/recovery. Exited holdings (hasNow=false) are handled
+// separately in _buildAifData, since "exited" needs the actual month it left,
+// not just a prev-vs-latest delta (which breaks once the exit is >1 month old).
+function _aifClassifyHeld(prevVal, latVal, everHeldEarlier) {
+  const hadPrev = (prevVal || 0) > 0;
+  if (!hadPrev) return everHeldEarlier ? { type: 'recovery', label: 'RECOVERY' } : { type: 'new', label: 'NEW' };
+  const delta = (latVal || 0) - (prevVal || 0);
+  if (delta >= 0.5)  return { type: 'increased', label: 'STRONG ADD' };
+  if (delta >= 0.15) return { type: 'increased', label: 'ADDING' };
+  if (delta > -0.15) return { type: 'stable', label: delta > 0.02 ? 'STABLE+' : (delta < -0.02 ? 'MICRO TRIM' : 'STABLE') };
+  if (delta > -0.5)  return { type: 'decreased', label: 'TRIMMING' };
+  return { type: 'decreased', label: 'STRONG TRIM' };
+}
+
+function _buildAifData() {
+  const rows = state.aif_holdings || [];
+  const allMonths = Array.from(new Set(rows.map(r => r.month))).sort(); // "YYYY-MM" sorts chronologically
+  const visibleMonths = allMonths.slice(-6);
+  const latestM = visibleMonths[visibleMonths.length - 1];
+  const prevM   = visibleMonths[visibleMonths.length - 2];
+
+  const byName = new Map();
+  for (const r of rows) {
+    if (!byName.has(r.name)) byName.set(r.name, { name: r.name, sector: r.sector, values: {} });
+    const g = byName.get(r.name);
+    g.values[r.month] = r.weight_pct;
+    if (r.sector) g.sector = r.sector; // most-recently-seen sector wins (rows are appended in month order)
+  }
+
+  const data = [];
+  for (const g of byName.values()) {
+    if (!visibleMonths.some(m => (g.values[m] || 0) > 0)) continue; // fully outside the visible window
+    const latVal = latestM ? (g.values[latestM] || 0) : 0;
+    const prvVal = prevM   ? (g.values[prevM]   || 0) : 0;
+    let cls, monthForSuffix;
+    if (latVal > 0) {
+      const everHeldEarlier = allMonths.some(m => m < prevM && (g.values[m] || 0) > 0);
+      cls = _aifClassifyHeld(prvVal, latVal, everHeldEarlier);
+      monthForSuffix = latestM;
+    } else {
+      // No longer held as of latestM — label with the actual last month it was
+      // held, not latestM, so an old exit doesn't read as "EXITED <this month>".
+      const lastHeldMonth = allMonths.slice().reverse().find(m => (g.values[m] || 0) > 0);
+      cls = { type: 'exited', label: 'EXITED' };
+      monthForSuffix = lastHeldMonth;
+    }
+    const needsMonthSuffix = ['new', 'exited', 'recovery'].includes(cls.type);
+    data.push({
+      name: g.name, sector: g.sector || '—', values: g.values,
+      type: cls.type,
+      label: needsMonthSuffix && monthForSuffix ? `${cls.label} - ${_aifMonthLabel(monthForSuffix).split("'")[0].toUpperCase()}` : cls.label,
+    });
+  }
+  data.sort((a, b) => {
+    const av = latestM ? (a.values[latestM] || 0) : 0;
+    const bv = latestM ? (b.values[latestM] || 0) : 0;
+    if (av !== bv) return bv - av;
+    const findLast = h => visibleMonths.slice().reverse().find(m => (h.values[m] || 0) > 0) || '';
+    return findLast(b).localeCompare(findLast(a));
+  });
+  return { data, visibleMonths, latestM, prevM };
+}
 
 function renderAIFHoldings() {
   const TYPE_CFG = {
@@ -2954,24 +3041,16 @@ function renderAIFHoldings() {
     exited:    { bg:'rgba(107,114,128,0.1)', border:'#6b7280', col:'#6b7280',  label:'Exited'    },
   };
 
-  // ── Dynamic month detection ──────────────────────────────────────────────
-  // All possible months in calendar order; add new keys here as factsheets arrive
-  const ALL_MONTHS = [
-    { key:'jan', label:'Jan' }, { key:'feb', label:'Feb' }, { key:'mar', label:'Mar' },
-    { key:'apr', label:'Apr' }, { key:'may', label:'May' }, { key:'jun', label:'Jun' },
-    { key:'jul', label:'Jul' }, { key:'aug', label:'Aug' }, { key:'sep', label:'Sep' },
-    { key:'oct', label:'Oct' }, { key:'nov', label:'Nov' }, { key:'dec', label:'Dec' },
-  ];
-  // A month is "available" if at least one holding has a non-zero value for it
-  const availableMonths = ALL_MONTHS.filter(m =>
-    AIF_DATA.some(d => (d[m.key] || 0) > 0)
-  );
-  // Show current month + up to 5 prior = max 6 columns
-  const visibleMonths = availableMonths.slice(-6);
-  const latestM  = visibleMonths[visibleMonths.length - 1];
-  const prevM    = visibleMonths[visibleMonths.length - 2];
-  const rangeLabel = visibleMonths.map(m => m.label).join(' → ');
-  const newLabel = `New ${latestM ? latestM.label : ''}`;
+  const { data: AIF_DATA, visibleMonths, latestM, prevM } = _buildAifData();
+
+  if (!visibleMonths.length) {
+    return `<div class="card text-center py-10 t-faint">
+      No AIF holdings recorded yet. Click <b>+ Update Holdings</b> above and paste in a month's factsheet to get started.
+    </div>`;
+  }
+
+  const rangeLabel = visibleMonths.map(_aifMonthLabel).join(' → ');
+  const newLabel = `New ${latestM ? _aifMonthLabel(latestM).split("'")[0] : ''}`;
 
   const counts = {};
   for (const d of AIF_DATA) counts[d.type] = (counts[d.type] || 0) + 1;
@@ -2991,7 +3070,7 @@ function renderAIFHoldings() {
 
   // Summary chips — latest month drives holdings count and new label
   const chips = [
-    { l:'Holdings',   v: latestM ? AIF_DATA.filter(d=>(d[latestM.key]||0)>0).length : 0 },
+    { l:'Holdings',   v: latestM ? AIF_DATA.filter(d=>(d.values[latestM]||0)>0).length : 0 },
     { l:'Increased',  v: counts.increased||0, col:'#34d399' },
     { l:'Decreased',  v: counts.decreased||0, col:'#f87171' },
     { l:newLabel,     v: counts.new||0,        col:'#f472b6' },
@@ -3005,12 +3084,12 @@ function renderAIFHoldings() {
   // Table rows — dynamic month columns; change = latest vs previous month
   const rows = filtered.map(p => {
     const cfg    = TYPE_CFG[p.type] || TYPE_CFG.stable;
-    const latVal = latestM ? (p[latestM.key] || 0) : 0;
-    const prvVal = prevM   ? (p[prevM.key]   || 0) : 0;
+    const latVal = latestM ? (p.values[latestM] || 0) : 0;
+    const prvVal = prevM   ? (p.values[prevM]   || 0) : 0;
     const change = (latVal - prvVal).toFixed(2);
     const chgCol = parseFloat(change) > 0 ? '#34d399' : parseFloat(change) < 0 ? '#f87171' : '#94a3b8';
     const arrow  = parseFloat(change) > 0 ? '↑' : parseFloat(change) < 0 ? '↓' : '→';
-    const maxVal = Math.max(...visibleMonths.map(m => p[m.key] || 0), 0.1);
+    const maxVal = Math.max(...visibleMonths.map(m => p.values[m] || 0), 0.1);
 
     function miniBar(val, isLatest) {
       const pct = ((val || 0) / maxVal) * 100;
@@ -3026,7 +3105,7 @@ function renderAIFHoldings() {
     }
 
     const monthCells = visibleMonths.map((m, i) =>
-      `<td>${miniBar(p[m.key] || 0, i === visibleMonths.length - 1)}</td>`
+      `<td>${miniBar(p.values[m] || 0, i === visibleMonths.length - 1)}</td>`
     ).join('');
 
     return `<tr>
@@ -3046,16 +3125,17 @@ function renderAIFHoldings() {
 
   const colSpan = 4 + visibleMonths.length; // Holding + Sector + months + Change + Signal
   const monthHeaders = visibleMonths.map((m, i) =>
-    `<th class="text-left"${i === visibleMonths.length-1 ? ' style="color:var(--accent)"' : ''}>${m.label} %</th>`
+    `<th class="text-left"${i === visibleMonths.length-1 ? ' style="color:var(--accent)"' : ''}>${_aifMonthLabel(m)} %</th>`
   ).join('');
-  const changeHeader = prevM && latestM ? `${prevM.label}→${latestM.label}` : 'Change';
+  const changeHeader = prevM && latestM ? `${_aifMonthLabel(prevM)}→${_aifMonthLabel(latestM)}` : 'Change';
 
   return `
     <div class="flex gap-3 flex-wrap mb-4">${chips}</div>
     <div class="flex gap-2 flex-wrap mb-4">${filterBtns}</div>
     <div class="card" style="padding:0;overflow-x:auto">
-      <div style="padding:12px 16px;border-bottom:1px solid var(--border);font-size:12px;font-weight:600;color:var(--text-muted)">
-        ${rangeLabel} · AIF Holdings · ${filtered.length} shown
+      <div style="padding:12px 16px;border-bottom:1px solid var(--border);font-size:12px;font-weight:600;color:var(--text-muted);display:flex;justify-content:space-between;align-items:center">
+        <span>${rangeLabel} · AIF Holdings · ${filtered.length} shown</span>
+        ${latestM ? `<button onclick="openAifHoldingsModal('${latestM}')" class="btn btn-ghost text-xs py-1 px-2" title="Edit or delete ${_aifMonthLabel(latestM)}'s data">✏️ Edit ${_aifMonthLabel(latestM)}</button>` : ''}
       </div>
       <table class="tbl">
         <thead><tr>
@@ -3074,6 +3154,102 @@ function setAifFilter(f) {
   aifFilter = f;
   document.getElementById('tab-content').innerHTML = renderAIF();
   // re-render only the holdings section without re-rendering the whole tab
+}
+
+// ─── AIF Holdings: Update-Month modal ───────────────────────────────────────────
+// Parses pasted factsheet text into [{name, weight_pct}]. Handles both "one holding
+// per line" and the natural two-column newspaper-style paste (e.g. "Centum
+// Electronics 3.8% NRB Bearings 2.1%") since it scans for every "<name> <num>%"
+// pattern in the whole blob rather than splitting on line breaks first.
+function _aifParseTextarea(text) {
+  const re = /([A-Za-z][A-Za-z0-9&.,'()/\-\s]*?)\s+(\d+(?:\.\d+)?)\s*%/g;
+  const out = [];
+  let m;
+  while ((m = re.exec(text)) !== null) {
+    const name = m[1].replace(/\s+/g, ' ').trim();
+    const weight_pct = parseFloat(m[2]);
+    if (name && !isNaN(weight_pct)) out.push({ name, weight_pct });
+  }
+  return out;
+}
+
+// Look up the most recent historical sector for a holding name, so re-pasted
+// months don't need sector typed in every time — only genuinely new names lack one.
+function _aifSectorFor(name) {
+  const rows = (state.aif_holdings || []).filter(r => r.name === name && r.sector).sort((a, b) => a.month.localeCompare(b.month));
+  return rows.length ? rows[rows.length - 1].sector : null;
+}
+
+function _aifEntriesToText(month) {
+  return (state.aif_holdings || [])
+    .filter(r => r.month === month)
+    .sort((a, b) => b.weight_pct - a.weight_pct)
+    .map(r => `${r.name} ${r.weight_pct}%`)
+    .join('\n');
+}
+
+function openAifHoldingsModal(month) {
+  const today = new Date();
+  const defaultMonth = month || `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+  document.getElementById('aifh-month').value = defaultMonth;
+  onAifHoldingsMonthChange();
+  document.getElementById('aifh-modal').classList.remove('hidden');
+}
+
+function closeAifHoldingsModal() {
+  document.getElementById('aifh-modal').classList.add('hidden');
+}
+
+function onAifHoldingsMonthChange() {
+  const month = document.getElementById('aifh-month').value;
+  const existingText = _aifEntriesToText(month);
+  document.getElementById('aifh-text').value = existingText;
+  document.getElementById('aifh-delete-btn').style.display = existingText ? 'inline-flex' : 'none';
+  _aifUpdatePreview();
+}
+
+function _aifUpdatePreview() {
+  const text = document.getElementById('aifh-text').value;
+  const parsed = _aifParseTextarea(text);
+  const total = parsed.reduce((s, p) => s + p.weight_pct, 0);
+  const el = document.getElementById('aifh-preview');
+  if (!parsed.length) {
+    el.textContent = text.trim() ? 'No "Name X.X%" patterns recognized yet.' : 'Paste holdings above — one or two per line, e.g. "Centum Electronics 3.8%".';
+    el.style.color = 'var(--text-faint)';
+    return;
+  }
+  el.textContent = `${parsed.length} holdings parsed, totaling ${total.toFixed(1)}%${Math.abs(total - 100) > 3 ? '  ⚠️ far from 100% — check for a missed or duplicated line' : ''}`;
+  el.style.color = Math.abs(total - 100) > 3 ? '#f87171' : 'var(--text-faint)';
+}
+
+async function saveAifHoldingsMonth() {
+  const month = document.getElementById('aifh-month').value;
+  if (!month) { alert('Pick a month first'); return; }
+  const parsed = _aifParseTextarea(document.getElementById('aifh-text').value);
+  if (!parsed.length) { alert('No holdings parsed — check the pasted text'); return; }
+  const holdings = parsed.map(p => ({ name: p.name, weight_pct: p.weight_pct, sector: _aifSectorFor(p.name) }));
+  const btn = document.getElementById('aifh-save-btn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    await fetch('/api/aif_holdings/month', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ month, holdings }),
+    });
+    closeAifHoldingsModal();
+    await fetchData();
+  } finally {
+    btn.disabled = false; btn.textContent = 'Save';
+  }
+}
+
+async function deleteAifHoldingsMonth() {
+  const month = document.getElementById('aifh-month').value;
+  if (!month) return;
+  if (!confirm(`Delete all holdings recorded for ${_aifMonthLabel(month)}? This can't be undone.`)) return;
+  await fetch(`/api/aif_holdings/month/${month}`, { method: 'DELETE' });
+  closeAifHoldingsModal();
+  await fetchData();
 }
 
 // ─── Watchlist ────────────────────────────────────────────────────────────────
@@ -4581,9 +4757,10 @@ function toggleTradesRow(posId) {
 
 function renderTradesPanel(p, isCon, isUS) {
   const trades = p.trades || [];
-  const cur = isUS ? '$' : '₹';
+  const sym = isUS ? curSym(p.currency) : '₹';
+  const cur = sym;
   const fmtPrice = isUS
-    ? v => '$' + (v||0).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})
+    ? v => sym + (v||0).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})
     : v => '₹' + (v||0).toLocaleString('en-IN');
   const ACCT_COLOURS = { vibhanshu:'#6366f1', manjari:'#ec4899', huf:'#f59e0b',
                          manjbhawna:'#14b8a6', us_vibhanshu:'#3b82f6', us_manjari:'#8b5cf6', us_huf:'#10b981' };
@@ -4715,7 +4892,7 @@ function renderJournalNotes(p) {
 // Render trades collapsible
 function renderJournalTrades(trades, currency) {
   if (!trades || !trades.length) return '';
-  const sym = currency === 'USD' ? '$' : '₹';
+  const sym = curSym(currency);
   const rows = trades.map(t => {
     const col = t.type === 'sell' ? '#f87171' : '#34d399';
     return '<div style="font-size:11px;display:flex;gap:10px;padding:3px 0;border-bottom:1px solid var(--border)">' +
@@ -4758,7 +4935,7 @@ function renderJournal() {
       <div style="font-size:13px">When you sell a position, it moves here with your thesis and lessons.</div>
     </div>`;
 
-  const cur = p => p.currency === 'USD' ? '$' : '₹';
+  const cur = p => curSym(p.currency);
   const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
   const totalPnl = sold.reduce((s, p) => s + (p.realized_pnl || 0), 0);
@@ -4953,7 +5130,7 @@ function editJournalEntry(id) {
   document.getElementById('jem-sell-date').value   = p.sell_date  || '';
   document.getElementById('jem-sell-price').value  = p.sell_price || '';
   document.getElementById('jem-sell-qty').value    = p.sell_qty   || '';
-  const cur = p.currency === 'USD' ? '$' : '₹';
+  const cur = curSym(p.currency);
   document.getElementById('jem-buy-price-disp').textContent =
     `${cur}${(p.avg_buy_price||0).toLocaleString('en-IN')}`;
   document.getElementById('jem-thesis').value      = p.thesis     || '';
@@ -5179,6 +5356,24 @@ async function fetchUsdRate() {
     }
   } finally {
     if (btn) { btn.textContent = '⟳'; btn.disabled = false; }
+  }
+}
+
+// ─── Non-USD global FX rates (EUR/GBP/SGD/AUD) ─────────────────────────────────
+async function fetchFxRate(currency) {
+  const display = document.getElementById(`fx-rate-display-${currency}`);
+  const prevText = display ? display.textContent : null;
+  if (display) display.textContent = '…';
+  try {
+    const res  = await fetch(`/api/fx_rate/${currency}`);
+    const data = await res.json();
+    if (data.rate) {
+      await fetchData(); // /api/fx_rate already persisted the rate server-side
+    } else if (display) {
+      display.textContent = prevText;
+    }
+  } catch (e) {
+    if (display) display.textContent = prevText;
   }
 }
 
@@ -7375,23 +7570,27 @@ function fmtNum(v) {
   return `<span class="pn">${s}</span>`;
 }
 
-// Currency-aware formatter: USD uses $K/$M/$B; INR uses ₹K/₹L/₹Cr
+// Currency-aware formatter: any non-INR currency uses $K/$M/$B-style scaling;
+// INR uses ₹K/₹L/₹Cr. Pass `currency` (e.g. p.currency) for the correct symbol
+// on EUR/GBP/SGD/AUD positions — falls back to the isUS boolean ($/₹) when omitted.
 // withSign=true adds '+' prefix for positive values (P&L display)
-function fmtCur(v, isUS, withSign) {
+function fmtCur(v, isUS, withSign, currency) {
   if (v == null || isNaN(v)) return '—';
   const a = Math.abs(v);
   const neg = v < 0;
+  const isNonInr = currency ? currency !== 'INR' : isUS;
+  const sym = currency ? curSym(currency) : (isUS ? '$' : '₹');
   let mag;
-  if (isUS) {
-    if (a >= 1e9)      mag = '$' + (a / 1e9).toFixed(2) + 'B';
-    else if (a >= 1e6) mag = '$' + (a / 1e6).toFixed(2) + 'M';
-    else if (a >= 1e3) mag = '$' + (a / 1e3).toFixed(1) + 'K';
-    else               mag = '$' + a.toFixed(0);
+  if (isNonInr) {
+    if (a >= 1e9)      mag = sym + (a / 1e9).toFixed(2) + 'B';
+    else if (a >= 1e6) mag = sym + (a / 1e6).toFixed(2) + 'M';
+    else if (a >= 1e3) mag = sym + (a / 1e3).toFixed(1) + 'K';
+    else               mag = sym + a.toFixed(0);
   } else {
-    if (a >= 1e7)      mag = '₹' + (a / 1e7).toFixed(2) + ' Cr';
-    else if (a >= 1e5) mag = '₹' + (a / 1e5).toFixed(2) + ' L';
-    else if (a >= 1e3) mag = '₹' + (a / 1e3).toFixed(1) + 'K';
-    else               mag = '₹' + a.toFixed(0);
+    if (a >= 1e7)      mag = sym + (a / 1e7).toFixed(2) + ' Cr';
+    else if (a >= 1e5) mag = sym + (a / 1e5).toFixed(2) + ' L';
+    else if (a >= 1e3) mag = sym + (a / 1e3).toFixed(1) + 'K';
+    else               mag = sym + a.toFixed(0);
   }
   const sign = neg ? '-' : (withSign ? '+' : '');
   return `<span class="pn">${sign}${mag}</span>`;
